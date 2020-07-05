@@ -1,28 +1,47 @@
+import os
 import pygame
 
 # Variables
-
-WIDTH = 1200
-HEIGHT = 600
+RESOLUTION = (1200, 600)
 VELOCITY = 20
 TOPLEFT = (0, 0)
-PLAYERSTART = (400, 100)
+PLAYERSTART = (800, 400)
 
 # Code
+def loadImage(name, colorkey=None):
+    pathname = os.path.join('resource', name)
+    try:
+        image = pygame.image.load(pathname)
+    except pygame.error as message:
+        print('Cannot load image:', name)
+        raise SystemExit(name)
+    image = image.convert()
+    if colorkey is not None:
+        if colorkey == -1:
+            colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey, pygame.RLEACCEL)
+    return image
+
+# class Player(pygame.sprite.Sprite):
+#     def __init__(self):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image, self.rect = loadImage('Player.png', -1)
+
+
+
 
 pygame.init()
 
-screen = pygame.display.set_mode((WIDTH,HEIGHT))
+screen = pygame.display.set_mode(RESOLUTION)
 
-background = pygame.image.load('resource/Background.jpg').convert()
-background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-
+background = loadImage('Background.jpg')
+background = pygame.transform.scale(background, RESOLUTION)
 screen.blit(background, TOPLEFT)
 
-player = pygame.image.load('resource/Player.jpg').convert()
 
-# screen.blit(player, (0, 0))
+player = loadImage('Player.jpg')
 screen.blit(player, PLAYERSTART)
+
 
 position = player.get_rect().move(PLAYERSTART)
 
@@ -36,14 +55,14 @@ while True:
         if event.type == pygame.QUIT:
             quit = True
             break
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
                 position = position.move(-VELOCITY, 0)
-            if event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_d:
                 position = position.move(VELOCITY, 0)
-            if event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_s:
                 position = position.move(0, VELOCITY)
-            if event.key == pygame.K_UP:
+            elif event.key == pygame.K_w:
                 position = position.move(0, -VELOCITY)
             screen.blit(player, position)
             pygame.display.flip()
