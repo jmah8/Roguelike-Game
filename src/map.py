@@ -1,6 +1,6 @@
 import os
 import pygame
-from loadAsset import loadImage
+import object
 import constant
 
 pygame.init()
@@ -8,6 +8,8 @@ pygame.init()
 class tile:
     def __init__(self, walkable):
         self.walkable = walkable
+
+
 
 
 def create_map():

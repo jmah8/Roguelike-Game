@@ -1,5 +1,6 @@
-import pygame
 import os
+import pygame
+import constant
 
 pygame.init()
 
@@ -10,7 +11,7 @@ def loadImage(name, colorkey=None):
     except pygame.error as message:
         print('Cannot load image:', name)
         raise SystemExit(name)
-    image = image.convert()
+    image = image.convert_alpha()
     image = pygame.transform.scale(image, (64, 64))
     if colorkey is not None:
         if colorkey == -1:
@@ -20,13 +21,36 @@ def loadImage(name, colorkey=None):
 
 
 
+
+
+class object(pygame.sprite.Sprite):
+    def __init__(self, x, y, image):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = loadImage('16x16/heroes/knight/knight_idle_anim_f0.png', -1)
+        self.x = x
+        self.y = y
+    
+    def draw_object(self, surface):
+        surface.blit(self.image, (self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE))
+
+    def move(self, dx, dy, map):
+        if map[self.x + dx][self.y + dy].walkable == True:
+           self.x += dx
+           self.y += dy 
+
+    def update(self):
+        pass
+
+
+
+
 # TODO: change path for images to constant when right picture is found
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = loadImage('16x16/heroes/knight/knight_idle_anim_f0.png', -1)
         self.health = 3
-        self.position = (800, 320)
+        self.position = (5, 3)
 
     def update(self):
-        self.rect.move()
+        pass
