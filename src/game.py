@@ -1,70 +1,38 @@
 import os
 import pygame
+import player 
+import map
+import constant
+from loadAsset import loadImage
 
-# Variables
-RESOLUTION = (1216, 640)
-SPRITE_SIZE = 64
-TOPLEFT = (0, 0)
-
-# Code
-class tile:
-    def __init__(self, walkable):
-        self.walkable = walkable
-
-def create_map():
-    create_map = [[ tile(True) for y in range(0, (RESOLUTION[1] // SPRITE_SIZE))] for x in range(0, (RESOLUTION[0] // SPRITE_SIZE))]
-
-    create_map[1][2].walkable = False
-    create_map[3][4].walkable = False
-
-    return create_map
-
-def loadImage(name, colorkey=None):
-    pathname = os.path.join('resource', name)
-    try:
-        image = pygame.image.load(pathname)
-    except pygame.error as message:
-        print('Cannot load image:', name)
-        raise SystemExit(name)
-    image = image.convert()
-    image = pygame.transform.scale(image, (64, 64))
-    if colorkey is not None:
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey, pygame.RLEACCEL)
-    return image, image.get_rect()
-    
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage('16x16/heroes/knight/knight_idle_anim_f0.png', -1)
-        self.health = 3
-        self.position = (800, 320)
-
-    def update(self):
-        self.rect.move()
 
 def draw_game():
     global SURFACE_MAIN, PLAYER
 
     draw_map(MAP)
 
-    PLAYER = Player()
+    PLAYER = player.Player()
     SURFACE_MAIN.blit(PLAYER.image, PLAYER.position)
 
     pygame.display.flip()
 
+
+
+
 def draw_map(map_to_draw):
-    for x in range(0, (RESOLUTION[0] // SPRITE_SIZE)):
-        for y in range(0, (RESOLUTION[1] // SPRITE_SIZE)):
+    for x in range(0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
+        for y in range(0, (constant.RESOLUTION[1] // constant.SPRITE_SIZE)):
             if map_to_draw[x][y].walkable == True:
                 floor = loadImage('16x16/tiles/floor/floor_1.png')
-                SURFACE_MAIN.blit(floor[0], (x * SPRITE_SIZE, y * SPRITE_SIZE))
+                SURFACE_MAIN.blit(floor[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
             else:
                 wall = loadImage('16x16/tiles/wall/wall_1.png')
-                SURFACE_MAIN.blit(wall[0], (x * SPRITE_SIZE, y * SPRITE_SIZE))
+                SURFACE_MAIN.blit(wall[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
     pygame.display.flip()
+
+
+
+
 
 def main_loop():
     #TODO: Maybe get rid of global variables later
@@ -94,15 +62,22 @@ def main_loop():
     pygame.quit()
     exit()
 
+
+
+
+
 def init():
     global SURFACE_MAIN, MAP
 
     pygame.init()
 
-    SURFACE_MAIN = pygame.display.set_mode(RESOLUTION)
+    SURFACE_MAIN = pygame.display.set_mode(constant.RESOLUTION)
     pygame.display.set_caption('My Pygame')
 
-    MAP = create_map()
+    MAP = map.create_map()
+
+
+
 
 
 if __name__ == '__main__':
