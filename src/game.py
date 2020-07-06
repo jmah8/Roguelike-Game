@@ -70,7 +70,7 @@ def init():
 
     MAP = map.create_map()
 
-    PLAYER = object.object(0, 0, constant.CHARACTER)
+    PLAYER = object.object(1, 1, constant.CHARACTER)
 
 
 
