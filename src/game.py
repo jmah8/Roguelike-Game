@@ -30,13 +30,10 @@ def draw_map(map_to_draw):
 
 
 def main_loop():
-    draw_game()
-    # position = PLAYER.rect.move(PLAYER.position)
     run = True
     while run:
         events = pygame.event.get()
         for event in events:
-            # SURFACE_MAIN.blit(MAP[0], position, position)
             if event.type == pygame.QUIT:
                 run = False
                 break
