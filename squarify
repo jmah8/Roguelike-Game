@@ -1,0 +1,21 @@
+#!/bin/sh
+# Gets the files that aren't spriteSizexspriteSize and dumps the name, current size and original size to wrongsizeSprite.txt
+pathname="$HOME/Desktop/TestConvert/*"
+var=$(identify "$pathname" | grep -Ev 'coin|weapon|door' | awk '{printf "%s\t%s\t%s\n", $1, $3, $4}')
+#var=$(identify resource/frames/* | grep -v 16x16 | awk '{printf ("%5s\t%s\t%s\n", $1, $3, $4)}' | cut -c 17-)
+
+echo "$var" | wc -l
+
+echo "$var" | while read -r line ; 
+do
+	# awk -F[x] splits char into left and right of whatever x is
+	varx=$(echo "$line" | awk '{print $2}' | awk -F\[x\] '{print $1}')
+	vary=$(echo "$line" | awk '{print $2}' | awk -F\[x\] '{print $2}')
+	
+	if [ "$varx" -ne "$vary" ] 
+	then
+		diff=$((vary - varx))
+		convert "$(echo "$line" | awk '{print $1}')" -crop "$varx"x"$varx"+0+"$diff" "$(echo "$line" | sed 's/\.[^.]*$/.square&/' | awk '{printf "%s", $1}')"
+	fi
+done
+

@@ -19,13 +19,13 @@ do
 		diffx=$((varx - spriteSize))
 		if [ "$diffx" -lt 0 ]
 		then
-			convert "$(echo "$line" | awk '{print $1}')" -resize "$spriteSize" ~/Desktop/TestConvert/result1.png
+			convert "$(echo "$line" | awk '{print $1}')" -resize "$spriteSize" "$(echo "$line" | awk '{printf "Sized%s", $1}')"
 		else
 			convert "$(echo "$line" | awk '{print $1}')" -crop "$spriteSize"x"$spriteSize"+"$diffx"+0 ~/Desktop/TestConvert/result2.png
 		fi
 	fi
 	
-	if [ "$vary" -ne 16 ]
+	if [ "$vary" -ne $spriteSize ]
 	then 
 		diffy=$((vary - spriteSize))
 		if [ "$diffy" -lt 0 ]
