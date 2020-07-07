@@ -1,48 +1,38 @@
 #!/bin/sh
+# Gets the files that aren't spriteSizexspriteSize and dumps the name, current size and original size to wrongsizeSprite.txt
+spriteSize=64
+pathname="$HOME/Desktop/TestConvert/*"
+var=$(identify "$pathname" | grep -v "$spriteSize"x"$spriteSize" | awk '{printf "%s\t%s\t%s\n", $1, $3, $4}')
+#var=$(identify resource/frames/* | grep -v 16x16 | awk '{printf ("%5s\t%s\t%s\n", $1, $3, $4)}' | cut -c 17-)
 
-# Gets the files that aren't 16x16 and dumps the name, current size and original size to wrongsizeSprite.txt
-# var=$(identify resource/frames/* | grep -v 16x16 | awk '{printf ("%5s\t%s\t%s\n", $1, $3, $4)}' | cut -c 17-)
-# pathname=resource/frames/*
-pathname=$HOME/Desktop/TestConvert/*
-var=$(identify $pathname | grep -v 16x16 | awk '{printf ("%5s \t %s \t %s \n", $1, $3, $4)}')
-# var=$(identify $pathname | grep -v 16x16 | awk '{print $1, $3, $4}' | cut -c 17-)
-# echo $var > wrongsizeSprite.txt
+echo "$var" | wc -l
 
-
-# Might need escape character before [ and ]
-echo $var | while read -r line ; 
+echo "$var" | while read -r line ; 
 do
 	# awk -F[x] splits char into left and right of whatever x is
 	varx=$(echo "$line" | awk '{print $2}' | awk -F\[x\] '{print $1}')
 	vary=$(echo "$line" | awk '{print $2}' | awk -F\[x\] '{print $2}')
-	echo $varx, $vary
+	
 
-	if [ $varx -ne 16 ]
+	if [ "$varx" -ne "$spriteSize" ]
 	then
-		diffx=$((varx - 16))
-		echo $diffx
-		echo 1
-		`$line | awk '{print $1}'`
-		echo 1
-		if [ $diffx -lt 0 ]
-		# When varx < 16
+		diffx=$((varx - spriteSize))
+		if [ "$diffx" -lt 0 ]
 		then
-			# diffx=${var#-}
-			convert `$line | awk '{print $1}'` -resize 16 `$line | cut -f 1`
+			convert "$(echo "$line" | awk '{print $1}')" -resize "$spriteSize" ~/Desktop/TestConvert/result1.png
 		else
-			convert `$line | awk '{print $1}'` -crop 16x16+$diffx+0 `$line | cut -f 1`
+			convert "$(echo "$line" | awk '{print $1}')" -crop "$spriteSize"x"$spriteSize"+"$diffx"+0 ~/Desktop/TestConvert/result2.png
 		fi
 	fi
 	
-	if [ $vary -ne 16 ]
+	if [ "$vary" -ne 16 ]
 	then 
-		diffy=$((vary - 16))
-		if [ $diffy -lt 0 ]
-		# When vary < 16
+		diffy=$((vary - spriteSize))
+		if [ "$diffy" -lt 0 ]
 		then
-			convert `$line | awk '{print $1}'` -resize x16 `$line | cut -f 1`
+			convert "$(echo "$line" | awk '{print $1}')" -resize x"$spriteSize" ~/Desktop/TestConvert/result3.png
 		else
-			convert `$line | awk '{print $1}'` -crop 16x16+0+$diffy `$line | cut -f 1`
+			convert "$(echo "$line" | awk '{print $1}')" -crop "$spriteSize"x"$spriteSize"+0+"$diffy" ~/Desktop/TestConvert/result4.png
 		fi
 	fi
 done
