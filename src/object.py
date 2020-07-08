@@ -1,7 +1,7 @@
 import os
 import pygame
 import constant
-
+import game
 pygame.init()
 
 
@@ -76,9 +76,20 @@ class object(pygame.sprite.Sprite):
             dy (arg, int): int to change entity's y coord
             map (arg, array[array]): map when entity is
         '''
-        if map[self.x + dx][self.y + dy].walkable == True:
+        tile_is_wall = map[self.x + dx][self.y + dy].walkable == True
+        target = None
+
+        if map[self.x + dx][self.y + dy].walkable == True and target is None:
             self.x += dx
             self.y += dy
+
+        for object in constant.game_objects:
+            if (object is not self and object.x == self.x + dx and object.y == self.y + dy and object.creature):
+                target = object
+                break
+        if target:
+            print(self.creature.name_instance + " attacks " + target.creature.name_instance)
+
 
     def update(self):
         pass

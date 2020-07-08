@@ -12,7 +12,7 @@ def draw_game():
     '''
     draw_map(MAP)
     constant.com_map = MAP
-    
+
     for obj in GAME_OBJECTS:
         obj.draw_object(SURFACE_MAIN)
     # SLIME.draw_object(SURFACE_MAIN)
@@ -101,15 +101,17 @@ def init():
 
     MAP = map.create_map()
 
-    creaturetest = components.creature("tester creature")
-    PLAYER = object.object(1, 1, "knight", constant.CHARACTER, creaturetest)
+    creaturetest = components.creature("Viet")
+    PLAYER = object.object(
+        1, 1, "knight", constant.CHARACTER, creature=creaturetest)
 
-    creaturetest1 = components.creature("tesdter creature1")
+    creaturetest1 = components.creature("Slime")
     ai_component = components.ai_test()
     SLIME = object.object(6, 6, "slime", constant.SLIME,
-                          creaturetest1, ai=ai_component)
+                          creature=creaturetest1, ai=ai_component)
 
     GAME_OBJECTS = [PLAYER, SLIME]
+    constant.game_objects = GAME_OBJECTS
 
 
 if __name__ == '__main__':
