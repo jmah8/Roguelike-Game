@@ -4,6 +4,7 @@ import constant
 
 pygame.init()
 
+
 def loadImage(name, colorkey=None):
     '''
     Load and convert image to surface and returns image and the image rect
@@ -78,10 +79,21 @@ class object(pygame.sprite.Sprite):
             dy (arg, int): int to change entity's y coord
             map (arg, array[array]): map when entity is
         '''
-        if map[self.x + dx][self.y + dy].walkable == True:
-           self.x += dx
-           self.y += dy 
-           self.rect = self.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
+        tile_is_wall = map[self.x + dx][self.y + dy].walkable == True
+        target = None
+
+        if map[self.x + dx][self.y + dy].walkable == True and target is None:
+            self.x += dx
+            self.y += dy
+            self.rect = self.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
+
+        for object in constant.game_objects:
+            if (object is not self and object.x == self.x + dx and object.y == self.y + dy and object.creature):
+                target = object
+                break
+        if target:
+            print(self.creature.name_instance + " attacks " + target.creature.name_instance)
+
 
     def update(self):
         pass
@@ -103,7 +115,8 @@ class object(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage('16x16/heroes/knight/knight_idle_anim_f0.png', -1)
+        self.image, self.rect = loadImage(
+            '16x16/heroes/knight/knight_idle_anim_f0.png', -1)
         self.health = 3
         self.position = (5, 3)
 

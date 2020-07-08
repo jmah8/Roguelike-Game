@@ -1,4 +1,11 @@
+import os
+import pygame
+import map
 import constant
+import object
+import components
+import game
+import random
 
 class creature:
     '''
@@ -20,7 +27,8 @@ class ai_test:
     '''
 
     def takeTurn(self):
-        self.owner.move(-1, 0, constant.com_map)
+        self.owner.move(random.choice([0, 1, -1]),
+                        random.choice([0, 1, -1]), constant.com_map)
 
 # class item:
 # class container:

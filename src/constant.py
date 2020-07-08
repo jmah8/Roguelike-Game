@@ -18,3 +18,5 @@ FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
 
 # MAP
 com_map = None
+
+game_objects = None

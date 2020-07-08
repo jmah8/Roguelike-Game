@@ -5,6 +5,7 @@ import constant
 import object
 import components
 
+
 def draw_game():
     '''
     Draws maps and entities
@@ -47,23 +48,18 @@ def main_loop():
     '''
     Main game loop which takes in player input and moves character    
     '''
+    player_action = "no-action"
+
     run = True
     while run:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                run = False
-                break
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    PLAYER.move(-1, 0, MAP)
-                if event.key == pygame.K_d:
-                    PLAYER.move(1, 0, MAP)
-                if event.key == pygame.K_s:
-                    PLAYER.move(0, 1, MAP)
-                if event.key == pygame.K_w:
-                    PLAYER.move(0, -1, MAP)
+        player_action = handleKeys()
+        if player_action == "QUIT":
+            run = False
+        elif player_action != "no-action":
+            for obj in GAME_OBJECTS:
+                if obj.ai:
+                    obj.ai.takeTurn()
 
         draw_game()
 
@@ -71,11 +67,33 @@ def main_loop():
     exit()
 
 
+def handleKeys():
+    events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+            return "QUIT"
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                PLAYER.move(-1, 0, MAP)
+                return "player-moved"
+            if event.key == pygame.K_d:
+                PLAYER.move(1, 0, MAP)
+                return "player-moved"
+            if event.key == pygame.K_s:
+                PLAYER.move(0, 1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_w:
+                PLAYER.move(0, -1, MAP)
+                return "player-moved"
+    return "no-action"
+
+
 def init():
     '''
     Initializes pygame and the map and entities
     '''
-    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES
+    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES, GAME_OBJECTS
 
     pygame.init()
 
@@ -84,17 +102,19 @@ def init():
 
     MAP = map.create_map()
 
-    creaturetest = components.creature("tester creature")
-    PLAYER = object.object(1, 1, "knight", constant.CHARACTER, creaturetest)
-    creaturetest1 = components.creature("tester creature1")
-    SLIME = object.object(6, 6, "slime", constant.SLIME, creaturetest1)
+    creaturetest = components.creature("Viet")
+    PLAYER = object.object(
+        1, 1, "knight", constant.CHARACTER, creature=creaturetest)
+
+    creaturetest1 = components.creature("Slime")
+    ai_component = components.ai_test()
+    SLIME = object.object(6, 6, "slime", constant.SLIME,
+                          creature=creaturetest1, ai=ai_component)
+
+    GAME_OBJECTS = [PLAYER, SLIME]
+    constant.game_objects = GAME_OBJECTS
 
     ALLSPRITES = pygame.sprite.OrderedUpdates(SLIME, PLAYER)
-
-
-
-
-
 
 
 if __name__ == '__main__':
