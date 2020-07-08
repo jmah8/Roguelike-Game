@@ -9,8 +9,8 @@ def draw_game():
 
     draw_map(MAP)
 
-    PLAYER.draw_object(SURFACE_MAIN)
     SLIME.draw_object(SURFACE_MAIN)
+    PLAYER.draw_object(SURFACE_MAIN)
 
     pygame.display.flip()
 
@@ -65,7 +65,7 @@ def init():
     MAP = map.create_map()
 
     PLAYER = object.object(1, 1, constant.CHARACTER)
-    SLIME = object.object(1, 1, constant.SLIME)
+    SLIME = object.object(6, 6, constant.SLIME)
 
 
 if __name__ == '__main__':
