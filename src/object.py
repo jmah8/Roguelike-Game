@@ -41,11 +41,15 @@ class object(pygame.sprite.Sprite):
         y (arg, int): Position on y axis
         image (arg, string): Path to image of entity
     '''
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, object_id, image, creature = None):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = loadImage(image, -1)
         self.x = x
         self.y = y
+        
+        if creature: 
+            self.creature = creature
+            creature.owner = self
     
     def draw_object(self, surface):
         '''

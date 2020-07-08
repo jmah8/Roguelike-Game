@@ -3,8 +3,7 @@ import pygame
 import map
 import constant
 import object
-
-
+import components
 
 def draw_game():
     '''
@@ -16,8 +15,6 @@ def draw_game():
     PLAYER.draw_object(SURFACE_MAIN)
 
     pygame.display.flip()
-
-
 
 
 # TODO: change path for images to constant when right picture is found
@@ -34,13 +31,12 @@ def draw_map(map_to_draw):
         for y in range(0, (constant.RESOLUTION[1] // constant.SPRITE_SIZE)):
             if map_to_draw[x][y].walkable == True:
                 floor = object.loadImage('16x16/tiles/floor/floor_1.png')
-                SURFACE_MAIN.blit(floor[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
+                SURFACE_MAIN.blit(
+                    floor[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
             else:
                 wall = object.loadImage('16x16/tiles/wall/wall_1.png')
-                SURFACE_MAIN.blit(wall[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
-
-
-
+                SURFACE_MAIN.blit(
+                    wall[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
 
 
 def main_loop():
@@ -71,9 +67,6 @@ def main_loop():
     exit()
 
 
-
-
-
 def init():
     '''
     Initializes pygame and the map and entities
@@ -87,9 +80,10 @@ def init():
 
     MAP = map.create_map()
 
-    PLAYER = object.object(1, 1, constant.CHARACTER)
-    SLIME = object.object(6, 6, constant.SLIME)
-
+    creaturetest = components.creature("tester creature")
+    PLAYER = object.object(1, 1, "knight", constant.CHARACTER, creaturetest)
+    creaturetest1 = components.creature("tester creature1")
+    SLIME = object.object(6, 6, "slime", constant.SLIME, creaturetest1)
 
 if __name__ == '__main__':
     init()
