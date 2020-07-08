@@ -4,6 +4,7 @@ import constant
 
 pygame.init()
 
+
 def loadImage(name, colorkey=None):
     '''
     Load and convert image to surface and returns image and the image rect
@@ -28,9 +29,6 @@ def loadImage(name, colorkey=None):
     return image, image.get_rect()
 
 
-
-
-
 class object(pygame.sprite.Sprite):
     '''
     Class for object which represents entity, which is anything that appears
@@ -41,16 +39,20 @@ class object(pygame.sprite.Sprite):
         y (arg, int): Position on y axis
         image (arg, string): Path to image of entity
     '''
-    def __init__(self, x, y, object_id, image, creature = None):
+
+    def __init__(self, x, y, object_id, image, creature=None, ai=None):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = loadImage(image, -1)
         self.x = x
         self.y = y
-        
-        if creature: 
-            self.creature = creature
+        self.creature = creature
+        if creature:
             creature.owner = self
-    
+
+        self.ai = ai
+        if ai:
+            ai.owner = self
+
     def draw_object(self, surface):
         '''
         Draws entity image to surface at entity's position
@@ -60,7 +62,8 @@ class object(pygame.sprite.Sprite):
         Arg:
             surface (arg, pygame.surface): surface to draw image on
         '''
-        surface.blit(self.image, (self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE))
+        surface.blit(self.image, (self.x*constant.SPRITE_SIZE,
+                                  self.y*constant.SPRITE_SIZE))
 
     def move(self, dx, dy, map):
         '''
@@ -74,8 +77,8 @@ class object(pygame.sprite.Sprite):
             map (arg, array[array]): map when entity is
         '''
         if map[self.x + dx][self.y + dy].walkable == True:
-           self.x += dx
-           self.y += dy 
+            self.x += dx
+            self.y += dy
 
     def update(self):
         pass
@@ -97,7 +100,8 @@ class object(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage('16x16/heroes/knight/knight_idle_anim_f0.png', -1)
+        self.image, self.rect = loadImage(
+            '16x16/heroes/knight/knight_idle_anim_f0.png', -1)
         self.health = 3
         self.position = (5, 3)
 

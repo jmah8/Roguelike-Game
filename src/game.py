@@ -5,14 +5,18 @@ import constant
 import object
 import components
 
+
 def draw_game():
     '''
     Draws maps and entities
     '''
     draw_map(MAP)
-
-    SLIME.draw_object(SURFACE_MAIN)
-    PLAYER.draw_object(SURFACE_MAIN)
+    constant.com_map = MAP
+    
+    for obj in GAME_OBJECTS:
+        obj.draw_object(SURFACE_MAIN)
+    # SLIME.draw_object(SURFACE_MAIN)
+    # PLAYER.draw_object(SURFACE_MAIN)
 
     pygame.display.flip()
 
@@ -43,23 +47,18 @@ def main_loop():
     '''
     Main game loop which takes in player input and moves character    
     '''
+    player_action = "no-action"
+
     run = True
     while run:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                run = False
-                break
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    PLAYER.move(-1, 0, MAP)
-                if event.key == pygame.K_d:
-                    PLAYER.move(1, 0, MAP)
-                if event.key == pygame.K_s:
-                    PLAYER.move(0, 1, MAP)
-                if event.key == pygame.K_w:
-                    PLAYER.move(0, -1, MAP)
+        player_action = handleKeys()
+        if player_action == "QUIT":
+            run = False
+        elif player_action != "no-action":
+            for obj in GAME_OBJECTS:
+                if obj.ai:
+                    obj.ai.takeTurn()
 
         draw_game()
 
@@ -67,11 +66,33 @@ def main_loop():
     exit()
 
 
+def handleKeys():
+    events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+            return "QUIT"
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                PLAYER.move(-1, 0, MAP)
+                return "player-moved"
+            if event.key == pygame.K_d:
+                PLAYER.move(1, 0, MAP)
+                return "player-moved"
+            if event.key == pygame.K_s:
+                PLAYER.move(0, 1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_w:
+                PLAYER.move(0, -1, MAP)
+                return "player-moved"
+    return "no-action"
+
+
 def init():
     '''
     Initializes pygame and the map and entities
     '''
-    global SURFACE_MAIN, MAP, PLAYER, SLIME
+    global SURFACE_MAIN, MAP, PLAYER, SLIME, GAME_OBJECTS
 
     pygame.init()
 
@@ -82,13 +103,13 @@ def init():
 
     creaturetest = components.creature("tester creature")
     PLAYER = object.object(1, 1, "knight", constant.CHARACTER, creaturetest)
-    creaturetest1 = components.creature("tester creature1")
-    SLIME = object.object(6, 6, "slime", constant.SLIME, creaturetest1)
 
+    creaturetest1 = components.creature("tesdter creature1")
+    ai_component = components.ai_test()
+    SLIME = object.object(6, 6, "slime", constant.SLIME,
+                          creaturetest1, ai=ai_component)
 
-
-
-
+    GAME_OBJECTS = [PLAYER, SLIME]
 
 
 if __name__ == '__main__':
