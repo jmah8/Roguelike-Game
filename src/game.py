@@ -11,8 +11,11 @@ def draw_game():
     '''
     draw_map(MAP)
 
-    SLIME.draw_object(SURFACE_MAIN)
-    PLAYER.draw_object(SURFACE_MAIN)
+    ALLSPRITES.draw(SURFACE_MAIN)
+
+    # Might need this later
+    # SLIME.draw_object(SURFACE_MAIN)
+    # PLAYER.draw_object(SURFACE_MAIN)
 
     pygame.display.flip()
 
@@ -71,7 +74,7 @@ def init():
     '''
     Initializes pygame and the map and entities
     '''
-    global SURFACE_MAIN, MAP, PLAYER, SLIME
+    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES
 
     pygame.init()
 
@@ -82,8 +85,11 @@ def init():
 
     creaturetest = components.creature("tester creature")
     PLAYER = object.object(1, 1, "knight", constant.CHARACTER, creaturetest)
+
     creaturetest1 = components.creature("tester creature1")
     SLIME = object.object(6, 6, "slime", constant.SLIME, creaturetest1)
+
+    ALLSPRITES = pygame.sprite.OrderedUpdates(SLIME, PLAYER)
 
 
 

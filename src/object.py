@@ -43,9 +43,10 @@ class object(pygame.sprite.Sprite):
     '''
     def __init__(self, x, y, object_id, image, creature = None):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage(image, -1)
+        self.image, self.rect = loadImage(image, -1)        
         self.x = x
         self.y = y
+        self.rect.move_ip(self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE)
         
         if creature: 
             self.creature = creature
@@ -76,6 +77,7 @@ class object(pygame.sprite.Sprite):
         if map[self.x + dx][self.y + dy].walkable == True:
            self.x += dx
            self.y += dy 
+           self.rect = self.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
 
     def update(self):
         pass
