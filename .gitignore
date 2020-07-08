@@ -129,4 +129,4 @@ dmypy.json
 /.vscode
 
 # Resources
-resource/*
+resource/16x16
