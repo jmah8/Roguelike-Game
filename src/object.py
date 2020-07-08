@@ -49,6 +49,7 @@ class object(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.rect.move_ip(self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE)
+        
         self.creature = creature
         if creature:
             creature.owner = self
