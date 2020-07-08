@@ -66,7 +66,6 @@ def main_loop():
     pygame.quit()
     exit()
 
-
 def handleKeys():
     events = pygame.event.get()
     for event in events:
@@ -80,12 +79,27 @@ def handleKeys():
             if event.key == pygame.K_d:
                 PLAYER.move(1, 0, MAP)
                 return "player-moved"
-            if event.key == pygame.K_s:
-                PLAYER.move(0, 1, MAP)
-                return "player-moved"
             if event.key == pygame.K_w:
                 PLAYER.move(0, -1, MAP)
                 return "player-moved"
+            if event.key == pygame.K_q:
+                PLAYER.move(-1, -1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_e:
+                PLAYER.move(1, -1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_z:
+                PLAYER.move(-1, 1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_c:
+                PLAYER.move(1, 1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_s:
+                PLAYER.move(0, 1, MAP)
+                return "player-moved"
+            if event.key == pygame.K_x:
+                PLAYER.move(0, 0, MAP)
+                return "player-moved"                    
     return "no-action"
 
 
@@ -107,6 +121,7 @@ def init():
         1, 1, "knight", constant.CHARACTER, creature=creaturetest)
 
     creaturetest1 = components.creature("Slime")
+
     ai_component = components.ai_test()
     SLIME = object.object(6, 6, "slime", constant.SLIME,
                           creature=creaturetest1, ai=ai_component)

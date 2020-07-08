@@ -79,7 +79,6 @@ class object(pygame.sprite.Sprite):
             dy (arg, int): int to change entity's y coord
             map (arg, array[array]): map when entity is
         '''
-        tile_is_wall = map[self.x + dx][self.y + dy].walkable == True
         target = None
 
         if map[self.x + dx][self.y + dy].walkable == True and target is None:
