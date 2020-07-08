@@ -95,6 +95,10 @@ class object(pygame.sprite.Sprite):
             print(self.creature.name_instance + " attacks " + target.creature.name_instance)
 
 
-    def update(self):
-        pass
+    def update(self, dx, dy, map):
+        if not self.ai:
+            self.move(dx, dy, map)
+        else:
+            self.ai.takeTurn()
+
 

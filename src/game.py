@@ -48,7 +48,6 @@ def main_loop():
     '''
     Main game loop which takes in player input and moves character    
     '''
-    player_action = "no-action"
 
     run = True
     while run:
@@ -56,10 +55,6 @@ def main_loop():
         player_action = handleKeys()
         if player_action == "QUIT":
             run = False
-        elif player_action != "no-action":
-            for obj in GAME_OBJECTS:
-                if obj.ai:
-                    obj.ai.takeTurn()
 
         draw_game()
 
@@ -74,32 +69,23 @@ def handleKeys():
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_a:
-                PLAYER.move(-1, 0, MAP)
-                return "player-moved"
+                ALLSPRITES.update(-1, 0, MAP)
             if event.key == pygame.K_d:
-                PLAYER.move(1, 0, MAP)
-                return "player-moved"
+                ALLSPRITES.update(1, 0, MAP)
             if event.key == pygame.K_w:
-                PLAYER.move(0, -1, MAP)
-                return "player-moved"
+                ALLSPRITES.update(0, -1, MAP)
             if event.key == pygame.K_q:
-                PLAYER.move(-1, -1, MAP)
-                return "player-moved"
+                ALLSPRITES.update(-1, -1, MAP)
             if event.key == pygame.K_e:
-                PLAYER.move(1, -1, MAP)
-                return "player-moved"
+                ALLSPRITES.update(1, -1, MAP)
             if event.key == pygame.K_z:
-                PLAYER.move(-1, 1, MAP)
-                return "player-moved"
+                ALLSPRITES.update(-1, 1, MAP)
             if event.key == pygame.K_c:
-                PLAYER.move(1, 1, MAP)
-                return "player-moved"
+                ALLSPRITES.update(1, 1, MAP)
             if event.key == pygame.K_s:
-                PLAYER.move(0, 1, MAP)
-                return "player-moved"
+                ALLSPRITES.update(0, 1, MAP)
             if event.key == pygame.K_x:
-                PLAYER.move(0, 0, MAP)
-                return "player-moved"                    
+                ALLSPRITES.update(0, 0, MAP)
     return "no-action"
 
 
