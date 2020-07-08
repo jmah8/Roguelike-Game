@@ -101,10 +101,11 @@ def init():
     SLIME = object.object(6, 6, "slime", constant.SLIME,
                           creature=creaturetest1, ai=ai_component)
 
-    GAME_OBJECTS = [PLAYER, SLIME]
-    constant.game_objects = GAME_OBJECTS
+    # GAME_OBJECTS = [PLAYER, SLIME]
+    # constant.game_objects = GAME_OBJECTS
 
     ALLSPRITES = pygame.sprite.OrderedUpdates(SLIME, PLAYER)
+    constant.game_objects = ALLSPRITES
 
 
 if __name__ == '__main__':
