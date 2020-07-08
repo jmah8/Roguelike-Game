@@ -98,35 +98,3 @@ class object(pygame.sprite.Sprite):
     def update(self):
         pass
 
-
-# # TODO: change path for images to constant when right picture is found
-# class Player(pygame.sprite.Sprite):
-#     def __init__(self):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image, self.rect = loadImage(
-#             '16x16/heroes/knight/knight_idle_anim_f0.png', -1)
-#         self.health = 3
-#         self.position = (5, 3)
-
-#     def update(self):
-#         pass
-
-# TODO: change path for images to constant when right picture is found
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage(
-            '16x16/heroes/knight/knight_idle_anim_f0.png', -1)
-        self.health = 3
-        self.position = (5, 3)
-
-# class Slime(pygame.sprite.Sprite):
-#     def __init__(self):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image, self.rect = loadImage(
-#             '16x16/mobs/slime_idle_anim_f0.png', -1)
-#         self.health = 3
-#         self.position = (5, 3)
-
-#     def update(self):
-#         pass

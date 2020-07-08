@@ -1,11 +1,5 @@
-import os
-import pygame
-import map
-import constant
-import object
-import components
-import game
 import random
+import constant
 
 class creature:
     '''

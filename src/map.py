@@ -1,6 +1,4 @@
-import os
 import pygame
-import object
 import constant
 
 pygame.init()
