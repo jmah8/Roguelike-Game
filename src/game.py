@@ -85,6 +85,12 @@ def init():
     creaturetest1 = components.creature("tester creature1")
     SLIME = object.object(6, 6, "slime", constant.SLIME, creaturetest1)
 
+
+
+
+
+
+
 if __name__ == '__main__':
     init()
     main_loop()
