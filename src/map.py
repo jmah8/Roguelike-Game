@@ -6,6 +6,13 @@ import constant
 pygame.init()
 
 class tile:
+    '''
+    Class for the tiles of map
+
+    Attributes: 
+        walkable (arg, bool) : True if tile is walkable by objects, false
+        otherwise
+    '''
     def __init__(self, walkable):
         self.walkable = walkable
 
@@ -13,6 +20,9 @@ class tile:
 
 
 def create_map():
+    '''
+    Returns a map where the outer edges are walls and everything else is a tile.
+    '''
     create_map = []
     for x in range (0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
         create_map_row = []
