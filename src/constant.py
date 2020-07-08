@@ -15,3 +15,6 @@ FLOOR_5 = '16x16/tiles/floor/floor_side2.png'
 FLOOR_6 = '16x16/tiles/floor/floor_side3.png'
 FLOOR_7 = '16x16/tiles/floor/floor_side4.png'
 FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
+
+# MAP
+com_map = None

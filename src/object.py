@@ -41,17 +41,21 @@ class object(pygame.sprite.Sprite):
         y (arg, int): Position on y axis
         image (arg, string): Path to image of entity
     '''
-    def __init__(self, x, y, object_id, image, creature = None):
+
+    def __init__(self, x, y, object_id, image, creature=None, ai=None):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage(image, -1)        
+        self.image, self.rect = loadImage(image, -1)
         self.x = x
         self.y = y
         self.rect.move_ip(self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE)
-        
-        if creature: 
-            self.creature = creature
+        self.creature = creature
+        if creature:
             creature.owner = self
-    
+
+        self.ai = ai
+        if ai:
+            ai.owner = self
+
     def draw_object(self, surface):
         '''
         Draws entity image to surface at entity's position

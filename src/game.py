@@ -10,6 +10,7 @@ def draw_game():
     Draws maps and entities
     '''
     draw_map(MAP)
+    constant.com_map = MAP
 
     ALLSPRITES.draw(SURFACE_MAIN)
 
@@ -85,7 +86,6 @@ def init():
 
     creaturetest = components.creature("tester creature")
     PLAYER = object.object(1, 1, "knight", constant.CHARACTER, creaturetest)
-
     creaturetest1 = components.creature("tester creature1")
     SLIME = object.object(6, 6, "slime", constant.SLIME, creaturetest1)
 
