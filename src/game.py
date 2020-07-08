@@ -75,6 +75,9 @@ def main_loop():
 
 
 def init():
+    '''
+    Initializes pygame and the map and entities
+    '''
     global SURFACE_MAIN, MAP, PLAYER, SLIME
 
     pygame.init()
