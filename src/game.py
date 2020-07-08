@@ -13,6 +13,7 @@ def draw_game():
     draw_map(MAP)
 
     PLAYER.draw_object(SURFACE_MAIN)
+    SLIME.draw_object(SURFACE_MAIN)
 
     pygame.display.flip()
 
@@ -56,7 +57,7 @@ def main_loop():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    PLAYER.move(-1, 0, MAP)    
+                    PLAYER.move(-1, 0, MAP)
                 if event.key == pygame.K_d:
                     PLAYER.move(1, 0, MAP)
                 if event.key == pygame.K_s:
@@ -74,10 +75,7 @@ def main_loop():
 
 
 def init():
-    '''
-    Initializes SURFACE_MAIN, PLAYER and MAP
-    '''
-    global SURFACE_MAIN, MAP, PLAYER
+    global SURFACE_MAIN, MAP, PLAYER, SLIME
 
     pygame.init()
 
@@ -87,9 +85,7 @@ def init():
     MAP = map.create_map()
 
     PLAYER = object.object(1, 1, constant.CHARACTER)
-
-
-
+    SLIME = object.object(1, 1, constant.SLIME)
 
 
 if __name__ == '__main__':

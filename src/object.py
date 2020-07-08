@@ -4,7 +4,6 @@ import constant
 
 pygame.init()
 
-# 
 def loadImage(name, colorkey=None):
     '''
     Load and convert image to surface and returns image and the image rect
@@ -19,6 +18,7 @@ def loadImage(name, colorkey=None):
     except pygame.error as message:
         print('Cannot load image:', name)
         raise SystemExit(name)
+    # convert_alpha() is also an option
     image = image.convert_alpha()
     image = pygame.transform.scale(image, (64, 64))
     if colorkey is not None:
@@ -43,7 +43,7 @@ class object(pygame.sprite.Sprite):
     '''
     def __init__(self, x, y, image):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = loadImage(constant.CHARACTER, -1)
+        self.image, self.rect = loadImage(image, -1)
         self.x = x
         self.y = y
     
@@ -77,7 +77,17 @@ class object(pygame.sprite.Sprite):
         pass
 
 
+# # TODO: change path for images to constant when right picture is found
+# class Player(pygame.sprite.Sprite):
+#     def __init__(self):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image, self.rect = loadImage(
+#             '16x16/heroes/knight/knight_idle_anim_f0.png', -1)
+#         self.health = 3
+#         self.position = (5, 3)
 
+#     def update(self):
+#         pass
 
 # TODO: change path for images to constant when right picture is found
 class Player(pygame.sprite.Sprite):
@@ -87,5 +97,13 @@ class Player(pygame.sprite.Sprite):
         self.health = 3
         self.position = (5, 3)
 
-    def update(self):
-        pass
+# class Slime(pygame.sprite.Sprite):
+#     def __init__(self):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image, self.rect = loadImage(
+#             '16x16/mobs/slime_idle_anim_f0.png', -1)
+#         self.health = 3
+#         self.position = (5, 3)
+
+#     def update(self):
+#         pass
