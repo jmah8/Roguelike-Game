@@ -11,6 +11,7 @@ def draw_game():
     Draws maps and entities
     '''
     map.draw_map(MAP, SURFACE_MAIN)
+    # could change this so instead of constant map, pass map into method
     constant.com_map = MAP
 
     ALLSPRITES.draw(SURFACE_MAIN)
@@ -66,14 +67,22 @@ def handleKeys():
                 ALLSPRITES.update(0, 1, MAP)
             if event.key == pygame.K_x:
                 ALLSPRITES.update(0, 0, MAP)
+            print("PLAYER at " + str(PLAYER.x), str(PLAYER.y))
+            print("PLAYER_rect at " + str(PLAYER.rect))
+            print("SLIME at " + str(SLIME.x), str(SLIME.y))
+            print("SLIME_rect at " + str(SLIME.rect))
+            print()
     return "no-action"
+
+
+
 
 
 def init():
     '''
     Initializes pygame and the map and entities
     '''
-    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES, GAME_OBJECTS
+    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES, GAME_OBJECTS, SLIME
 
     pygame.init()
 

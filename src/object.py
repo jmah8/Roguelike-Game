@@ -82,15 +82,16 @@ class object(pygame.sprite.Sprite):
         '''
         target = None
 
+        for object in constant.game_objects:
+            if (object is not self and object.x == self.x + dx and object.y == self.y + dy and object.creature):
+                target = object
+                break
+
         if map[self.x + dx][self.y + dy].walkable == True and target is None:
             self.x += dx
             self.y += dy
             self.rect = self.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
 
-        for object in constant.game_objects:
-            if (object is not self and object.x == self.x + dx and object.y == self.y + dy and object.creature):
-                target = object
-                break
         if target:
             print(self.creature.name_instance + " attacks " + target.creature.name_instance)
 
