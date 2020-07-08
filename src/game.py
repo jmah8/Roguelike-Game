@@ -5,7 +5,11 @@ import constant
 import object
 
 
+
 def draw_game():
+    '''
+    Draws maps and entities
+    '''
     draw_map(MAP)
 
     PLAYER.draw_object(SURFACE_MAIN)
@@ -14,8 +18,17 @@ def draw_game():
 
 
 
+
 # TODO: change path for images to constant when right picture is found
 def draw_map(map_to_draw):
+    '''
+    Draws map and makes walkable = True to floor and walkable = False wall
+
+    Loops through every tile in map and draws it in correct position
+
+    Arg:
+        map_to_draw (array): map to draw as background
+    '''
     for x in range(0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
         for y in range(0, (constant.RESOLUTION[1] // constant.SPRITE_SIZE)):
             if map_to_draw[x][y].walkable == True:
@@ -30,6 +43,9 @@ def draw_map(map_to_draw):
 
 
 def main_loop():
+    '''
+    Main game loop which takes in player input and moves character    
+    '''
     run = True
     while run:
         events = pygame.event.get()
@@ -58,6 +74,9 @@ def main_loop():
 
 
 def init():
+    '''
+    Initializes SURFACE_MAIN, PLAYER and MAP
+    '''
     global SURFACE_MAIN, MAP, PLAYER
 
     pygame.init()
