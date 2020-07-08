@@ -5,3 +5,4 @@ TOPLEFT = (0, 0)
 
 # Image path
 CHARACTER = '16x16/heroes/knight/knight_idle_anim_f0.png'
+SLIME = '16x16/mobs/slime_idle_anim_f0.png'
