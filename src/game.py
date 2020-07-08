@@ -91,6 +91,12 @@ def init():
     SLIME = object.object(6, 6, constant.SLIME)
 
 
+
+
+
+
+
+
 if __name__ == '__main__':
     init()
     main_loop()
