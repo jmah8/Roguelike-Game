@@ -56,3 +56,25 @@ def draw_map(map_to_draw, surface):
                 wall = object.loadImage('16x16/tiles/wall/wall_1.png')
                 surface.blit(
                     wall[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
+
+
+def check_map_for_creature(x, y, exclude_object):
+    """
+    if excluded_object != None, 
+    check map to see if creature at (x,y) is a not excluded_object
+    else check map to see if any creature at (x,y)
+    """
+    if exclude_object:
+        target = None
+        for object in constant.game_objects:
+                if (object is not exclude_object and object.x == x and object.y == y and object.creature):
+                    target = object
+                    return target
+    
+    else:
+        target = None
+        for object in constant.game_objects:
+                if (object.x == x and object.y == y and object.creature):
+                    target = object
+                    return target
+                

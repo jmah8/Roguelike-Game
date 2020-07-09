@@ -42,7 +42,13 @@ def main_loop():
     pygame.quit()
     exit()
 
+
+
+
 def handleKeys():
+    """
+    Handle player input
+    """
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT:
@@ -96,7 +102,7 @@ def init():
 
     creaturetest = components.creature("Viet", 10)
     PLAYER = object.object(
-        1, 1, "knight", constant.CHARACTER, creature=creaturetest)
+        1, 1, "player", constant.CHARACTER, creature=creaturetest)
 
     creaturetest1 = components.creature("Slime", 3, components.death)
 
@@ -109,6 +115,9 @@ def init():
 
     ALLSPRITES = pygame.sprite.OrderedUpdates(SLIME, PLAYER)
     constant.game_objects = ALLSPRITES
+
+
+
 
 
 if __name__ == '__main__':

@@ -59,48 +59,21 @@ class object(pygame.sprite.Sprite):
         if ai:
             ai.owner = self
 
-    def draw_object(self, surface):
-        """
-        Draws entity image to surface at entity's position
+    # def draw_object(self, surface):
+    #     """
+    #     Draws entity image to surface at entity's position
 
-        Draws entity on coord taking into account the size of the sprites
+    #     Draws entity on coord taking into account the size of the sprites
 
-        Arg:
-            surface (arg, pygame.surface): surface to draw image on
-        """
-        surface.blit(self.image, (self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE))
-
-    def move(self, dx, dy, map):
-        """
-        Moves entity's position if tile is walkable else do nothing
-
-        Moves entity by dx and dy on map
-
-        Arg:
-            dx (arg, int): int to change entity's x coord
-            dy (arg, int): int to change entity's y coord
-            map (arg, array[array]): map when entity is
-        """
-        target = None
-
-        for object in constant.game_objects:
-            if (object is not self and object.x == self.x + dx and object.y == self.y + dy and object.creature):
-                target = object
-                break
-
-        if map[self.x + dx][self.y + dy].walkable == True and target is None:
-            self.x += dx
-            self.y += dy
-            self.rect = self.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
-
-        if target:
-            print(self.creature.name_instance + " attacks " + target.creature.name_instance + " for 1 damage")
-            target.creature.take_damage(1)
+    #     Arg:
+    #         surface (arg, pygame.surface): surface to draw image on
+    #     """
+    #     surface.blit(self.image, (self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE))
 
 
     def update(self, dx, dy, map):
-        if self.object_id == "knight":
-            self.move(dx, dy, map)
+        if self.object_id == "player":
+            self.creature.move(dx, dy, map)
         elif self.ai:
             self.ai.takeTurn()
 
