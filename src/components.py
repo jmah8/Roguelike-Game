@@ -1,6 +1,6 @@
 import random
 import constant
-import map as gamemap
+import gamemap
 
 class creature:
     """

@@ -4,6 +4,7 @@ MAP_HEIGHT = 10
 SPRITE_SIZE = 64
 RESOLUTION = (MAP_WIDTH*SPRITE_SIZE, MAP_HEIGHT*SPRITE_SIZE)
 TOPLEFT = (0, 0)
+FPS = 30
 
 # Image path
 CHARACTER = '16x16/heroes/knight/knight_idle_anim_f0.png'

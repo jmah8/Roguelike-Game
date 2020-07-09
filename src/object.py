@@ -13,7 +13,8 @@ def loadImage(name, colorkey=None):
         name (arg, string) : Pathname of image to convert
         colorkey (arg, (int, int)) : Position of color to be transparent
     """
-    pathname = os.path.join('resource', name)
+    dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+    pathname = os.path.join(dirname, name)
     try:
         image = pygame.image.load(pathname)
     except pygame.error as message:
