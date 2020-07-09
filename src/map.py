@@ -5,13 +5,13 @@ import object
 pygame.init()
 
 class tile:
-    '''
+    """
     Class for the tiles of map
 
     Attributes: 
         walkable (arg, bool) : True if tile is walkable by objects, false
         otherwise
-    '''
+    """
     def __init__(self, walkable):
         self.walkable = walkable
 
@@ -19,9 +19,9 @@ class tile:
 
 
 def create_map():
-    '''
+    """
     Returns a map where the outer edges are walls and everything else is a tile.
-    '''
+    """
     create_map = []
     for x in range (0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
         create_map_row = []
@@ -38,14 +38,14 @@ def create_map():
 
 # TODO: change path for images to constant when right picture is found
 def draw_map(map_to_draw, surface):
-    '''
+    """
     Draws map and makes walkable = True to floor and walkable = False wall
 
     Loops through every tile in map and draws it in correct position
 
     Arg:
         map_to_draw (array): map to draw as background
-    '''
+    """
     for x in range(0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
         for y in range(0, (constant.RESOLUTION[1] // constant.SPRITE_SIZE)):
             if map_to_draw[x][y].walkable == True:

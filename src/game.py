@@ -7,10 +7,11 @@ import components
 
 
 def draw_game():
-    '''
+    """
     Draws maps and entities
-    '''
+    """
     map.draw_map(MAP, SURFACE_MAIN)
+    # could change this so instead of constant map, pass map into method
     constant.com_map = MAP
 
     ALLSPRITES.draw(SURFACE_MAIN)
@@ -26,9 +27,9 @@ def draw_game():
 
 
 def main_loop():
-    '''
+    """
     Main game loop which takes in player input and moves character    
-    '''
+    """
 
     while True:
 
@@ -66,14 +67,25 @@ def handleKeys():
                 ALLSPRITES.update(0, 1, MAP)
             if event.key == pygame.K_x:
                 ALLSPRITES.update(0, 0, MAP)
+            print("PLAYER at " + str(PLAYER.x), str(PLAYER.y))
+            print("PLAYER_rect at " + str(PLAYER.rect))
+            print("SLIME at " + str(SLIME.x), str(SLIME.y))
+            print("SLIME_rect at " + str(SLIME.rect))
+            print()
     return "no-action"
 
 
+
+
+
+
+
+
 def init():
-    '''
+    """
     Initializes pygame and the map and entities
-    '''
-    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES, GAME_OBJECTS
+    """
+    global SURFACE_MAIN, MAP, PLAYER, ALLSPRITES, GAME_OBJECTS, SLIME
 
     pygame.init()
 
@@ -82,20 +94,21 @@ def init():
 
     MAP = map.create_map()
 
-    creaturetest = components.creature("Viet")
+    creaturetest = components.creature("Viet", 10)
     PLAYER = object.object(
         1, 1, "knight", constant.CHARACTER, creature=creaturetest)
 
-    creaturetest1 = components.creature("Slime")
+    creaturetest1 = components.creature("Slime", 3, components.death)
 
     ai_component = components.ai_test()
     SLIME = object.object(6, 6, "slime", constant.SLIME,
                           creature=creaturetest1, ai=ai_component)
 
-    GAME_OBJECTS = [PLAYER, SLIME]
-    constant.game_objects = GAME_OBJECTS
+    # GAME_OBJECTS = [PLAYER, SLIME]
+    # constant.game_objects = GAME_OBJECTS
 
     ALLSPRITES = pygame.sprite.OrderedUpdates(SLIME, PLAYER)
+    constant.game_objects = ALLSPRITES
 
 
 if __name__ == '__main__':
