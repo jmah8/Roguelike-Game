@@ -15,8 +15,9 @@ class Game:
 
         self.surface = pygame.display.set_mode(constant.RESOLUTION)
         pygame.display.set_caption('My Pygame')
-
+        pygame.key.set_repeat(500, 50)
         self.running = True
+
 
     def new(self):
         """
@@ -25,38 +26,33 @@ class Game:
         global slime
 
         self.walls = pygame.sprite.Group()
-        self.floors = pygame.sprite.Group()
+        # self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
+        self.all_sprites = pygame.sprite.Group()
+
+        self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
+
 
         gamemap.draw_map(self.map_tiles.data, self)
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-                                    1, 1, "player", constant.CHARACTER, creature=creaturetest)
+            12, 11, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 6, 6, "slime", constant.SLIME,
-                              creature=creaturetest1, ai=ai_component)
-        self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
-
-        self.all_sprites = pygame.sprite.OrderedUpdates(
-            slime, self.player)
-        constant.game_objects = self.all_sprites
-
         slime = object.object(self, 2, 2, "enemy", constant.SLIME,
-                              creature=creaturetest1, ai=ai_component)
+                            creature=creaturetest1, ai=ai_component)
 
-        self.all_sprites = pygame.sprite.OrderedUpdates(self.player, slime)
+        self.all_sprites.add(self.player)
+        self.all_sprites.add(slime)
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
         self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
         self.run()
 
-    def update(self):
-        self.camera.update(self.player)
 
     def run(self):
         """
@@ -65,14 +61,16 @@ class Game:
         self.playing = True
         while self.playing:
             self.events()
-            self.update()
+            self.camera.update(self.player)
             self.draw()
+
+
 
     def events(self):
         """
         Handle player input
         """
-        events = pygame.event.get()
+        events = pygame.event.get() 
         for event in events:
             if event.type == pygame.QUIT:
                 if self.playing:
@@ -81,23 +79,24 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    self.all_sprites.update(-1, 0, self)
+                    self.all_sprites.update(-1, 0)
                 if event.key == pygame.K_d:
-                    self.all_sprites.update(1, 0, self)
+                    self.all_sprites.update(1, 0)
                 if event.key == pygame.K_w:
-                    self.all_sprites.update(0, -1, self)
+                    self.all_sprites.update(0, -1)
                 if event.key == pygame.K_q:
-                    self.all_sprites.update(-1, -1, self)
+                    self.all_sprites.update(-1, -1)
                 if event.key == pygame.K_e:
-                    self.all_sprites.update(1, -1, self)
+                    self.all_sprites.update(1, -1)
                 if event.key == pygame.K_z:
-                    self.all_sprites.update(-1, 1, self)
+                    self.all_sprites.update(-1, 1)
                 if event.key == pygame.K_c:
-                    self.all_sprites.update(1, 1, self)
+                    self.all_sprites.update(1, 1)
                 if event.key == pygame.K_s:
-                    self.all_sprites.update(0, 1, self)
+                    self.all_sprites.update(0, 1)
                 if event.key == pygame.K_x:
-                    self.all_sprites.update(0, 0, self)
+                    self.all_sprites.update(0, 0)
+
                 print(self.camera.camera.topleft)
                 print("player at " + str(self.player.x), str(self.player.y))
                 print("player_rect at " + str(self.player.rect))
@@ -106,29 +105,24 @@ class Game:
                 print()
         return "no-action"
 
+    
     def draw_grid(self):
         for x in range(0, constant.MAP_WIDTH, constant.SPRITE_SIZE):
-            pygame.draw.line(self.surface, constant.GREY,
-                             (x, 0), (x, constant.MAP_HEIGHT))
+            pygame.draw.line(self.surface, constant.GREY, (x, 0), (x, constant.MAP_HEIGHT))
 
         for y in range(0, constant.MAP_HEIGHT, constant.SPRITE_SIZE):
-            pygame.draw.line(self.surface, constant.GREY,
-                             (0, y), (constant.MAP_WIDTH, y))
+            pygame.draw.line(self.surface, constant.GREY, (0, y), (constant.MAP_WIDTH, y))
+        
+
 
     def draw(self):
         """
         Draws maps and entities
         """
-        self.walls.draw(self.surface)
-        self.floors.draw(self.surface)
-        self.draw_grid()
 
-       # self.all_sprites.draw(self.surface)
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
-        # Might need this later
-        # slime.draw_object(surface)
-        # player.draw_object(surface)
+        self.draw_grid()
 
         pygame.display.flip()
 
@@ -136,4 +130,7 @@ class Game:
 g = Game()
 while g.running:
     g.new()
+    g.run()
+
 pygame.quit()
+
