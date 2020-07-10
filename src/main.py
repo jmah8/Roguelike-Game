@@ -29,16 +29,16 @@ class Game:
         self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
 
-        gamemap.draw_map(self.map_tiles, self)
+        gamemap.draw_map(self.map_tiles.data, self)
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-            1, 1, "player", constant.CHARACTER, creature=creaturetest)
+            5, 5, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 2, 2, "enemy", constant.SLIME,
+        slime = object.object(self, 6, 6, "enemy", constant.SLIME,
                             creature=creaturetest1, ai=ai_component)
 
         self.all_sprites = pygame.sprite.OrderedUpdates(self.player, slime)
@@ -46,7 +46,7 @@ class Game:
         self.player_group.add(self.player)
         self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
-        self.run()
+        self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
 
     def run(self):
@@ -90,12 +90,13 @@ class Game:
                     self.all_sprites.update(0, 1, self)
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self)
+
                 print("player at " + str(self.player.x), str(self.player.y))
                 print("player_rect at " + str(self.player.rect))
                 print("slime at " + str(slime.x), str(slime.y))
                 print("slime_rect at " + str(slime.rect))
                 print()
-        return "no-action"
+                self.camera.update(self.player)
 
     
     def draw_grid(self):
@@ -115,7 +116,10 @@ class Game:
         self.floors.draw(self.surface)
         self.draw_grid()
 
-        self.all_sprites.draw(self.surface)
+        # self.all_sprites.draw(self.surface)
+
+        for sprite in self.all_sprites:
+            self.surface.blit(sprite.image, self.camera.apply(sprite))
 
         pygame.display.flip()
 
@@ -124,6 +128,7 @@ if __name__ == '__main__':
     g = Game()
     while g.running:
         g.new()
+        g.run()
 
     pygame.quit()
 

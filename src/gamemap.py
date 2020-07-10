@@ -36,14 +36,24 @@ class floor(tile):
         tile.__init__(self, game, x, y)
         self.game.floors.add(self)
 
+class TileMap:
+    def __init__(self, filename):
+        map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+        self.data = []
+        with open(os.path.join(map_dir, filename), 'rt') as output:
+            for line in output:
+                self.data.append(line)
+
+        self.tilewidth = len(self.data[0])
+        self.tileheight = len(self.data)
+        self.width = self.tilewidth * SPRITE_SIZE
+        self.height = self.tileheight * SPRITE_SIZE
+
+        
 
 def load_data():
-    map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
-    map_tile = []
-    with open(os.path.join(map_dir, 'map.txt'), 'rt') as output:
-        for line in output:
-            map_tile.append(line)
-    return map_tile
+    map_data = TileMap('map.txt')
+    return map_data
 
 
 # TODO: change path for images to constant when right picture is found
@@ -65,23 +75,18 @@ def draw_map(map_to_draw, game):
                 floor(game, col, row)
 
 
-def check_map_for_creature(x, y, exclude_object):
-    """
-    if excluded_object != None, 
-    check map to see if creature at (x,y) is a not excluded_object
-    else check map to see if any creature at (x,y)
-    """
-    if exclude_object:
-        target = None
-        for object in game_objects:
-                if (object is not exclude_object and object.x == x and object.y == y and object.creature):
-                    target = object
-                    return target
-    
-    else:
-        target = None
-        for object in game_objects:
-                if (object.x == x and object.y == y and object.creature):
-                    target = object
-                    return target
             
+
+class Camera:
+    def __init__(self, width, height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+
+    def apply(self, entity):
+        return entity.rect.move(self.camera.topleft)
+    
+    def update(self, player):
+        x = -player.rect.x + int(MAP_WIDTH / 2)
+        y = -player.rect.y + int(MAP_HEIGHT / 2)
+        self.camera = pygame.Rect(x, y, self.width, self.height)
