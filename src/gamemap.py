@@ -17,8 +17,7 @@ class tile(pygame.sprite.Sprite):
         game (arg, game): game with object data
     """
     def __init__(self, game, x, y):
-        self.group = game.all_sprites
-        pygame.sprite.Sprite.__init__(self, self.group)
+        pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.x = x
         self.y = y
@@ -27,14 +26,14 @@ class tile(pygame.sprite.Sprite):
 
 class wall(tile):
     def __init__(self, game, x, y):
-        self.image, self.rect = object.loadImage(FLOOR_1)
+        self.image, self.rect = object.loadImage(WALL_1)
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
         self.walkable = False
 
 class floor(tile):
     def __init__(self, game, x, y):
-        self.image, self.rect = object.loadImage(FLOOR_5)
+        self.image, self.rect = object.loadImage(FLOOR_1)
         tile.__init__(self, game, x, y)
         self.game.floors.add(self)
         self.walkable = True

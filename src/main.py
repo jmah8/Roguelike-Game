@@ -90,7 +90,7 @@ class Game:
                     self.all_sprites.update(0, 1, self.map_tiles)
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self.map_tiles)
-                print("player at " + str(player.x), str(player.y))
+                print("player at, player " + str(player.x), str(player.y))
                 print("player_rect at " + str(player.rect))
                 print("slime at " + str(slime.x), str(slime.y))
                 print("slime_rect at " + str(slime.rect))
@@ -112,6 +112,8 @@ class Game:
         Draws maps and entities
         """
         gamemap.draw_map(self.map_tiles, self)
+        self.walls.draw(self.surface)
+        self.floors.draw(self.surface)
         self.draw_grid()
         # could change this so instead of constant map, pass map into method
         constant.com_map = self.map_tiles
