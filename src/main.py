@@ -26,7 +26,9 @@ class Game:
         """
         global player, slime
 
-        self.map_tiles = gamemap.create_map()
+        self.walls = pygame.sprite.Group()
+        self.floors = pygame.sprite.Group()
+        self.map_tiles = gamemap.load_data()
 
         creaturetest = components.creature("Viet", 10)
         player = object.object(
@@ -109,7 +111,7 @@ class Game:
         """
         Draws maps and entities
         """
-        gamemap.draw_map(self.map_tiles, self.surface)
+        gamemap.draw_map(self.map_tiles, self)
         self.draw_grid()
         # could change this so instead of constant map, pass map into method
         constant.com_map = self.map_tiles
