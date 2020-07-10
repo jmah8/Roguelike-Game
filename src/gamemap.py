@@ -23,6 +23,7 @@ class tile(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x * SPRITE_SIZE
         self.rect.y = y * SPRITE_SIZE
+        self.game.all_sprites.add(self)
 
 class wall(tile):
     def __init__(self, game, x, y):
@@ -42,7 +43,7 @@ class TileMap:
         self.data = []
         with open(os.path.join(map_dir, filename), 'rt') as output:
             for line in output:
-                self.data.append(line)
+                self.data.append(line.strip())
 
         self.tilewidth = len(self.data[0])
         self.tileheight = len(self.data)
@@ -94,6 +95,6 @@ class Camera:
 
         x = min(0, x)
         y = min(0, y)
-        x = max(-(self.width - MAP_HEIGHT), x)
+        x = max(-(self.width - MAP_WIDTH), x)
         y = max(-(self.height - MAP_HEIGHT), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)

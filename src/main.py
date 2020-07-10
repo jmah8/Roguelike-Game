@@ -28,6 +28,8 @@ class Game:
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
+        self.all_sprites = pygame.sprite.Group()
+
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
 
@@ -43,7 +45,8 @@ class Game:
         slime = object.object(self, 2, 2, "enemy", constant.SLIME,
                             creature=creaturetest1, ai=ai_component)
 
-        self.all_sprites = pygame.sprite.OrderedUpdates(self.player, slime)
+        self.all_sprites.add(self.player)
+        self.all_sprites.add(slime)
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
         self.enemies = pygame.sprite.Group()
@@ -117,8 +120,6 @@ class Game:
         self.walls.draw(self.surface)
         self.floors.draw(self.surface)
         self.draw_grid()
-
-        # self.all_sprites.draw(self.surface)
 
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
