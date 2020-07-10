@@ -82,11 +82,18 @@ class Camera:
         self.camera = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
+        print("w:" + str(width) + " " + "h:" + str(height))
 
     def apply(self, entity):
+        # print(self.camera.topleft)
         return entity.rect.move(self.camera.topleft)
     
     def update(self, player):
         x = -player.rect.x + int(MAP_WIDTH / 2)
         y = -player.rect.y + int(MAP_HEIGHT / 2)
+
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.width - MAP_HEIGHT), x)
+        y = max(-(self.height - MAP_HEIGHT), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)

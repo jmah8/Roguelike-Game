@@ -15,7 +15,7 @@ class Game:
 
         self.surface = pygame.display.set_mode(constant.RESOLUTION)
         pygame.display.set_caption('My Pygame')
-
+        pygame.key.set_repeat(500, 50)
         self.running = True
 
 
@@ -28,17 +28,19 @@ class Game:
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
+        self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
+
 
         gamemap.draw_map(self.map_tiles.data, self)
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-            5, 5, "player", constant.CHARACTER, creature=creaturetest)
+            1, 1, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 6, 6, "enemy", constant.SLIME,
+        slime = object.object(self, 2, 2, "enemy", constant.SLIME,
                             creature=creaturetest1, ai=ai_component)
 
         self.all_sprites = pygame.sprite.OrderedUpdates(self.player, slime)
@@ -46,7 +48,6 @@ class Game:
         self.player_group.add(self.player)
         self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
-        self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
 
     def run(self):
@@ -56,6 +57,7 @@ class Game:
         self.playing = True
         while self.playing:
             self.events()
+            self.camera.update(self.player)
             self.draw()
 
 
@@ -91,12 +93,12 @@ class Game:
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self)
 
+                print(self.camera.camera.topleft)
                 print("player at " + str(self.player.x), str(self.player.y))
                 print("player_rect at " + str(self.player.rect))
                 print("slime at " + str(slime.x), str(slime.y))
                 print("slime_rect at " + str(slime.rect))
                 print()
-                self.camera.update(self.player)
 
     
     def draw_grid(self):
