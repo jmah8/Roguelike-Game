@@ -24,6 +24,8 @@ FLOOR_6 = '16x16/tiles/floor/floor_side3.png'
 FLOOR_7 = '16x16/tiles/floor/floor_side4.png'
 FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
 
+FLOOR_1 = '16x16/tiles/wall/wall_1.png'
+
 # MAP
 com_map = None
 

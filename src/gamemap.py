@@ -1,61 +1,71 @@
 import pygame
-import constant
+from constant import *
 import object
+import os
 
 pygame.init()
 
-class tile:
+class tile(pygame.sprite.Sprite):
     """
     Class for the tiles of map
 
     Attributes: 
         walkable (arg, bool) : True if tile is walkable by objects, false
         otherwise
+        x (arg, int): x position of tile
+        y (arg, int): y position of tile
+        game (arg, game): game with object data
     """
-    def __init__(self, walkable):
-        self.walkable = walkable
+    def __init__(self, game, x, y):
+        self.group = game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.group)
+        self.game = game
+        self.x = x
+        self.y = y
+        self.rect.x = x * SPRITE_SIZE
+        self.rect.y = y * SPRITE_SIZE
+
+class wall(tile):
+    def __init__(self, game, x, y):
+        self.image, self.rect = object.loadImage(FLOOR_1)
+        tile.__init__(self, game, x, y)
+        self.game.walls.add(self)
+        self.walkable = False
+
+class floor(tile):
+    def __init__(self, game, x, y):
+        self.image, self.rect = object.loadImage(FLOOR_5)
+        tile.__init__(self, game, x, y)
+        self.game.floors.add(self)
+        self.walkable = True
 
 
-
-
-def create_map():
-    """
-    Returns a map where the outer edges are walls and everything else is a tile.
-    """
-    create_map = []
-    for x in range (0, constant.TILE_WIDTH):
-        create_map_row = []
-        for y in range (0, constant.TILE_HEIGHT):
-            if ((y == 0 or y == constant.TILE_HEIGHT - 1)
-            or (x == 0 or x == constant.TILE_WIDTH - 1)):
-                create_map_row.append(tile(False))
-            else:
-                create_map_row.append(tile(True))
-        create_map.append(create_map_row)
-    return create_map
-
+def load_data():
+    map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+    map_tile = []
+    with open(os.path.join(map_dir, 'map.txt'), 'rt') as output:
+        for line in output:
+            map_tile.append(line)
+    return map_tile
 
 
 # TODO: change path for images to constant when right picture is found
-def draw_map(map_to_draw, surface):
+def draw_map(map_to_draw, game):
     """
     Draws map and makes walkable = True to floor and walkable = False wall
 
     Loops through every tile in map and draws it in correct position
 
     Arg:
-        map_to_draw (array): map to draw as background
+        map_to_draw (arg, array): map to draw as background
+        game (arg, game): game with data
     """
-    for x in range(0, constant.TILE_WIDTH):
-        for y in range(0, constant.TILE_HEIGHT):
-            if map_to_draw[x][y].walkable == True:
-                floor = object.loadImage('16x16/tiles/floor/floor_1.png')
-                surface.blit(
-                    floor[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
-            else:
-                wall = object.loadImage('16x16/tiles/wall/wall_1.png')
-                surface.blit(
-                    wall[0], (x * constant.SPRITE_SIZE, y * constant.SPRITE_SIZE))
+    for row, tiles in enumerate(map_to_draw):
+        for col, tile in enumerate(tiles):
+            if tile == '1':
+                wall(game, col, row)
+            if tile == '.':
+                floor(game, col, row)
 
 
 def check_map_for_creature(x, y, exclude_object):
@@ -66,15 +76,15 @@ def check_map_for_creature(x, y, exclude_object):
     """
     if exclude_object:
         target = None
-        for object in constant.game_objects:
+        for object in game_objects:
                 if (object is not exclude_object and object.x == x and object.y == y and object.creature):
                     target = object
                     return target
     
     else:
         target = None
-        for object in constant.game_objects:
+        for object in game_objects:
                 if (object.x == x and object.y == y and object.creature):
                     target = object
                     return target
-                
+            
