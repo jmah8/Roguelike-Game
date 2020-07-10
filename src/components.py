@@ -51,20 +51,20 @@ class creature:
             self.owner.x -= dx
             self.owner.y -= dy
             self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-
-
-
-        # target = gamemap.check_map_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
-
-        # is_walkable_tile = map[self.owner.x + dx][self.owner.y + dy].walkable == True
-
-        # if  is_walkable_tile and target is None:
-        #     self.owner.x += dx
-        #     self.owner.y += dy
-        #     self.owner.rect = self.owner.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
-
-        # if target:
-        #     self.attack(target, 1)
+        if game.player_group.has(self.owner):
+            enemy_hit = pygame.sprite.spritecollideany(self.owner, game.enemies)
+            if  enemy_hit:
+                self.owner.x -= dx
+                self.owner.y -= dy
+                self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
+                self.attack(enemy_hit, 1)
+        if game.enemies.has(self.owner):
+            enemy_hit = pygame.sprite.spritecollideany(self.owner, game.player_group)
+            if  enemy_hit:
+                self.owner.x -= dx
+                self.owner.y -= dy
+                self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
+                self.attack(enemy_hit, 1)
 
 
     def attack(self, target, damage):
@@ -82,15 +82,11 @@ class creature:
 
 def death(obj):
     """
-    Creature death. First option results in removing the sprite,
-    but second option leaves sprite in 
+    Creature death. Remove creature from groups and stop drawing it
     """
     print (obj.creature.name_instance + " is dead")
-    # Remove creature
-    game_objects.remove(obj.creature.owner)
-    # Leave creature
-    # obj.creature = None
-    # obj.ai = None
+    obj.game.all_sprites.remove(obj)
+    obj.game.enemies.remove(obj)
 
 
 
@@ -105,6 +101,7 @@ class ai_test:
         self.owner = None
 
     def takeTurn(self, game):
+        print("Take turn")
         self.owner.creature.move(random.choice([0, 1, -1]),
                         random.choice([0, 1, -1]), game)
 

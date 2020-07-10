@@ -23,7 +23,7 @@ class Game:
         """
         Makes new map and entity
         """
-        global player, slime
+        global slime
 
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
@@ -32,20 +32,20 @@ class Game:
         gamemap.draw_map(self.map_tiles, self)
 
         creaturetest = components.creature("Viet", 10)
-        player = object.object(
+        self.player = object.object(self,
             1, 1, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(6, 6, "slime", constant.SLIME,
+        slime = object.object(self, 2, 2, "enemy", constant.SLIME,
                             creature=creaturetest1, ai=ai_component)
 
-        # GAME_OBJECTS = [player, slime]
-        # constant.game_objects = GAME_OBJECTS
-
-        self.all_sprites = pygame.sprite.OrderedUpdates(slime, player)
-        constant.game_objects = self.all_sprites
+        self.all_sprites = pygame.sprite.OrderedUpdates(self.player, slime)
+        self.player_group = pygame.sprite.GroupSingle()
+        self.player_group.add(self.player)
+        self.enemies = pygame.sprite.Group()
+        self.enemies.add(slime)
         self.run()
 
 
@@ -90,8 +90,8 @@ class Game:
                     self.all_sprites.update(0, 1, self)
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self)
-                print("player at, player " + str(player.x), str(player.y))
-                print("player_rect at " + str(player.rect))
+                print("player at " + str(self.player.x), str(self.player.y))
+                print("player_rect at " + str(self.player.rect))
                 print("slime at " + str(slime.x), str(slime.y))
                 print("slime_rect at " + str(slime.rect))
                 print()
@@ -114,19 +114,16 @@ class Game:
         self.walls.draw(self.surface)
         self.floors.draw(self.surface)
         self.draw_grid()
-        # could change this so instead of constant map, pass map into method
-        constant.com_map = self.map_tiles
 
         self.all_sprites.draw(self.surface)
 
-        # Might need this later
-        # slime.draw_object(surface)
-        # player.draw_object(surface)
-
         pygame.display.flip()
 
-g = Game()
-while g.running:
-    g.new()
 
-pygame.quit()
+if __name__ == '__main__':
+    g = Game()
+    while g.running:
+        g.new()
+
+    pygame.quit()
+
