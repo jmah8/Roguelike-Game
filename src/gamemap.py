@@ -23,11 +23,11 @@ def create_map():
     Returns a map where the outer edges are walls and everything else is a tile.
     """
     create_map = []
-    for x in range (0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
+    for x in range (0, constant.TILE_WIDTH):
         create_map_row = []
-        for y in range (0, (constant.RESOLUTION[1] // constant.SPRITE_SIZE)):
-            if ((y == 0 or y == (constant.RESOLUTION[1] // constant.SPRITE_SIZE) - 1)
-            or (x == 0 or x == (constant.RESOLUTION[0] // constant.SPRITE_SIZE) - 1)):
+        for y in range (0, constant.TILE_HEIGHT):
+            if ((y == 0 or y == constant.TILE_HEIGHT - 1)
+            or (x == 0 or x == constant.TILE_WIDTH - 1)):
                 create_map_row.append(tile(False))
             else:
                 create_map_row.append(tile(True))
@@ -46,8 +46,8 @@ def draw_map(map_to_draw, surface):
     Arg:
         map_to_draw (array): map to draw as background
     """
-    for x in range(0, (constant.RESOLUTION[0] // constant.SPRITE_SIZE)):
-        for y in range(0, (constant.RESOLUTION[1] // constant.SPRITE_SIZE)):
+    for x in range(0, constant.TILE_WIDTH):
+        for y in range(0, constant.TILE_HEIGHT):
             if map_to_draw[x][y].walkable == True:
                 floor = object.loadImage('16x16/tiles/floor/floor_1.png')
                 surface.blit(

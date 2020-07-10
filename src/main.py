@@ -95,12 +95,22 @@ class Game:
                 print()
         return "no-action"
 
+    
+    def draw_grid(self):
+        for x in range(0, constant.MAP_WIDTH, constant.SPRITE_SIZE):
+            pygame.draw.line(self.surface, constant.GREY, (x, 0), (x, constant.MAP_HEIGHT))
+
+        for y in range(0, constant.MAP_HEIGHT, constant.SPRITE_SIZE):
+            pygame.draw.line(self.surface, constant.GREY, (0, y), (constant.MAP_WIDTH, y))
+        
+
 
     def draw(self):
         """
         Draws maps and entities
         """
         gamemap.draw_map(self.map_tiles, self.surface)
+        self.draw_grid()
         # could change this so instead of constant map, pass map into method
         constant.com_map = self.map_tiles
 
