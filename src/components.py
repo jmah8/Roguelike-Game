@@ -33,38 +33,56 @@ class creature:
         if self.hp <= 0 and self.death_function:
             self.death_function(self.owner)
 
-    def move(self, dx, dy, game):
+    def move(self, dx, dy):
         """
-        Moves entity's position if tile is walkable else do nothing
+        Moves entity's position if tile is not a tile or enemy
+        else do nothing if wall or attack if enemy
 
         Moves entity by dx and dy on map
 
         Arg:
             dx (arg, int): int to change entity's x coord
             dy (arg, int): int to change entity's y coord
-            map (arg, array[array]): map when entity is
+            game (arg, game): game with all game data
         """
         self.owner.x += dx
         self.owner.y += dy
         self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-        if pygame.sprite.spritecollideany(self.owner, game.walls):
-            self.owner.x -= dx
-            self.owner.y -= dy
-            self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-        if game.player_group.has(self.owner):
-            enemy_hit = pygame.sprite.spritecollideany(self.owner, game.enemies)
-            if  enemy_hit:
-                self.owner.x -= dx
-                self.owner.y -= dy
-                self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-                self.attack(enemy_hit, 1)
-        if game.enemies.has(self.owner):
-            enemy_hit = pygame.sprite.spritecollideany(self.owner, game.player_group)
-            if  enemy_hit:
-                self.owner.x -= dx
-                self.owner.y -= dy
-                self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-                self.attack(enemy_hit, 1)
+
+        creature_collide_with_wall = pygame.sprite.spritecollideany(self.owner, self.owner.game.walls)
+
+        if creature_collide_with_wall:
+            self.reverse_move(dx, dy)
+
+
+        if_player = self.owner.game.player_group.has(self.owner)
+
+        if if_player:
+            creature_hit = pygame.sprite.spritecollideany(self.owner, self.owner.game.enemies)
+            if  creature_hit:
+                self.reverse_move(dx, dy)
+                self.attack(creature_hit, 1)
+        
+        if_enemy = self.owner.game.enemies.has(self.owner)
+
+        if if_enemy:
+            creature_hit = pygame.sprite.spritecollideany(self.owner, self.owner.game.player_group)
+            if  creature_hit:
+                self.reverse_move(dx, dy)
+                self.attack(creature_hit, 1)
+    
+
+    def reverse_move(self, dx, dy):
+        """
+        Reverse the move
+
+        Arg:
+            dx (arg, int): int to change entity's x coord
+            dy (arg, int): int to change entity's y coord
+        """
+        self.owner.x -= dx
+        self.owner.y -= dy
+        self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
 
     def attack(self, target, damage):
@@ -100,9 +118,9 @@ class ai_test:
     def __init__(self):
         self.owner = None
 
-    def takeTurn(self, game):
+    def takeTurn(self):
         self.owner.creature.move(random.choice([0, 1, -1]),
-                        random.choice([0, 1, -1]), game)
+                        random.choice([0, 1, -1]))
 
 # class item:
 # class container:

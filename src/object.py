@@ -62,11 +62,11 @@ class object(pygame.sprite.Sprite):
             ai.owner = self
 
 
-    def update(self, dx, dy, game):
-        if self.object_id == "player":
-            self.creature.move(dx, dy, game)
+    def update(self, dx, dy):
         if self.ai:
-            self.ai.takeTurn(game)
+            self.ai.takeTurn()
+        elif self.object_id == "player":
+            self.creature.move(dx, dy)
 
 
 

@@ -35,7 +35,7 @@ class floor(tile):
     def __init__(self, game, x, y):
         self.image, self.rect = object.loadImage(FLOOR_1)
         tile.__init__(self, game, x, y)
-        self.game.floors.add(self)
+        # self.game.floors.add(self)
 
 class TileMap:
     def __init__(self, filename):
@@ -83,10 +83,8 @@ class Camera:
         self.camera = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
-        print("w:" + str(width) + " " + "h:" + str(height))
 
     def apply(self, entity):
-        # print(self.camera.topleft)
         return entity.rect.move(self.camera.topleft)
     
     def update(self, player):

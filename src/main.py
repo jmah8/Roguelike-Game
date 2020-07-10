@@ -26,7 +26,7 @@ class Game:
         global slime
 
         self.walls = pygame.sprite.Group()
-        self.floors = pygame.sprite.Group()
+        # self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
         self.all_sprites = pygame.sprite.Group()
 
@@ -37,7 +37,7 @@ class Game:
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-            1, 1, "player", constant.CHARACTER, creature=creaturetest)
+            12, 11, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
@@ -78,23 +78,23 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    self.all_sprites.update(-1, 0, self)
+                    self.all_sprites.update(-1, 0)
                 if event.key == pygame.K_d:
-                    self.all_sprites.update(1, 0, self)
+                    self.all_sprites.update(1, 0)
                 if event.key == pygame.K_w:
-                    self.all_sprites.update(0, -1, self)
+                    self.all_sprites.update(0, -1)
                 if event.key == pygame.K_q:
-                    self.all_sprites.update(-1, -1, self)
+                    self.all_sprites.update(-1, -1)
                 if event.key == pygame.K_e:
-                    self.all_sprites.update(1, -1, self)
+                    self.all_sprites.update(1, -1)
                 if event.key == pygame.K_z:
-                    self.all_sprites.update(-1, 1, self)
+                    self.all_sprites.update(-1, 1)
                 if event.key == pygame.K_c:
-                    self.all_sprites.update(1, 1, self)
+                    self.all_sprites.update(1, 1)
                 if event.key == pygame.K_s:
-                    self.all_sprites.update(0, 1, self)
+                    self.all_sprites.update(0, 1)
                 if event.key == pygame.K_x:
-                    self.all_sprites.update(0, 0, self)
+                    self.all_sprites.update(0, 0)
 
                 print(self.camera.camera.topleft)
                 print("player at " + str(self.player.x), str(self.player.y))
@@ -117,21 +117,18 @@ class Game:
         """
         Draws maps and entities
         """
-        self.walls.draw(self.surface)
-        self.floors.draw(self.surface)
-        self.draw_grid()
 
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
+        self.draw_grid()
 
         pygame.display.flip()
 
 
-if __name__ == '__main__':
-    g = Game()
-    while g.running:
-        g.new()
-        g.run()
+g = Game()
+while g.running:
+    g.new()
+    g.run()
 
-    pygame.quit()
+pygame.quit()
 
