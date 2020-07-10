@@ -28,7 +28,7 @@ class Game:
         self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
 
-        gamemap.draw_map(self.map_tiles, self)
+        gamemap.draw_map(self.map_tiles.data, self)
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
@@ -39,13 +39,11 @@ class Game:
         ai_component = components.ai_test()
         slime = object.object(self, 6, 6, "slime", constant.SLIME,
                               creature=creaturetest1, ai=ai_component)
-        self.camera = gamemap.Camera(constant.MAP_WIDTH, constant.MAP_HEIGHT)
+        self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
         self.all_sprites = pygame.sprite.OrderedUpdates(
             slime, self.player)
         constant.game_objects = self.all_sprites
-
-        self.camera = gamemap.Camera(constant.MAP_WIDTH, constant.MAP_HEIGHT)
 
         slime = object.object(self, 2, 2, "enemy", constant.SLIME,
                               creature=creaturetest1, ai=ai_component)
@@ -100,6 +98,7 @@ class Game:
                     self.all_sprites.update(0, 1, self)
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self)
+                print(self.camera.camera.topleft)
                 print("player at " + str(self.player.x), str(self.player.y))
                 print("player_rect at " + str(self.player.rect))
                 print("slime at " + str(slime.x), str(slime.y))

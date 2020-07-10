@@ -40,16 +40,23 @@ class floor(tile):
         tile.__init__(self, game, x, y)
         self.game.floors.add(self)
 
+class MapData:
+    def __init__ (self, filename):
+        map_dir = os.path.join(os.path.dirname(
+            os.path.dirname(__file__)), 'resource')
+        self.data = []
+        with open(os.path.join(map_dir, filename), 'rt') as output:
+            for line in output:
+                self.data.append(line.strip())
+        
+        self.tilewidth = len(self.data[0])
+        self.tileheight = len(self.data)
+        self.width = self.tilewidth * SPRITE_SIZE
+        self.height = self.tileheight * SPRITE_SIZE    
 
 def load_data():
-    map_dir = os.path.join(os.path.dirname(
-        os.path.dirname(__file__)), 'resource')
-    map_tile = []
-    with open(os.path.join(map_dir, 'map.txt'), 'rt') as output:
-        for line in output:
-            map_tile.append(line.strip())
-    return map_tile
-
+    map_data = MapData('map.txt')
+    return map_data
 
 # TODO: change path for images to constant when right picture is found
 def draw_map(map_to_draw, game):
@@ -103,6 +110,7 @@ class Camera:
     def update(self, target):
         x = -target.rect.centerx + int(MAP_WIDTH / 2)
         y = -target.rect.centery + int(MAP_HEIGHT / 2)
+
 
         x = min(0, x)
         y = min(0, y)

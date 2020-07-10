@@ -101,7 +101,6 @@ class ai_test:
         self.owner = None
 
     def takeTurn(self, game):
-        print("Take turn")
         self.owner.creature.move(random.choice([0, 1, -1]),
                         random.choice([0, 1, -1]), game)
 
