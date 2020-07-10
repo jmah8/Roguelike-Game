@@ -1,5 +1,5 @@
 import random
-import constant
+from constant import *
 import gamemap
 import pygame
 
@@ -46,11 +46,11 @@ class creature:
         """
         self.owner.x += dx
         self.owner.y += dy
-        self.owner.rect = self.owner.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
+        self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
         if pygame.sprite.spritecollideany(self.owner, game.walls):
             self.owner.x -= dx
             self.owner.y -= dy
-            self.owner.rect = self.owner.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
+            self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
 
 
@@ -87,7 +87,7 @@ def death(obj):
     """
     print (obj.creature.name_instance + " is dead")
     # Remove creature
-    constant.game_objects.remove(obj.creature.owner)
+    game_objects.remove(obj.creature.owner)
     # Leave creature
     # obj.creature = None
     # obj.ai = None

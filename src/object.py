@@ -1,6 +1,6 @@
 import os
 import pygame
-import constant
+from constant import *
 
 pygame.init()
 
@@ -22,7 +22,7 @@ def loadImage(name, colorkey=None):
         raise SystemExit(name)
     # convert_alpha() is also an option
     image = image.convert_alpha()
-    image = pygame.transform.scale(image, (constant.SPRITE_SIZE, constant.SPRITE_SIZE))
+    image = pygame.transform.scale(image, (SPRITE_SIZE, SPRITE_SIZE))
     if colorkey is not None:
         if colorkey == -1:
             colorkey = image.get_at((0, 0))
@@ -49,8 +49,8 @@ class object(pygame.sprite.Sprite):
         self.image, self.rect = loadImage(image, -1)
         self.object_id = object_id
         self.x = x
-        self.y = y
-        self.rect.move_ip(self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE)
+        self.y = y 
+        self.rect.topleft = (self.x*SPRITE_SIZE, self.y*SPRITE_SIZE)
         
         self.creature = creature
         if creature:
