@@ -29,14 +29,12 @@ class wall(tile):
         self.image, self.rect = object.loadImage(WALL_1)
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
-        self.walkable = False
 
 class floor(tile):
     def __init__(self, game, x, y):
         self.image, self.rect = object.loadImage(FLOOR_1)
         tile.__init__(self, game, x, y)
         self.game.floors.add(self)
-        self.walkable = True
 
 
 def load_data():

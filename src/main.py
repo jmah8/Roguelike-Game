@@ -16,7 +16,6 @@ class Game:
         self.surface = pygame.display.set_mode(constant.RESOLUTION)
         pygame.display.set_caption('My Pygame')
 
-        self.clock = pygame.time.Clock()
         self.running = True
 
 
@@ -29,6 +28,8 @@ class Game:
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
+
+        gamemap.draw_map(self.map_tiles, self)
 
         creaturetest = components.creature("Viet", 10)
         player = object.object(
@@ -54,7 +55,6 @@ class Game:
         """
         self.playing = True
         while self.playing:
-            self.clock.tick(constant.FPS)
             self.events()
             self.draw()
 
@@ -111,7 +111,6 @@ class Game:
         """
         Draws maps and entities
         """
-        gamemap.draw_map(self.map_tiles, self)
         self.walls.draw(self.surface)
         self.floors.draw(self.surface)
         self.draw_grid()
