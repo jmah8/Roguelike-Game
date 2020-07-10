@@ -48,6 +48,8 @@ class object(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.image, self.rect = loadImage(image, -1)
+        self.l_image = pygame.transform.flip(self.image, True, False)
+        self.r_image = self.image
         self.object_id = object_id
         self.x = x
         self.y = y 

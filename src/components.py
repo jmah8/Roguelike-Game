@@ -44,6 +44,10 @@ class creature:
             dx (arg, int): int to change entity's x coord
             dy (arg, int): int to change entity's y coord
         """
+        if (dx > 0):
+            self.owner.image = self.owner.r_image
+        elif (dx < 0): 
+            self.owner.image = self.owner.l_image
         self.owner.x += dx
         self.owner.y += dy
         self.owner.rect.topleft = (self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
