@@ -5,6 +5,7 @@ import os
 
 pygame.init()
 
+
 class tile(pygame.sprite.Sprite):
     """
     Class for the tiles of map
@@ -16,6 +17,7 @@ class tile(pygame.sprite.Sprite):
         y (arg, int): y position of tile
         game (arg, game): game with object data
     """
+
     def __init__(self, game, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
@@ -24,11 +26,13 @@ class tile(pygame.sprite.Sprite):
         self.rect.x = x * SPRITE_SIZE
         self.rect.y = y * SPRITE_SIZE
 
+
 class wall(tile):
     def __init__(self, game, x, y):
         self.image, self.rect = object.loadImage(WALL_1)
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
+
 
 class floor(tile):
     def __init__(self, game, x, y):
@@ -38,11 +42,12 @@ class floor(tile):
 
 
 def load_data():
-    map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+    map_dir = os.path.join(os.path.dirname(
+        os.path.dirname(__file__)), 'resource')
     map_tile = []
     with open(os.path.join(map_dir, 'map.txt'), 'rt') as output:
         for line in output:
-            map_tile.append(line)
+            map_tile.append(line.strip())
     return map_tile
 
 
@@ -74,14 +79,33 @@ def check_map_for_creature(x, y, exclude_object):
     if exclude_object:
         target = None
         for object in game_objects:
-                if (object is not exclude_object and object.x == x and object.y == y and object.creature):
-                    target = object
-                    return target
-    
+            if (object is not exclude_object and object.x == x and object.y == y and object.creature):
+                target = object
+                return target
+
     else:
         target = None
         for object in game_objects:
-                if (object.x == x and object.y == y and object.creature):
-                    target = object
-                    return target
-            
+            if (object.x == x and object.y == y and object.creature):
+                target = object
+                return target
+
+
+class Camera:
+    def __init__(self, width, height):
+        self.camera = pygame.Rect(0, 0, width, height)
+        self.width = width
+        self.height = height
+
+    def apply(self, entity):
+        return entity.rect.move(self.camera.topleft)
+
+    def update(self, target):
+        x = -target.rect.centerx + int(MAP_WIDTH / 2)
+        y = -target.rect.centery + int(MAP_HEIGHT / 2)
+
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.width - MAP_WIDTH), x)
+        y = max(-(self.height - MAP_HEIGHT), y)
+        self.camera = pygame.Rect(x, y, self.width, self.height)

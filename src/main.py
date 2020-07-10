@@ -18,12 +18,10 @@ class Game:
 
         self.running = True
 
-
     def new(self):
         """
         Makes new map and entity
         """
-        global player, slime
 
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
@@ -32,22 +30,26 @@ class Game:
         gamemap.draw_map(self.map_tiles, self)
 
         creaturetest = components.creature("Viet", 10)
-        player = object.object(
+        self.player = object.object(
             1, 1, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(6, 6, "slime", constant.SLIME,
-                            creature=creaturetest1, ai=ai_component)
+        self.slime = object.object(6, 6, "slime", constant.SLIME,
+                                   creature=creaturetest1, ai=ai_component)
+        self.camera = gamemap.Camera(constant.MAP_WIDTH, constant.MAP_HEIGHT)
 
-        # GAME_OBJECTS = [player, slime]
-        # constant.game_objects = GAME_OBJECTS
-
-        self.all_sprites = pygame.sprite.OrderedUpdates(slime, player)
+        self.all_sprites = pygame.sprite.OrderedUpdates(
+            self.slime, self.player)
         constant.game_objects = self.all_sprites
+
+        self.camera = gamemap.Camera(constant.MAP_WIDTH, constant.MAP_HEIGHT)
+
         self.run()
 
+    def update(self):
+        self.camera.update(self.player)
 
     def run(self):
         """
@@ -56,15 +58,14 @@ class Game:
         self.playing = True
         while self.playing:
             self.events()
+            self.update()
             self.draw()
-
-
 
     def events(self):
         """
         Handle player input
         """
-        events = pygame.event.get() 
+        events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
                 if self.playing:
@@ -90,22 +91,22 @@ class Game:
                     self.all_sprites.update(0, 1, self)
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self)
-                print("player at, player " + str(player.x), str(player.y))
-                print("player_rect at " + str(player.rect))
-                print("slime at " + str(slime.x), str(slime.y))
-                print("slime_rect at " + str(slime.rect))
+                print("player at, player " +
+                      str(self.player.x), str(self.player.y))
+                print("player_rect at " + str(self.player.rect))
+                print("slime at " + str(self.slime.x), str(self.slime.y))
+                print("slime_rect at " + str(self.slime.rect))
                 print()
         return "no-action"
 
-    
     def draw_grid(self):
         for x in range(0, constant.MAP_WIDTH, constant.SPRITE_SIZE):
-            pygame.draw.line(self.surface, constant.GREY, (x, 0), (x, constant.MAP_HEIGHT))
+            pygame.draw.line(self.surface, constant.GREY,
+                             (x, 0), (x, constant.MAP_HEIGHT))
 
         for y in range(0, constant.MAP_HEIGHT, constant.SPRITE_SIZE):
-            pygame.draw.line(self.surface, constant.GREY, (0, y), (constant.MAP_WIDTH, y))
-        
-
+            pygame.draw.line(self.surface, constant.GREY,
+                             (0, y), (constant.MAP_WIDTH, y))
 
     def draw(self):
         """
@@ -117,16 +118,17 @@ class Game:
         # could change this so instead of constant map, pass map into method
         constant.com_map = self.map_tiles
 
-        self.all_sprites.draw(self.surface)
-
+       # self.all_sprites.draw(self.surface)
+        for sprite in self.all_sprites:
+            self.surface.blit(sprite.image, self.camera.apply(sprite))
         # Might need this later
         # slime.draw_object(surface)
         # player.draw_object(surface)
 
         pygame.display.flip()
 
+
 g = Game()
 while g.running:
     g.new()
-
 pygame.quit()
