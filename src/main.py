@@ -22,6 +22,7 @@ class Game:
         """
         Makes new map and entity
         """
+        global slime
 
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
@@ -30,22 +31,30 @@ class Game:
         gamemap.draw_map(self.map_tiles, self)
 
         creaturetest = components.creature("Viet", 10)
-        self.player = object.object(
-            1, 1, "player", constant.CHARACTER, creature=creaturetest)
+        self.player = object.object(self,
+                                    1, 1, "player", constant.CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        self.slime = object.object(6, 6, "slime", constant.SLIME,
-                                   creature=creaturetest1, ai=ai_component)
+        slime = object.object(self, 6, 6, "slime", constant.SLIME,
+                              creature=creaturetest1, ai=ai_component)
         self.camera = gamemap.Camera(constant.MAP_WIDTH, constant.MAP_HEIGHT)
 
         self.all_sprites = pygame.sprite.OrderedUpdates(
-            self.slime, self.player)
+            slime, self.player)
         constant.game_objects = self.all_sprites
 
         self.camera = gamemap.Camera(constant.MAP_WIDTH, constant.MAP_HEIGHT)
 
+        slime = object.object(self, 2, 2, "enemy", constant.SLIME,
+                              creature=creaturetest1, ai=ai_component)
+
+        self.all_sprites = pygame.sprite.OrderedUpdates(self.player, slime)
+        self.player_group = pygame.sprite.GroupSingle()
+        self.player_group.add(self.player)
+        self.enemies = pygame.sprite.Group()
+        self.enemies.add(slime)
         self.run()
 
     def update(self):
@@ -91,11 +100,10 @@ class Game:
                     self.all_sprites.update(0, 1, self)
                 if event.key == pygame.K_x:
                     self.all_sprites.update(0, 0, self)
-                print("player at, player " +
-                      str(self.player.x), str(self.player.y))
+                print("player at " + str(self.player.x), str(self.player.y))
                 print("player_rect at " + str(self.player.rect))
-                print("slime at " + str(self.slime.x), str(self.slime.y))
-                print("slime_rect at " + str(self.slime.rect))
+                print("slime at " + str(slime.x), str(slime.y))
+                print("slime_rect at " + str(slime.rect))
                 print()
         return "no-action"
 
@@ -115,8 +123,6 @@ class Game:
         self.walls.draw(self.surface)
         self.floors.draw(self.surface)
         self.draw_grid()
-        # could change this so instead of constant map, pass map into method
-        constant.com_map = self.map_tiles
 
        # self.all_sprites.draw(self.surface)
         for sprite in self.all_sprites:

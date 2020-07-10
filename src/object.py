@@ -44,8 +44,9 @@ class object(pygame.sprite.Sprite):
         image (arg, string): Path to image of entity
     """
 
-    def __init__(self, x, y, object_id, image, creature=None, ai=None):
+    def __init__(self, game, x, y, object_id, image, creature=None, ai=None):
         pygame.sprite.Sprite.__init__(self)
+        self.game = game
         self.image, self.rect = loadImage(image, -1)
         self.object_id = object_id
         self.x = x
@@ -60,22 +61,11 @@ class object(pygame.sprite.Sprite):
         if ai:
             ai.owner = self
 
-    # def draw_object(self, surface):
-    #     """
-    #     Draws entity image to surface at entity's position
-
-    #     Draws entity on coord taking into account the size of the sprites
-
-    #     Arg:
-    #         surface (arg, pygame.surface): surface to draw image on
-    #     """
-    #     surface.blit(self.image, (self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE))
-
 
     def update(self, dx, dy, game):
         if self.object_id == "player":
             self.creature.move(dx, dy, game)
-        elif self.ai:
+        if self.ai:
             self.ai.takeTurn(game)
 
 
