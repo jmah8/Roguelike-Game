@@ -1,6 +1,7 @@
 import random
 import constant
 import gamemap
+import pygame
 
 class creature:
     """
@@ -32,7 +33,7 @@ class creature:
         if self.hp <= 0 and self.death_function:
             self.death_function(self.owner)
 
-    def move(self, dx, dy, map):
+    def move(self, dx, dy, game):
         """
         Moves entity's position if tile is walkable else do nothing
 
@@ -43,17 +44,27 @@ class creature:
             dy (arg, int): int to change entity's y coord
             map (arg, array[array]): map when entity is
         """
-        target = gamemap.check_map_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
-
-        is_walkable_tile = map[self.owner.x + dx][self.owner.y + dy].walkable == True
-
-        if  is_walkable_tile and target is None:
-            self.owner.x += dx
-            self.owner.y += dy
+        self.owner.x += dx
+        self.owner.y += dy
+        self.owner.rect = self.owner.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
+        if pygame.sprite.spritecollideany(self.owner, game.walls):
+            self.owner.x -= dx
+            self.owner.y -= dy
             self.owner.rect = self.owner.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
 
-        if target:
-            self.attack(target, 1)
+
+
+        # target = gamemap.check_map_for_creature(self.owner.x + dx, self.owner.y + dy, self.owner)
+
+        # is_walkable_tile = map[self.owner.x + dx][self.owner.y + dy].walkable == True
+
+        # if  is_walkable_tile and target is None:
+        #     self.owner.x += dx
+        #     self.owner.y += dy
+        #     self.owner.rect = self.owner.rect.move(dx*constant.SPRITE_SIZE, dy*constant.SPRITE_SIZE)
+
+        # if target:
+        #     self.attack(target, 1)
 
 
     def attack(self, target, damage):
@@ -93,9 +104,9 @@ class ai_test:
     def __init__(self):
         self.owner = None
 
-    def takeTurn(self):
+    def takeTurn(self, game):
         self.owner.creature.move(random.choice([0, 1, -1]),
-                        random.choice([0, 1, -1]), constant.com_map)
+                        random.choice([0, 1, -1]), game)
 
 # class item:
 # class container:

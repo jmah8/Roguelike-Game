@@ -72,11 +72,11 @@ class object(pygame.sprite.Sprite):
     #     surface.blit(self.image, (self.x*constant.SPRITE_SIZE, self.y*constant.SPRITE_SIZE))
 
 
-    def update(self, dx, dy, map):
+    def update(self, dx, dy, game):
         if self.object_id == "player":
-            self.creature.move(dx, dy, map)
+            self.creature.move(dx, dy, game)
         elif self.ai:
-            self.ai.takeTurn()
+            self.ai.takeTurn(game)
 
 
 

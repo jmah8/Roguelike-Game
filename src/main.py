@@ -73,23 +73,23 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    self.all_sprites.update(-1, 0, self.map_tiles)
+                    self.all_sprites.update(-1, 0, self)
                 if event.key == pygame.K_d:
-                    self.all_sprites.update(1, 0, self.map_tiles)
+                    self.all_sprites.update(1, 0, self)
                 if event.key == pygame.K_w:
-                    self.all_sprites.update(0, -1, self.map_tiles)
+                    self.all_sprites.update(0, -1, self)
                 if event.key == pygame.K_q:
-                    self.all_sprites.update(-1, -1, self.map_tiles)
+                    self.all_sprites.update(-1, -1, self)
                 if event.key == pygame.K_e:
-                    self.all_sprites.update(1, -1, self.map_tiles)
+                    self.all_sprites.update(1, -1, self)
                 if event.key == pygame.K_z:
-                    self.all_sprites.update(-1, 1, self.map_tiles)
+                    self.all_sprites.update(-1, 1, self)
                 if event.key == pygame.K_c:
-                    self.all_sprites.update(1, 1, self.map_tiles)
+                    self.all_sprites.update(1, 1, self)
                 if event.key == pygame.K_s:
-                    self.all_sprites.update(0, 1, self.map_tiles)
+                    self.all_sprites.update(0, 1, self)
                 if event.key == pygame.K_x:
-                    self.all_sprites.update(0, 0, self.map_tiles)
+                    self.all_sprites.update(0, 0, self)
                 print("player at, player " + str(player.x), str(player.y))
                 print("player_rect at " + str(player.rect))
                 print("slime at " + str(slime.x), str(slime.y))
