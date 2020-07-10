@@ -1,7 +1,7 @@
 import os
 import pygame
 import gamemap
-import constant
+from constant import *
 import object
 import components
 
@@ -13,8 +13,8 @@ class Game:
         """
         pygame.init()
 
-        self.surface = pygame.display.set_mode(constant.RESOLUTION)
-        pygame.display.set_caption('My Pygame')
+        self.surface = pygame.display.set_mode(RESOLUTION)
+        self.clock = pygame.time.Clock()
         pygame.key.set_repeat(500, 50)
         self.running = True
 
@@ -37,12 +37,12 @@ class Game:
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-            12, 11, "player", constant.CHARACTER, creature=creaturetest)
+            2, 6, "player", CHARACTER, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 2, 2, "enemy", constant.SLIME,
+        slime = object.object(self, 2, 2, "enemy", SLIME,
                             creature=creaturetest1, ai=ai_component)
 
         self.all_sprites.add(self.player)
@@ -60,6 +60,7 @@ class Game:
         """
         self.playing = True
         while self.playing:
+            self.clock.tick(FPS)
             self.events()
             self.camera.update(self.player)
             self.draw()
@@ -107,11 +108,11 @@ class Game:
 
     
     def draw_grid(self):
-        for x in range(0, constant.MAP_WIDTH, constant.SPRITE_SIZE):
-            pygame.draw.line(self.surface, constant.GREY, (x, 0), (x, constant.MAP_HEIGHT))
+        for x in range(0, MAP_WIDTH, SPRITE_SIZE):
+            pygame.draw.line(self.surface, GREY, (x, 0), (x, MAP_HEIGHT))
 
-        for y in range(0, constant.MAP_HEIGHT, constant.SPRITE_SIZE):
-            pygame.draw.line(self.surface, constant.GREY, (0, y), (constant.MAP_WIDTH, y))
+        for y in range(0, MAP_HEIGHT, SPRITE_SIZE):
+            pygame.draw.line(self.surface, GREY, (0, y), (MAP_WIDTH, y))
         
 
 
@@ -119,7 +120,7 @@ class Game:
         """
         Draws maps and entities
         """
-
+        pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
         self.draw_grid()

@@ -10,6 +10,9 @@ TOPLEFT = (0, 0)
 # Colours
 GREY = (128, 128, 128)
 
+# Enemy Attributes
+SLIME_FOV = 1
+
 # Image path
 CHARACTER = '16x16/heroes/knight/knight_idle_anim_f0.png'
 SLIME = 'mobs/slime_idle_anim_f0.png'
@@ -24,3 +27,6 @@ FLOOR_7 = '16x16/tiles/floor/floor_side4.png'
 FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
 
 WALL_1 = '16x16/tiles/wall/wall_1.png'
+
+
+FPS = 60
