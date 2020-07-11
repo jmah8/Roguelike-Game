@@ -22,7 +22,7 @@ class tile(pygame.sprite.Sprite):
         self.y = y
         self.rect.x = x * SPRITE_SIZE
         self.rect.y = y * SPRITE_SIZE
-        self.game.all_sprites.add(self)
+        self.game.all_tile.add(self)
         self.seen = False
 
 class wall(tile):
@@ -147,7 +147,7 @@ class Camera:
 
 
 def new_fov(game):
-    new_fov = [[x for x in range (0, game.map_tiles.tilewidth)] for y in range (game.map_tiles.tileheight)]
+    new_fov = [[0 for x in range (0, game.map_tiles.tilewidth)] for y in range (game.map_tiles.tileheight)]
     return new_fov
 
 
@@ -170,6 +170,8 @@ def ray_casting(game, map_array, fov):
 
             if isinstance(game.map_array[int(round(y))][int(round(x))], wall):
                 break
+    
+    fov[game.player.y][game.player.x] = 1
 
 
 def draw_seen(game, map_array, fov):
@@ -186,7 +188,20 @@ def draw_seen(game, map_array, fov):
                 tile.seen = True
             else:
                 tile = map_array[y][x]
-                # if (not tile.seen):
-                tile.image = game.game_sprites.unseen_tile
-                # else:
-                #     tile.image.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
+                if (not tile.seen):
+                    tile.image = game.game_sprites.unseen_tile
+                else:
+                    tile.image.fill((5, 5, 5), special_flags=pygame.BLEND_RGB_MAX)
+
+
+def check_if_in_fov(game, obj):
+    """
+    Checks to see if sprite is in player FOV
+
+    Arg:
+        sprite (arg, sprite): sprite to check
+    """
+    x = obj.x
+    y = obj.y
+    if (game.fov[y][x] == 1):
+        return True

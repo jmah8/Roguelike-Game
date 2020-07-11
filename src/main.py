@@ -26,13 +26,18 @@ class Game:
         """
         global slime
 
+        # Group with all walls
         self.walls = pygame.sprite.Group()
         # self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
-        self.all_sprites = pygame.sprite.OrderedUpdates()
+        # Group with all tiles
+        self.all_tile = pygame.sprite.Group()
+        # Group with all creatures
+        self.all_creature = pygame.sprite.OrderedUpdates()
 
+        # Load in all sprites
         self.game_sprites = sprite.GameSprites()
-
+    
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
         self.map_array = gamemap.draw_map(self.map_tiles.data, self)
@@ -50,10 +55,12 @@ class Game:
         # NOTE: Adding player last makes monster ai acts first (more correct)
         # but adding player first means no more monster moves, 
         # then player moves resulting in ranged attack
-        self.all_sprites.add(self.player)
-        self.all_sprites.add(slime)
+        self.all_creature.add(self.player)
+        self.all_creature.add(slime)
+
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
+
         self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
         self.run()
@@ -82,23 +89,23 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    self.all_sprites.update(-1, 0)
+                    self.all_creature.update(-1, 0)
                 if event.key == pygame.K_d:
-                    self.all_sprites.update(1, 0)
+                    self.all_creature.update(1, 0)
                 if event.key == pygame.K_w:
-                    self.all_sprites.update(0, -1)
+                    self.all_creature.update(0, -1)
                 if event.key == pygame.K_q:
-                    self.all_sprites.update(-1, -1)
+                    self.all_creature.update(-1, -1)
                 if event.key == pygame.K_e:
-                    self.all_sprites.update(1, -1)
+                    self.all_creature.update(1, -1)
                 if event.key == pygame.K_z:
-                    self.all_sprites.update(-1, 1)
+                    self.all_creature.update(-1, 1)
                 if event.key == pygame.K_c:
-                    self.all_sprites.update(1, 1)
+                    self.all_creature.update(1, 1)
                 if event.key == pygame.K_s:
-                    self.all_sprites.update(0, 1)
+                    self.all_creature.update(0, 1)
                 if event.key == pygame.K_x:
-                    self.all_sprites.update(0, 0)
+                    self.all_creature.update(0, 0)
 
                 print(self.camera.camera.topleft)
                 print("player at " + str(self.player.x), str(self.player.y))
@@ -108,11 +115,16 @@ class Game:
                 print()
 
     def draw_grid(self):
+        """
+        Draws grid
+        """
         for x in range(0, CAMERA_WIDTH, SPRITE_SIZE):
             pygame.draw.line(self.surface, GREY, (x, 0), (x, CAMERA_HEIGHT))
 
         for y in range(0, CAMERA_HEIGHT, SPRITE_SIZE):
             pygame.draw.line(self.surface, GREY, (0, y), (CAMERA_WIDTH, y))
+
+
 
     def draw(self):
         """
@@ -121,13 +133,17 @@ class Game:
         self.fov = gamemap.new_fov(self)
         gamemap.ray_casting(self, self.map_array, self.fov)
         gamemap.draw_seen(self, self.map_array, self.fov)
-        for sprite in self.all_sprites:
-            self.surface.blit(sprite.image, self.camera.apply(sprite))
+        for tile in self.all_tile:
+            self.surface.blit(tile.image, self.camera.apply(tile))
+        for obj in self.all_creature:
+            if gamemap.check_if_in_fov(self, obj):
+                self.surface.blit(obj.image, self.camera.apply(obj))
         self.draw_grid()
 
         self.draw_debug()
 
         pygame.display.flip()
+
 
     def draw_debug(self):
         self.draw_text(self.surface, (15, CAMERA_HEIGHT-50), WHITE, "FPS: " + str(int(self.clock.get_fps())), BLACK)

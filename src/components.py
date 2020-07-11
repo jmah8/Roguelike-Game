@@ -106,7 +106,7 @@ def death(obj):
     Creature death. Remove creature from groups and stop drawing it
     """
     print (obj.creature.name_instance + " is dead")
-    obj.game.all_sprites.remove(obj)
+    obj.game.all_creature.remove(obj)
     obj.game.enemies.remove(obj)
 
 
