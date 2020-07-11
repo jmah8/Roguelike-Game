@@ -24,6 +24,9 @@ SLIME_FOV = 3
 PLAYER = '16x16/heroes/knight/knight_idle_anim_f0.png'
 SLIME = 'mobs/slime_idle_anim_f0.png'
 
+SPIKE = '16x16/tiles/floor/spikes_anim_f0.png'
+SPIKE_1 = '16x16/tiles/floor/spikes_anim_f6.png'
+
 FLOOR_1 = '16x16/tiles/floor/floor_1.png'
 FLOOR_2 = '16x16/tiles/floor/floor_2.png'
 FLOOR_3 = '16x16/tiles/floor/floor_3.png'

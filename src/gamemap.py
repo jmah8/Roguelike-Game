@@ -161,16 +161,19 @@ def ray_casting(game, map_array, fov):
             if x < 0 or y < 0 or x > MAP_WIDTH or y > MAP_HEIGHT:
                 break
                 
-            fov[int(round(x))][int(round(y))] = 1
+            fov[int(round(y))][int(round(x))] = 1
 
-            if isinstance(game.map_array[int(round(x))][int(round(y))], wall):
+            if isinstance(game.map_array[int(round(y))][int(round(x))], wall):
                 break
 
 
 def draw_shadow(game, map_array, fov):
-    for x in range(0, TILE_HEIGHT):
-        for y in range(0, TILE_WIDTH):
-            if fov[x][y] == 1:
-                map_array[x][y].image = loadImage(FLOOR_2)
+    for y in range(0, len(game.map_array)):
+        for x in range(0, len(game.map_array[0])):
+            if fov[y][x] == 1:
+                if isinstance(map_array[y][x], floor):
+                    map_array[y][x].image = game.game_sprites.spike
+                else:
+                    map_array[y][x].image = game.game_sprites.wall_image
             else:
-                map_array[x][y].image = loadImage(FLOOR_3)
+                map_array[y][x].image = game.game_sprites.spike1

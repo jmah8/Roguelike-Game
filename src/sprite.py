@@ -36,5 +36,7 @@ class GameSprites():
         self.floor_image = loadImage(FLOOR_1)
         self.player_image = loadImage(PLAYER)
         self.slime_image = loadImage(SLIME)
+        self.spike = loadImage(SPIKE)
+        self.spike1 = loadImage(SPIKE_1)
 
     

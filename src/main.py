@@ -38,15 +38,17 @@ class Game:
         self.map_array, self.fov = gamemap.draw_map(self.map_tiles.data, self)
 
 
+        print(len(self.map_array))
+        print(len(self.map_array[0]))
 
-
-
+        print(len(self.fov))
+        print(len(self.fov[0]))
 
 
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-            2, 6, "player", self.game_sprites.player_image, creature=creaturetest)
+            6, 6, "player", self.game_sprites.player_image, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
