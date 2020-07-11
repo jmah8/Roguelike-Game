@@ -154,7 +154,7 @@ def ray_casting(game, map_array, fov):
         x = game.player.x
         y = game.player.y
 
-        for b in range(RAD):
+        for b in range(PLAYER_FOV):
             x += ax
             y += ay
 
@@ -171,11 +171,11 @@ def draw_seen(game, map_array, fov):
     for y in range(0, game.map_tiles.tileheight):
         for x in range(0, game.map_tiles.tilewidth):
             if (x, y) == (game.player.x, game.player.y):
-                map_array[y][x].image = game.game_sprites.seen_floor
+                map_array[y][x].image = game.game_sprites.floor_image
             elif fov[y][x] == 1:
                 if isinstance(map_array[y][x], floor):
-                    map_array[y][x].image = game.game_sprites.seen_floor
+                    map_array[y][x].image = game.game_sprites.floor_image
                 else:
                     map_array[y][x].image = game.game_sprites.wall_image
             else:
-                map_array[y][x].image = game.game_sprites.unseen_floor
+                map_array[y][x].image = game.game_sprites.unseen_tile
