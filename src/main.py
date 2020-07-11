@@ -128,22 +128,31 @@ class Game:
         pygame.display.flip()
 
     def draw_debug(self):
-        self.draw_text(self.surface, (15, MAP_HEIGHT-50), WHITE, "FPS: " + str(int(self.clock.get_fps())))
+        self.draw_text(self.surface, (15, MAP_HEIGHT-50), WHITE, "FPS: " + str(int(self.clock.get_fps())), BLACK)
 
-    def draw_text(self, display_surface, coord, text_color, text):
+    def draw_text(self, display_surface, coord, text_color, text, text_bg_color = None):
         """
         displays text at coord on given surface
         """
-        text_surface, text_rect = self.text_to_objects(text, text_color)
+        text_surface, text_rect = self.text_to_objects(text, text_color, text_bg_color)
         
         text_rect.topleft = coord
 
         display_surface.blit(text_surface, text_rect)
 
-    def text_to_objects(self, inc_text, inc_color):
-        text_surface = FONT_DEBUG_MESSAGE.render(inc_text, False, inc_color)
+    def text_to_objects(self, inc_text, inc_color, inc_bg_color):
+        if inc_bg_color:
+            text_surface = FONT_DEBUG_MESSAGE.render(inc_text, False, inc_color, inc_bg_color)
+        else: 
+            text_surface = FONT_DEBUG_MESSAGE.render(inc_text, False, inc_color,)
         return text_surface, text_surface.get_rect()
 
+    # def text_height():
+    #     font_object = font.render('a', False, (0,0,0))
+    #     font_rect = font_object.get_rect()
+    #     return font_rect.height
+
+    
 
 g = Game()
 while g.running:
