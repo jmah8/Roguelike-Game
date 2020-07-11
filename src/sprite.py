@@ -25,3 +25,16 @@ def loadImage(name, colorkey=None):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey, pygame.RLEACCEL)
     return image
+
+
+class GameSprites():
+    """
+    Class that holds all the sprite images
+    """
+    def __init__(self):
+        self.wall_image = loadImage(WALL_1)
+        self.floor_image = loadImage(FLOOR_1)
+        self.player_image = loadImage(PLAYER)
+        self.slime_image = loadImage(SLIME)
+
+    

@@ -11,8 +11,6 @@ class tile(pygame.sprite.Sprite):
     Class for the tiles of map
 
     Attributes: 
-        walkable (arg, bool) : True if tile is walkable by objects, false
-        otherwise
         x (arg, int): x position of tile
         y (arg, int): y position of tile
         game (arg, game): game with object data
@@ -28,19 +26,31 @@ class tile(pygame.sprite.Sprite):
 
 class wall(tile):
     def __init__(self, game, x, y):
-        self.image = loadImage(WALL_1)
+        self.image = game.game_sprites.wall_image
         self.rect = self.image.get_rect()
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
 
 class floor(tile):
     def __init__(self, game, x, y):
-        self.image = loadImage(FLOOR_1)
+        self.image = game.game_sprites.floor_image
         self.rect = self.image.get_rect()
         tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
 
 class TileMap:
+    """
+    Load map data for filename.txt
+
+    Arg:
+        filename (arg, string): name of file to read from 
+
+    Attribute:
+        tilewidth (int): # of tiles wide
+        tileheight (int): # of tiles tall
+        width (int): actual width of map
+        height (int): actual height of map
+    """
     def __init__(self, filename):
         map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
         self.data = []
@@ -56,6 +66,9 @@ class TileMap:
         
 
 def load_data():
+    """
+    Load data from map.txt and returns TileMap instance
+    """
     map_data = TileMap('map.txt')
     return map_data
 
@@ -82,15 +95,39 @@ def draw_map(map_to_draw, game):
             
 
 class Camera:
+    """
+    Camera that "follows" player around
+
+    Camera is actually the whole map that gets offset whenever
+    player moves and it offsets everything else relative to
+    the camera's offset
+
+    Arg:
+        width (arg, int): width of whole map
+        height (arg, int): height of whole map
+        camera (rect): rect of whole map
+    """
     def __init__(self, width, height):
         self.camera = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
 
     def apply(self, entity):
+        """
+        Apply camera offset to entity 
+
+        Arg:
+            entity (arg, object): object to apply offset to
+        """
         return entity.rect.move(self.camera.topleft)
     
     def update(self, player):
+        """
+        Update the camera based on player position
+
+        Arg:
+            player (arg, object): player to follow
+        """
         x = -player.rect.x + int(MAP_WIDTH / 2)
         y = -player.rect.y + int(MAP_HEIGHT / 2)
 

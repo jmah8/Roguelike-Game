@@ -11,10 +11,12 @@ TOPLEFT = (0, 0)
 GREY = (128, 128, 128)
 
 # Enemy Attributes
-SLIME_FOV = 2
+# FOV should be 1 bigger than actual FOV since player acts first
+# and so player can move out of enemy FOV before enemy acts
+SLIME_FOV = 3
 
 # Image path
-CHARACTER = '16x16/heroes/knight/knight_idle_anim_f0.png'
+PLAYER = '16x16/heroes/knight/knight_idle_anim_f0.png'
 SLIME = 'mobs/slime_idle_anim_f0.png'
 
 FLOOR_1 = '16x16/tiles/floor/floor_1.png'

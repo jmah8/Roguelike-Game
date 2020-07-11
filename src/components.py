@@ -62,7 +62,7 @@ class creature:
 
         if if_player:
             creature_hit = pygame.sprite.spritecollideany(self.owner, self.owner.game.enemies)
-            if  creature_hit:
+            if creature_hit:
                 self.reverse_move(dx, dy)
                 self.attack(creature_hit, 1)
         
@@ -70,7 +70,7 @@ class creature:
 
         if if_enemy:
             creature_hit = pygame.sprite.spritecollideany(self.owner, self.owner.game.player_group)
-            if  creature_hit:
+            if creature_hit:
                 self.reverse_move(dx, dy)
                 self.attack(creature_hit, 1)
     
@@ -123,7 +123,8 @@ class ai_test:
 
     def takeTurn(self):
         """
-        Make creature move towards the player
+        Make creature move towards the player if in creature FOV,
+        else wander
         """
         diff_x = self.owner.x - self.owner.game.player.x
         diff_y = self.owner.y - self.owner.game.player.y

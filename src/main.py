@@ -4,6 +4,7 @@ import gamemap
 from constant import *
 import object
 import components
+import sprite
 
 
 class Game:
@@ -21,7 +22,7 @@ class Game:
 
     def new(self):
         """
-        Makes new map and entity
+        Makes new map and entity and adds them to the relevant groups
         """
         global slime
 
@@ -30,6 +31,8 @@ class Game:
         self.map_tiles = gamemap.load_data()
         self.all_sprites = pygame.sprite.OrderedUpdates()
 
+        self.game_sprites = sprite.GameSprites()
+
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
 
@@ -37,17 +40,19 @@ class Game:
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-            2, 6, "player", CHARACTER, creature=creaturetest)
+            2, 6, "player", self.game_sprites.player_image, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 2, 2, "enemy", SLIME,
+        slime = object.object(self, 2, 2, "enemy", self.game_sprites.slime_image,
                             creature=creaturetest1, ai=ai_component)
 
-        # NOTE: Always add player last so monster ai acts first
-        self.all_sprites.add(slime)
+        # NOTE: Adding player last makes monster ai acts first (more correct)
+        # but adding player first means no more monster moves, 
+        # then player moves resulting in ranged attack
         self.all_sprites.add(self.player)
+        self.all_sprites.add(slime)
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
         self.enemies = pygame.sprite.Group()
