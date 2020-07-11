@@ -28,13 +28,17 @@ class tile(pygame.sprite.Sprite):
 class wall(tile):
     def __init__(self, game, x, y):
         self.image = game.game_sprites.wall_image
-        self.rect = self.image.get_rect()
+        self.image_explored = self.image.copy()
+        self.image_explored.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
+        self.rect = self.image.get_rect()   
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
 
 class floor(tile):
     def __init__(self, game, x, y):
         self.image = game.game_sprites.floor_image
+        self.image_explored = self.image.copy()
+        self.image_explored.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
         self.rect = self.image.get_rect()
         tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
@@ -191,7 +195,10 @@ def draw_seen(game, map_array, fov):
                 if (not tile.seen):
                     tile.image = game.game_sprites.unseen_tile
                 else:
-                    tile.image.fill((5, 5, 5), special_flags=pygame.BLEND_RGB_MAX)
+                    tile.image = tile.image_explored
+                    # image = tile.image.copy()
+                    # image.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
+                    # tile.image = image
 
 
 def check_if_in_fov(game, obj):
