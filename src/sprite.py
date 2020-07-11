@@ -36,5 +36,7 @@ class GameSprites():
         self.floor_image = loadImage(FLOOR_1)
         self.player_image = loadImage(PLAYER)
         self.slime_image = loadImage(SLIME)
-
+        # self.floor_image.fill(GREY, special_flags=pygame.BLEND_RGB_MULT)
+        self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
+        self.unseen_tile.fill(BLACK)
     

@@ -84,12 +84,20 @@ def draw_map(map_to_draw, game):
         map_to_draw (arg, array): map to draw as background
         game (arg, game): game with data
     """
+    map_array = []
+    fov = []
     for row, tiles in enumerate(map_to_draw):
+        map_array_row = []
+        fov_row = []
         for col, tile in enumerate(tiles):
             if tile == '1':
-                wall(game, col, row)
+                map_array_row.append(wall(game, col, row))
             if tile == '.':
-                floor(game, col, row)
+                map_array_row.append(floor(game, col, row))
+            fov_row.append(0)
+        map_array.append(map_array_row)
+        fov.append(fov_row)
+    return map_array, fov 
   
 
 class Camera:
@@ -134,3 +142,40 @@ class Camera:
         x = max(-(self.width - MAP_WIDTH), x)
         y = max(-(self.height - MAP_HEIGHT), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)
+
+
+
+
+def ray_casting(game, map_array, fov):
+    for a in range(0, RAYS + 1, STEP):
+        ax = sintable[a]
+        ay = costable[a]
+
+        x = game.player.x
+        y = game.player.y
+
+        for b in range(PLAYER_FOV):
+            x += ax
+            y += ay
+
+            if x < 0 or y < 0 or x > MAP_WIDTH or y > MAP_HEIGHT:
+                break
+                
+            fov[int(round(y))][int(round(x))] = 1
+
+            if isinstance(game.map_array[int(round(y))][int(round(x))], wall):
+                break
+
+
+def draw_seen(game, map_array, fov):
+    for y in range(0, game.map_tiles.tileheight):
+        for x in range(0, game.map_tiles.tilewidth):
+            if (x, y) == (game.player.x, game.player.y):
+                map_array[y][x].image = game.game_sprites.floor_image
+            elif fov[y][x] == 1:
+                if isinstance(map_array[y][x], floor):
+                    map_array[y][x].image = game.game_sprites.floor_image
+                else:
+                    map_array[y][x].image = game.game_sprites.wall_image
+            else:
+                map_array[y][x].image = game.game_sprites.unseen_tile
