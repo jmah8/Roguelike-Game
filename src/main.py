@@ -13,7 +13,7 @@ class Game:
         Initializes pygame
         """
         pygame.init()
-
+        pygame.display.set_caption("Knight's Adventure")
         self.surface = pygame.display.set_mode(RESOLUTION)
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(500, 50)
@@ -35,7 +35,14 @@ class Game:
 
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
-        gamemap.draw_map(self.map_tiles.data, self)
+        self.map_array, self.fov = gamemap.draw_map(self.map_tiles.data, self)
+
+
+
+
+
+
+
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
@@ -118,7 +125,8 @@ class Game:
         """
         Draws maps and entities
         """
-        pygame.display.set_caption("Knight's Adventure")
+        gamemap.ray_casting(self, self.map_array, self.fov)
+        gamemap.draw_shadow(self, self.map_array, self.fov)
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
         self.draw_grid()
