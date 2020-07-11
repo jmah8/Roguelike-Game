@@ -37,15 +37,6 @@ class Game:
 
         self.map_array, self.fov = gamemap.draw_map(self.map_tiles.data, self)
 
-
-        print(len(self.map_array))
-        print(len(self.map_array[0]))
-
-        print(len(self.fov))
-        print(len(self.fov[0]))
-
-
-
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
             6, 6, "player", self.game_sprites.player_image, creature=creaturetest)
@@ -128,7 +119,7 @@ class Game:
         Draws maps and entities
         """
         gamemap.ray_casting(self, self.map_array, self.fov)
-        gamemap.draw_shadow(self, self.map_array, self.fov)
+        gamemap.draw_seen(self, self.map_array, self.fov)
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
         self.draw_grid()

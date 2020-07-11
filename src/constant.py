@@ -13,8 +13,8 @@ TOPLEFT = (0, 0)
 # Colours
 GREY = (128, 128, 128)
 RED = (255, 0, 0)
-BLACK = (255,255,255)
-WHITE = (0,0,0)
+WHITE = (255,255,255)
+BLACK = (0,0,0)
 # Enemy Attributes
 # FOV should be 1 bigger than actual FOV since player acts first
 # and so player can move out of enemy FOV before enemy acts
@@ -47,7 +47,7 @@ FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
 # RayCasting
 RAYS = 360
 STEP = 3
-RAD = 2
+RAD = 4
 
 sintable = [
     0.00000, 0.01745, 0.03490, 0.05234, 0.06976, 0.08716, 0.10453,
