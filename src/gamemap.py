@@ -23,6 +23,7 @@ class tile(pygame.sprite.Sprite):
         self.rect.x = x * SPRITE_SIZE
         self.rect.y = y * SPRITE_SIZE
         self.game.all_sprites.add(self)
+        self.seen = False
 
 class wall(tile):
     def __init__(self, game, x, y):
@@ -85,19 +86,19 @@ def draw_map(map_to_draw, game):
         game (arg, game): game with data
     """
     map_array = []
-    fov = []
+    # fov = []
     for row, tiles in enumerate(map_to_draw):
         map_array_row = []
-        fov_row = []
+        # fov_row = []
         for col, tile in enumerate(tiles):
             if tile == '1':
                 map_array_row.append(wall(game, col, row))
             if tile == '.':
                 map_array_row.append(floor(game, col, row))
-            fov_row.append(0)
+            # fov_row.append(0)
         map_array.append(map_array_row)
-        fov.append(fov_row)
-    return map_array, fov 
+        # fov.append(fov_row)
+    return map_array 
   
 
 class Camera:
@@ -134,16 +135,20 @@ class Camera:
         Arg:
             player (arg, object): player to follow
         """
-        x = -player.rect.x + int(MAP_WIDTH / 2)
-        y = -player.rect.y + int(MAP_HEIGHT / 2)
+        x = -player.rect.x + int(CAMERA_WIDTH / 2)
+        y = -player.rect.y + int(CAMERA_HEIGHT / 2)
 
         x = min(0, x)
         y = min(0, y)
-        x = max(-(self.width - MAP_WIDTH), x)
-        y = max(-(self.height - MAP_HEIGHT), y)
+        x = max(-(self.width - CAMERA_WIDTH), x)
+        y = max(-(self.height - CAMERA_HEIGHT), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)
 
 
+
+def new_fov(game):
+    new_fov = [[x for x in range (0, game.map_tiles.tilewidth)] for y in range (game.map_tiles.tileheight)]
+    return new_fov
 
 
 def ray_casting(game, map_array, fov):
@@ -173,9 +178,15 @@ def draw_seen(game, map_array, fov):
             if (x, y) == (game.player.x, game.player.y):
                 map_array[y][x].image = game.game_sprites.floor_image
             elif fov[y][x] == 1:
+                tile = map_array[y][x]
                 if isinstance(map_array[y][x], floor):
-                    map_array[y][x].image = game.game_sprites.floor_image
+                    tile.image = game.game_sprites.floor_image
                 else:
-                    map_array[y][x].image = game.game_sprites.wall_image
+                    tile.image = game.game_sprites.wall_image
+                tile.seen = True
             else:
-                map_array[y][x].image = game.game_sprites.unseen_tile
+                tile = map_array[y][x]
+                # if (not tile.seen):
+                tile.image = game.game_sprites.unseen_tile
+                # else:
+                #     tile.image.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)

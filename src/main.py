@@ -35,7 +35,7 @@ class Game:
 
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
-        self.map_array, self.fov = gamemap.draw_map(self.map_tiles.data, self)
+        self.map_array = gamemap.draw_map(self.map_tiles.data, self)
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
@@ -108,16 +108,17 @@ class Game:
                 print()
 
     def draw_grid(self):
-        for x in range(0, MAP_WIDTH, SPRITE_SIZE):
-            pygame.draw.line(self.surface, GREY, (x, 0), (x, MAP_HEIGHT))
+        for x in range(0, CAMERA_WIDTH, SPRITE_SIZE):
+            pygame.draw.line(self.surface, GREY, (x, 0), (x, CAMERA_HEIGHT))
 
-        for y in range(0, MAP_HEIGHT, SPRITE_SIZE):
-            pygame.draw.line(self.surface, GREY, (0, y), (MAP_WIDTH, y))
+        for y in range(0, CAMERA_HEIGHT, SPRITE_SIZE):
+            pygame.draw.line(self.surface, GREY, (0, y), (CAMERA_WIDTH, y))
 
     def draw(self):
         """
         Draws maps and entities
         """
+        self.fov = gamemap.new_fov(self)
         gamemap.ray_casting(self, self.map_array, self.fov)
         gamemap.draw_seen(self, self.map_array, self.fov)
         for sprite in self.all_sprites:
@@ -129,7 +130,7 @@ class Game:
         pygame.display.flip()
 
     def draw_debug(self):
-        self.draw_text(self.surface, (15, MAP_HEIGHT-50), WHITE, "FPS: " + str(int(self.clock.get_fps())), BLACK)
+        self.draw_text(self.surface, (15, CAMERA_HEIGHT-50), WHITE, "FPS: " + str(int(self.clock.get_fps())), BLACK)
 
     def draw_text(self, display_surface, coord, text_color, text, text_bg_color = None):
         """
