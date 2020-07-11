@@ -110,7 +110,6 @@ class Game:
                 print("slime at " + str(slime.x), str(slime.y))
                 print("slime_rect at " + str(slime.rect))
                 print()
-        return "no-action"
 
     
     def draw_grid(self):
