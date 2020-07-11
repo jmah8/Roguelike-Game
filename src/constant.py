@@ -1,3 +1,6 @@
+import pygame
+pygame.font.init()
+
 # Display constants
 TILE_WIDTH = 16
 TILE_HEIGHT = 12
@@ -9,7 +12,9 @@ TOPLEFT = (0, 0)
 
 # Colours
 GREY = (128, 128, 128)
-
+RED = (255, 0, 0)
+BLACK = (255,255,255)
+WHITE = (0,0,0)
 # Enemy Attributes
 SLIME_FOV = 2
 
@@ -28,5 +33,7 @@ FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
 
 WALL_1 = '16x16/tiles/wall/wall_1.png'
 
-
 FPS = 60
+
+#FONTS
+FONT_DEBUG_MESSAGE = pygame.font.Font('Pygame/resource/fonts/FFF_Tusj.ttf', 28)
