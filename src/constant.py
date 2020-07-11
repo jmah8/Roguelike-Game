@@ -38,4 +38,4 @@ WALL_1 = '16x16/tiles/wall/wall_1.png'
 FPS = 60
 
 #FONTS
-FONT_DEBUG_MESSAGE = pygame.font.Font('Pygame/resource/fonts/FFF_Tusj.ttf', 28)
+FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
