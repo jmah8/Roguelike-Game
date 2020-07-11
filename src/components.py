@@ -128,28 +128,28 @@ class ai_test:
         diff_x = self.owner.x - self.owner.game.player.x
         diff_y = self.owner.y - self.owner.game.player.y
 
-        # if (abs(diff_x) <= SLIME_FOV or abs(diff_y) <= SLIME_FOV):
-        move_x = 0
-        move_y = 0
-        if (diff_x > 0):
-            move_x = -1
-        elif (diff_x < 0):
-            move_x = 1
+        if (abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV):
+            print("Random")
+            self.owner.creature.move(random.choice([0, 1, -1]), random.choice([0, 1, -1]))
         else:
+            print("Chasing")
             move_x = 0
-        
-        if (diff_y > 0):
-            move_y = -1
-        elif (diff_y < 0):
-            move_y = 1
-        else:
             move_y = 0
+            if (diff_x > 0):
+                move_x = -1
+            elif (diff_x < 0):
+                move_x = 1
+            else:
+                move_x = 0
+            
+            if (diff_y > 0):
+                move_y = -1
+            elif (diff_y < 0):
+                move_y = 1
+            else:
+                move_y = 0
 
-        self.owner.creature.move(move_x, move_y)
-
-        # else:
-        #     self.owner.creature.move(random.choice([0, 1, -1]),
-        #                 random.choice([0, 1, -1]))
+            self.owner.creature.move(move_x, move_y)
 
 
 # class item:

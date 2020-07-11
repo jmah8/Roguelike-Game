@@ -11,7 +11,7 @@ TOPLEFT = (0, 0)
 GREY = (128, 128, 128)
 
 # Enemy Attributes
-SLIME_FOV = 1
+SLIME_FOV = 2
 
 # Image path
 CHARACTER = '16x16/heroes/knight/knight_idle_anim_f0.png'

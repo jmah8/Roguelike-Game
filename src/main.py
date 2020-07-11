@@ -28,7 +28,7 @@ class Game:
         self.walls = pygame.sprite.Group()
         # self.floors = pygame.sprite.Group()
         self.map_tiles = gamemap.load_data()
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = pygame.sprite.OrderedUpdates()
 
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
@@ -45,8 +45,9 @@ class Game:
         slime = object.object(self, 2, 2, "enemy", SLIME,
                             creature=creaturetest1, ai=ai_component)
 
-        self.all_sprites.add(self.player)
+        # NOTE: Always add player last so monster ai acts first
         self.all_sprites.add(slime)
+        self.all_sprites.add(self.player)
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
         self.enemies = pygame.sprite.Group()

@@ -2,6 +2,7 @@ import pygame
 from constant import *
 import object
 import os
+from sprite import *
 
 pygame.init()
 
@@ -27,13 +28,15 @@ class tile(pygame.sprite.Sprite):
 
 class wall(tile):
     def __init__(self, game, x, y):
-        self.image, self.rect = object.loadImage(WALL_1)
+        self.image = loadImage(WALL_1)
+        self.rect = self.image.get_rect()
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
 
 class floor(tile):
     def __init__(self, game, x, y):
-        self.image, self.rect = object.loadImage(FLOOR_1)
+        self.image = loadImage(FLOOR_1)
+        self.rect = self.image.get_rect()
         tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
 
