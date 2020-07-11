@@ -35,7 +35,6 @@ class Game:
 
         self.camera = gamemap.Camera(self.map_tiles.width, self.map_tiles.height)
 
-
         gamemap.draw_map(self.map_tiles.data, self)
 
         creaturetest = components.creature("Viet", 10)
@@ -59,7 +58,6 @@ class Game:
         self.enemies.add(slime)
         self.run()
 
-
     def run(self):
         """
         Main game loop which takes in process player input updates screen    
@@ -70,8 +68,6 @@ class Game:
             self.events()
             self.camera.update(self.player)
             self.draw()
-
-
 
     def events(self):
         """
@@ -111,26 +107,42 @@ class Game:
                 print("slime_rect at " + str(slime.rect))
                 print()
 
-    
     def draw_grid(self):
         for x in range(0, MAP_WIDTH, SPRITE_SIZE):
             pygame.draw.line(self.surface, GREY, (x, 0), (x, MAP_HEIGHT))
 
         for y in range(0, MAP_HEIGHT, SPRITE_SIZE):
             pygame.draw.line(self.surface, GREY, (0, y), (MAP_WIDTH, y))
-        
-
 
     def draw(self):
         """
         Draws maps and entities
         """
-        pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
+        pygame.display.set_caption("Knight's Adventure")
         for sprite in self.all_sprites:
             self.surface.blit(sprite.image, self.camera.apply(sprite))
         self.draw_grid()
 
+        self.draw_debug()
+
         pygame.display.flip()
+
+    def draw_debug(self):
+        self.draw_text(self.surface, (15, MAP_HEIGHT-50), WHITE, "FPS: " + str(int(self.clock.get_fps())))
+
+    def draw_text(self, display_surface, coord, text_color, text):
+        """
+        displays text at coord on given surface
+        """
+        text_surface, text_rect = self.text_to_objects(text, text_color)
+        
+        text_rect.topleft = coord
+
+        display_surface.blit(text_surface, text_rect)
+
+    def text_to_objects(self, inc_text, inc_color):
+        text_surface = FONT_DEBUG_MESSAGE.render(inc_text, False, inc_color)
+        return text_surface, text_surface.get_rect()
 
 
 g = Game()
@@ -139,4 +151,3 @@ while g.running:
     g.run()
 
 pygame.quit()
-

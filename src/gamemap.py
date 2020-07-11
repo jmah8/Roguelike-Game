@@ -90,9 +90,7 @@ def draw_map(map_to_draw, game):
                 wall(game, col, row)
             if tile == '.':
                 floor(game, col, row)
-
-
-            
+  
 
 class Camera:
     """
