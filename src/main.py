@@ -133,8 +133,12 @@ class Game:
         self.fov = gamemap.new_fov(self)
         gamemap.ray_casting(self, self.map_array, self.fov)
         gamemap.draw_seen(self, self.map_array, self.fov)
+
+        # Draws all tiles
         for tile in self.all_tile:
             self.surface.blit(tile.image, self.camera.apply(tile))
+
+        # Draws creature if it is in player fov
         for obj in self.all_creature:
             if gamemap.check_if_in_fov(self, obj):
                 self.surface.blit(obj.image, self.camera.apply(obj))

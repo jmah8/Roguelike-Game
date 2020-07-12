@@ -26,6 +26,19 @@ def loadImage(name, colorkey=None):
         image.set_colorkey(colorkey, pygame.RLEACCEL)
     return image
 
+def seen_sprite(image):
+    """
+    Converts an image, to a seen image
+
+    Arg:
+        image (arg, sprite): image to convert to seen image
+    """
+    seen_image = image.copy()
+    seen_image = image.copy()
+    seen_image.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
+    return seen_image
+
+
 
 class GameSprites():
     """

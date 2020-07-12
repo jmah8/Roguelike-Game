@@ -196,9 +196,6 @@ def draw_seen(game, map_array, fov):
                     tile.image = game.game_sprites.unseen_tile
                 else:
                     tile.image = tile.image_explored
-                    # image = tile.image.copy()
-                    # image.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
-                    # tile.image = image
 
 
 def check_if_in_fov(game, obj):

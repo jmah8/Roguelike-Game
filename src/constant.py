@@ -47,7 +47,7 @@ FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
 # RayCasting
 RAYS = 360
 STEP = 3
-PLAYER_FOV = 4
+PLAYER_FOV = 3
 
 sintable = [
     0.00000, 0.01745, 0.03490, 0.05234, 0.06976, 0.08716, 0.10453,
