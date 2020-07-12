@@ -47,10 +47,8 @@ class object(pygame.sprite.Sprite):
     def update_anim(self):
         if (self.anim):
             clock = self.game.clock.get_fps()
-            # print(clock)
 
             if clock > 0.0:
-                # print("Increase flicker")
                 self.flicker_timer += 1 / clock
             
             if self.flicker_timer >= self.flicker_speed:
@@ -61,13 +59,8 @@ class object(pygame.sprite.Sprite):
 
                 else:
                     self.anim_frame += 1
-                    # print("Increase animation frame")
 
             self.image = self.anim[self.anim_frame]
-            # print("changed image to " + str(self.anim_frame))
-
-
-
 
 
     def update(self, dx, dy):

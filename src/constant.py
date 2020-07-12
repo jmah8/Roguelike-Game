@@ -25,9 +25,10 @@ SLIME_FOV = 3
 
 # Image path
 KNIGHT = 'knight/knight_idle_anim_f0.png'
-KNIGHT_RUN_R = 'knight/knight_run_anim_f0.png'
+KNIGHT_RUN = 'knight/knight_run_anim_f0.png'
+
 SLIME = 'slime/slime_idle_anim_f0.png'
-SLIME_RUN_R = 'slime/slime_run_anim_f0.png'
+SLIME_RUN = 'slime/slime_run_anim_f0.png'
 
 SPIKE = '16x16/tiles/floor/spikes_anim_f0.png'
 SPIKE_1 = '16x16/tiles/floor/spikes_anim_f6.png'

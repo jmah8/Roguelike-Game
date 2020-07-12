@@ -60,22 +60,46 @@ def seen_sprite(image):
     return seen_image
 
 
+def flip_anim(anim_array):
+    """
+    Flips animation image to face the other way
+    """
+    flip_anim = []
+    for i in anim_array:
+        flip_anim.append(pygame.transform.flip(i, True, False))
+
+
+
 
 class GameSprites():
     """
     Class that holds all the sprite images
     """
     def __init__(self):
+        #  Environment
         self.wall_image = loadImage(WALL_1)
         self.floor_image = loadImage(FLOOR_1)
-        self.player_image = loadImage(KNIGHT)
-        self.slime_image = loadImage(SLIME)
         self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.unseen_tile.fill(BLACK)
         self.seen_wall_image = seen_sprite(self.wall_image)
         self.seen_floor_image = seen_sprite(self.floor_image)
-        self.knight_anim = load_anim(KNIGHT, 0, 5)
+
+        # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)
-        self.knight_run_r_anim = load_anim(KNIGHT_RUN_R, 0, 5)
-        # self.slime_l_run = 
+        self.slime_run_anim = load_anim(SLIME_RUN, 0 , 5)
+        self.slime_dict = {
+            "idle_right" : self.slime_anim,
+            "idle_left" : flip_anim(self.slime_anim),
+            "run_right" : self.slime_run_anim,
+            "run_left" : flip_anim(self.slime_run_anim)
+        }
+
+        self.knight_anim = load_anim(KNIGHT, 0, 5)
+        self.knight_run_anim = load_anim(KNIGHT_RUN, 0, 5)
+        self.knight_dict = {
+            "idle_right" : self.knight_anim,
+            "idle_left" : flip_anim(self.knight_anim),
+            "run_right" : self.knight_run_anim,
+            "run_left" : flip_anim(self.knight_run_anim)
+        }
     
