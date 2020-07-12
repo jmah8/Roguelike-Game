@@ -10,11 +10,14 @@ CAMERA_HEIGHT = TILE_HEIGHT * SPRITE_SIZE
 RESOLUTION = (CAMERA_WIDTH, CAMERA_HEIGHT)
 TOPLEFT = (0, 0)
 
+
 # Colours
 GREY = (128, 128, 128)
 RED = (255, 0, 0)
-WHITE = (255,255,255)
-BLACK = (0,0,0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
 # Enemy Attributes
 # FOV should be 1 bigger than actual FOV since player acts first
 # and so player can move out of enemy FOV before enemy acts
@@ -40,9 +43,13 @@ WALL_1 = '16x16/tiles/wall/wall_1.png'
 
 FPS = 60
 
-#FONTS
+# FONTS
 FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
+FONT_MESSAGE_TEXT = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
+TEXT_SPACE_BUFFER = 5
 
+# MESSAGE DEFAULTS
+NUM_MESSAGES = 4
 
 # RayCasting
 RAYS = 360
@@ -100,7 +107,7 @@ sintable = [
     -0.15643, -0.13917, -0.12187, -0.10453, -0.08716, -0.06976, -0.05234,
     -0.03490, -0.01745, -0.00000
 ]
- 
+
 costable = [
     1.00000, 0.99985, 0.99939, 0.99863, 0.99756, 0.99619, 0.99452,
     0.99255, 0.99027, 0.98769, 0.98481, 0.98163, 0.97815, 0.97437, 0.97030,
@@ -121,7 +128,7 @@ costable = [
     -0.54464, -0.55919, -0.57358, -0.58779, -0.60182, -0.61566, -0.62932,
     -0.64279, -0.65606, -0.66913, -0.68200, -0.69466, -0.70711, -0.71934,
     -0.73135, -0.74314, -0.75471, -0.76604, -0.77715, -0.78801, -0.79864,
-    -0.80902, -0.81915, -0.82904, -0.83867, -0.84805, -0.85717, -0.86603, 
+    -0.80902, -0.81915, -0.82904, -0.83867, -0.84805, -0.85717, -0.86603,
     -0.87462, -0.88295, -0.89101, -0.89879, -0.90631, -0.91355, -0.92050,
     -0.92718, -0.93358, -0.93969, -0.94552, -0.95106, -0.95630, -0.96126,
     -0.96593, -0.97030, -0.97437, -0.97815, -0.98163, -0.98481, -0.98769,

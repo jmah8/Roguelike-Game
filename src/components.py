@@ -27,8 +27,8 @@ class creature:
         Creature takes damage to hp and if hp is <= 0, it dies
         """
         self.hp -= damage
-        print (self.name_instance + " took " + str(damage) + " damage")
-        print (self.name_instance + "'s hp is at :" + str(self.hp))
+        self.owner.game.print_game_message (self.name_instance + " took " + str(damage) + " damage", RED)
+        self.owner.game.print_game_message (self.name_instance + "'s hp is at :" + str(self.hp), WHITE)
 
         if self.hp <= 0 and self.death_function:
             self.death_function(self.owner)
@@ -96,8 +96,8 @@ class creature:
             target (arg, object): object to attack
             damage (arg, int): damage to do to object
         """
-        print(self.name_instance + " attacks " + target.creature.name_instance 
-        + " for " + str(damage)  + " damage")
+        self.owner.game.print_game_message(self.name_instance + " attacks " + target.creature.name_instance 
+        + " for " + str(damage)  + " damage", WHITE)
         target.creature.take_damage(damage)
 
 
@@ -105,7 +105,7 @@ def death(obj):
     """
     Creature death. Remove creature from groups and stop drawing it
     """
-    print (obj.creature.name_instance + " is dead")
+    self.owner.game.print_game_message (obj.creature.name_instance + " is dead", BLUE )
     obj.game.all_creature.remove(obj)
     obj.game.enemies.remove(obj)
 
@@ -130,10 +130,10 @@ class ai_test:
         diff_y = self.owner.y - self.owner.game.player.y
 
         if (abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV):
-            print("Random")
+            ("Random")
             self.owner.creature.move(random.choice([0, 1, -1]), random.choice([0, 1, -1]))
         else:
-            print("Chasing")
+            # self.owner.game.print_game_message("Chasing", WHITE)
             move_x = 0
             move_y = 0
             if (diff_x > 0):
