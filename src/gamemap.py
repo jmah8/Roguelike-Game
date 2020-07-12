@@ -28,8 +28,7 @@ class tile(pygame.sprite.Sprite):
 class wall(tile):
     def __init__(self, game, x, y):
         self.image = game.game_sprites.wall_image
-        self.image_explored = self.image.copy()
-        self.image_explored.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
+        self.image_explored = game.game_sprites.seen_wall_image
         self.rect = self.image.get_rect()   
         tile.__init__(self, game, x, y)
         self.game.walls.add(self)
@@ -37,8 +36,7 @@ class wall(tile):
 class floor(tile):
     def __init__(self, game, x, y):
         self.image = game.game_sprites.floor_image
-        self.image_explored = self.image.copy()
-        self.image_explored.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)
+        self.image_explored = game.game_sprites.seen_floor_image
         self.rect = self.image.get_rect()
         tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
@@ -163,7 +161,7 @@ def ray_casting(game, map_array, fov):
         x = game.player.x
         y = game.player.y
 
-        for b in range(PLAYER_FOV):
+        for b in range(KNIGHT_FOV):
             x += ax
             y += ay
 

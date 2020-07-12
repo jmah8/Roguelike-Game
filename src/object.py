@@ -3,11 +3,7 @@ import pygame
 from constant import *
 from sprite import *
 
-
-
 pygame.init()
-
-
 
 class object(pygame.sprite.Sprite):
     """
@@ -24,13 +20,17 @@ class object(pygame.sprite.Sprite):
         ai (arg, ai): Ai object has
     """
 
-    def __init__(self, game, x, y, object_id, image, creature=None, ai=None, container = None):
+    def __init__(self, game, x, y, object_id, anim, creature=None, ai=None, container = None):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
-        self.image = image
+        self.anim = anim
+        self.image = anim[0]
         self.rect = self.image.get_rect()
         self.l_image = pygame.transform.flip(self.image, True, False)
         self.r_image = self.image
+        self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
+        self.flicker_timer = 0.0
+        self.anim_frame = 0
         self.object_id = object_id
         self.x = x
         self.y = y 
@@ -44,10 +44,32 @@ class object(pygame.sprite.Sprite):
         if ai:
             ai.owner = self
 
-        self.container = container
-        if container: 
-            container.owner = self
+    def update_anim(self):
+        if (self.anim):
+            clock = self.game.clock.get_fps()
+            # print(clock)
+
+            if clock > 0.0:
+                # print("Increase flicker")
+                self.flicker_timer += 1 / clock
             
+            if self.flicker_timer >= self.flicker_speed:
+                self.flicker_timer = 0.0
+
+                if self.anim_frame >= len(self.anim) - 1:
+                    self.anim_frame = 0
+
+                else:
+                    self.anim_frame += 1
+                    # print("Increase animation frame")
+
+            self.image = self.anim[self.anim_frame]
+            # print("changed image to " + str(self.anim_frame))
+
+
+
+
+
     def update(self, dx, dy):
         """
         Updates the object depending on its ai or player input
