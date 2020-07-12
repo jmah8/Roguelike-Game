@@ -24,7 +24,7 @@ class object(pygame.sprite.Sprite):
         ai (arg, ai): Ai object has
     """
 
-    def __init__(self, game, x, y, object_id, image, creature=None, ai=None):
+    def __init__(self, game, x, y, object_id, image, creature=None, ai=None, container = None):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.image = image
@@ -44,7 +44,10 @@ class object(pygame.sprite.Sprite):
         if ai:
             ai.owner = self
 
-
+        self.container = container
+        if container: 
+            container.owner = self
+            
     def update(self, dx, dy):
         """
         Updates the object depending on its ai or player input

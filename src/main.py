@@ -49,11 +49,12 @@ class Game:
         self.player = object.object(self,
                                     6, 6, "player", self.game_sprites.player_image, creature=creaturetest)
 
-        creaturetest1 = components.creature("Slime", 99, components.death)
+        creaturetest1 = components.creature("Slime", 3, True)
 
         ai_component = components.ai_test()
         slime = object.object(self, 2, 2, "enemy", self.game_sprites.slime_image,
                               creature=creaturetest1, ai=ai_component)
+                              
 
         # NOTE: Adding player last makes monster ai acts first (more correct)
         # but adding player first means no more monster moves,
