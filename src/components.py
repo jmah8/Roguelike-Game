@@ -57,9 +57,11 @@ class creature:
         if (dx > 0):
             self.owner.right = True
             self.owner.left = False
+            self.owner.moving = True
         elif (dx < 0):
             self.owner.right = False
             self.owner.left = True
+            self.owner.moving = True
         self.owner.x += dx
         self.owner.y += dy
         self.owner.rect.topleft = (

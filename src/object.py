@@ -38,6 +38,7 @@ class object(pygame.sprite.Sprite):
 
         self.left = False
         self.right = True
+        self.moving = False
 
         # Refactor this to a new class later
         self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
@@ -65,13 +66,25 @@ class object(pygame.sprite.Sprite):
 
                 if self.anim_frame >= len(self.anim) - 1:
                     self.anim_frame = 0
+                    self.moving = False
 
                 else:
                     self.anim_frame += 1
+                    self.moving = False
+
             if self.right:
-                self.image = self.anim["idle_right"][self.anim_frame]
+                if self.moving:
+                    self.image = self.anim["run_right"][self.anim_frame]
+                else:
+                    self.image = self.anim["idle_right"][self.anim_frame]
             else:
-                self.image = self.anim["idle_left"][self.anim_frame]
+                if self.moving:
+                    self.image = self.anim["run_left"][self.anim_frame]
+                else:
+                    self.image = self.anim["idle_left"][self.anim_frame]
+
+            # self.moving = False
+                
 
 
     def update(self, dx, dy):

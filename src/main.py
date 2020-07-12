@@ -18,7 +18,7 @@ class Game:
         pygame.display.set_caption("Knight's Adventure")
         self.surface = pygame.display.set_mode(RESOLUTION)
         self.clock = pygame.time.Clock()
-        pygame.key.set_repeat(500, 50)
+        pygame.key.set_repeat(350, 75)
         self.running = True
         self.GAME_MESSAGES = []
 
