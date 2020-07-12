@@ -20,22 +20,31 @@ class object(pygame.sprite.Sprite):
         ai (arg, ai): Ai object has
     """
 
-    def __init__(self, game, x, y, object_id, anim, creature=None, ai=None, container = None):
+    def __init__(self, game, x, y, object_id, image=None, anim=None, creature=None, ai=None, container = None):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
-        self.anim = anim
-        self.image = anim[0]
-        self.rect = self.image.get_rect()
-        self.l_image = pygame.transform.flip(self.image, True, False)
-        self.r_image = self.image
-        self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
-        self.flicker_timer = 0.0
-        self.anim_frame = 0
-        self.object_id = object_id
         self.x = x
         self.y = y 
+        self.object_id = object_id
+        self.anim = anim
+        self.image = image
+        if self.image:
+            self.image = image
+        else:
+            self.image = anim['idle_right'][0]
+
+        self.rect = self.image.get_rect()
         self.rect.topleft = (self.x*SPRITE_SIZE, self.y*SPRITE_SIZE)
-        
+
+        self.left = False
+        self.right = True
+
+        # Refactor this to a new class later
+        self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
+        self.flicker_timer = 0.0
+        self.anim_frame = 0     
+
+
         self.creature = creature
         if creature:
             creature.owner = self
@@ -59,8 +68,10 @@ class object(pygame.sprite.Sprite):
 
                 else:
                     self.anim_frame += 1
-
-            self.image = self.anim[self.anim_frame]
+            if self.right:
+                self.image = self.anim["idle_right"][self.anim_frame]
+            else:
+                self.image = self.anim["idle_left"][self.anim_frame]
 
 
     def update(self, dx, dy):

@@ -67,6 +67,7 @@ def flip_anim(anim_array):
     flip_anim = []
     for i in anim_array:
         flip_anim.append(pygame.transform.flip(i, True, False))
+    return flip_anim
 
 
 

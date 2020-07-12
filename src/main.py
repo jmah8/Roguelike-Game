@@ -47,12 +47,12 @@ class Game:
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-                                    6, 6, "player", anim=self.game_sprites.knight_anim, creature=creaturetest)
+                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, True)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_anim,
+        slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creaturetest1, ai=ai_component)
                               
 

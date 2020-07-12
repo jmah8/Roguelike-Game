@@ -55,9 +55,11 @@ class creature:
             dy (arg, int): int to change entity's y coord
         """
         if (dx > 0):
-            self.owner.image = self.owner.r_image
+            self.owner.right = True
+            self.owner.left = False
         elif (dx < 0):
-            self.owner.image = self.owner.l_image
+            self.owner.right = False
+            self.owner.left = True
         self.owner.x += dx
         self.owner.y += dy
         self.owner.rect.topleft = (
