@@ -47,12 +47,12 @@ class Game:
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
-                                    6, 6, "player", self.game_sprites.player_image, creature=creaturetest)
+                                    6, 6, "player", anim=self.game_sprites.knight_anim, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 99, components.death)
 
         ai_component = components.ai_test()
-        slime = object.object(self, 2, 2, "enemy", self.game_sprites.slime_image,
+        slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_anim,
                               creature=creaturetest1, ai=ai_component)
 
         # NOTE: Adding player last makes monster ai acts first (more correct)
@@ -141,7 +141,8 @@ class Game:
 
         # Draws creature if it is in player fov
         for obj in self.all_creature:
-            if gamemap.check_if_in_fov(self, obj):
+            if gamemap.check_if_in_fov(self, obj):  
+                obj.update_anim()            
                 self.surface.blit(obj.image, self.camera.apply(obj))
         self.draw_grid()
 

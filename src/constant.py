@@ -24,8 +24,10 @@ BLUE = (0, 0, 255)
 SLIME_FOV = 3
 
 # Image path
-PLAYER = '16x16/heroes/knight/knight_idle_anim_f0.png'
-SLIME = 'mobs/slime_idle_anim_f0.png'
+KNIGHT = 'knight/knight_idle_anim_f0.png'
+KNIGHT_RUN_R = 'knight/knight_run_anim_f0.png'
+SLIME = 'slime/slime_idle_anim_f0.png'
+SLIME_RUN_R = 'slime/slime_run_anim_f0.png'
 
 SPIKE = '16x16/tiles/floor/spikes_anim_f0.png'
 SPIKE_1 = '16x16/tiles/floor/spikes_anim_f6.png'
@@ -51,10 +53,14 @@ TEXT_SPACE_BUFFER = 5
 # MESSAGE DEFAULTS
 NUM_MESSAGES = 4
 
-# RayCasting
+# ANIMATIONS
+ANIMATION_SPEED = 0.75
+
+
+# RAYCASTING
 RAYS = 360
 STEP = 3
-PLAYER_FOV = 3
+KNIGHT_FOV = 3
 
 sintable = [
     0.00000, 0.01745, 0.03490, 0.05234, 0.06976, 0.08716, 0.10453,
