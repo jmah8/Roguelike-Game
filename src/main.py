@@ -16,7 +16,7 @@ class Game:
         """
         pygame.init()
         pygame.display.set_caption("Knight's Adventure")
-        self.surface = pygame.display.set_mode(RESOLUTION)
+        self.surface = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(350, 75)
         self.running = True
@@ -91,6 +91,25 @@ class Game:
                     self.playing = False
                 self.running = False
 
+            if event.type == pygame.VIDEORESIZE:
+                # print(self.camera_width)
+                # print(self.camera_height)
+                new_width = event.w
+                new_height = event.h
+                # Remove if statements if left and top should be empty
+                # else right and bottom is empty
+                if (new_width > self.map_tiles.width):
+                    self.camera.camera_width = self.map_tiles.width
+                else:
+                    self.camera.camera_width = event.w
+                
+                if (new_height > self.map_tiles.height):
+                    self.camera.camera_height = self.map_tiles.height
+                else:
+                    self.camera.camera_height = event.h
+                # This line is only used in pygame 1
+                self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height), pygame.RESIZABLE)
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
                     self.all_creature.update(-1, 0)
@@ -111,6 +130,7 @@ class Game:
                 if event.key == pygame.K_x:
                     self.all_creature.update(0, 0)
 
+
                 # print(self.camera.camera.topleft)
                 # print("player at " + str(self.player.x), str(self.player.y))
                 # print("player_rect at " + str(self.player.rect))
@@ -122,11 +142,11 @@ class Game:
         """
         Draws grid
         """
-        for x in range(0, CAMERA_WIDTH, SPRITE_SIZE):
-            pygame.draw.line(self.surface, GREY, (x, 0), (x, CAMERA_HEIGHT))
+        for x in range(0, self.camera.camera_width, SPRITE_SIZE):
+            pygame.draw.line(self.surface, GREY, (x, 0), (x, self.camera.camera_height))
 
-        for y in range(0, CAMERA_HEIGHT, SPRITE_SIZE):
-            pygame.draw.line(self.surface, GREY, (0, y), (CAMERA_WIDTH, y))
+        for y in range(0, self.camera.camera_height, SPRITE_SIZE):
+            pygame.draw.line(self.surface, GREY, (0, y), (self.camera.camera_width, y))
 
     def draw(self):
         """
@@ -152,7 +172,7 @@ class Game:
         pygame.display.flip()
 
     def draw_debug(self):
-        self.draw_text(self.surface, (CAMERA_WIDTH-125, 15), WHITE,
+        self.draw_text(self.surface, (self.camera.camera_width-125, 15), WHITE,
                        "FPS: " + str(int(self.clock.get_fps())), BLACK)
 
     def draw_text(self, display_surface, coord, text_color, text, text_bg_color=None):
@@ -192,7 +212,7 @@ class Game:
             to_draw = self.GAME_MESSAGES[-NUM_MESSAGES:]
 
         text_height = self.text_height_helper(FONT_MESSAGE_TEXT)
-        y_pos = CAMERA_HEIGHT - (NUM_MESSAGES*text_height) - TEXT_SPACE_BUFFER
+        y_pos = self.camera.camera_height - (NUM_MESSAGES*text_height) - TEXT_SPACE_BUFFER
         i = 0
         for message, color in to_draw:
             self.draw_text(self.surface, (TEXT_SPACE_BUFFER,

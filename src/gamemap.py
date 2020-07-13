@@ -116,10 +116,12 @@ class Camera:
         height (arg, int): height of whole map
         camera (rect): rect of whole map
     """
-    def __init__(self, width, height):
+    def __init__(self, width, height, camera_width=CAMERA_WIDTH, camera_height=CAMERA_HEIGHT):
         self.camera = pygame.Rect(0, 0, width, height)
         self.width = width
         self.height = height
+        self.camera_width = camera_width
+        self.camera_height = camera_height
 
     def apply(self, entity):
         """
@@ -137,13 +139,13 @@ class Camera:
         Arg:
             player (arg, object): player to follow
         """
-        x = -player.rect.x + int(CAMERA_WIDTH / 2)
-        y = -player.rect.y + int(CAMERA_HEIGHT / 2)
+        x = -player.rect.x + int(self.camera_width / 2)
+        y = -player.rect.y + int(self.camera_height / 2)
 
         x = min(0, x)
         y = min(0, y)
-        x = max(-(self.width - CAMERA_WIDTH), x)
-        y = max(-(self.height - CAMERA_HEIGHT), y)
+        x = max(-(self.width - self.camera_width), x)
+        y = max(-(self.height - self.camera_height), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)
 
 
