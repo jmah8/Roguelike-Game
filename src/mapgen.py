@@ -1,6 +1,11 @@
 import gamemap
 import random
 
+class Room:
+    def __init__(self, up_left, down_right):
+        self.up_left = up_left
+        self.down_right = down_right
+
 class Node:
     def __init__ (self, up_left, down_right, left_child=None, right_child=None):
         self.up_left = up_left
@@ -10,6 +15,7 @@ class Node:
         self.left_child = left_child
         self.right_child = right_child
         self.split_hor = None 
+        self.room_array = []
 
 class Tree:
     def __init__(self, map_array, room_width=10, room_height=10, dist_from_sister_node_min=2, dist_from_sister_node_max=3):
@@ -37,7 +43,7 @@ class Tree:
             self._split_horizontal(node)
         else:
             hor = random.randint(0, 1)
-            if (hor == 1):
+            if (hor == 0):
                 self._split_horizontal(node)
             else:
                 self._split_vertical(node)
@@ -75,11 +81,11 @@ class Tree:
     # TODO: decide if this should return a value or not
     def _make_room(self, node):
         if (node == None):
-            return
-        self._make_room(node.left_child)
-        self._make_room(node.right_child)
+            return None
+        left = self._make_room(node.left_child)
+        right = self._make_room(node.right_child)
         # TODO: add array of child rooms to node
-        if (node.left_child == None and node.right_child == None):
+        if (left == None and right == None):
             ul_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
             ul_y = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
             lr_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
@@ -99,10 +105,17 @@ class Tree:
             node.room_up_left = up_left
             node.room_down_right = down_right
 
-        for y in range(up_left[1], down_right[1]):
-            for x in range(up_left[0], down_right[0]):
+        for y in range(up_left[1], down_right[1] + 1):
+            for x in range(up_left[0], down_right[0] + 1):
                 self.map_array[y][x] = 0
  
+        node.room_array.append(left)
+        node.room_array.append(right)
+        node.room_array.append((node.room_up_left, node.room_down_right))
+        # room_array.append(node.room_up_left)
+        # room_array.append(node.room_down_right)
+
+        return node.room_array
 
 
     def build_path(self):
@@ -125,6 +138,7 @@ class Tree:
             right_up = node.right_child.room_up_left
             right_down = node.right_child.room_down_right
             if (node.split_hor):
+                # TODO: fix bug where path_max_x is for some reason getting larger of the two values
                 print("hor")
                 path_min_x = max(left_up[0], right_up[0])
                 path_max_x = min(left_down[0], right_down[0])
@@ -135,15 +149,15 @@ class Tree:
                     pass
                 path_x = random.randint(path_min_x, path_max_x)
                 print(path_x)
-                path_ul = (path_x, node.left_child.room_down_right[1])
-                path_lr = (path_x, node.right_child.room_up_left[1])
+                path_ul = (path_x, node.left_child.room_down_right[1] + 1)
+                path_lr = (path_x + 1, node.right_child.room_up_left[1])
                 print(path_ul)
                 print(path_lr)
                 print("")
 
                 for y in range(path_ul[1], path_lr[1]):
-                    for x in range(path_ul[0], path_lr[0] + 1):
-                        self.map_array[y][x] = 0
+                    for x in range(path_ul[0], path_lr[0]):
+                        self.map_array[y][x] = "."
             else:
                 print("ver")
                 path_min_y = max(left_up[1], right_up[1])
@@ -155,15 +169,15 @@ class Tree:
                     pass
                 path_y = random.randint(path_min_y, path_max_y)
                 print (path_y)  
-                path_ul = (node.left_child.room_down_right[0], path_y)
-                path_lr = (node.right_child.room_up_left[0], path_y)
+                path_ul = (node.left_child.room_down_right[0] + 1, path_y)
+                path_lr = (node.right_child.room_up_left[0], path_y + 1)
                 print(path_ul)
                 print(path_lr)
                 print("")
             
-                for y in range(path_ul[1], path_lr[1] + 1):
+                for y in range(path_ul[1], path_lr[1]):
                     for x in range(path_ul[0], path_lr[0]):
-                        self.map_array[y][x] = 0
+                        self.map_array[y][x] = "."
 
             self.print_map()
             print("")
@@ -194,7 +208,7 @@ class Tree:
 
 
 
-map_array = [[1 for x in range (0, 40)] for y in range (0, 40)]
+map_array = [["1" for x in range (0, 40)] for y in range (0, 40)]
 tree = Tree(map_array)
 tree.build_bsp()
 tree.make_room()
