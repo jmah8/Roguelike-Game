@@ -78,7 +78,7 @@ class Tree:
             return
         self._make_room(node.left_child)
         self._make_room(node.right_child)
-        # TODO: take into account room width and height, ie not the split room with carved out tiles 
+        # TODO: add array of child rooms to node
         if (node.left_child == None and node.right_child == None):
             ul_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
             ul_y = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
@@ -102,6 +102,7 @@ class Tree:
         for y in range(up_left[1], down_right[1]):
             for x in range(up_left[0], down_right[0]):
                 self.map_array[y][x] = 0
+ 
 
 
     def build_path(self):
@@ -130,7 +131,9 @@ class Tree:
                 print(path_min_x)
                 print(path_max_x)
                 # TODO: Case where left child's room is lower than right child's room
-                path_x = random.randint(path_min_x, path_min_x)
+                if (path_max_x < path_min_x):
+                    pass
+                path_x = random.randint(path_min_x, path_max_x)
                 print(path_x)
                 path_ul = (path_x, node.left_child.room_down_right[1])
                 path_lr = (path_x, node.right_child.room_up_left[1])
@@ -148,6 +151,8 @@ class Tree:
                 print(path_min_y)
                 print(path_max_y)
                 # TODO: Case where left child's room is lower than right child's room
+                if (path_max_y < path_min_y):
+                    pass
                 path_y = random.randint(path_min_y, path_max_y)
                 print (path_y)  
                 path_ul = (node.left_child.room_down_right[0], path_y)
@@ -161,6 +166,11 @@ class Tree:
                         self.map_array[y][x] = 0
 
             self.print_map()
+            print("")
+
+    
+    def find_closest_room(self, left_child, right_child):
+        pass
 
 
     def print_tree(self):
