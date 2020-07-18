@@ -238,8 +238,25 @@ class Tree:
             # If node was split horizontally
             if (node.split_hor):
                 # print("hor")
+
                 path_min_x = max(left_up[0], right_up[0])
+                # example:
+                # 111111
+                # 110001
+                # 111111
+                # 100011
+                # In this case path_min_x would be 2, since a path could only connect the 2 
+                # rows of 0s if its greater or equal to 2
+
                 path_max_x = min(left_down[0], right_down[0])
+                # example:
+                # 111111
+                # 110001
+                # 111111
+                # 100011
+                # In this case path_max_x would be 3, since a path could only connect the 2
+                # rows of 0s if its less or equal to 2
+                
                 # print(path_min_x)
                 # print(path_max_x)
 
@@ -266,8 +283,25 @@ class Tree:
             # If node was vertically split
             else:
                 # print("ver")
+
                 path_min_y = max(left_up[1], right_up[1])
+                # example:
+                # 101111
+                # 101101
+                # 101101
+                # 111101
+                # In this case path_min_y would be 1, since a path could only connect the 2
+                # rows of 0s if its greater or equal to 1
+
                 path_max_y = min(left_down[1], right_down[1])
+                # example:
+                # 101111
+                # 101101
+                # 101101
+                # 111101
+                # In this case path_max_y would be 2, since a path could only connect the 2
+                # rows of 0s if its less or equal to 2
+
                 # print(path_min_y)
                 # print(path_max_y)
 
@@ -305,21 +339,7 @@ class Tree:
         Arg:
             node (Node, arg): Current node to make path between 2 of it's children nodes
             path_min_x (int, arg): minimun x coordinate that the path must be
-                example:
-                111111
-                110001
-                111111
-                100011
-                In this case path_min_x would be 2, since a path could only connect the 2 
-                rows of 0s if its greater or equal to 2
             path_max_x (int, arg): maximum x coordinate that the path must be
-                example:
-                111111
-                110001
-                111111
-                100011
-                In this case path_max_x would be 3, since a path could only connect the 2
-                rows of 0s if its less or equal to 2
         """
         path_x = random.randint(path_min_x, path_max_x)
         # print(path_x)
@@ -331,7 +351,8 @@ class Tree:
 
         for y in range(path_ul[1], path_lr[1]):
             for x in range(path_ul[0], path_lr[0]):
-                self.map_array[y][x] = "."
+                # if (self.map_array[y][x] == '1'):
+                    self.map_array[y][x] = "."
 
 
     def _vert_straight_path(self, node, path_min_y, path_max_y):
@@ -341,21 +362,7 @@ class Tree:
         Arg:
             node (Node, arg): Current node to make path between 2 of it's children nodes
             path_min_y (int, arg): minimun y coordinate that the path must be
-                example:
-                101111
-                101101
-                101101
-                111101
-                In this case path_min_y would be 1, since a path could only connect the 2
-                rows of 0s if its greater or equal to 1
             path_max_y (int, arg): maximum y coordinate that the path must be
-                example:
-                101111
-                101101
-                101101
-                111101
-                In this case path_max_y would be 2, since a path could only connect the 2
-                rows of 0s if its less or equal to 2
         """
         path_y = random.randint(path_min_y, path_max_y)
         # print (path_y)  
@@ -367,7 +374,8 @@ class Tree:
     
         for y in range(path_ul[1], path_lr[1]):
             for x in range(path_ul[0], path_lr[0]):
-                self.map_array[y][x] = "."
+                # if (self.map_array[y][x] == '1'):
+                    self.map_array[y][x] = "."
 
 
     def _hor_zigzag_path(self, left_up, left_down, right_up, right_down):
@@ -391,13 +399,16 @@ class Tree:
         high = max(left_x, right_x)
 
         for y in range(right_up[1] - right_y, right_up[1]):
-            self.map_array[y][right_x] = '.'
+            if (self.map_array[y][right_x] == '1'):
+                self.map_array[y][right_x] = '.'
 
         for y in range(left_down[1] + 1, left_down[1] + left_y):
-            self.map_array[y][left_x] = '.'
+            if (self.map_array[y][left_x] == '1'):
+                self.map_array[y][left_x] = '.'
 
         for i in range (low, high + 1):
-            self.map_array[left_down[1] + left_y][i] = '.'
+            if (self.map_array[left_down[1] + left_y][i] == '1'):
+                self.map_array[left_down[1] + left_y][i] = '.'
 
 
     def _vert_zigzag_path(self, left_up, left_down, right_up, right_down):
@@ -426,13 +437,16 @@ class Tree:
         # print(path_lr)
 
         for x in range (left_down[0] + 1, left_down[0] + left_x):
-            self.map_array[left_y][x] = '.'
+            # if (self.map_array[left_y][x] == '1'):
+                self.map_array[left_y][x] = '.'
 
         for x in range (right_up[0] - right_x, right_up[0]):
-            self.map_array[right_y][x] = '.'
+            # if (self.map_array[right_y][x] == '1'):
+                self.map_array[right_y][x] = '.'
 
         for i in range (low, high + 1):
-            self.map_array[i][(left_down[0] + left_x)] = '.'
+            # if (self.map_array[i][(left_down[0] + left_x)] == '1'):
+                self.map_array[i][(left_down[0] + left_x)] = '.'
 
     
     def find_closest_room(self, coord, left_child, right_child):

@@ -27,17 +27,27 @@ class Tile(pygame.sprite.Sprite):
         self.seen = False
 
 class Wall(Tile):
-    def __init__(self, game, x, y):
-        self.image = game.game_sprites.wall_image
+    def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
         self.image_explored = game.game_sprites.seen_wall_image
+        self.image_unexplored = game.game_sprites.wall_image
+        self.image = self.image_unexplored
+        if (image_unexplored):
+            self.image_unexplored = image_unexplored
+        if (image_explored):
+            self.image_explored = image_explored
         self.rect = self.image.get_rect()   
         Tile.__init__(self, game, x, y)
         self.game.walls.add(self)
 
 class Floor(Tile):
-    def __init__(self, game, x, y):
-        self.image = game.game_sprites.floor_image_1
+    def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
         self.image_explored = game.game_sprites.seen_floor_image_1
+        self.image_unexplored = game.game_sprites.floor_image_1
+        self.image = self.image_unexplored
+        if (image_unexplored):
+            self.image_unexplored = image_unexplored
+        if (image_explored):
+            self.image_explored = image_explored
         self.rect = self.image.get_rect()
         Tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
@@ -125,6 +135,9 @@ class MapInfo:
 
 
 def gen_map(game):
+    """
+    Generates random map and prints resulting map into console. Also draws map to surface
+    """
     map_array = [["1" for x in range (0, MAP_WIDTH)] for y in range (0, MAP_HEIGHT)]
     tree = Tree(map_array)
     tree.build_bsp()
@@ -141,10 +154,10 @@ def draw_tiles(p_map_array, game):
         for row, tile in enumerate(tiles):
             if tile == '1':
                 map_array_row.append(Wall(game, row, col))
-            if tile == '0':
+            elif tile == '0':
                 map_array_row.append(Floor(game, row, col))
-            if tile == '.':
-                map_array_row.append(Floor(game, row, col))
+            elif tile == '.':
+                map_array_row.append(Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
     return map_array
 
@@ -227,14 +240,14 @@ def ray_casting(game, map_array, fov):
 def draw_seen(game, map_array, fov):
     for y in range(0, game.map_tiles.tileheight):
         for x in range(0, game.map_tiles.tilewidth):
+            tile = map_array[y][x]
             if (x, y) == (game.player.x, game.player.y):
-                map_array[y][x].image = game.game_sprites.floor_image_1
+                tile.image = tile.image_unexplored
             elif fov[y][x] == 1:
-                tile = map_array[y][x]
-                if isinstance(map_array[y][x], Floor):
-                    tile.image = game.game_sprites.floor_image_1
+                if isinstance(tile, Floor):
+                    tile.image = tile.image_unexplored
                 else:
-                    tile.image = game.game_sprites.wall_image
+                    tile.image = tile.image_unexplored
                 tile.seen = True
             else:
                 tile = map_array[y][x]

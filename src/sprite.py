@@ -80,10 +80,13 @@ class GameSprites():
         #  Environment
         self.wall_image = loadImage(WALL_1)
         self.floor_image_1 = loadImage(FLOOR_1)
+        self.floor_image_2 = loadImage(FLOOR_2)
+        self.spike = loadImage(SPIKE)
         self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.unseen_tile.fill(BLACK)
         self.seen_wall_image = seen_sprite(self.wall_image)
         self.seen_floor_image_1 = seen_sprite(self.floor_image_1)
+        self.seen_floor_image_2 = seen_sprite(self.floor_image_2)
 
         # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)
