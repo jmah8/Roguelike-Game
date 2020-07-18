@@ -31,7 +31,13 @@ class Game:
         # Group with all walls
         self.walls = pygame.sprite.Group()
         # self.floors = pygame.sprite.Group()
-        self.map_tiles = gamemap.load_data()
+
+
+        # Load map data
+        # This is for reading maps from text files
+        # self.map_tiles = gamemap.load_data()
+    
+
         # Group with all tiles
         self.all_tile = pygame.sprite.Group()
         # Group with all creatures
@@ -40,10 +46,16 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
+        # This is for generating random maps
+        self.map_array = gamemap.gen_map(self)
+        self.map_tiles = gamemap.MapInfo(self.map_array)
+        self.wall_hack = False
+
         self.camera = gamemap.Camera(
             self.map_tiles.width, self.map_tiles.height)
 
-        self.map_array = gamemap.draw_map(self.map_tiles.data, self)
+
+
 
         creaturetest = components.creature("Viet", 10)
         self.player = object.object(self,
@@ -129,6 +141,10 @@ class Game:
                     self.all_creature.update(0, 1)
                 if event.key == pygame.K_x:
                     self.all_creature.update(0, 0)
+                if event.key == pygame.K_ESCAPE:
+                    self.wall_hack = not self.wall_hack
+                    if (self.wall_hack):
+                        self.fov = [[1 for x in range (0, self.map_tiles.tilewidth)] for y in range (self.map_tiles.tileheight)]
 
 
                 # print(self.camera.camera.topleft)
@@ -152,7 +168,8 @@ class Game:
         """
         Draws maps and entities
         """
-        self.fov = gamemap.new_fov(self)
+        if (not self.wall_hack):
+            self.fov = gamemap.new_fov(self)
         gamemap.ray_casting(self, self.map_array, self.fov)
         gamemap.draw_seen(self, self.map_array, self.fov)
 

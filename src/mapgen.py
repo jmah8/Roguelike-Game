@@ -1,5 +1,6 @@
 import gamemap
 import random
+from constant import *
 
 class Room:
     """
@@ -50,7 +51,8 @@ class Tree:
         dist_from_sister_node_min (int, arg): min distance a room should be from it's sister room or edge
         dist_from_sister_node_max (int, arg): max distance a room should be from it's sister room or edge
     """
-    def __init__(self, map_array, sub_dungeon_width=10, sub_dungeon_height=10, dist_from_sister_node_min=2, dist_from_sister_node_max=3):
+    def __init__(self, map_array, sub_dungeon_width=SUB_DUNGEON_WIDTH, sub_dungeon_height=SUB_DUNGEON_HEIGHT,
+                 dist_from_sister_node_min=DIST_FROM_SISTER_NODE_MIN, dist_from_sister_node_max=DIST_FROM_SISTER_NODE_MAX):
         y_len = len(map_array)
         x_len = len(map_array[0])
         self.root = Node((0, 0), (x_len - 1, y_len - 1))
@@ -144,7 +146,7 @@ class Tree:
     # TODO: decide if this should return a value or not
     def _make_rooms(self, node):
         """
-        Recursively makes room in the left nodes and any parent node randomly chooses one of the child rooms
+        Recursively makes room in the leaf nodes and any parent node randomly chooses one of the child rooms
 
         Arg:
             node (Node, arg): node to make room in
@@ -184,8 +186,6 @@ class Tree:
  
 
         node.child_room_array.append(new_room)
-        # print(node.up_left + node.down_right, end='')
-        # print(node.child_room_array)
 
         return node.child_room_array
 
@@ -202,128 +202,208 @@ class Tree:
 
 
     def build_path(self):
+        """
+        Builds path to join sister nodes
+        """
         if (self.root != None):
             self._build_path(self.root)
         else:
             print("Root is None")
 
     def _build_path(self, node):
+        """
+        Recursively builds path to join sister nodes.
+
+        Do nothing on leaf nodes. Else join the 2 children node's room with a random single tile path.
+        Will cut through other rooms and paths. If there is no straight path from both rooms,
+        randomly make a zigzag path to connect the 2 rooms
+
+        Arg:
+            node (Node, arg): node to build path for
+        """
         if (node == None):
             return 
+
         left = self._build_path(node.left_child)
         right = self._build_path(node.right_child)
+
         if (node.left_child == None and node.right_child == None):
             return
+
         else:
-            # TODO: fix bug where min is large than max
             left_up = node.left_child.room.up_left
             left_down = node.left_child.room.down_right
             right_up = node.right_child.room.up_left
             right_down = node.right_child.room.down_right
+            # If node was split horizontally
             if (node.split_hor):
-                # TODO: fix bug where path_max_x is for some reason getting larger of the two values
-                print("hor")
+                # print("hor")
                 path_min_x = max(left_up[0], right_up[0])
                 path_max_x = min(left_down[0], right_down[0])
-                print(path_min_x)
-                print(path_max_x)
-                # TODO: Case where left child's room is more right than right child's room
+                # print(path_min_x)
+                # print(path_max_x)
+
+                # Case: where left child is lower than right child (ie no straight path to both rooms)
+                # 1111|1111
+                # 1111|1001
+                # 1111|1001
+                # 1111|1111
+                # 1000|1111
+                # 1000|1111
+                # 1111|1111
+                """
+                1 = wall
+                0 = floor
+                | = where the node was split (represents nothing on actual map)
+                """
                 if (path_max_x < path_min_x):
-                    left_x = random.randint(left_up[0], left_down[0])
-                    right_x = random.randint(right_up[0], right_down[0])
-                    diff_y = right_up[1] - left_down[1]
-                    left_y = random.randint(2, diff_y - 2)
-                    right_y = diff_y - left_y 
-                    path_ul = (right_x, right_y)
-                    path_lr = (left_x, left_y)
-                    low = min(left_x, right_x)
-                    high = max(left_x, right_x)
-
-                    for y in range(right_up[1] - right_y, right_up[1]):
-                        self.map_array[y][right_x] = '.'
-
-                    for y in range(left_down[1] + 1, left_down[1] + left_y):
-                        self.map_array[y][left_x] = '.'
-
-                    for i in range (low, high + 1):
-                        print("hor pathbuilding")
-                        self.map_array[left_down[1] + left_y][i] = '.'
+                    self._hor_zigzag_path(left_up, left_down, right_up, right_down)
                     
-
-                    
+                # There is a straight path to both rooms
                 else: 
                     path_x = random.randint(path_min_x, path_max_x)
-                    print(path_x)
+                    # print(path_x)
                     path_ul = (path_x, node.left_child.room.down_right[1] + 1)
                     path_lr = (path_x + 1, node.right_child.room.up_left[1])
-                    print(path_ul)
-                    print(path_lr)
-                    print("")
+                    # print(path_ul)
+                    # print(path_lr)
+                    # print("")
 
                     for y in range(path_ul[1], path_lr[1]):
                         for x in range(path_ul[0], path_lr[0]):
                             self.map_array[y][x] = "."
+
+            # If node was vertically split
             else:
-                print("ver")
+                # print("ver")
                 path_min_y = max(left_up[1], right_up[1])
                 path_max_y = min(left_down[1], right_down[1])
-                print(path_min_y)
-                print(path_max_y)
-                # TODO: Case where left child's room is lower than right child's room
+                # print(path_min_y)
+                # print(path_max_y)
+
+                # Case: where left child (top one) is higher up than the right child (bottom one)
+                # (ie no straight path to both rooms)
+                # 11111111
+                # 11111001
+                # 11111001
+                # 11111111
+                # --------
+                # 11111111
+                # 10001111
+                # 10001111
+                # 11111111
+                """
+                1 = wall
+                0 = floor
+                - = where node was split (represents nothing on actual map)
+                """
                 if (path_max_y < path_min_y):
-                    left_y = random.randint(left_up[1], left_down[1])
-                    right_y = random.randint(right_up[1], right_down[1])
-                    diff_x = right_up[0] - left_down[0]
-                    left_x = random.randint(2, diff_x - 2)
-                    right_x = diff_x - left_x
-                    print(left_x)
-                    print(right_x)
-                    path_ul = ((right_up[0] - right_x), right_y)
-                    path_lr = ((left_down[0] + left_x), left_y)
-                    low = min(left_y, right_y)
-                    high = max(left_y, right_y)
-                    print("Zigzag path")
-                    print(path_ul)
-                    print(path_lr)
+                    self._ver_zigzag_path(left_up, left_down, right_up, right_down)
 
-                    for x in range (left_down[0] + 1, left_down[0] + left_x):
-                        self.map_array[left_y][x] = '.'
-
-                    for x in range (right_up[0] - right_x, right_up[0]):
-                        self.map_array[right_y][x] = '.'
-
-                    for i in range (low, high + 1):
-                        print("ver pathbuilding")
-                        self.map_array[i][(left_down[0] + left_x)] = '.'
-
+                # Else there is a straight path to both rooms
                 else:
                     path_y = random.randint(path_min_y, path_max_y)
-                    print (path_y)  
+                    # print (path_y)  
                     path_ul = (node.left_child.room.down_right[0] + 1, path_y)
                     path_lr = (node.right_child.room.up_left[0], path_y + 1)
-                    print(path_ul)
-                    print(path_lr)
-                    print("")
+                    # print(path_ul)
+                    # print(path_lr)
+                    # print("")
                 
                     for y in range(path_ul[1], path_lr[1]):
                         for x in range(path_ul[0], path_lr[0]):
                             self.map_array[y][x] = "."
 
-            self.print_map()
-            print("")
+            # self.print_map()
+            # print("")
+
+
+    def _hor_zigzag_path(self, left_up, left_down, right_up, right_down):
+        """
+        Helper function to build a zigzag path for a horizontally split node
+
+        Arg:
+            left_up ((int, int), arg): left child room's up left coordinate
+            left_down ((int, int), arg): left child room's down right coordinate
+            right_up ((int, int), arg): right child room's up left coordinate
+            right_down ((int, int), arg): right child room's down right coordinate
+        """
+        left_x = random.randint(left_up[0], left_down[0])
+        right_x = random.randint(right_up[0], right_down[0])
+        diff_y = right_up[1] - left_down[1]
+        left_y = random.randint(2, diff_y - 2)
+        right_y = diff_y - left_y 
+        # path_ul = (right_x, right_y)
+        # path_lr = (left_x, left_y)
+        low = min(left_x, right_x)
+        high = max(left_x, right_x)
+
+        for y in range(right_up[1] - right_y, right_up[1]):
+            self.map_array[y][right_x] = '.'
+
+        for y in range(left_down[1] + 1, left_down[1] + left_y):
+            self.map_array[y][left_x] = '.'
+
+        for i in range (low, high + 1):
+            self.map_array[left_down[1] + left_y][i] = '.'
+
+
+    def _ver_zigzag_path(self, left_up, left_down, right_up, right_down):
+        """
+        Helper function to build a zigzag path for a vertically split node
+
+        Arg:
+            left_up ((int, int), arg): left child room's up left coordinate
+            left_down ((int, int), arg): left child room's down right coordinate
+            right_up ((int, int), arg): right child room's up left coordinate
+            right_down ((int, int), arg): right child room's down right coordinate
+        """
+        left_y = random.randint(left_up[1], left_down[1])
+        right_y = random.randint(right_up[1], right_down[1])
+        diff_x = right_up[0] - left_down[0]
+        left_x = random.randint(2, diff_x - 2)
+        right_x = diff_x - left_x
+        # print(left_x)
+        # print(right_x)
+        path_ul = ((right_up[0] - right_x), right_y)
+        path_lr = ((left_down[0] + left_x), left_y)
+        low = min(left_y, right_y)
+        high = max(left_y, right_y)
+        # print("Zigzag path")
+        # print(path_ul)
+        # print(path_lr)
+
+        for x in range (left_down[0] + 1, left_down[0] + left_x):
+            self.map_array[left_y][x] = '.'
+
+        for x in range (right_up[0] - right_x, right_up[0]):
+            self.map_array[right_y][x] = '.'
+
+        for i in range (low, high + 1):
+            self.map_array[i][(left_down[0] + left_x)] = '.'
 
     
     def find_closest_room(self, coord, left_child, right_child):
-        left_rooms = left_child.child_room_array
-        right_rooms = right_child.child_room_array
-
-
+        #TODO: could use this for make better paths
+        pass
 
     def print_tree(self):
+        """
+        Prints tree information if root is not None.
+
+        Prints the up_left and down_right coordinate of node and room up_left and down_right
+        if node has room
+        """
         if (self.root != None):
             self._print_tree(self.root)
 
     def _print_tree(self, node):
+        """
+        Recursively prints tree information using post order traversal
+
+        Arg:
+            node (Node, arg): node to print information
+        """
         if (node != None):
             self._print_tree(node.left_child)
             self._print_tree(node.right_child)
@@ -333,20 +413,19 @@ class Tree:
             print("")
 
     def print_map(self):
-        for row in map_array:
+        """
+        Prints maps
+        """
+        for row in self.map_array:
             for val in row:
                 print (val, end='')
             print()
 
 
 
-map_array = [["1" for x in range (0, 40)] for y in range (0, 40)]
-tree = Tree(map_array)
-tree.build_bsp()
-tree.make_room()
-tree.print_tree()
-tree.print_map()
-print("")
-
-
-tree.build_path()
+# map_array = [["1" for x in range (0, 40)] for y in range (0, 40)]
+# tree = Tree(map_array)
+# tree.build_bsp()
+# tree.make_room()
+# tree.build_path()
+# tree.print_map()

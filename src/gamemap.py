@@ -3,10 +3,11 @@ from constant import *
 import object
 import os
 from sprite import *
+from mapgen import Tree
 
 pygame.init()
 
-class tile(pygame.sprite.Sprite):
+class Tile(pygame.sprite.Sprite):
     """
     Class for the tiles of map
 
@@ -25,20 +26,20 @@ class tile(pygame.sprite.Sprite):
         self.game.all_tile.add(self)
         self.seen = False
 
-class wall(tile):
+class Wall(Tile):
     def __init__(self, game, x, y):
         self.image = game.game_sprites.wall_image
         self.image_explored = game.game_sprites.seen_wall_image
         self.rect = self.image.get_rect()   
-        tile.__init__(self, game, x, y)
+        Tile.__init__(self, game, x, y)
         self.game.walls.add(self)
 
-class floor(tile):
+class Floor(Tile):
     def __init__(self, game, x, y):
-        self.image = game.game_sprites.floor_image
-        self.image_explored = game.game_sprites.seen_floor_image
+        self.image = game.game_sprites.floor_image_1
+        self.image_explored = game.game_sprites.seen_floor_image_1
         self.rect = self.image.get_rect()
-        tile.__init__(self, game, x, y)
+        Tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
 
 class TileMap:
@@ -94,14 +95,59 @@ def draw_map(map_to_draw, game):
         # fov_row = []
         for col, tile in enumerate(tiles):
             if tile == '1':
-                map_array_row.append(wall(game, col, row))
+                map_array_row.append(Wall(game, col, row))
             if tile == '.':
-                map_array_row.append(floor(game, col, row))
+                map_array_row.append(Floor(game, col, row))
             # fov_row.append(0)
         map_array.append(map_array_row)
         # fov.append(fov_row)
     return map_array 
-  
+
+
+class MapInfo:
+    """
+    Load map data for filename.txt
+
+    Arg:
+        filename (arg, string): name of file to read from 
+
+    Attribute:
+        tilewidth (int): # of tiles wide
+        tileheight (int): # of tiles tall
+        width (int): actual width of map
+        height (int): actual height of map
+    """
+    def __init__(self, map_array):
+        self.tilewidth = len(map_array[0])
+        self.tileheight = len(map_array)
+        self.width = self.tilewidth * SPRITE_SIZE
+        self.height = self.tileheight * SPRITE_SIZE
+
+
+def gen_map(game):
+    map_array = [["1" for x in range (0, MAP_WIDTH)] for y in range (0, MAP_HEIGHT)]
+    tree = Tree(map_array)
+    tree.build_bsp()
+    tree.make_room()
+    tree.build_path()
+    tree.print_map()
+    return draw_tiles(map_array, game)
+
+
+def draw_tiles(p_map_array, game):
+    map_array = []
+    for col, tiles in enumerate(p_map_array):
+        map_array_row = []
+        for row, tile in enumerate(tiles):
+            if tile == '1':
+                map_array_row.append(Wall(game, row, col))
+            if tile == '0':
+                map_array_row.append(Floor(game, row, col))
+            if tile == '.':
+                map_array_row.append(Floor(game, row, col))
+        map_array.append(map_array_row)
+    return map_array
+
 
 class Camera:
     """
@@ -172,7 +218,7 @@ def ray_casting(game, map_array, fov):
                 
             fov[int(round(y))][int(round(x))] = 1
 
-            if isinstance(game.map_array[int(round(y))][int(round(x))], wall):
+            if isinstance(game.map_array[int(round(y))][int(round(x))], Wall):
                 break
     
     fov[game.player.y][game.player.x] = 1
@@ -182,11 +228,11 @@ def draw_seen(game, map_array, fov):
     for y in range(0, game.map_tiles.tileheight):
         for x in range(0, game.map_tiles.tilewidth):
             if (x, y) == (game.player.x, game.player.y):
-                map_array[y][x].image = game.game_sprites.floor_image
+                map_array[y][x].image = game.game_sprites.floor_image_1
             elif fov[y][x] == 1:
                 tile = map_array[y][x]
-                if isinstance(map_array[y][x], floor):
-                    tile.image = game.game_sprites.floor_image
+                if isinstance(map_array[y][x], Floor):
+                    tile.image = game.game_sprites.floor_image_1
                 else:
                     tile.image = game.game_sprites.wall_image
                 tile.seen = True
