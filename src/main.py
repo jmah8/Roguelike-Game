@@ -31,11 +31,6 @@ class Game:
         # Group with all walls
         self.walls = pygame.sprite.Group()
         # self.floors = pygame.sprite.Group()
-
-
-        # Load map data
-        # This is for reading maps from text files
-        # self.map_tiles = gamemap.load_data()
     
 
         # Group with all tiles
@@ -46,9 +41,15 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
+        # Load map data
+        # This is for reading maps from text files
+        if (READ_FROM_FILE):
+            self.map_tiles = gamemap.load_data()
+            self.map_array = gamemap.draw_map(self.map_tiles.data, self)
+        else:
         # This is for generating random maps
-        self.map_array = gamemap.gen_map(self)
-        self.map_tiles = gamemap.MapInfo(self.map_array)
+            self.map_array = gamemap.gen_map(self)
+            self.map_tiles = gamemap.MapInfo(self.map_array)
         self.wall_hack = False
 
         self.camera = gamemap.Camera(
