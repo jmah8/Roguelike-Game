@@ -260,18 +260,8 @@ class Tree:
                     self._hor_zigzag_path(left_up, left_down, right_up, right_down)
                     
                 # There is a straight path to both rooms
-                else: 
-                    path_x = random.randint(path_min_x, path_max_x)
-                    # print(path_x)
-                    path_ul = (path_x, node.left_child.room.down_right[1] + 1)
-                    path_lr = (path_x + 1, node.right_child.room.up_left[1])
-                    # print(path_ul)
-                    # print(path_lr)
-                    # print("")
-
-                    for y in range(path_ul[1], path_lr[1]):
-                        for x in range(path_ul[0], path_lr[0]):
-                            self.map_array[y][x] = "."
+                else:
+                    self._hor_straight_path(node, path_min_x, path_max_x)
 
             # If node was vertically split
             else:
@@ -298,24 +288,86 @@ class Tree:
                 - = where node was split (represents nothing on actual map)
                 """
                 if (path_max_y < path_min_y):
-                    self._ver_zigzag_path(left_up, left_down, right_up, right_down)
+                    self._vert_zigzag_path(left_up, left_down, right_up, right_down)
 
                 # Else there is a straight path to both rooms
                 else:
-                    path_y = random.randint(path_min_y, path_max_y)
-                    # print (path_y)  
-                    path_ul = (node.left_child.room.down_right[0] + 1, path_y)
-                    path_lr = (node.right_child.room.up_left[0], path_y + 1)
-                    # print(path_ul)
-                    # print(path_lr)
-                    # print("")
-                
-                    for y in range(path_ul[1], path_lr[1]):
-                        for x in range(path_ul[0], path_lr[0]):
-                            self.map_array[y][x] = "."
+                    self._vert_straight_path(node, path_min_y, path_max_y)
 
             # self.print_map()
             # print("")
+
+
+    def _hor_straight_path(self, node, path_min_x, path_max_x):
+        """
+        Helper function to build straight path for horizontally split node
+
+        Arg:
+            node (Node, arg): Current node to make path between 2 of it's children nodes
+            path_min_x (int, arg): minimun x coordinate that the path must be
+                example:
+                111111
+                110001
+                111111
+                100011
+                In this case path_min_x would be 2, since a path could only connect the 2 
+                rows of 0s if its greater or equal to 2
+            path_max_x (int, arg): maximum x coordinate that the path must be
+                example:
+                111111
+                110001
+                111111
+                100011
+                In this case path_max_x would be 3, since a path could only connect the 2
+                rows of 0s if its less or equal to 2
+        """
+        path_x = random.randint(path_min_x, path_max_x)
+        # print(path_x)
+        path_ul = (path_x, node.left_child.room.down_right[1] + 1)
+        path_lr = (path_x + 1, node.right_child.room.up_left[1])
+        # print(path_ul)
+        # print(path_lr)
+        # print("")
+
+        for y in range(path_ul[1], path_lr[1]):
+            for x in range(path_ul[0], path_lr[0]):
+                self.map_array[y][x] = "."
+
+
+    def _vert_straight_path(self, node, path_min_y, path_max_y):
+        """
+        Helper function to build straight path for vertically split node
+
+        Arg:
+            node (Node, arg): Current node to make path between 2 of it's children nodes
+            path_min_y (int, arg): minimun y coordinate that the path must be
+                example:
+                101111
+                101101
+                101101
+                111101
+                In this case path_min_y would be 1, since a path could only connect the 2
+                rows of 0s if its greater or equal to 1
+            path_max_y (int, arg): maximum y coordinate that the path must be
+                example:
+                101111
+                101101
+                101101
+                111101
+                In this case path_max_y would be 2, since a path could only connect the 2
+                rows of 0s if its less or equal to 2
+        """
+        path_y = random.randint(path_min_y, path_max_y)
+        # print (path_y)  
+        path_ul = (node.left_child.room.down_right[0] + 1, path_y)
+        path_lr = (node.right_child.room.up_left[0], path_y + 1)
+        # print(path_ul)
+        # print(path_lr)
+        # print("")
+    
+        for y in range(path_ul[1], path_lr[1]):
+            for x in range(path_ul[0], path_lr[0]):
+                self.map_array[y][x] = "."
 
 
     def _hor_zigzag_path(self, left_up, left_down, right_up, right_down):
@@ -348,7 +400,7 @@ class Tree:
             self.map_array[left_down[1] + left_y][i] = '.'
 
 
-    def _ver_zigzag_path(self, left_up, left_down, right_up, right_down):
+    def _vert_zigzag_path(self, left_up, left_down, right_up, right_down):
         """
         Helper function to build a zigzag path for a vertically split node
 
@@ -365,8 +417,8 @@ class Tree:
         right_x = diff_x - left_x
         # print(left_x)
         # print(right_x)
-        path_ul = ((right_up[0] - right_x), right_y)
-        path_lr = ((left_down[0] + left_x), left_y)
+        # path_ul = ((right_up[0] - right_x), right_y)
+        # path_lr = ((left_down[0] + left_x), left_y)
         low = min(left_y, right_y)
         high = max(left_y, right_y)
         # print("Zigzag path")
