@@ -156,8 +156,10 @@ class Tree:
 
 
 
-    # TODO: decide if this should return a value or not
+
     def _make_rooms(self, node):
+        # TODO: could change it so the SUB_DUNGEON width/height correspond to the actual room dimensions
+        #       instead of sub dungeon dimension
         """
         Recursively makes room in the leaf nodes and any parent node randomly chooses one of the child rooms
         as its room
@@ -191,8 +193,8 @@ class Tree:
                 down_right = node.right_child.room.down_right
             new_room = Room(up_left, down_right)
             node.room = new_room
-            node.child_room_array.append(left)
-            node.child_room_array.append(right)
+            node.child_room_array = node.child_room_array + left
+            node.child_room_array = node.child_room_array + right
 
         for y in range(up_left[1], down_right[1] + 1):
             for x in range(up_left[0], down_right[0] + 1):
@@ -204,16 +206,7 @@ class Tree:
         return node.child_room_array
 
 
-    # def _make_subdungeon(self, node):
-    #     ul_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
-    #     ul_y = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
-    #     lr_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
-    #     lr_y = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
-    #     up_left = (node.up_left[0] + ul_x, node.up_left[1] + ul_y)
-    #     down_right = (node.down_right[0] - lr_x, node.down_right[1] - lr_y)
-    #     new_room = Room(up_left, down_right)
-    #     node.room = new_room
-    #     return new_room
+
 
 
     def build_path(self):
@@ -221,9 +214,13 @@ class Tree:
         Builds path to join sister nodes
         """
         if (self.root != None):
-            self._build_path(self.root)
+            # self._build_path(self.root)
+            self._build_path_intelligent(self.root)
         else:
             print("Root is None")
+
+
+
 
     def _build_path(self, node):
         """
@@ -300,8 +297,7 @@ class Tree:
                     
                 # There is a straight path to both rooms
                 else:
-                    # self._hor_straight_path(node, path_min_x, path_max_x)
-                    self._build_hor_straight_path(node.left_child.room, node.right_child.room)
+                    self._hor_straight_path(node, path_min_x, path_max_x)
 
 
 
@@ -360,8 +356,7 @@ class Tree:
 
                 # Else there is a straight path to both rooms
                 else:
-                    # self._vert_straight_path(node, path_min_y, path_max_y)
-                    self._build_vert_straight_path(node.left_child.room, node.right_child.room)
+                    self._vert_straight_path(node, path_min_y, path_max_y)
 
 
 
@@ -370,50 +365,46 @@ class Tree:
             # print("")
 
 
-    # def _hor_straight_path(self, node, path_min_x, path_max_x):
-    #     """
-    #     Helper function to build straight path for horizontally split node
 
-    #     Arg:
-    #         node (Node, arg): Current node to make path between 2 of it's children nodes
-    #         path_min_x (int, arg): minimun x coordinate that the path must be
-    #         path_max_x (int, arg): maximum x coordinate that the path must be
-    #     """
-    #     path_x = random.randint(path_min_x, path_max_x)
-    #     # print(path_x)
-    #     path_ul = (path_x, node.left_child.room.down_right[1] + 1)
-    #     path_lr = (path_x + 1, node.right_child.room.up_left[1])
-    #     # print(path_ul)
-    #     # print(path_lr)
-    #     # print("")
+    def _build_path_intelligent(self, node):
+        """
+        Recursively builds path to join sister nodes.
 
-    #     for y in range(path_ul[1], path_lr[1]):
-    #         for x in range(path_ul[0], path_lr[0]):
-    #             # if (self.map_array[y][x] == '1'):
-    #                 self.map_array[y][x] = "."
+        Do nothing on leaf nodes. Else join the 2 children node's room with a random single tile path.
+        This method will build paths more intelligently and connect rooms close to where the children
+        nodes were divided
+
+        Arg:
+            node (Node, arg): node to build path for
+        """
+        if (node == None):
+            return 
+
+        left = self._build_path_intelligent(node.left_child)
+        right = self._build_path_intelligent(node.right_child)
+
+        # If leaf node do nothing
+        if (node.left_child == None and node.right_child == None):
+            return
+
+        else:
+            self.build_path_to_closest_room(node)
 
 
-    def _build_hor_straight_path(self, left_room, right_room):
+
+    def _hor_straight_path(self, node, path_min_x, path_max_x):
         """
         Helper function to build straight path for horizontally split node
 
-        Arg
-            left_room (Room, arg): left room to make path from
-            right_room (Room, arg): right room to make path to
+        Arg:
+            node (Node, arg): Current node to make path between 2 of it's children nodes
             path_min_x (int, arg): minimun x coordinate that the path must be
             path_max_x (int, arg): maximum x coordinate that the path must be
         """
-        # TODO: could change these 2 lines to be in if, since in _build_path it
-        #       calculated before calling this method, but in find_closest_room
-        #       it isn't 
-        path_min_x = max(left_room.up_left[0], right_room.up_left[0])
-        path_max_x = min(left_room.down_right[0], right_room.down_right[0])
- 
-
         path_x = random.randint(path_min_x, path_max_x)
         # print(path_x)
-        path_ul = (path_x, left_room.down_right[1] + 1)
-        path_lr = (path_x + 1, right_room.up_left[1])
+        path_ul = (path_x, node.left_child.room.down_right[1] + 1)
+        path_lr = (path_x + 1, node.right_child.room.up_left[1])
         # print(path_ul)
         # print(path_lr)
         # print("")
@@ -424,27 +415,57 @@ class Tree:
                     self.map_array[y][x] = "."
 
 
-    # def _vert_straight_path(self, node, path_min_y, path_max_y):
-    #     """
-    #     Helper function to build straight path for vertically split node
+    def _build_hor_straight_path(self, left_room, right_room):
+        """
+        Helper function to build straight path for horizontally split node
 
-    #     Arg:
-    #         node (Node, arg): Current node to make path between 2 of it's children nodes
-    #         path_min_y (int, arg): minimun y coordinate that the path must be
-    #         path_max_y (int, arg): maximum y coordinate that the path must be
-    #     """
-    #     path_y = random.randint(path_min_y, path_max_y)
-    #     # print (path_y)  
-    #     path_ul = (node.left_child.room.down_right[0] + 1, path_y)
-    #     path_lr = (node.right_child.room.up_left[0], path_y + 1)
-    #     # print(path_ul)
-    #     # print(path_lr)
-    #     # print("")
+        Arg
+            left_room (Room, arg): left room to make path from
+            right_room (Room, arg): right room to make path to
+            # path_min_x (int, arg): minimun x coordinate that the path must be
+            # path_max_x (int, arg): maximum x coordinate that the path must be
+        """
+        # TODO: could change these 2 lines to be in if, since in _build_path it
+        #       calculated before calling this method, but in find_closest_room
+        #       it isn't 
+        path_min_y = max(left_room.up_left[1], right_room.up_left[1])
+        path_max_y = min(left_room.down_right[1], right_room.down_right[1])
+
+        path_y = random.randint(path_min_y, path_max_y)
+        # print(path_x)
+        path_ul = (left_room.down_right[0] + 1, path_y)
+        path_lr = (right_room.up_left[0], path_y + 1)
+        # print(path_ul)
+        # print(path_lr)
+        # print("")
+
+        for y in range(path_ul[1], path_lr[1]):
+            for x in range(path_ul[0], path_lr[0]):
+                # if (self.map_array[y][x] == '1'):
+                    self.map_array[y][x] = "."
+
+
+    def _vert_straight_path(self, node, path_min_y, path_max_y):
+        """
+        Helper function to build straight path for vertically split node
+
+        Arg:
+            node (Node, arg): Current node to make path between 2 of it's children nodes
+            path_min_y (int, arg): minimun y coordinate that the path must be
+            path_max_y (int, arg): maximum y coordinate that the path must be
+        """
+        path_y = random.randint(path_min_y, path_max_y)
+        # print (path_y)  
+        path_ul = (node.left_child.room.down_right[0] + 1, path_y)
+        path_lr = (node.right_child.room.up_left[0], path_y + 1)
+        # print(path_ul)
+        # print(path_lr)
+        # print("")
     
-    #     for y in range(path_ul[1], path_lr[1]):
-    #         for x in range(path_ul[0], path_lr[0]):
-    #             # if (self.map_array[y][x] == '1'):
-    #                 self.map_array[y][x] = "."
+        for y in range(path_ul[1], path_lr[1]):
+            for x in range(path_ul[0], path_lr[0]):
+                # if (self.map_array[y][x] == '1'):
+                    self.map_array[y][x] = "."
 
 
     def _build_vert_straight_path(self, left_room, right_room):
@@ -454,19 +475,19 @@ class Tree:
         Arg:
             left_room (Room, arg): left room to make path from
             right_room (Room, arg): right room to make path to        
-            path_min_y (int, arg): minimun y coordinate that the path must be
-            path_max_y (int, arg): maximum y coordinate that the path must be
+            # path_min_y (int, arg): minimun y coordinate that the path must be
+            # path_max_y (int, arg): maximum y coordinate that the path must be
         """
         # TODO: could change these 2 lines to be in if, since in _build_path it
         #       calculated before calling this method, but in find_closest_room
         #       it isn't 
-        path_min_y = max(left_room.up_left[1], right_room.up_left[1])
-        path_max_y = min(left_room.down_right[1], right_room.down_right[1])
+        path_min_x = max(left_room.up_left[0], right_room.up_left[0])
+        path_max_x = min(left_room.down_right[0], right_room.down_right[0])
 
-        path_y = random.randint(path_min_y, path_max_y)
+        path_x = random.randint(path_min_x, path_max_x)
         # print (path_y)  
-        path_ul = (left_room.down_right[0] + 1, path_y)
-        path_lr = (right_room.up_left[0], path_y + 1)
+        path_ul = (path_x, left_room.down_right[1] + 1)
+        path_lr = (path_x + 1, right_room.up_left[1])
         # print(path_ul)
         # print(path_lr)
         # print("")
@@ -548,7 +569,7 @@ class Tree:
                 self.map_array[i][(left_down[0] + left_x)] = '.'
 
     
-    def find_closest_rooms(self, node):
+    def build_path_to_closest_room(self, node):
         #TODO: could use this for make better paths
         if (node.split_hor):
             # Horizontally split means the two subdungeons are on top of each other
@@ -557,6 +578,7 @@ class Tree:
                 for r_room in (node.right_child.child_room_array):
                     if (self._find_if_rooms_are_vert_adjacent(l_room, r_room)):
                         self._build_vert_straight_path(l_room, r_room)
+                        return
 
         else:
             # Vertically split means the two subdungeons are beside each other
@@ -565,6 +587,7 @@ class Tree:
                 for r_room in (node.right_child.child_room_array):
                     if (self._find_if_rooms_are_hor_adjacent(l_room, r_room)):
                         self._build_hor_straight_path(l_room, r_room)
+                        return
 
 
     
@@ -572,8 +595,11 @@ class Tree:
     def _find_if_rooms_are_vert_adjacent(self, left_room, right_room):
         # min x value that both rooms share in common
         path_min_x = max(left_room.up_left[0], right_room.up_left[0])
+        # print(path_min_x)
         # max x value that both rooms share in common
-        path_max_x = min(left_room.down_right[0], right_room.right_down[0]) 
+        path_max_x = min(left_room.down_right[0], right_room.down_right[0]) 
+        # print(path_max_x)
+        # print("")
 
         # # If rooms are not close to coord
         # if (not(path_min_x <= coord and coord <= path_max_x)):
@@ -587,30 +613,33 @@ class Tree:
             right_y = right_room.up_left[1]
             diff_y = right_y - left_y
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE min and max
-            return (diff_y > (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y < (2 * DIST_FROM_SISTER_NODE_MAX))
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
         
         return False
 
     
     def _find_if_rooms_are_hor_adjacent(self, left_room, right_room):
         # min y value that both rooms share in common
-        range_of_y_min = max(left_room.up_left[1], right_room.up_left[1])
+        path_min_y = max(left_room.up_left[1], right_room.up_left[1])
+        # print(path_min_y)
         # max y value that both rooms share in common
-        range_of_y_max = min(left_room.down_right[1], right_room.down_right[1])
+        path_max_y = min(left_room.down_right[1], right_room.down_right[1])
+        # print(path_max_y)
+        # print("")
 
         # # If rooms are not close to coord
         # if (not(range_of_y_min <= coord and coord <= range_of_y_max)):
         #     return False
 
         # If both rooms are in the same y range = True, else false
-        adj = range_of_y_min <= range_of_y_max
+        adj = path_min_y <= path_max_y
 
         if (adj):
             left_x = left_room.down_right[0]
             right_x = right_room.up_left[0]
             diff_y = right_x - left_x
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE min and max
-            return (diff_y > (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y < (2* DIST_FROM_SISTER_NODE_MAX))
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2* DIST_FROM_SISTER_NODE_MAX))
 
         return False
 
