@@ -104,9 +104,9 @@ def draw_map(map_to_draw, game):
         map_array_row = []
         # fov_row = []
         for col, tile in enumerate(tiles):
-            if tile == '1':
+            if tile == WALL:
                 map_array_row.append(Wall(game, col, row))
-            if tile == '.':
+            if tile == FLOOR:
                 map_array_row.append(Floor(game, col, row))
             # fov_row.append(0)
         map_array.append(map_array_row)
@@ -143,7 +143,7 @@ def gen_map(game):
     tree.build_bsp()
     tree.make_room()
     tree.build_path()
-    # tree.print_tree()
+    tree.print_tree()
     tree.print_map()
     return draw_tiles(map_array, game)
 
@@ -153,11 +153,11 @@ def draw_tiles(p_map_array, game):
     for col, tiles in enumerate(p_map_array):
         map_array_row = []
         for row, tile in enumerate(tiles):
-            if tile == '1':
+            if tile == WALL:
                 map_array_row.append(Wall(game, row, col))
-            elif tile == '0':
+            elif tile == FLOOR:
                 map_array_row.append(Floor(game, row, col))
-            elif tile == '.':
+            elif tile == PATH:
                 map_array_row.append(Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
     return map_array
