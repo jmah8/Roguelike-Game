@@ -243,9 +243,11 @@ class Tree:
         if (left == None and right == None):
             new_room = self._make_room_in_leaf_node(node)
         else:
-            new_room = self._get_room_from_random_child(node)
             node.child_room_array = node.child_room_array + left
             node.child_room_array = node.child_room_array + right 
+            # Choose one or the other
+            new_room = self._get_room_from_random_child(node)
+            # new_room = self._get_room_from_random_immediate_child(node)
 
         node.child_room_array.append(new_room)
 
@@ -254,6 +256,12 @@ class Tree:
 
 
     def _make_room_in_leaf_node(self, node):
+        """
+        Makes room in leaf nodes only and returns the room made
+
+        Arg:
+            node (Node, arg): node to make room in
+        """
         ul_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
         ul_y = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
         lr_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
@@ -271,7 +279,13 @@ class Tree:
 
 
     
-    def _get_room_from_random_child(self, node):
+    def _get_room_from_random_immediate_child(self, node):
+        """
+        Makes room in parent node by choosing a room from one of it's immediate children
+
+        Arg:
+            node (Node, arg): node to make room in
+        """
         ran = random.randint(0, 1)
         if (ran == 0):
             up_left = node.left_child.room.up_left
@@ -281,6 +295,21 @@ class Tree:
             down_right = node.right_child.room.down_right
 
         new_room = Room(up_left, down_right)
+        node.room = new_room
+        return new_room
+
+
+
+    def _get_room_from_random_child(self, node):
+        """
+        Makes room in parent node by choosing a room from any of it's children
+
+        Arg:
+            node (Node, arg): node to make room in
+        """
+        room = random.choice(node.child_room_array)
+
+        new_room = room    
         node.room = new_room
         return new_room
 
@@ -525,8 +554,8 @@ class Tree:
             right_child (Node, arg): right child to build path to
 
         """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.return_coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.return_coords()
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
 
         left_x = random.randint(left_child_up_x, left_child_down_x)
         right_x = random.randint(right_child_up_x, right_child_down_x)
@@ -538,15 +567,15 @@ class Tree:
 
         for y in range(right_child_up_y - right_y, right_child_up_y):
             # if (self.map_array[y][right_x] == '1'):
-                self.map_array[y][right_x] = '.'
+                self.map_array[y][right_x] = PATH
 
         for y in range(left_child_down_y + 1, left_child_down_y + left_y):
             # if (self.map_array[y][left_x] == '1'):
-                self.map_array[y][left_x] = '.'
+                self.map_array[y][left_x] = PATH
 
         for x in range (low, high + 1):
             # if (self.map_array[left_child_down_y + left_y][x] == '1'):
-                self.map_array[left_child_down_y + left_y][x] = '.'
+                self.map_array[left_child_down_y + left_y][x] = PATH
 
 
     def _vert_zigzag_path(self, left_child, right_child):
@@ -559,8 +588,8 @@ class Tree:
             right_up ((int, int), arg): right child room's up left coordinate
             right_down ((int, int), arg): right child room's down right coordinate
         """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.return_coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.return_coords()
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
 
         left_y = random.randint(left_child_up_y, left_child_down_y)
         right_y = random.randint(right_child_up_y, right_child_down_y)
@@ -572,15 +601,15 @@ class Tree:
 
         for x in range (left_child_down_x + 1, left_child_down_x + left_x):
             # if (self.map_array[left_y][x] == '1'):
-                self.map_array[left_y][x] = '.'
+                self.map_array[left_y][x] = PATH
 
         for x in range (right_child_up_x - right_x, right_child_up_x):
             # if (self.map_array[right_y][x] == '1'):
-                self.map_array[right_y][x] = '.'
+                self.map_array[right_y][x] = PATH
 
         for y in range (low, high + 1):
             # if (self.map_array[y][(left_child_down_x + left_x)] == '1'):
-                self.map_array[y][(left_child_down_x + left_x)] = '.'
+                self.map_array[y][(left_child_down_x + left_x)] = PATH
 
     
     def build_path_to_closest_rooms(self, node):
