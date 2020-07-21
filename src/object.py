@@ -28,9 +28,7 @@ class object(pygame.sprite.Sprite):
         self.object_id = object_id
         self.anim = anim
         self.image = image
-        if self.image:
-            self.image = image
-        else:
+        if not self.image:
             self.image = anim['idle_right'][0]
 
         self.rect = self.image.get_rect()
@@ -40,10 +38,11 @@ class object(pygame.sprite.Sprite):
         self.right = True
         self.moving = False
 
-        # Refactor this to a new class later
-        self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
-        self.flicker_timer = 0.0
-        self.anim_frame = 0     
+        # TODO: Refactor this to a new class later
+        if (anim):
+            self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
+            self.flicker_timer = 0.0
+            self.anim_frame = 0     
 
 
         self.creature = creature
@@ -91,10 +90,22 @@ class object(pygame.sprite.Sprite):
         """
         Updates the object depending on its ai or player input
         """
-        if self.ai:
-            self.ai.takeTurn()
-        elif self.game.player_group.has(self):
-            self.creature.move(dx, dy)
-
+        if (not self.game.free_camera_on):
+            if self.ai:
+                self.ai.takeTurn()
+            elif self.game.player_group.has(self):
+                self.creature.move(dx, dy)
+                self.game.free_camera.x = self.x
+                self.game.free_camera.y = self.y
+        else:
+            self.game.free_camera.x += dx
+            self.game.free_camera.y += dy
+            self.game.free_camera.rect.topleft = (self.game.free_camera.x * SPRITE_SIZE, self.game.free_camera.y * SPRITE_SIZE)
+            print("")
+            print(self.game.free_camera.x)
+            print(self.game.free_camera.y)
+            print(str(self.game.free_camera.x * SPRITE_SIZE))
+            print(str(self.game.free_camera.y * SPRITE_SIZE))
+            print(self.game.free_camera.rect)
 
 

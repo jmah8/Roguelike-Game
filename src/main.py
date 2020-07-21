@@ -56,6 +56,10 @@ class Game:
             self.map_tiles.width, self.map_tiles.height)
 
 
+        self.free_camera_on = False
+        camera = components.creature("Camera", 999, False)
+        self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
+
 
 
         creaturetest = components.creature("Viet", 10)
@@ -78,6 +82,9 @@ class Game:
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
 
+        self.camera_group = pygame.sprite.GroupSingle()
+        self.camera_group.add(self.free_camera)
+
         self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
         self.run()
@@ -90,7 +97,10 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            self.camera.update(self.player)
+            if (not self.free_camera_on):
+                self.camera.update(self.player)
+            else:
+                self.camera.update(self.free_camera)
             self.draw()
 
     def events(self):
@@ -146,6 +156,12 @@ class Game:
                     self.wall_hack = not self.wall_hack
                     if (self.wall_hack):
                         self.fov = [[1 for x in range (0, self.map_tiles.tilewidth)] for y in range (self.map_tiles.tileheight)]
+                if event.key == pygame.K_m:
+                    self.free_camera_on = not self.free_camera_on
+                    if (self.free_camera_on):
+                        self.free_camera.x = self.player.x
+                        self.free_camera.y = self.player.y
+
 
 
                 # print(self.camera.camera.topleft)
@@ -178,11 +194,16 @@ class Game:
         for tile in self.all_tile:
             self.surface.blit(tile.image, self.camera.apply(tile))
 
+        if (self.free_camera_on):
+            self.camera_group.draw(self.surface)
+
         # Draws creature if it is in player fov
         for obj in self.all_creature:
             if gamemap.check_if_in_fov(self, obj):  
                 obj.update_anim()            
                 self.surface.blit(obj.image, self.camera.apply(obj))
+
+
         self.draw_grid()
 
         self.draw_debug()
