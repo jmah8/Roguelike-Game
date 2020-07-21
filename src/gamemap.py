@@ -227,7 +227,7 @@ def ray_casting(game, map_array, fov):
             x += ax
             y += ay
 
-            if x < 0 or y < 0 or x > game.map_tiles.tilewidth or y > game.map_tiles.tileheight:
+            if x < 0 or y < 0 or x > game.map_tiles.tilewidth - 1 or y > game.map_tiles.tileheight - 1:
                 break
                 
             fov[int(round(y))][int(round(x))] = 1
