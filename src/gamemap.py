@@ -12,9 +12,10 @@ class Tile(pygame.sprite.Sprite):
     Class for the tiles of map
 
     Attributes: 
-        x (arg, int): x position of tile
-        y (arg, int): y position of tile
-        game (arg, game): game with object data
+        x (int, arg): x position of tile
+        y (int, arg): y position of tile
+        game (game, arg): game with object data
+        seen (bool): if tile was seen
     """
     def __init__(self, game, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -27,6 +28,15 @@ class Tile(pygame.sprite.Sprite):
         self.seen = False
 
 class Wall(Tile):
+    """
+    Class for Wall
+
+    Attributes:
+        image_unexplored (surface, arg): image of unexplored wall
+        image_explored (surface, arg): image of unexplored wall
+        image (surface, arg): current image of wall
+        game (game, arg): game with object data
+    """
     def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
         self.image_explored = game.game_sprites.seen_wall_image
         self.image_unexplored = game.game_sprites.wall_image
@@ -40,6 +50,15 @@ class Wall(Tile):
         self.game.walls.add(self)
 
 class Floor(Tile):
+    """
+    Class for Floor
+
+    Attributes:
+        image_unexplored (surface, arg): image of unexplored floor
+        image_explored (surface, arg): image of unexplored floor
+        image (surface, arg): current image of floor
+        game (game, arg): game with object data
+    """
     def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
         self.image_explored = game.game_sprites.seen_floor_image_1
         self.image_unexplored = game.game_sprites.floor_image_1
@@ -87,7 +106,7 @@ def load_data():
     return map_data
 
 
-# TODO: change path for images to constant when right picture is found
+
 def draw_map(map_to_draw, game):
     """
     Draws map and makes walkable = True to floor and walkable = False wall
@@ -116,10 +135,11 @@ def draw_map(map_to_draw, game):
 
 class MapInfo:
     """
-    Load map data for filename.txt
+    Load map data from map_array
 
     Arg:
-        filename (arg, string): name of file to read from 
+        map_array ([[char]char], arg): 2D array representing map to get 
+                                        data from
 
     Attribute:
         tilewidth (int): # of tiles wide
@@ -149,6 +169,14 @@ def gen_map(game):
 
 
 def draw_tiles(p_map_array, game):
+    """
+    Draws tiles to background using p_map_array and returns 
+    array filled with Tiles
+
+    Arg:
+        p_map_array ([char[char]], arg): map to draw as background
+        game: (Game, arg): game with all game data
+    """
     map_array = []
     for col, tiles in enumerate(p_map_array):
         map_array_row = []

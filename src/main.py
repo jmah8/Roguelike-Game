@@ -105,8 +105,6 @@ class Game:
                 self.running = False
 
             if event.type == pygame.VIDEORESIZE:
-                # print(self.camera_width)
-                # print(self.camera_height)
                 new_width = event.w
                 new_height = event.h
                 # Remove if statements if left and top should be empty
@@ -190,21 +188,39 @@ class Game:
         pygame.display.flip()
 
     def draw_debug(self):
+        """
+        Draws FPS counter on top right of screen
+        """
         self.draw_text(self.surface, (self.camera.camera_width-125, 15), WHITE,
                        "FPS: " + str(int(self.clock.get_fps())), BLACK)
 
     def draw_text(self, display_surface, coord, text_color, text, text_bg_color=None):
         """
         displays text at coord on given surface
+
+        Arg:
+            display_surface (surface, arg): surface to draw to
+            coord ((int, int), arg): coord to draw to
+            text_color (color, arg): color of text
+            text (string, arg): text to draw
+            text_bg_color (color, arg): background color of text
         """
-        text_surface, text_rect = self.text_to_objects_helper(
+        text_surface, text_rect = self._text_to_objects_helper(
             text, text_color, text_bg_color)
 
         text_rect.topleft = coord
 
         display_surface.blit(text_surface, text_rect)
 
-    def text_to_objects_helper(self, inc_text, inc_color, inc_bg_color):
+    def _text_to_objects_helper(self, inc_text, inc_color, inc_bg_color):
+        """
+        Helper function for draw_text. Returns the text surface and rect
+    
+        Arg:
+            inc_text (string): text to draw
+            inc_color (color, arg): color of text
+            inc_bg_color (color, arg): background color of text
+        """
         if inc_bg_color:
             text_surface = FONT_DEBUG_MESSAGE.render(
                 inc_text, False, inc_color, inc_bg_color)
@@ -213,7 +229,7 @@ class Game:
                 inc_text, False, inc_color,)
         return text_surface, text_surface.get_rect()
 
-    def text_height_helper(self, font):
+    def _text_height_helper(self, font):
         font_object = font.render('a', False, (0, 0, 0))
         font_rect = font_object.get_rect()
         return font_rect.height
@@ -229,7 +245,7 @@ class Game:
         else:
             to_draw = self.GAME_MESSAGES[-NUM_MESSAGES:]
 
-        text_height = self.text_height_helper(FONT_MESSAGE_TEXT)
+        text_height = self._text_height_helper(FONT_MESSAGE_TEXT)
         y_pos = self.camera.camera_height - (NUM_MESSAGES*text_height) - TEXT_SPACE_BUFFER
         i = 0
         for message, color in to_draw:

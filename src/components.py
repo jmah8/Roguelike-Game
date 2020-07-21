@@ -25,7 +25,7 @@ class creature:
 
     def take_damage(self, damage):
         """
-        Creature takes damage to hp and if hp is <= 0, it dies
+        Creature takes damage to hp and if hp is <= 0 and killable == True, it dies
         """
         self.hp -= damage
         self.owner.game.print_game_message(
@@ -38,6 +38,9 @@ class creature:
             
 
     def die(self):
+        """
+        Prints that object is dead and removes it from all_creature and enemies group
+        """
         self.owner.game.print_game_message(
             self.name_instance + " is dead", BLUE)
         self.owner.game.all_creature.remove(self.owner)
@@ -48,12 +51,14 @@ class creature:
         Moves entity's position if tile is not a tile or enemy
         else do nothing if wall or attack if enemy
 
-        Moves entity by dx and dy on map
+        Moves entity by dx and dy on map. If entity collides with
+        wall or enemy, stop it from moving by actually reversing the move
 
         Arg:
             dx (arg, int): int to change entity's x coord
             dy (arg, int): int to change entity's y coord
         """
+        # For animation
         if (dx > 0):
             self.owner.right = True
             self.owner.left = False
@@ -62,17 +67,22 @@ class creature:
             self.owner.right = False
             self.owner.left = True
             self.owner.moving = True
+
         self.owner.x += dx
         self.owner.y += dy
         self.owner.rect.topleft = (
             self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
+
+        # check to see if entity collided with wall and if so don't move
         creature_collide_with_wall = pygame.sprite.spritecollideany(
             self.owner, self.owner.game.walls)
 
         if creature_collide_with_wall:
             self.reverse_move(dx, dy)
 
+
+        # check to see if entity (player) collided with enemy and if so don't move
         if_player = self.owner.game.player_group.has(self.owner)
 
         if if_player:
@@ -82,6 +92,8 @@ class creature:
                 self.reverse_move(dx, dy)
                 self.attack(creature_hit, 1)
 
+
+        # check to see if entity (enemy) collided with player and if so don't move
         if_enemy = self.owner.game.enemies.has(self.owner)
 
         if if_enemy:
@@ -120,11 +132,10 @@ class ai_test:
     """
     Once per turn, execute
     """
-
     def __init__(self):
         self.owner = None
 
-    def takeTurn(self):
+    def take_turn(self):
         """
         Make creature move towards the player if in creature FOV,
         else wander
@@ -132,29 +143,32 @@ class ai_test:
         diff_x = self.owner.x - self.owner.game.player.x
         diff_y = self.owner.y - self.owner.game.player.y
 
+        # If player is not in enemy FOV wander
         if (abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV):
-            ("Random")
             self.owner.creature.move(random.choice(
                 [0, 1, -1]), random.choice([0, 1, -1]))
+        # Else move towards player using shortest path
         else:
-            # self.owner.game.print_game_message("Chasing", WHITE)
-            move_x = 0
-            move_y = 0
-            if (diff_x > 0):
-                move_x = -1
-            elif (diff_x < 0):
-                move_x = 1
-            else:
-                move_x = 0
-
-            if (diff_y > 0):
-                move_y = -1
-            elif (diff_y < 0):
-                move_y = 1
-            else:
-                move_y = 0
+            move_x = self._calculate_change_in_position(diff_x)
+            move_y = self._calculate_change_in_position(diff_y)
 
             self.owner.creature.move(move_x, move_y)
+
+    def _calculate_change_in_position(self, diff):
+        """
+        Helper function for take_turn. Returns int that moves
+        self closer to player
+
+        Arg:
+            diff (int, arg): difference between self position and player
+        """
+        if (diff > 0):
+            move = -1
+        elif (diff < 0):
+            move = 1
+        else:
+            move = 0
+        return move
 
 
 class container:

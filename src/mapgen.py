@@ -76,7 +76,7 @@ def find_common_y_between_rooms(left_room, right_room):
 
 class Node:
     """
-    Class that represents a node in the BSP Tree
+    Class that represents a node in the BST
 
     Attributes:
         up_left ((int, int), arg): coordinate of the topleft of the split node/sub dungeon
@@ -102,7 +102,7 @@ class Node:
 
 class Tree:
     """
-    Class that represent A BSP Tree 
+    Class that represent A BST 
 
     Each node in tree represents a subdungeon in the tree
 
@@ -334,9 +334,9 @@ class Tree:
         """
         Recursively builds path to join sister nodes.
 
-        Do nothing on leaf nodes. Else join the 2 children node's room with a random single tile path.
-        Will cut through other rooms and paths. If there is no straight path from both rooms,
-        randomly make a zigzag path to connect the 2 rooms
+        Do nothing on leaf nodes. Else join the 2 children node's room with a random 
+        single tile path. Will cut through other rooms and paths. If there is no 
+        straight path from both rooms, randomly make a zigzag path to connect the 2 rooms
 
         Arg:
             node (Node, arg): node to build path for
@@ -384,7 +384,7 @@ class Tree:
             else:
                 path_min_y, path_max_y = find_common_y_between_rooms(left_child.room, right_child.room)
 
-                # Case: where left child (top one) is higher up than the right child (bottom one)
+                # Case: where left child (top one) is more to the right than the right child (bottom one)
                 # (ie no straight path to both rooms)
                 # 11111111
                 # 11111001
@@ -416,8 +416,8 @@ class Tree:
         Recursively builds path to join sister nodes.
 
         Do nothing on leaf nodes. Else join the 2 children node's room with a random single tile path.
-        This method will build paths more intelligently and connect rooms close to where the children
-        nodes were divided
+        This method will build paths more intelligently (ie no zigzags and cutting through rooms)
+        and connect rooms close to where the children nodes were divided
 
         Arg:
             node (Node, arg): node to build path for
@@ -557,22 +557,32 @@ class Tree:
         left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
         right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
 
+        # x coord of path connecting the left room
         left_x = random.randint(left_child_up_x, left_child_down_x)
+        # x coord of path connecting the right room
         right_x = random.randint(right_child_up_x, right_child_down_x)
+
         diff_y = right_child_up_y - left_child_down_y
+
+        # make sure that the path has atleast one square sticking straigh 
+        # out from children before zigzagging
         left_y = random.randint(2, diff_y - 2)
-        right_y = diff_y - left_y 
+        right_y = diff_y - left_y
+
         low = min(left_x, right_x)
         high = max(left_x, right_x)
 
+        # draw zig part for right child
         for y in range(right_child_up_y - right_y, right_child_up_y):
             # if (self.map_array[y][right_x] == '1'):
                 self.map_array[y][right_x] = PATH
 
+        # draw zig part for left child
         for y in range(left_child_down_y + 1, left_child_down_y + left_y):
             # if (self.map_array[y][left_x] == '1'):
                 self.map_array[y][left_x] = PATH
 
+        # draw zag part that connects the two zig parts
         for x in range (low, high + 1):
             # if (self.map_array[left_child_down_y + left_y][x] == '1'):
                 self.map_array[left_child_down_y + left_y][x] = PATH
@@ -591,29 +601,44 @@ class Tree:
         left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
         right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
 
+        # y coord of path connecting the left room
         left_y = random.randint(left_child_up_y, left_child_down_y)
+        # y coord of path connecting the right room
         right_y = random.randint(right_child_up_y, right_child_down_y)
+
         diff_x = right_child_up_x - left_child_down_x
+
+        # make sure that the path has atleast one square sticking straigh 
+        # out from children before zigzagging
         left_x = random.randint(2, diff_x - 2)
         right_x = diff_x - left_x
+
         low = min(left_y, right_y)
         high = max(left_y, right_y)
 
+        # draw zig part for left child
         for x in range (left_child_down_x + 1, left_child_down_x + left_x):
             # if (self.map_array[left_y][x] == '1'):
                 self.map_array[left_y][x] = PATH
 
+        # draw zig part for left child
         for x in range (right_child_up_x - right_x, right_child_up_x):
             # if (self.map_array[right_y][x] == '1'):
                 self.map_array[right_y][x] = PATH
 
+        # draw zag part that connects the two zig parts
         for y in range (low, high + 1):
             # if (self.map_array[y][(left_child_down_x + left_x)] == '1'):
                 self.map_array[y][(left_child_down_x + left_x)] = PATH
 
     
     def build_path_to_closest_rooms(self, node):
-        #TODO: could use this for make better paths
+        """
+        Builds paths between adjacent children rooms
+
+        Arg:
+            node (Node, arg): node to build path between its children's room
+        """
         if (node.split_hor):
             # Horizontally split means the two subdungeons are on top of each other
             # therefore we should find if it is vertically adjacent
@@ -644,13 +669,21 @@ class Tree:
     
 
     def _find_if_rooms_are_vert_adjacent(self, left_room, right_room):
+        """
+        Return true if both rooms are vertically adjacent
+
+        Rooms are considered vertically adjacent if the rooms have at 
+        least 1 common x coord and are children of the same parent node,
+        meaning that the distance between them is between 2* DIST_FROM_SISTER_NODE
+        min/max
+
+        Arg:
+            left_room (Room, arg): left room to check
+            right_room (Room, arg): right room to check
+        """
+
         # min and max x value that both rooms share in common
         path_min_x, path_max_x = find_common_x_between_rooms(left_room, right_room)
-
-
-        # # If rooms are not close to coord
-        # if (not(path_min_x <= coord and coord <= path_max_x)):
-        #     return False
 
         # If both rooms are in the same x range = True, else False
         adj = path_min_x <= path_max_x
@@ -666,12 +699,22 @@ class Tree:
 
     
     def _find_if_rooms_are_hor_adjacent(self, left_room, right_room):
+        """
+        Return true if both rooms are horizontally adjacent
+
+        Rooms are considered horizontally adjacent if the rooms have at 
+        least 1 common y coord and are children of the same parent node,
+        meaning that the distance between them is between 2* DIST_FROM_SISTER_NODE
+        min/max
+
+        Arg:
+            left_room (Room, arg): left room to check
+            right_room (Room, arg): right room to check
+        """
+
         # min and max y value that both rooms share in common
         path_min_y, path_max_y = find_common_y_between_rooms(left_room, right_room)
 
-        # # If rooms are not close to coord
-        # if (not(range_of_y_min <= coord and coord <= range_of_y_max)):
-        #     return False
 
         # If both rooms are in the same y range = True, else false
         adj = path_min_y <= path_max_y
@@ -712,10 +755,11 @@ class Tree:
             if (node.room.up_left != None and node.room.down_right != None):
                 print("room.up_left: " + str(node.room.up_left) + " , room.down_right: " + str(node.room.down_right))
             print("")
+    
 
     def print_map(self):
         """
-        Prints maps
+        Prints the map using the constants defined in constant.py
         """
         for row in self.map_array:
             for val in row:
