@@ -67,6 +67,9 @@ class creature:
             self.owner.right = False
             self.owner.left = True
             self.owner.moving = True
+        
+        if (not dy == 0):
+            self.owner.moving = True
 
         self.owner.x += dx
         self.owner.y += dy
