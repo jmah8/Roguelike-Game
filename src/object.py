@@ -95,7 +95,7 @@ class object(pygame.sprite.Sprite):
         """
         if (not self.game.free_camera_on):
             if self.ai:
-                self.ai.takeTurn()
+                self.ai.take_turn()
             elif self.game.player_group.has(self):
                 self.creature.move(dx, dy)
                 self.game.free_camera.x = self.x
