@@ -96,7 +96,3 @@ class object(pygame.sprite.Sprite):
             self.ai.take_turn()
         else:
             self.creature.move(dx, dy)
-            print(self.x)
-            print(self.y)
-            print(self.rect.x)
-            print(self.rect.y)

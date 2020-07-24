@@ -207,7 +207,7 @@ class Game:
             self.surface.blit(tile.image, self.camera.apply(tile))
 
         if (self.free_camera_on):
-            self.camera_group.draw(self.surface)
+            self.surface.blit(self.free_camera.image, self.camera.apply(self.free_camera))
 
         # Draws creature if it is in player fov
         for obj in self.all_creature:
