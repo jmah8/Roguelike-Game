@@ -88,27 +88,15 @@ class object(pygame.sprite.Sprite):
             # self.moving = False
                 
 
-
     def update(self, dx, dy):
         """
         Updates the object depending on its ai or player input
         """
-        if (not self.game.free_camera_on):
-            if self.ai:
-                self.ai.take_turn()
-            elif self.game.player_group.has(self):
-                self.creature.move(dx, dy)
-                self.game.free_camera.x = self.x
-                self.game.free_camera.y = self.y
+        if self.ai:
+            self.ai.take_turn()
         else:
-            self.game.free_camera.x += dx
-            self.game.free_camera.y += dy
-            self.game.free_camera.rect.topleft = (self.game.free_camera.x * SPRITE_SIZE, self.game.free_camera.y * SPRITE_SIZE)
-            print("")
-            print(self.game.free_camera.x)
-            print(self.game.free_camera.y)
-            print(str(self.game.free_camera.x * SPRITE_SIZE))
-            print(str(self.game.free_camera.y * SPRITE_SIZE))
-            print(self.game.free_camera.rect)
-
-
+            self.creature.move(dx, dy)
+            print(self.x)
+            print(self.y)
+            print(self.rect.x)
+            print(self.rect.y)
