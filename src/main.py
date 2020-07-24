@@ -38,6 +38,8 @@ class Game:
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
 
+        self.current_group = self.all_creature
+
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
@@ -56,6 +58,10 @@ class Game:
             self.map_tiles.width, self.map_tiles.height)
 
 
+        self.free_camera_on = False
+        camera = components.creature("Camera", 999, False)
+        self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
+
 
 
         creaturetest = components.creature("Viet", 10)
@@ -63,10 +69,15 @@ class Game:
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, True)
-
         ai_component = components.ai_test()
         slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creaturetest1, ai=ai_component)
+
+        # TODO: Fix ai for creatures merging when stepping onto same tile
+        creaturetest2 = components.creature("Slime1", 3, True)
+        ai_component_1 = components.ai_test()
+        slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
+                              creature=creaturetest2, ai=ai_component_1)
                               
 
         # NOTE: Adding player last makes monster ai acts first (more correct)
@@ -74,12 +85,17 @@ class Game:
         # then player moves resulting in ranged attack
         self.all_creature.add(self.player)
         self.all_creature.add(slime)
+        self.all_creature.add(slime1)
 
         self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
 
+        self.camera_group = pygame.sprite.GroupSingle()
+        self.camera_group.add(self.free_camera)
+
         self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
+        self.enemies.add(slime1)
         self.run()
 
     def run(self):
@@ -90,7 +106,10 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            self.camera.update(self.player)
+            if (not self.free_camera_on):
+                self.camera.update(self.player)
+            else:
+                self.camera.update(self.free_camera)
             self.draw()
 
     def events(self):
@@ -123,27 +142,38 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
-                    self.all_creature.update(-1, 0)
+                    self.current_group.update(-1, 0)
                 if event.key == pygame.K_d:
-                    self.all_creature.update(1, 0)
+                    self.current_group.update(1, 0)
                 if event.key == pygame.K_w:
-                    self.all_creature.update(0, -1)
+                    self.current_group.update(0, -1)
                 if event.key == pygame.K_q:
-                    self.all_creature.update(-1, -1)
+                    self.current_group.update(-1, -1)
                 if event.key == pygame.K_e:
-                    self.all_creature.update(1, -1)
+                    self.current_group.update(1, -1)
                 if event.key == pygame.K_z:
-                    self.all_creature.update(-1, 1)
+                    self.current_group.update(-1, 1)
                 if event.key == pygame.K_c:
-                    self.all_creature.update(1, 1)
+                    self.current_group.update(1, 1)
                 if event.key == pygame.K_s:
-                    self.all_creature.update(0, 1)
+                    self.current_group.update(0, 1)
                 if event.key == pygame.K_x:
-                    self.all_creature.update(0, 0)
+                    self.current_group.update(0, 0)
                 if event.key == pygame.K_ESCAPE:
                     self.wall_hack = not self.wall_hack
                     if (self.wall_hack):
                         self.fov = [[1 for x in range (0, self.map_tiles.tilewidth)] for y in range (self.map_tiles.tileheight)]
+                if event.key == pygame.K_m:
+                    self.free_camera_on = not self.free_camera_on
+                    if (self.free_camera_on):
+                        self.current_group = self.camera_group
+                        self.free_camera.x = self.player.x
+                        self.free_camera.y = self.player.y
+                        self.free_camera.rect.topleft = self.player.rect.topleft
+                    else:
+                        self.current_group = self.all_creature
+
+
 
 
                 # print(self.camera.camera.topleft)
@@ -176,11 +206,16 @@ class Game:
         for tile in self.all_tile:
             self.surface.blit(tile.image, self.camera.apply(tile))
 
+        if (self.free_camera_on):
+            self.camera_group.draw(self.surface)
+
         # Draws creature if it is in player fov
         for obj in self.all_creature:
             if gamemap.check_if_in_fov(self, obj):  
                 obj.update_anim()            
                 self.surface.blit(obj.image, self.camera.apply(obj))
+
+
         self.draw_grid()
 
         self.draw_debug()

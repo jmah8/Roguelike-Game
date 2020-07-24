@@ -163,7 +163,7 @@ def gen_map(game):
     tree.build_bsp()
     tree.make_room()
     tree.build_path()
-    tree.print_tree()
+    # tree.print_tree()
     tree.print_map()
     return draw_tiles(map_array, game)
 

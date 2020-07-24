@@ -28,10 +28,7 @@ class object(pygame.sprite.Sprite):
         self.object_id = object_id
         self.anim = anim
         self.image = image
-
-        if self.image:
-            self.image = image
-        else:
+        if not self.image:
             self.image = anim['idle_right'][0]
 
         self.rect = self.image.get_rect()
@@ -42,9 +39,10 @@ class object(pygame.sprite.Sprite):
         self.moving = False
 
         # TODO: Refactor this to a new class later
-        self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
-        self.flicker_timer = 0.0
-        self.anim_frame = 0     
+        if (anim):
+            self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
+            self.flicker_timer = 0.0
+            self.anim_frame = 0     
 
 
         self.creature = creature
@@ -90,15 +88,15 @@ class object(pygame.sprite.Sprite):
             # self.moving = False
                 
 
-
     def update(self, dx, dy):
         """
         Updates the object depending on its ai or player input
         """
         if self.ai:
             self.ai.take_turn()
-        elif self.game.player_group.has(self):
+        else:
             self.creature.move(dx, dy)
-
-
-
+            print(self.x)
+            print(self.y)
+            print(self.rect.x)
+            print(self.rect.y)
