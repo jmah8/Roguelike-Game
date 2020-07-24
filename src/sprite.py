@@ -2,7 +2,7 @@ import pygame
 from constant import *
 import os
 
-def loadImage(name, colorkey=None):
+def load_image(name, colorkey=None):
     """
     Load and convert image to surface and returns image and the image rect
     and makes color at colorkey transparent
@@ -40,11 +40,11 @@ def load_anim(pathname, start_num, end_num):
         end_num (arg, int): image file name end #
     """
     sprite_anim = []
-    sprite_anim.append(loadImage(pathname))
+    sprite_anim.append(load_image(pathname))
     tmp = pathname
     for i in range (start_num, end_num):
         tmp = tmp.replace(str(i), str(i+1))
-        sprite_anim.append(loadImage(tmp))
+        sprite_anim.append(load_image(tmp))
     return sprite_anim
 
 
@@ -78,10 +78,10 @@ class GameSprites():
     """
     def __init__(self):
         #  Environment
-        self.wall_image = loadImage(WALL_1)
-        self.floor_image_1 = loadImage(FLOOR_1)
-        self.floor_image_2 = loadImage(FLOOR_2)
-        self.spike = loadImage(SPIKE)
+        self.wall_image = load_image(WALL_1)
+        self.floor_image_1 = load_image(FLOOR_1)
+        self.floor_image_2 = load_image(FLOOR_2)
+        self.spike = load_image(SPIKE)
         self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.unseen_tile.fill(BLACK)
         self.seen_wall_image = seen_sprite(self.wall_image)

@@ -54,6 +54,9 @@ class object(pygame.sprite.Sprite):
             ai.owner = self
 
     def update_anim(self):
+        """
+        Updates objects sprite depending on time passed
+        """
         if (self.anim):
             clock = self.game.clock.get_fps()
 
