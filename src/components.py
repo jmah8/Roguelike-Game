@@ -14,14 +14,19 @@ class creature:
         name_instance (arg, string) : Name of creature
         hp (arg, int) : HP of creature
         owner (object) : object that has self as creature component
+        killable (boolean) : if creature is killable
+        group (group): group creature can attack
+        walk_through_tile (boolean): if creature can walk through tiles like walls
     """
 
-    def __init__(self, name_instance, hp, killable=None):
+    def __init__(self, name_instance, hp, killable=None, enemy_group=None, walk_through_tile=False):
         self.name_instance = name_instance
         self.maxhp = hp
         self.hp = hp
         self.owner = None
         self.killable = killable
+        self.enemy_group = enemy_group
+        self.walk_through_tile = walk_through_tile
 
     def take_damage(self, damage):
         """
@@ -59,6 +64,41 @@ class creature:
             dy (arg, int): int to change entity's y coord
         """
         # For animation
+        self._update_anim_status(dx, dy)
+
+        self.owner.x += dx
+        self.owner.y += dy
+        self.owner.rect.topleft = (
+            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
+
+        if (not self.walk_through_tile):
+            # check to see if entity collided with wall and if so don't move
+            creature_collide_with_wall = pygame.sprite.spritecollideany(
+                self.owner, self.owner.game.walls)
+
+            if creature_collide_with_wall:
+                self.reverse_move(dx, dy)
+
+        # check to see if entity collided with enemy and if so don't move
+        if (self.enemy_group):
+            creature_hit = pygame.sprite.spritecollideany(self.owner, self.enemy_group)
+            if creature_hit:
+                self.reverse_move(dx, dy)
+                self.attack(creature_hit, 1)
+
+
+    def _update_anim_status(self, dx, dy):
+        """
+        Updates the direction the sprite is moving
+
+        If sprite is moving regardless of direction, moving is true.
+        If sprite is moving left, left = True and right = False and
+        opposite is true for moving right
+
+        Args:
+            dx (int): change in x
+            dy (int): change in y
+        """
         if (dx > 0):
             self.owner.right = True
             self.owner.left = False
@@ -71,40 +111,6 @@ class creature:
         if (not dy == 0):
             self.owner.moving = True
 
-        self.owner.x += dx
-        self.owner.y += dy
-        self.owner.rect.topleft = (
-            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-
-
-        # check to see if entity collided with wall and if so don't move
-        creature_collide_with_wall = pygame.sprite.spritecollideany(
-            self.owner, self.owner.game.walls)
-
-        if creature_collide_with_wall:
-            self.reverse_move(dx, dy)
-
-
-        # check to see if entity (player) collided with enemy and if so don't move
-        if_player = self.owner.game.player_group.has(self.owner)
-
-        if if_player:
-            creature_hit = pygame.sprite.spritecollideany(
-                self.owner, self.owner.game.enemies)
-            if creature_hit:
-                self.reverse_move(dx, dy)
-                self.attack(creature_hit, 1)
-
-
-        # check to see if entity (enemy) collided with player and if so don't move
-        if_enemy = self.owner.game.enemies.has(self.owner)
-
-        if if_enemy:
-            creature_hit = pygame.sprite.spritecollideany(
-                self.owner, self.owner.game.player_group)
-            if creature_hit:
-                self.reverse_move(dx, dy)
-                self.attack(creature_hit, 1)
 
     def reverse_move(self, dx, dy):
         """

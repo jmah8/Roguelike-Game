@@ -37,7 +37,14 @@ class Game:
         self.all_tile = pygame.sprite.Group()
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
+        # Player group
+        self.player_group = pygame.sprite.GroupSingle()
+        # Free camera group
+        self.camera_group = pygame.sprite.GroupSingle()
+        # Enemy group
+        self.enemies = pygame.sprite.Group()
 
+        # Switches current group to all creatures
         self.current_group = self.all_creature
 
         # Load in all sprites
@@ -59,22 +66,22 @@ class Game:
 
 
         self.free_camera_on = False
-        camera = components.creature("Camera", 999, False)
+        camera = components.creature("Camera", 999, False, walk_through_tile=True)
         self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
 
 
 
-        creaturetest = components.creature("Viet", 10)
+        creaturetest = components.creature("Viet", 10, enemy_group=self.enemies)
         self.player = object.object(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
 
-        creaturetest1 = components.creature("Slime", 3, True)
+        creaturetest1 = components.creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = components.ai_test()
         slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creaturetest1, ai=ai_component)
 
         # TODO: Fix ai for creatures merging when stepping onto same tile
-        creaturetest2 = components.creature("Slime1", 3, True)
+        creaturetest2 = components.creature("Slime1", 3, True, enemy_group=self.player_group)
         ai_component_1 = components.ai_test()
         slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creaturetest2, ai=ai_component_1)
@@ -87,13 +94,10 @@ class Game:
         self.all_creature.add(slime)
         self.all_creature.add(slime1)
 
-        self.player_group = pygame.sprite.GroupSingle()
         self.player_group.add(self.player)
 
-        self.camera_group = pygame.sprite.GroupSingle()
         self.camera_group.add(self.free_camera)
 
-        self.enemies = pygame.sprite.Group()
         self.enemies.add(slime)
         self.enemies.add(slime1)
         self.run()
@@ -173,15 +177,6 @@ class Game:
                     else:
                         self.current_group = self.all_creature
 
-
-
-
-                # print(self.camera.camera.topleft)
-                # print("player at " + str(self.player.x), str(self.player.y))
-                # print("player_rect at " + str(self.player.rect))
-                # print("slime at " + str(slime.x), str(slime.y))
-                # print("slime_rect at " + str(slime.rect))
-                # print()
 
     def draw_grid(self):
         """
