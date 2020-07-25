@@ -63,7 +63,6 @@ class creature:
             dx (arg, int): int to change entity's x coord
             dy (arg, int): int to change entity's y coord
         """
-        # For animation
         self._update_anim_status(dx, dy)
 
         self.owner.x += dx

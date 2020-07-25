@@ -16,8 +16,12 @@ class object(pygame.sprite.Sprite):
         y (arg, int): Position on y axis
         object_id (arg, string): id of object
         image (arg, sprite): Sprite of image
+        anim (arg, [string][int]): dictionary of sprites for animation
         creature (arg, creature): Creature it is
         ai (arg, ai): Ai object has
+        flicker_speed (float): how much time we spend on single frame
+        flicker_timer (float): how much timer has passed
+        anim_frame (int): current frame of animation
     """
 
     def __init__(self, game, x, y, object_id, image=None, anim=None, creature=None, ai=None, container = None):
@@ -38,7 +42,6 @@ class object(pygame.sprite.Sprite):
         self.right = True
         self.moving = False
 
-        # TODO: Refactor this to a new class later
         if (anim):
             self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
             self.flicker_timer = 0.0
@@ -56,6 +59,7 @@ class object(pygame.sprite.Sprite):
     def update_anim(self):
         """
         Updates objects sprite depending on time passed
+        and if it is moving and direction it is facing
         """
         if (self.anim):
             clock = self.game.clock.get_fps()
@@ -66,13 +70,9 @@ class object(pygame.sprite.Sprite):
             if self.flicker_timer >= self.flicker_speed:
                 self.flicker_timer = 0.0
 
-                if self.anim_frame >= len(self.anim) - 1:
-                    self.anim_frame = 0
-                    self.moving = False
-
-                else:
-                    self.anim_frame += 1
-                    self.moving = False
+                self.anim_frame += 1
+                self.anim_frame %= len(self.anim)
+                self.moving = False
 
             if self.right:
                 if self.moving:
@@ -84,8 +84,6 @@ class object(pygame.sprite.Sprite):
                     self.image = self.anim["run_left"][self.anim_frame]
                 else:
                     self.image = self.anim["idle_left"][self.anim_frame]
-
-            # self.moving = False
                 
 
     def update(self, dx, dy):
