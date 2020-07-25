@@ -5,6 +5,7 @@ from constant import *
 import object
 import components
 import sprite
+import pathfinding
 
 pygame.font.init()
 
@@ -54,12 +55,16 @@ class Game:
         # This is for reading maps from text files
         if (READ_FROM_FILE):
             self.map_tiles = gamemap.load_data()
-            self.map_array = gamemap.draw_map(self.map_tiles.data, self)
+            self.map_array = gamemap.draw_tiles(self.map_tiles.data, self)
         else:
         # This is for generating random maps
-            self.map_array = gamemap.gen_map(self)
+            self.map_array, self.data_array = gamemap.gen_map(self)
             self.map_tiles = gamemap.MapInfo(self.map_array)
         self.wall_hack = False
+
+        self.graph = pathfinding.Graph()
+        self.graph.make_graph(self.data_array, self.map_tiles)
+        self.graph.neighbour()
 
         self.camera = gamemap.Camera(
             self.map_tiles.width, self.map_tiles.height)
@@ -73,17 +78,17 @@ class Game:
 
         creaturetest = components.creature("Viet", 10, enemy_group=self.enemies)
         self.player = object.object(self,
-                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
+                                    1, 2, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = components.ai_test()
-        slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
+        slime = object.object(self, 1, 1, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creaturetest1, ai=ai_component)
 
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = components.creature("Slime1", 3, True, enemy_group=self.player_group)
         ai_component_1 = components.ai_test()
-        slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
+        slime1 = object.object(self, 1, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creaturetest2, ai=ai_component_1)
                               
 
@@ -144,38 +149,49 @@ class Game:
                 # This line is only used in pygame 1
                 self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height), pygame.RESIZABLE)
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    self.current_group.update(-1, 0)
-                if event.key == pygame.K_d:
-                    self.current_group.update(1, 0)
-                if event.key == pygame.K_w:
-                    self.current_group.update(0, -1)
-                if event.key == pygame.K_q:
-                    self.current_group.update(-1, -1)
-                if event.key == pygame.K_e:
-                    self.current_group.update(1, -1)
-                if event.key == pygame.K_z:
-                    self.current_group.update(-1, 1)
-                if event.key == pygame.K_c:
-                    self.current_group.update(1, 1)
-                if event.key == pygame.K_s:
-                    self.current_group.update(0, 1)
-                if event.key == pygame.K_x:
-                    self.current_group.update(0, 0)
-                if event.key == pygame.K_ESCAPE:
-                    self.wall_hack = not self.wall_hack
-                    if (self.wall_hack):
-                        self.fov = [[1 for x in range (0, self.map_tiles.tilewidth)] for y in range (self.map_tiles.tileheight)]
-                if event.key == pygame.K_m:
-                    self.free_camera_on = not self.free_camera_on
-                    if (self.free_camera_on):
-                        self.current_group = self.camera_group
-                        self.free_camera.x = self.player.x
-                        self.free_camera.y = self.player.y
-                        self.free_camera.rect.topleft = self.player.rect.topleft
-                    else:
-                        self.current_group = self.all_creature
+            self._handle_key(event)
+
+    def _handle_key(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a:
+                self.current_group.update(-1, 0)
+            if event.key == pygame.K_d:
+                self.current_group.update(1, 0)
+            if event.key == pygame.K_w:
+                self.current_group.update(0, -1)
+            if event.key == pygame.K_q:
+                self.current_group.update(-1, -1)
+            if event.key == pygame.K_e:
+                self.current_group.update(1, -1)
+            if event.key == pygame.K_z:
+                self.current_group.update(-1, 1)
+            if event.key == pygame.K_c:
+                self.current_group.update(1, 1)
+            if event.key == pygame.K_s:
+                self.current_group.update(0, 1)
+            if event.key == pygame.K_x:
+                self.current_group.update(0, 0)
+            if event.key == pygame.K_ESCAPE:
+                self.wall_hack = not self.wall_hack
+                if (self.wall_hack):
+                    self.fov = [[1 for x in range (0, self.map_tiles.tilewidth)] for y in range (self.map_tiles.tileheight)]
+            if event.key == pygame.K_m:
+                self.free_camera_on = not self.free_camera_on
+                if (self.free_camera_on):
+                    self.current_group = self.camera_group
+                    self.free_camera.x = self.player.x
+                    self.free_camera.y = self.player.y
+                    self.free_camera.rect.topleft = self.player.rect.topleft
+                else:
+                    self.current_group = self.all_creature
+            if event.key == pygame.K_RETURN:
+                if (self.free_camera_on):
+                    start = (self.player.x, self.player.y)
+                    goal = (self.free_camera.x, self.free_camera.y)
+                    visited = self.graph.bfs(start, goal)
+                    if (visited):
+                        path = self.graph.find_path(start, goal, visited)
+
 
 
     def draw_grid(self):

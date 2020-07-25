@@ -188,7 +188,7 @@ def draw_tiles(p_map_array, game):
             elif tile == PATH:
                 map_array_row.append(Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
-    return map_array
+    return map_array, p_map_array
 
 
 class Camera:
