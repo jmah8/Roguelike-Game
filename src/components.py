@@ -33,9 +33,9 @@ class creature:
         Creature takes damage to hp and if hp is <= 0 and killable == True, it dies
         """
         self.hp -= damage
-        self.owner.game.print_game_message(
+        self.owner.game.drawing.print_game_message(
             self.name_instance + " took " + str(damage) + " damage", RED)
-        self.owner.game.print_game_message(
+        self.owner.game.drawing.print_game_message(
             self.name_instance + "'s hp is at :" + str(self.hp), WHITE)
 
         if self.hp <= 0 and self.killable:
@@ -46,10 +46,10 @@ class creature:
         """
         Prints that object is dead and removes it from all_creature and enemies group
         """
-        self.owner.game.print_game_message(
+        self.owner.game.drawing.print_game_message(
             self.name_instance + " is dead", BLUE)
         self.owner.game.all_creature.remove(self.owner)
-        self.owner.game.enemies.remove(self.owner) 
+        self.owner.game.enemy_group.remove(self.owner)
 
     def move(self, dx, dy):
         """
@@ -132,7 +132,7 @@ class creature:
             target (arg, object): object to attack
             damage (arg, int): damage to do to object
         """
-        self.owner.game.print_game_message(self.name_instance + " attacks " + target.creature.name_instance
+        self.owner.game.drawing.print_game_message(self.name_instance + " attacks " + target.creature.name_instance
                                            + " for " + str(damage) + " damage", WHITE)
         target.creature.take_damage(damage)
 
