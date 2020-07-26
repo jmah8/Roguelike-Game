@@ -4,7 +4,7 @@ import gamemap
 import pygame
 
 
-class creature:
+class Creature:
     """
     have hp
     can damage other objects
@@ -14,9 +14,9 @@ class creature:
         name_instance (arg, string) : Name of creature
         hp (arg, int) : HP of creature
         owner (object) : object that has self as creature component
-        killable (boolean) : if creature is killable
-        group (group): group creature can attack
-        walk_through_tile (boolean): if creature can walk through tiles like walls
+        killable (arg, boolean) : if creature is killable
+        enemy_group (arg, group): group creature can attack
+        walk_through_tile (arg, boolean): if creature can walk through tiles like walls
     """
 
     def __init__(self, name_instance, hp, killable=None, enemy_group=None, walk_through_tile=False):
@@ -60,9 +60,9 @@ class creature:
         Moves entity by dx and dy on map. If entity collides with
         wall or enemy, stop it from moving by actually reversing the move
 
-        Arg:
-            dx (arg, int): int to change entity's x coord
-            dy (arg, int): int to change entity's y coord
+        Args:
+            dx (int): int to change entity's x coord
+            dy (int): int to change entity's y coord
         """
         self._update_anim_status(dx, dy)
 
@@ -116,9 +116,9 @@ class creature:
         """
         Reverse the move
 
-        Arg:
-            dx (arg, int): int to change entity's x coord
-            dy (arg, int): int to change entity's y coord
+        Args:
+            dx (int): int to change entity's x coord
+            dy (int): int to change entity's y coord
         """
         self.owner.x -= dx
         self.owner.y -= dy
@@ -129,15 +129,15 @@ class creature:
         """
         Attack target creature for damage
 
-        Arg:
-            target (arg, object): object to attack
-            damage (arg, int): damage to do to object
+        Args:
+            target (object): object to attack
+            damage (int): damage to do to object
         """
         self.owner.game.drawing.print_game_message(self.name_instance + " attacks " + target.creature.name_instance
                                            + " for " + str(damage) + " damage", WHITE)
         target.creature.take_damage(damage)
 
-class ai_test:
+class Ai_test:
     """
     Once per turn, execute
     """
@@ -168,7 +168,7 @@ class ai_test:
         Helper function for take_turn. Returns int that moves
         self closer to player
 
-        Arg:
+        Args:
             diff (int, arg): difference between self position and player
         """
         if (diff > 0):
@@ -180,7 +180,7 @@ class ai_test:
         return move
 
 
-class container:
+class Container:
     def __init__(self, volume=10.0, inventory = []):
         self.inventory = inventory
         self.volume = volume
@@ -190,7 +190,7 @@ class container:
     ## TODO Get volume of container()
     ## TODO get weight of inventory()
 
-class item:
+class Item:
     def __init__(self, name, weight = 0.0, volume = 0.0, consumable = None):
         self.name = name
         self.weight = weight

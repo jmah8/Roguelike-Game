@@ -36,7 +36,7 @@ class Graph:
 
         Makes a node if corresponding point on map isn't wall
 
-        Arg:
+        Args:
             map (2D array): 2D array representing map
             map_data (MapInfo): arg that holds map info
         """
@@ -66,7 +66,7 @@ class Graph:
 
         Visited is a dictionary of nodes and the previous node
 
-        Arg:
+        Args:
             start ((int, int)): start coord of bfs
             goal ((int, int)): goal of bfs
 

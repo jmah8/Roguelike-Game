@@ -6,9 +6,10 @@ def load_image(name, colorkey=None):
     """
     Load and convert image to surface and returns image and the image rect
     and makes color at colorkey transparent
-    Arg:
-        name (arg, string) : Pathname of image to convert
-        colorkey (arg, (int, int)) : Position of color to be transparent
+
+    Args:
+        name (string) : Pathname of image to convert
+        colorkey ((int, int)) : Position of color to be transparent
     """
     dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
     pathname = os.path.join(dirname, name)
@@ -34,10 +35,10 @@ def load_anim(pathname, start_num, end_num):
     in filename for the animation sprites and that the difference
     is a number
 
-    Arg:
-        pathname (arg, string): image path name
-        start_num (arg, int): image file name start #
-        end_num (arg, int): image file name end #
+    Args:
+        pathname (string): image path name
+        start_num (int): image file name start #
+        end_num (int): image file name end #
     """
     sprite_anim = []
     sprite_anim.append(load_image(pathname))
@@ -52,8 +53,8 @@ def seen_sprite(image):
     """
     Converts an image, to a seen image
 
-    Arg:
-        image (arg, sprite): image to convert to seen image
+    Args:
+        image (sprite): image to convert to seen image
     """
     seen_image = image.copy()
     seen_image.fill((100, 100, 100), special_flags=pygame.BLEND_RGB_MULT)

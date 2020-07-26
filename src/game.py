@@ -89,26 +89,26 @@ class Game:
 
 
         self.free_camera_on = False
-        camera = components.creature("Camera", 999, False, walk_through_tile=True)
+        camera = components.Creature("Camera", 999, False, walk_through_tile=True)
         self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
 
-        player_container = components.container()
-        player_com = components.creature("Viet", 10, enemy_group=self.enemy_group)
+        player_container = components.Container()
+        player_com = components.Creature("Viet", 10, enemy_group=self.enemy_group)
         self.player = object.object(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com, container=player_container)
 
-        creature_com = components.creature("Slime", 3, True, enemy_group=self.player_group)
-        ai_component = components.ai_test()
+        creature_com = components.Creature("Slime", 3, True, enemy_group=self.player_group)
+        ai_component = components.Ai_test()
         slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
 
         # TODO: Fix ai for creatures merging when stepping onto same tile
-        creaturetest2 = components.creature("Slime1", 3, True, enemy_group=self.player_group)
-        ai_component_1 = components.ai_test()
+        creaturetest2 = components.Creature("Slime1", 3, True, enemy_group=self.player_group)
+        ai_component_1 = components.Ai_test()
         slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
 
-        item_com = components.item("Red Potion", 0, 0, True)
+        item_com = components.Item("Red Potion", 0, 0, True)
         item_potion = object.object(self, 3, 3, "item", image=self.game_sprites.red_potion, item=item_com)
 
         self.ITEMS = [item_potion]
@@ -252,7 +252,7 @@ class Game:
         Uses difference in current/old coord and new/destination coord
         to find which direction to move
 
-        Arg:
+        Args:
             path (list): path to take
         """
         old_coord = (self.player.x, self.player.y)

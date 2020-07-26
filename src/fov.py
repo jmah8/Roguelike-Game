@@ -54,8 +54,8 @@ def check_if_in_fov(game, obj):
     """
     Checks to see if sprite is in player FOV
 
-    Arg:
-        sprite (arg, sprite): sprite to check
+    Args:
+        sprite (sprite): sprite to check
     """
     x = obj.x
     y = obj.y

@@ -150,7 +150,7 @@ class Tree:
             (This is because each node must be >= sub_dungeon width/height)
         Else split whichever way is possible 
 
-        Arg:
+        Args:
             node (Node, arg): Node to split
         """
         if (node.down_right[1] - node.up_left[1] < 2 * self.sub_dungeon_height and node.down_right[0] - node.up_left[0] < 2 * self.sub_dungeon_width):
@@ -173,7 +173,7 @@ class Tree:
         """
         Helper function to split node horizontally randomly, following sub_dungeon_height
 
-        Arg:
+        Args:
             node (Node, arg): node to split horizontally
         """
         split_y = random.randint(node.up_left[1] + self.sub_dungeon_height, node.down_right[1] - self.sub_dungeon_height)
@@ -193,7 +193,7 @@ class Tree:
         """
         Helper function to split node vertically randomly, following sub_dungeon_width
 
-        Arg:
+        Args:
             node (Node, arg): node to split vertically
         """
         split_x = random.randint(node.up_left[0] + self.sub_dungeon_width , node.down_right[0] - self.sub_dungeon_width)
@@ -229,7 +229,7 @@ class Tree:
         Recursively makes room in the leaf nodes and any parent node randomly chooses one of the child rooms
         as its room
 
-        Arg:
+        Args:
             node (Node, arg): node to make room in
         """
         # Return None if None node
@@ -259,7 +259,7 @@ class Tree:
         """
         Makes room in leaf nodes only and returns the room made
 
-        Arg:
+        Args:
             node (Node, arg): node to make room in
         """
         ul_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
@@ -283,7 +283,7 @@ class Tree:
         """
         Makes room in parent node by choosing a room from one of it's immediate children
 
-        Arg:
+        Args:
             node (Node, arg): node to make room in
         """
         ran = random.randint(0, 1)
@@ -304,8 +304,8 @@ class Tree:
         """
         Makes room in parent node by choosing a room from any of it's children
 
-        Arg:
-            node (Node, arg): node to make room in
+        Args:
+            node (Node): node to make room in
         """
         room = random.choice(node.child_room_array)
 
@@ -338,7 +338,7 @@ class Tree:
         single tile path. Will cut through other rooms and paths. If there is no 
         straight path from both rooms, randomly make a zigzag path to connect the 2 rooms
 
-        Arg:
+        Args:
             node (Node, arg): node to build path for
         """
         if (node == None):
@@ -419,7 +419,7 @@ class Tree:
         This method will build paths more intelligently (ie no zigzags and cutting through rooms)
         and connect rooms close to where the children nodes were divided
 
-        Arg:
+        Args:
             node (Node, arg): node to build path for
         """
         if (node == None):
@@ -441,7 +441,7 @@ class Tree:
         """
         Helper function to build straight path for horizontally split node
 
-        Arg:
+        Args:
             node (Node, arg): Current node to make path between 2 of it's children nodes
             path_min_x (int, arg): minimun x coordinate that the path must be
             path_max_x (int, arg): maximum x coordinate that the path must be
@@ -481,7 +481,7 @@ class Tree:
         """
         Draws straight horizontal path from path_ul to path_lr
 
-        Arg:
+        Args:
             path_ul ((int, int), arg): upper left of path coord
             path_lr ((int, int), arg): lower right of path coord
         """
@@ -495,7 +495,7 @@ class Tree:
         """
         Helper function to build straight path for vertically split node
 
-        Arg:
+        Args:
             node (Node, arg): Current node to make path between 2 of it's children nodes
             path_min_y (int, arg): minimun y coordinate that the path must be
             path_max_y (int, arg): maximum y coordinate that the path must be
@@ -512,7 +512,7 @@ class Tree:
         """
         Helper function to build straight path for vertically split node
 
-        Arg:
+        Args:
             left_room (Room, arg): left room to make path from
             right_room (Room, arg): right room to make path to        
             # path_min_y (int, arg): minimun y coordinate that the path must be
@@ -535,7 +535,7 @@ class Tree:
         """
         Draws straight vertical path from path_ul to path_lr
 
-        Arg:
+        Args:
             path_ul ((int, int), arg): upper left of path coord
             path_lr ((int, int), arg): lower right of path coord
         """
@@ -549,7 +549,7 @@ class Tree:
         """
         Helper function to build a zigzag path for a horizontally split node
 
-        Arg:
+        Args:
             left_child (Node, arg): left child to build path to
             right_child (Node, arg): right child to build path to
 
@@ -592,7 +592,7 @@ class Tree:
         """
         Helper function to build a zigzag path for a vertically split node
 
-        Arg:
+        Args:
             left_up ((int, int), arg): left child room's up left coordinate
             left_down ((int, int), arg): left child room's down right coordinate
             right_up ((int, int), arg): right child room's up left coordinate
@@ -636,7 +636,7 @@ class Tree:
         """
         Builds paths between adjacent children rooms
 
-        Arg:
+        Args:
             node (Node, arg): node to build path between its children's room
         """
         if (node.split_hor):
@@ -677,7 +677,7 @@ class Tree:
         meaning that the distance between them is between 2* DIST_FROM_SISTER_NODE
         min/max
 
-        Arg:
+        Args:
             left_room (Room, arg): left room to check
             right_room (Room, arg): right room to check
         """
@@ -707,7 +707,7 @@ class Tree:
         meaning that the distance between them is between 2* DIST_FROM_SISTER_NODE
         min/max
 
-        Arg:
+        Args:
             left_room (Room, arg): left room to check
             right_room (Room, arg): right room to check
         """
@@ -745,7 +745,7 @@ class Tree:
         """
         Recursively prints tree information using post order traversal
 
-        Arg:
+        Args:
             node (Node, arg): node to print information
         """
         if (node != None):

@@ -53,7 +53,7 @@ class Drawing:
         """
         displays text at coord on given surface
 
-        Arg:
+        Args:
             display_surface (surface, arg): surface to draw to
             coord ((int, int), arg): coord to draw to
             text_color (color, arg): color of text
@@ -71,7 +71,7 @@ class Drawing:
         """
         Helper function for draw_text. Returns the text surface and rect
 
-        Arg:
+        Args:
             inc_text (string): text to draw
             inc_color (color, arg): color of text
             inc_bg_color (color, arg): background color of text

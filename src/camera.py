@@ -8,9 +8,9 @@ class Camera:
     player moves and it offsets everything else relative to
     the camera's offset
 
-    Arg:
-        width (arg, int): width of whole map
-        height (arg, int): height of whole map
+    Args:
+        width (int): width of whole map
+        height (int): height of whole map
         camera (rect): rect of whole map
     """
     def __init__(self, width, height, camera_width=CAMERA_WIDTH, camera_height=CAMERA_HEIGHT):
@@ -24,8 +24,8 @@ class Camera:
         """
         Apply camera offset to entity 
 
-        Arg:
-            entity (arg, object): object to apply offset to
+        Args:
+            entity (object): object to apply offset to
         """
         return entity.rect.move(self.camera.topleft)
     
@@ -33,8 +33,8 @@ class Camera:
         """
         Update the camera based on player position
 
-        Arg:
-            player (arg, object): player to follow
+        Args:
+            player (object): player to follow
         """
         x = -player.rect.x + int(self.camera_width / 2)
         y = -player.rect.y + int(self.camera_height / 2)

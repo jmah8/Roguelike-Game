@@ -71,12 +71,9 @@ class Floor(Tile):
         Tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
 
-class TileMap:
+class MapInfo:
     """
-    Load map data for filename.txt
-
-    Arg:
-        filename (arg, string): name of file to read from 
+    Load map info of map_array into MapInfo
 
     Attribute:
         tilewidth (int): # of tiles wide
@@ -94,7 +91,11 @@ class TileMap:
 
 def load_map():
     """
-    Load data from map.txt and returns TileMap instance
+    Load data from map.txt and returns map
+
+    Returns:
+        map_array (2D array): 2D array loaded with map data from
+        with map.txt
     """
     map_data = 'map.txt'
     map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
@@ -109,7 +110,7 @@ class MapInfo:
     """
     Load map data from map_array
 
-    Arg:
+    Args:
         map_array ([[char]char], arg): 2D array representing map to get 
                                         data from
 
@@ -145,7 +146,7 @@ def draw_map(p_map_array, game):
     Draws tiles to background using p_map_array and returns 
     array filled with Tiles
 
-    Arg:
+    Args:
         p_map_array ([char[char]], arg): map to draw as background
         game: (Game, arg): game with all game data
     """
