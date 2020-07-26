@@ -196,8 +196,7 @@ class Game:
                         self._toggle_free_camera()
                         path = self.graph.find_path(start, goal, visited)
                         self._move_char_auto(path)
-                            
-                self._toggle_free_camera()
+
 
     def _toggle_free_camera(self):
         """
