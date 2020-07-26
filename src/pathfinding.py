@@ -38,6 +38,7 @@ class Graph:
 
         Arg:
             map (2D array): 2D array representing map
+            map_data (MapInfo): arg that holds map info
         """
         for y in range (map_data.tileheight):
             for x in range (map_data.tilewidth):

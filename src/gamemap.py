@@ -84,53 +84,25 @@ class TileMap:
         width (int): actual width of map
         height (int): actual height of map
     """
-    def __init__(self, filename):
-        map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
-        self.data = []
-        with open(os.path.join(map_dir, filename), 'rt') as output:
-            for line in output:
-                self.data.append(line.strip())
-
-        self.tilewidth = len(self.data[0])
-        self.tileheight = len(self.data)
+    def __init__(self, map_array):
+        self.tilewidth = len(map_array[0])
+        self.tileheight = len(map_array)
         self.width = self.tilewidth * SPRITE_SIZE
         self.height = self.tileheight * SPRITE_SIZE
 
         
 
-def load_data():
+def load_map():
     """
     Load data from map.txt and returns TileMap instance
     """
-    map_data = TileMap('map.txt')
-    return map_data
-
-
-
-# def draw_map(map_to_draw, game):
-#     """
-#     Draws map and makes walkable = True to floor and walkable = False wall
-
-#     Loops through every tile in map and draws it in correct position
-
-#     Arg:
-#         map_to_draw (arg, array): map to draw as background
-#         game (arg, game): game with data
-#     """
-#     map_array = []
-#     # fov = []
-#     for row, tiles in enumerate(map_to_draw):
-#         map_array_row = []
-#         # fov_row = []
-#         for col, tile in enumerate(tiles):
-#             if tile == WALL:
-#                 map_array_row.append(Wall(game, col, row))
-#             if tile == FLOOR:
-#                 map_array_row.append(Floor(game, col, row))
-#             # fov_row.append(0)
-#         map_array.append(map_array_row)
-#         # fov.append(fov_row)
-#     return map_array 
+    map_data = 'map.txt'
+    map_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+    map_array = []
+    with open(os.path.join(map_dir, map_data), 'rt') as output:
+        for line in output:
+            map_array.append(line.strip())
+    return map_array
 
 
 class MapInfo:
@@ -165,10 +137,10 @@ def gen_map(game):
     tree.build_path()
     # tree.print_tree()
     tree.print_map()
-    return draw_tiles(map_array, game)
+    return map_array
 
 
-def draw_tiles(p_map_array, game):
+def draw_map(p_map_array, game):
     """
     Draws tiles to background using p_map_array and returns 
     array filled with Tiles
@@ -188,58 +160,12 @@ def draw_tiles(p_map_array, game):
             elif tile == PATH:
                 map_array_row.append(Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
-    return map_array, p_map_array
-
-
-class Camera:
-    """
-    Camera that "follows" player around
-
-    Camera is actually the whole map that gets offset whenever
-    player moves and it offsets everything else relative to
-    the camera's offset
-
-    Arg:
-        width (arg, int): width of whole map
-        height (arg, int): height of whole map
-        camera (rect): rect of whole map
-    """
-    def __init__(self, width, height, camera_width=CAMERA_WIDTH, camera_height=CAMERA_HEIGHT):
-        self.camera = pygame.Rect(0, 0, width, height)
-        self.width = width
-        self.height = height
-        self.camera_width = camera_width
-        self.camera_height = camera_height
-
-    def apply(self, entity):
-        """
-        Apply camera offset to entity 
-
-        Arg:
-            entity (arg, object): object to apply offset to
-        """
-        return entity.rect.move(self.camera.topleft)
-    
-    def update(self, player):
-        """
-        Update the camera based on player position
-
-        Arg:
-            player (arg, object): player to follow
-        """
-        x = -player.rect.x + int(self.camera_width / 2)
-        y = -player.rect.y + int(self.camera_height / 2)
-
-        x = min(0, x)
-        y = min(0, y)
-        x = max(-(self.width - self.camera_width), x)
-        y = max(-(self.height - self.camera_height), y)
-        self.camera = pygame.Rect(x, y, self.width, self.height)
+    return map_array
 
 
 
 def new_fov(game):
-    new_fov = [[0 for x in range (0, game.map_tiles.tilewidth)] for y in range (game.map_tiles.tileheight)]
+    new_fov = [[0 for x in range (0, game.map_data.tilewidth)] for y in range (game.map_data.tileheight)]
     return new_fov
 
 
@@ -255,7 +181,7 @@ def ray_casting(game, map_array, fov):
             x += ax
             y += ay
 
-            if x < 0 or y < 0 or x > game.map_tiles.tilewidth - 1 or y > game.map_tiles.tileheight - 1:
+            if x < 0 or y < 0 or x > game.map_data.tilewidth - 1 or y > game.map_data.tileheight - 1:
                 break
                 
             fov[int(round(y))][int(round(x))] = 1
@@ -267,8 +193,8 @@ def ray_casting(game, map_array, fov):
 
 
 def draw_seen(game, map_array, fov):
-    for y in range(0, game.map_tiles.tileheight):
-        for x in range(0, game.map_tiles.tilewidth):
+    for y in range(0, game.map_data.tileheight):
+        for x in range(0, game.map_data.tilewidth):
             tile = map_array[y][x]
             if (x, y) == (game.player.x, game.player.y):
                 tile.image = tile.image_unexplored

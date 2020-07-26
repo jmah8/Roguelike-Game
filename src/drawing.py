@@ -13,7 +13,7 @@ class Drawing:
         if (not self.game.wall_hack):
             self.game.fov = gamemap.new_fov(self.game)
         gamemap.ray_casting(self.game, self.game.map_array, self.game.fov)
-        gamemap.draw_seen(self.game, self.game.map_array, self.game.fov)
+        gamemap.draw_seen(self.game, self.game.tile_array, self.game.fov)
 
         # Draws all tiles
         for tile in self.game.all_tile:

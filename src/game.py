@@ -7,6 +7,7 @@ import components
 import sprite
 import drawing
 import pathfinding
+from camera import Camera
 
 pygame.font.init()
 
@@ -60,20 +61,26 @@ class Game:
         # Load map data
         # This is for reading maps from text files
         if (READ_FROM_FILE):
-            self.map_tiles = gamemap.load_data()
-            self.map_array, self.data_array = gamemap.draw_tiles(self.map_tiles.data, self)
+            # Holds the map representation (chars)
+            self.map_array = gamemap.load_map()
+            # Holds map info like width and height
+            self.map_data = gamemap.MapInfo(self.map_array)
+            # Holds actual tiles
+            self.tile_array = gamemap.draw_map(self.map_array, self)
         else:
         # This is for generating random maps
-            self.map_array, self.data_array = gamemap.gen_map(self)
-            self.map_tiles = gamemap.MapInfo(self.map_array)
+            self.map_array = gamemap.gen_map(self)
+            self.map_data = gamemap.MapInfo(self.map_array)
+            self.tile_array = gamemap.draw_map(self.map_array, self)
+
         self.wall_hack = False
 
         self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.data_array, self.map_tiles)
+        self.graph.make_graph(self.map_array, self.map_data)
         self.graph.neighbour()
 
-        self.camera = gamemap.Camera(
-            self.map_tiles.width, self.map_tiles.height)
+        self.camera = Camera(
+            self.map_data.width, self.map_data.height)
 
 
         self.free_camera_on = False
@@ -156,13 +163,13 @@ class Game:
             new_height = event.h
             # Remove if statements if left and top should be empty
             # else right and bottom is empty
-            if (new_width > self.map_tiles.width):
-                self.camera.camera_width = self.map_tiles.width
+            if (new_width > self.map_data.width):
+                self.camera.camera_width = self.map_data.width
             else:
                 self.camera.camera_width = event.w
 
-            if (new_height > self.map_tiles.height):
-                self.camera.camera_height = self.map_tiles.height
+            if (new_height > self.map_data.height):
+                self.camera.camera_height = self.map_data.height
             else:
                 self.camera.camera_height = event.h
             # This line is only used in pygame 1
@@ -195,8 +202,8 @@ class Game:
             if event.key == pygame.K_ESCAPE:
                 self.wall_hack = not self.wall_hack
                 if (self.wall_hack):
-                    self.fov = [[1 for x in range(0, self.map_tiles.tilewidth)] for y in
-                                range(self.map_tiles.tileheight)]
+                    self.fov = [[1 for x in range(0, self.map_data.tilewidth)] for y in
+                                range(self.map_data.tileheight)]
             if event.key == pygame.K_m:
                 self._toggle_free_camera()
             if event.key == pygame.K_RETURN:
@@ -243,12 +250,12 @@ class Game:
         Arg:
             path (list): path to take
         """
-        temp_coord = (self.player.x, self.player.y)
+        old_coord = (self.player.x, self.player.y)
         for coord in path:
-            move_x = coord[0] - temp_coord[0]
-            move_y = coord[1] - temp_coord[1]
-            self.current_group.update(move_x, move_y)
-            temp_coord = coord
+            dest_x = coord[0] - old_coord[0]
+            dest_y = coord[1] - old_coord[1]
+            self.current_group.update(dest_x, dest_y)
+            old_coord = coord
             self._draw_game()
             pygame.time.delay(100)
 
