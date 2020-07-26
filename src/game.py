@@ -26,6 +26,7 @@ class Game:
         self.GAME_OBJECTS = []
         self.ENEMIES = []
         self.CREATURES = []
+        self.ITEMS = []
         self.drawing = drawing.Drawing(self)
 
     def new(self):
@@ -46,8 +47,9 @@ class Game:
         self.camera_group = pygame.sprite.GroupSingle()
         # Enemy group
         self.enemy_group = pygame.sprite.Group()
-
         # Switches current group to all creatures
+        self.item_group = pygame.sprite.Group()
+
         self.current_group = self.all_creature
 
         # Load in all sprites
@@ -91,19 +93,25 @@ class Game:
         slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
 
+        item_com = components.item("Red Potion", 0, 0, True)
+        item_potion = object.object(self, 3, 3, "item", image=self.game_sprites.red_potion, item=item_com)
+
+        self.ITEMS = [item_potion]
+        for i in self.ITEMS:
+            self.item_group.add(i)
+
         self.CREATURES = [self.player, slime, slime1]
         for c in self.CREATURES:
             self.all_creature.add(c)
 
         self.player.add(self.player_group)
-
         self.camera_group.add(self.free_camera)
 
         self.ENEMIES = [slime, slime1]
         for e in self.ENEMIES:
             self.enemy_group.add(e)
 
-        self.GAME_OBJECTS = [slime, slime1, self.player]
+        self.GAME_OBJECTS = [item_potion, slime1, slime, self.player]
 
     def run(self):
         """

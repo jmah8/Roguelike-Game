@@ -24,7 +24,7 @@ class object(pygame.sprite.Sprite):
         anim_frame (int): current frame of animation
     """
 
-    def __init__(self, game, x, y, object_id, image=None, anim=None, creature=None, ai=None, container = None):
+    def __init__(self, game, x, y, object_id, image=None, anim=None, creature=None, ai=None, item=None, container=None):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.x = x
@@ -32,6 +32,7 @@ class object(pygame.sprite.Sprite):
         self.object_id = object_id
         self.anim = anim
         self.image = image
+
         if not self.image:
             self.image = anim['idle_right'][0]
 
@@ -55,6 +56,14 @@ class object(pygame.sprite.Sprite):
         self.ai = ai
         if ai:
             ai.owner = self
+
+        self.item = item
+        if item:
+            item.owner = self
+
+        self.container = container
+        if container:
+            container.owner = self
 
     def update_anim(self):
         """

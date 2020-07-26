@@ -23,8 +23,8 @@ class Drawing:
         if (self.game.free_camera_on):
             self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
 
-        # Draws creature if it is in player fov
-        for obj in self.game.all_creature:
+        # Draws object if it is in player fov
+        for obj in self.game.GAME_OBJECTS:
             if gamemap.check_if_in_fov(self.game, obj):
                 obj.update_anim()
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))

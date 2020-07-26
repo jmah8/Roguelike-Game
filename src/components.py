@@ -49,6 +49,7 @@ class creature:
         self.owner.game.drawing.print_game_message(
             self.name_instance + " is dead", BLUE)
         self.owner.game.all_creature.remove(self.owner)
+        self.owner.game.GAME_OBJECTS.remove(self.owner)
         self.owner.game.enemy_group.remove(self.owner)
 
     def move(self, dx, dy):
@@ -189,10 +190,12 @@ class container:
     ## TODO Get volume of container()
     ## TODO get weight of inventory()
 
-class Item:
-    def __init__(self, weight = 0.0, volume = 0.0):
+class item:
+    def __init__(self, name, weight = 0.0, volume = 0.0, consumable = None):
+        self.name = name
         self.weight = weight
         self.volume = volume
+        self.owner = None
 
     ## TODO pickup_item()
     '''

@@ -59,7 +59,7 @@ FLOOR_7 = '16x16/tiles/floor/floor_side4.png'
 FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
 
 WALL_1 = '16x16/tiles/wall/wall_1.png'
-
+RED_POTION = 'items/consumables/potion_red.png'
 
 # FONTS
 FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)

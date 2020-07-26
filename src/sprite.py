@@ -98,6 +98,7 @@ class GameSprites():
             "run_left" : flip_anim(self.slime_run_anim)
         }
 
+        # Knight
         self.knight_anim = load_anim(KNIGHT, 0, 5)
         self.knight_run_anim = load_anim(KNIGHT_RUN, 0, 5)
         self.knight_dict = {
@@ -106,4 +107,9 @@ class GameSprites():
             "run_right" : self.knight_run_anim,
             "run_left" : flip_anim(self.knight_run_anim)
         }
+
+        #Items
+
+        #Consumables
+        self.red_potion = load_image(RED_POTION)
     
