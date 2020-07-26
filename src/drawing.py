@@ -1,6 +1,7 @@
 import gamemap
 import pygame
 from constant import *
+import fov
 
 class Drawing:
     def __init__(self, game):
@@ -11,9 +12,9 @@ class Drawing:
         Draws map and entities
         """
         if (not self.game.wall_hack):
-            self.game.fov = gamemap.new_fov(self.game)
-        gamemap.ray_casting(self.game, self.game.map_array, self.game.fov)
-        gamemap.draw_seen(self.game, self.game.tile_array, self.game.fov)
+            self.game.fov = fov.new_fov(self.game)
+        fov.ray_casting(self.game, self.game.map_array, self.game.fov)
+        fov.draw_seen(self.game, self.game.tile_array, self.game.fov)
 
         # Draws all tiles
         for tile in self.game.all_tile:
@@ -25,7 +26,7 @@ class Drawing:
 
         # Draws object if it is in player fov
         for obj in self.game.GAME_OBJECTS:
-            if gamemap.check_if_in_fov(self.game, obj):
+            if fov.check_if_in_fov(self.game, obj):
                 obj.update_anim()
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 

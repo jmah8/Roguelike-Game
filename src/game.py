@@ -8,6 +8,7 @@ import sprite
 import drawing
 import pathfinding
 from camera import Camera
+import fov
 
 pygame.font.init()
 
@@ -67,10 +68,14 @@ class Game:
             self.map_data = gamemap.MapInfo(self.map_array)
             # Holds actual tiles
             self.tile_array = gamemap.draw_map(self.map_array, self)
-        else:
+
         # This is for generating random maps
+        else:
+            # Holds the map representation (chars)
             self.map_array = gamemap.gen_map(self)
+            # Holds map info like width and height
             self.map_data = gamemap.MapInfo(self.map_array)
+            # Holds actual tiles
             self.tile_array = gamemap.draw_map(self.map_array, self)
 
         self.wall_hack = False
@@ -252,6 +257,20 @@ class Game:
         """
         old_coord = (self.player.x, self.player.y)
         for coord in path:
+            # If key pressed stop auto moving
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    return
+
+            # If enemy in FOV stop auto moving
+            # If wall hack on disregard
+            for obj in self.enemy_group:
+                print(fov.check_if_in_fov(self, obj))
+                print(not self.free_camera_on)
+                if (fov.check_if_in_fov(self, obj) and not self.wall_hack):
+                    return
+
             dest_x = coord[0] - old_coord[0]
             dest_y = coord[1] - old_coord[1]
             self.current_group.update(dest_x, dest_y)
