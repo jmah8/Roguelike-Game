@@ -190,6 +190,7 @@ class Game:
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
                     visited = self.graph.bfs(start, goal)
+                    
                     # If path is generated move player
                     if (visited):
                         self._toggle_free_camera()
