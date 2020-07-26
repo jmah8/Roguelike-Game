@@ -58,7 +58,7 @@ class Game:
         # This is for reading maps from text files
         if (READ_FROM_FILE):
             self.map_tiles = gamemap.load_data()
-            self.map_array = gamemap.draw_tiles(self.map_tiles.data, self)
+            self.map_array, self.data_array = gamemap.draw_tiles(self.map_tiles.data, self)
         else:
         # This is for generating random maps
             self.map_array, self.data_array = gamemap.gen_map(self)
@@ -190,7 +190,7 @@ class Game:
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
                     visited = self.graph.bfs(start, goal)
-                    
+
                     # If path is generated move player
                     if (visited):
                         self._toggle_free_camera()
