@@ -78,7 +78,7 @@ class Game:
 
         creaturetest = components.creature("Viet", 10, enemy_group=self.enemies)
         self.player = object.object(self,
-                                    1, 2, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
+                                    3, 3, "player", anim=self.game_sprites.knight_dict, creature=creaturetest)
 
         creaturetest1 = components.creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = components.ai_test()
@@ -190,7 +190,22 @@ class Game:
                     goal = (self.free_camera.x, self.free_camera.y)
                     visited = self.graph.bfs(start, goal)
                     if (visited):
+                        self.current_group = self.all_creature
                         path = self.graph.find_path(start, goal, visited)
+                        temp_coord = None
+                        # TODO: center camera on player when moving
+                        for coord in path:
+                            if (not temp_coord):
+                                temp_coord = coord
+                            else:
+                                move_x = coord[0] - temp_coord[0]
+                                move_y = coord[1] - temp_coord[1]
+                                self.current_group.update(move_x, move_y)
+                                temp_coord = coord
+                            self.draw()
+                            pygame.time.delay(100)
+                            
+                self.current_group = self.camera_group
 
 
 
