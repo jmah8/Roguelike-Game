@@ -47,9 +47,11 @@ class Game:
         self.camera_group = pygame.sprite.GroupSingle()
         # Enemy group
         self.enemy_group = pygame.sprite.Group()
-        # Switches current group to all creatures
+
         self.item_group = pygame.sprite.Group()
 
+        # Switches current group to all creatures
+        # the current group to move/update
         self.current_group = self.all_creature
 
         # Load in all sprites
@@ -59,7 +61,7 @@ class Game:
         # This is for reading maps from text files
         if (READ_FROM_FILE):
             self.map_tiles = gamemap.load_data()
-            self.map_array = gamemap.draw_tiles(self.map_tiles.data, self)
+            self.map_array, self.data_array = gamemap.draw_tiles(self.map_tiles.data, self)
         else:
         # This is for generating random maps
             self.map_array, self.data_array = gamemap.gen_map(self)
@@ -121,12 +123,19 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            if (not self.free_camera_on):
-                self.camera.update(self.player)
-            else:
-                self.camera.update(self.free_camera)
+            self._draw_game()
 
-            self.drawing.draw()
+
+    def _draw_game(self):
+        """
+        Draws camera and game
+        """
+        if (not self.free_camera_on):
+            self.camera.update(self.player)
+        else:
+            self.camera.update(self.free_camera)
+        self.drawing.draw()
+
 
     def events(self):
         """
@@ -183,34 +192,58 @@ class Game:
                     self.fov = [[1 for x in range(0, self.map_tiles.tilewidth)] for y in
                                 range(self.map_tiles.tileheight)]
             if event.key == pygame.K_m:
-                self.free_camera_on = not self.free_camera_on
-                if (self.free_camera_on):
-                    self.current_group = self.camera_group
-                    self.free_camera.x = self.player.x
-                    self.free_camera.y = self.player.y
-                    self.free_camera.rect.topleft = self.player.rect.topleft
-                else:
-                    self.current_group = self.all_creature
+                self._toggle_free_camera()
             if event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
+                    # Generates path
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
                     visited = self.graph.bfs(start, goal)
+
+                    # If path is generated move player
                     if (visited):
-                        self.current_group = self.all_creature
+                        self._toggle_free_camera()
                         path = self.graph.find_path(start, goal, visited)
-                        temp_coord = None
-                        # TODO: center camera on player when moving
-                        for coord in path:
-                            if (not temp_coord):
-                                temp_coord = coord
-                            else:
-                                move_x = coord[0] - temp_coord[0]
-                                move_y = coord[1] - temp_coord[1]
-                                self.current_group.update(move_x, move_y)
-                                temp_coord = coord
-                            self.drawing.draw()
-                            pygame.time.delay(100)
-                            
-                self.current_group = self.camera_group
+                        self._move_char_auto(path)
+
+                self._toggle_free_camera()
+
+    def _toggle_free_camera(self):
+        """
+        Changes free camera. If free camera is on, make free camera
+        have same position as player and make camera follow camera
+        else make it follow player
+        """
+        self.free_camera_on = not self.free_camera_on
+        if (self.free_camera_on):
+            self.current_group = self.camera_group
+            self.free_camera.x = self.player.x
+            self.free_camera.y = self.player.y
+            self.free_camera.rect.topleft = self.player.rect.topleft
+            self.free_camera
+        else:
+            self.current_group = self.all_creature
+
+    def _move_char_auto(self, path):
+        """
+        Moves current_group (player) according to path and draws character
+        with slight delay to show walking animation
+
+        Uses difference in current/old coord and new/destination coord
+        to find which direction to move
+
+        Arg:
+            path (list): path to take
+        """
+        temp_coord = None
+        for coord in path:
+            if (not temp_coord):
+                temp_coord = coord
+            else:
+                move_x = coord[0] - temp_coord[0]
+                move_y = coord[1] - temp_coord[1]
+                self.current_group.update(move_x, move_y)
+                temp_coord = coord
+            self._draw_game()
+            pygame.time.delay(100)
 

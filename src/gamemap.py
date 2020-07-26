@@ -107,30 +107,30 @@ def load_data():
 
 
 
-def draw_map(map_to_draw, game):
-    """
-    Draws map and makes walkable = True to floor and walkable = False wall
+# def draw_map(map_to_draw, game):
+#     """
+#     Draws map and makes walkable = True to floor and walkable = False wall
 
-    Loops through every tile in map and draws it in correct position
+#     Loops through every tile in map and draws it in correct position
 
-    Arg:
-        map_to_draw (arg, array): map to draw as background
-        game (arg, game): game with data
-    """
-    map_array = []
-    # fov = []
-    for row, tiles in enumerate(map_to_draw):
-        map_array_row = []
-        # fov_row = []
-        for col, tile in enumerate(tiles):
-            if tile == WALL:
-                map_array_row.append(Wall(game, col, row))
-            if tile == FLOOR:
-                map_array_row.append(Floor(game, col, row))
-            # fov_row.append(0)
-        map_array.append(map_array_row)
-        # fov.append(fov_row)
-    return map_array 
+#     Arg:
+#         map_to_draw (arg, array): map to draw as background
+#         game (arg, game): game with data
+#     """
+#     map_array = []
+#     # fov = []
+#     for row, tiles in enumerate(map_to_draw):
+#         map_array_row = []
+#         # fov_row = []
+#         for col, tile in enumerate(tiles):
+#             if tile == WALL:
+#                 map_array_row.append(Wall(game, col, row))
+#             if tile == FLOOR:
+#                 map_array_row.append(Floor(game, col, row))
+#             # fov_row.append(0)
+#         map_array.append(map_array_row)
+#         # fov.append(fov_row)
+#     return map_array 
 
 
 class MapInfo:
