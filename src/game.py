@@ -212,8 +212,6 @@ class Game:
                         path = self.graph.find_path(start, goal, visited)
                         self._move_char_auto(path)
 
-                self._toggle_free_camera()
-
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
         return objects
