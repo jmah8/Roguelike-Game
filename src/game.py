@@ -80,9 +80,10 @@ class Game:
         camera = components.creature("Camera", 999, False, walk_through_tile=True)
         self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
 
+        player_container = components.container()
         player_com = components.creature("Viet", 10, enemy_group=self.enemy_group)
         self.player = object.object(self,
-                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com)
+                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com, container=player_container)
 
         creature_com = components.creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = components.ai_test()
@@ -186,6 +187,11 @@ class Game:
                 self.current_group.update(0, 1)
             if event.key == pygame.K_x:
                 self.current_group.update(0, 0)
+            if event.key == pygame.K_t:
+                objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
+                for obj in objects_at_player:
+                    if obj.item: obj.item.pick_up(self.player)
+
             if event.key == pygame.K_ESCAPE:
                 self.wall_hack = not self.wall_hack
                 if (self.wall_hack):
@@ -207,6 +213,10 @@ class Game:
                         self._move_char_auto(path)
 
                 self._toggle_free_camera()
+
+    def map_objects_at_coords(self, coord_x, coord_y):
+        objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
+        return objects
 
     def _toggle_free_camera(self):
         """

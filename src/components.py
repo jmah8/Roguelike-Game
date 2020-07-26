@@ -183,7 +183,7 @@ class ai_test:
 class container:
     def __init__(self, volume=10.0, inventory = []):
         self.inventory = inventory
-        self.max_volume = volume
+        self.volume = volume
 
 
     ## TODO Get Name Inventory()
@@ -201,17 +201,17 @@ class item:
     '''
     Entity (Player/Creature Object) picks up item
     '''
-    def pickup_item(self, entity):
+    def pick_up(self, entity):
         if entity.container:
-            if entity.container.volume + self.volume > entity.container.max_volume:
-                entity.game.print_game_message("Inventory Full", WHITE)
+            if entity.container.volume + self.volume > entity.container.volume:
+                self.owner.game.drawing.print_game_message("Inventory Full", WHITE)
             else:
-                entity.game.print_game_message("Picked Up ####")
+                self.owner.game.drawing.print_game_message("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
                 self.container = entity.container
 
                 # need game object first
-                # game.current_objects.remove(self.owner)
+                entity.game.GAME_OBJECTS.remove(self.owner)
 
 
     ## TODO drop_item()
