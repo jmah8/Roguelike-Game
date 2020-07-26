@@ -243,15 +243,12 @@ class Game:
         Arg:
             path (list): path to take
         """
-        temp_coord = None
+        temp_coord = (self.player.x, self.player.y)
         for coord in path:
-            if (not temp_coord):
-                temp_coord = coord
-            else:
-                move_x = coord[0] - temp_coord[0]
-                move_y = coord[1] - temp_coord[1]
-                self.current_group.update(move_x, move_y)
-                temp_coord = coord
+            move_x = coord[0] - temp_coord[0]
+            move_y = coord[1] - temp_coord[1]
+            self.current_group.update(move_x, move_y)
+            temp_coord = coord
             self._draw_game()
             pygame.time.delay(100)
 

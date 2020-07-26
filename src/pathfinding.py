@@ -100,7 +100,7 @@ class Graph:
         while not current == start:
             path.append(current)
             current = visited[current]
-        path.append(start)
+        # path.append(start)
         path.reverse()
         return path
 
