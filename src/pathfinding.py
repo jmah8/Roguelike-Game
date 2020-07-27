@@ -120,6 +120,8 @@ class Graph:
             visited (dictionary): dictionary of path of nodes
                 to goal and the previous node
         """
+        if (goal not in self.nodes):
+            return
         visiting = queue.PriorityQueue()
         visiting.put(PrioritizedItem(0, self.nodes[start]))
         visited = {}
@@ -158,6 +160,8 @@ class Graph:
             visited (dictionary): dictionary of path of nodes
                 to goal and the previous node
         """
+        if (goal not in self.nodes):
+            return
         visiting = queue.PriorityQueue()
         visiting.put(PrioritizedItem(0, self.nodes[start]))
         visited = {}
@@ -174,8 +178,8 @@ class Graph:
             for next in node.edges:
                 new_cost = current_cost[(node.x, node.y)] + node.edges[next]
                 if next not in current_cost or new_cost < current_cost[next]:
-                    current_cost[next] = new_cost + _distance(next, goal)
-                    visiting.put(PrioritizedItem(new_cost, self.nodes[next]))
+                    current_cost[next] = new_cost
+                    visiting.put(PrioritizedItem(new_cost + _distance(next, goal), self.nodes[next]))
                     visited[next] = (node.x, node.y)
 
         return visited
@@ -196,7 +200,13 @@ class Graph:
 def _distance(coord1, coord2):
     """
     Returns distance between nodes using diagonal distance
+
+    D1 is cost of moving vertically and horizontally
+    D2 is cost of moving diagonally
     
+    Taken from:
+        https://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#diagonal-distance
+
     Arg:
         coord1 ((int,int)): First coord to compute distance between
         coord2 ((int,int)): Second coord to compute distance between
@@ -204,7 +214,9 @@ def _distance(coord1, coord2):
     Returns:
         Distance between coord1 and coord2 using diagonal distance
     """
+    D1 = 1
+    D2 = 1
     dx = abs(coord1[0] - coord2[0])
     dy = abs(coord1[1] - coord2[1])
-    return (dx + dy) - 1 * min(dx, dy)
+    return D1 * (dx + dy) + (D2 - 2 * D1) * min(dx, dy)
 
