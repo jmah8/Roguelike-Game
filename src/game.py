@@ -203,6 +203,10 @@ class Game:
                 objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
                 for obj in objects_at_player:
                     if obj.item: obj.item.pick_up(self.player)
+            if event.key == pygame.K_g:
+                if len(self.player.container.inventory) > 0:
+                    self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
+
 
             if event.key == pygame.K_ESCAPE:
                 self.wall_hack = not self.wall_hack
