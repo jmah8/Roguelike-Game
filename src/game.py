@@ -31,6 +31,7 @@ class Game:
         self.ITEMS = []
         self.drawing = drawing.Drawing(self)
 
+
     def new(self):
         """
         Makes new map and entity and adds them to the relevant groups
@@ -59,6 +60,7 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
+        #button
         # Load map data
         # This is for reading maps from text files
         if (READ_FROM_FILE):
@@ -220,7 +222,7 @@ class Game:
                     # Generates path
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
-                    visited = self.graph.a_star(start, goal)
+                    visited = self.graph.bfs(start, goal)
 
                     # If path is generated move player
                     if (visited):

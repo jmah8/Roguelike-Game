@@ -113,4 +113,6 @@ class GameSprites():
 
         #Consumables
         self.red_potion = load_image(RED_POTION)
-    
+
+        #UI
+        self.inventory_button = load_image(INVENTORY)

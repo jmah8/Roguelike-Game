@@ -1,5 +1,6 @@
 import pygame
 
+
 class pause_menu():
     menu_closed = False
 

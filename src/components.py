@@ -197,9 +197,11 @@ class Item:
         self.volume = volume
         self.owner = None
 
-    ## TODO pickup_item()
     '''
-    Entity (Player/Creature Object) picks up item
+    Entity (Player/Creature Object) with container picks up item if
+    the current volume of container + item is < container.volume
+    Add item to inventory
+    Remove item from game_objects 
     '''
     def pick_up(self, entity):
         if entity.container:
@@ -212,18 +214,18 @@ class Item:
                 # need game object first
                 entity.game.GAME_OBJECTS.remove(self.owner)
 
-
-    ## TODO drop_item()
     def drop_item(self, entity, x, y):
         """
         Drop item and position x and y
+        Update position and rect of item to player.x,player,y
+        Remove item from inventory
+        Add item to game_objects
         """
-        self.owner.game.GAME_OBJECTS.append(self.owner)
+        self.owner.game.GAME_OBJECTS.insert(0, self.owner)
         entity.container.inventory.remove(self.owner)
         self.owner.x = x
         self.owner.y = y
         self.owner.rect.topleft = (x*SPRITE_SIZE,y*SPRITE_SIZE)
         self.owner.game.drawing.print_game_message(self.name + " Item Dropped", WHITE)
 
-
-        ## TODO use_item()
+    ## TODO use_item()

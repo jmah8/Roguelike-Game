@@ -2,10 +2,12 @@ import gamemap
 import pygame
 from constant import *
 import fov
+import sprite
 
 class Drawing:
     def __init__(self, game):
         self.game = game
+        self.button_surface = pygame.Surface((100, 100))
 
     def draw(self):
         """
@@ -30,10 +32,14 @@ class Drawing:
                 obj.update_anim()
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
+        self.button(self.game.game_sprites.inventory_button, (0,0), self.game.surface)
+
+        self.draw_buttons()
         self.draw_grid()
         self.draw_debug()
         self.draw_messages()
         pygame.display.flip()
+
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -114,3 +120,16 @@ class Drawing:
 
     def print_game_message(self, ingame_message, message_color):
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
+
+    def button(self, img, coords, game_surface):
+        self.button_surface.blit(img, coords)
+        button_rect = img.get_rect()
+        button_rect.topright = coords
+        game_surface.blit(self.button_surface, (game_surface.get_width() - SPRITE_SIZE, game_surface.get_height() - SPRITE_SIZE))
+        return (img, button_rect)
+
+    def draw_buttons(self):
+        #InventoryButton
+        self.button(self.game.game_sprites.inventory_button, (0,0), self.game.surface)
+
+
