@@ -216,7 +216,7 @@ class Game:
                     # Generates path
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
-                    visited = self.graph.bfs(start, goal)
+                    visited = self.graph.a_star(start, goal)
 
                     # If path is generated move player
                     if (visited):
@@ -266,8 +266,6 @@ class Game:
             # If enemy in FOV stop auto moving
             # If wall hack on disregard
             for obj in self.enemy_group:
-                print(fov.check_if_in_fov(self, obj))
-                print(not self.free_camera_on)
                 if (fov.check_if_in_fov(self, obj) and not self.wall_hack):
                     return
 

@@ -1,5 +1,7 @@
 from constant import *
 import queue
+from dataclasses import dataclass, field
+from typing import Any
 
 class Node:
     """
@@ -15,6 +17,13 @@ class Node:
         self.x = x
         self.y = y
         self.edges = {}
+
+
+@dataclass(order=True)
+class PrioritizedItem:
+    priority: int
+    item: Any=field(compare=False)
+
 
 class Graph:
     """
@@ -51,8 +60,8 @@ class Graph:
         """
         Adds edges to all nodes with edge weight of 1
         """
-        dirs = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1],
-                [1, -1], [-1, 1], [1, 1]]
+        dirs = [[-1, 0], [1, 0], [0, -1], [0, 1],
+                [-1, -1], [1, -1], [-1, 1], [1, 1]]
         for node in self.nodes.values():
             for dir in dirs:
                 neighbour = (node.x + dir[0], node.y + dir[1])
@@ -62,7 +71,8 @@ class Graph:
 
     def bfs(self, start, goal):
         """
-        BFS traversal of graph
+        BFS traversal of graph.
+        Start at start and end at goal
 
         Visited is a dictionary of nodes and the previous node
 
@@ -72,7 +82,7 @@ class Graph:
 
         Returns:
             visited (dictionary): dictionary of path of nodes
-                                    to goal and the previous node
+                to goal and the previous node
         """
         if (goal not in self.nodes):
             return
@@ -94,6 +104,83 @@ class Graph:
 
         return visited
 
+    def dijkstra(self, start, goal):
+        """
+        Dijkstra's shortest path traversal of graph. 
+        Start at start and end at goal
+
+        Visited is dictionary of nodes and previous node
+        Current Cost is dictionary of lowest cost to a node
+
+        Args:
+            start ((int, int)): start coord of dijkstra's shorest path
+            goal ((int, int)): goal of dijkstra's shorest path
+
+        Returns:
+            visited (dictionary): dictionary of path of nodes
+                to goal and the previous node
+        """
+        visiting = queue.PriorityQueue()
+        visiting.put(PrioritizedItem(0, self.nodes[start]))
+        visited = {}
+        current_cost = {}
+        visited[start] = None
+        current_cost[start] = 0
+
+        while not visiting.empty():
+            node = visiting.get().item
+
+            if (node.x, node.y) == goal:
+                break
+
+            for next in node.edges:
+                new_cost = current_cost[(node.x, node.y)] + node.edges[next]
+                if next not in current_cost or new_cost < current_cost[next]:
+                    current_cost[next] = new_cost
+                    visiting.put(PrioritizedItem(new_cost, self.nodes[next]))
+                    visited[next] = (node.x, node.y)
+
+        return visited
+
+    
+    def a_star(self, start, goal):
+        """
+        A* search of graph. Start at start and end at goal
+
+        Visited is dictionary of nodes and previous node
+        Current Cost is dictionary of lowest cost to a node
+
+        Args:
+            start ((int, int)): start coord of A* 
+            goal ((int, int)): goal of A*
+
+        Returns:
+            visited (dictionary): dictionary of path of nodes
+                to goal and the previous node
+        """
+        visiting = queue.PriorityQueue()
+        visiting.put(PrioritizedItem(0, self.nodes[start]))
+        visited = {}
+        current_cost = {}
+        visited[start] = None
+        current_cost[start] = 0
+
+        while not visiting.empty():
+            node = visiting.get().item
+
+            if (node.x, node.y) == goal:
+                break
+
+            for next in node.edges:
+                new_cost = current_cost[(node.x, node.y)] + node.edges[next]
+                if next not in current_cost or new_cost < current_cost[next]:
+                    current_cost[next] = new_cost + _distance(goal, next)
+                    visiting.put(PrioritizedItem(new_cost, self.nodes[next]))
+                    visited[next] = (node.x, node.y)
+
+        return visited
+
+
 
     def find_path(self, start, goal, visited):
         path = []
@@ -104,4 +191,18 @@ class Graph:
         # path.append(start)
         path.reverse()
         return path
+
+
+def _distance(coord1, coord2):
+    """
+    Returns distance between nodes
+    
+    Arg:
+        coord1 ((int,int)): First coord to compute distance between
+        coord2 ((int,int)): Second coord to compute distance between
+
+    Returns:
+        Distance between coord1 and coord2
+    """
+    return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
 
