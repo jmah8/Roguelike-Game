@@ -174,7 +174,7 @@ class Graph:
             for next in node.edges:
                 new_cost = current_cost[(node.x, node.y)] + node.edges[next]
                 if next not in current_cost or new_cost < current_cost[next]:
-                    current_cost[next] = new_cost + _distance(goal, next)
+                    current_cost[next] = new_cost + _distance(next, goal)
                     visiting.put(PrioritizedItem(new_cost, self.nodes[next]))
                     visited[next] = (node.x, node.y)
 
@@ -195,14 +195,16 @@ class Graph:
 
 def _distance(coord1, coord2):
     """
-    Returns distance between nodes
+    Returns distance between nodes using diagonal distance
     
     Arg:
         coord1 ((int,int)): First coord to compute distance between
         coord2 ((int,int)): Second coord to compute distance between
 
     Returns:
-        Distance between coord1 and coord2
+        Distance between coord1 and coord2 using diagonal distance
     """
-    return abs(coord1[0] - coord2[0]) + abs(coord1[1] - coord2[1])
+    dx = abs(coord1[0] - coord2[0])
+    dy = abs(coord1[1] - coord2[1])
+    return (dx + dy) - 1 * min(dx, dy)
 
