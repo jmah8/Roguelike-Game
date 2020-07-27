@@ -21,6 +21,7 @@ class Game:
         pygame.init()
         pygame.display.set_caption("Knight's Adventure")
         self.surface = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE)
+        self.minimap = None
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(350, 75)
         self.running = True
@@ -30,6 +31,7 @@ class Game:
         self.CREATURES = []
         self.ITEMS = []
         self.drawing = drawing.Drawing(self)
+        self.mini_map_on = False
 
 
     def new(self):
@@ -201,6 +203,9 @@ class Game:
                 self.current_group.update(0, 1)
             if event.key == pygame.K_x:
                 self.current_group.update(0, 0)
+            if event.key == pygame.K_TAB:
+                self.mini_map_on = not self.mini_map_on
+
             if event.key == pygame.K_t:
                 objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
                 for obj in objects_at_player:

@@ -19,8 +19,8 @@ class object(pygame.sprite.Sprite):
         anim (arg, [string][int]): dictionary of sprites for animation
         creature (arg, Creature): Creature it is
         ai (arg, ai): Ai object has
-        item (arg, Item): # TODO: add description
-        container (arg, Container): # TODO: add description
+        item (arg, Item): Item self is
+        container (arg, Container): Container self is
         flicker_speed (float): how much time we spend on single frame
         flicker_timer (float): how much timer has passed
         anim_frame (int): current frame of animation

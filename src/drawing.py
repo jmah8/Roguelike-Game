@@ -22,7 +22,6 @@ class Drawing:
         for tile in self.game.all_tile:
             self.game.surface.blit(tile.image, self.game.camera.apply(tile))
 
-
         if (self.game.free_camera_on):
             self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
 
@@ -32,14 +31,14 @@ class Drawing:
                 obj.update_anim()
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
-        self.button(self.game.game_sprites.inventory_button, (0,0), self.game.surface)
+        if (self.game.mini_map_on):
+            self.draw_minimap()
 
         self.draw_buttons()
         self.draw_grid()
         self.draw_debug()
         self.draw_messages()
         pygame.display.flip()
-
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -121,15 +120,45 @@ class Drawing:
     def print_game_message(self, ingame_message, message_color):
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
+    def draw_minimap(self):
+        """
+        Draws minimap on topleft of screen
+        """
+        # Code below displays:
+        # Minimap is shrunk down version of actual map and
+        # so shows players, enemies and items
+        minimap = pygame.Surface(MINIMAP_RESOLUTION)
+        # map_data = self.game.map_data
+        # scaled_map = pygame.transform.scale(self.game.surface,
+        #     (MINIMAP_RESOLUTION))
+        # minimap.blit(scaled_map, (0, 0))
+
+        # Draws only map with fov but bad performance
+        map_data = self.game.map_data
+        tile_array = self.game.tile_array
+        for y in range (map_data.tileheight):
+            for x in range (map_data.tilewidth):
+                tile = tile_array[y][x]
+                tile_img = pygame.transform.scale(tile.image,
+                    (tile.rect.size[0] // (map_data.width // MINIMAP_RESOLUTION[0]),
+                    tile.rect.size[1] // (map_data.height // MINIMAP_RESOLUTION[1])))
+                tile_img_rect = tile_img.get_rect()
+                tile_img_rect.topleft = (tile.rect.topleft[0] // (map_data.width // MINIMAP_RESOLUTION[0]),
+                                        tile.rect.topleft[1] // (map_data.height // MINIMAP_RESOLUTION[1]))
+                minimap.blit(tile_img, tile_img_rect)
+
+        self.game.surface.blit(minimap, (0, 0))
+
     def button(self, img, coords, game_surface):
         self.button_surface.blit(img, coords)
         button_rect = img.get_rect()
         button_rect.topright = coords
-        game_surface.blit(self.button_surface, (game_surface.get_width() - SPRITE_SIZE, game_surface.get_height() - SPRITE_SIZE))
+        game_surface.blit(self.button_surface,
+                          (game_surface.get_width() - SPRITE_SIZE, game_surface.get_height() - SPRITE_SIZE))
         return (img, button_rect)
 
     def draw_buttons(self):
-        #InventoryButton
-        self.button(self.game.game_sprites.inventory_button, (0,0), self.game.surface)
+        # InventoryButton
+        self.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
 
 
