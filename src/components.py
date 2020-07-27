@@ -208,16 +208,22 @@ class Item:
             else:
                 self.owner.game.drawing.print_game_message("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
-                self.container = entity.container
 
                 # need game object first
                 entity.game.GAME_OBJECTS.remove(self.owner)
 
 
     ## TODO drop_item()
-    def drop_item(self, entity):
-        # game.current_objects.append(self.owner)
-        self.container.inventory.remove(self.owner)
-        entity.game.print_game_message("#### Item Dropped")
-        
+    def drop_item(self, entity, x, y):
+        """
+        Drop item and position x and y
+        """
+        self.owner.game.GAME_OBJECTS.append(self.owner)
+        entity.container.inventory.remove(self.owner)
+        self.owner.x = x
+        self.owner.y = y
+        self.owner.rect.topleft = (x*SPRITE_SIZE,y*SPRITE_SIZE)
+        self.owner.game.drawing.print_game_message(self.name + " Item Dropped", WHITE)
+
+
         ## TODO use_item()
