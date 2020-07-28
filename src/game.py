@@ -9,10 +9,11 @@ import drawing
 import pathfinding
 from camera import Camera
 import fov
-from menu import Menu_Manager
-from drawing import Drawing
-pygame.font.init()
+from menu_manager import Menu_Manager
 
+from drawing import Drawing
+
+pygame.font.init()
 
 class Game:
     def __init__(self):

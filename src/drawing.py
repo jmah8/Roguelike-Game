@@ -3,11 +3,11 @@ import pygame
 from constant import *
 import fov
 import sprite
-
+from button_manager import Button_Manager
 class Drawing:
     def __init__(self, game):
         self.game = game
-        self.button_surface = pygame.Surface((100, 100))
+        self.button_manager = Button_Manager()
 
     def draw(self):
         """
@@ -191,18 +191,8 @@ class Drawing:
 
         self.game.surface.blit(minimap, (0, 0))
 
-    def button(self, img, coords, game_surface):
-        self.button_surface.blit(img, coords)
-        # Makes button_surface transparent
-        self.button_surface.set_colorkey(BLACK)
-        button_rect = img.get_rect()
-        button_rect.topright = coords
-        game_surface.blit(self.button_surface,
-                          (game_surface.get_width() - SPRITE_SIZE, game_surface.get_height() - SPRITE_SIZE))
-        return (img, button_rect)
-
     def draw_buttons(self):
         # InventoryButton
-        self.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
+        self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
 
-
+        #
