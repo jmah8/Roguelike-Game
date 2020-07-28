@@ -29,9 +29,13 @@ class Drawing:
                 obj.update_anim()
                 self.game.map_surface.blit(obj.image, obj.rect)
 
+        if (self.game.free_camera_on):
+            rect = self.game.free_camera.rect
+        else:
+            rect = self.game.player.rect
 
-        x = -self.game.player.rect.x + int(self.game.camera.camera_width / 2)
-        y = -self.game.player.rect.y + int(self.game.camera.camera_height / 2)
+        x = -rect.x + int(self.game.camera.camera_width / 2)
+        y = -rect.y + int(self.game.camera.camera_height / 2)
 
         x = min(0, x)
         y = min(0, y)
@@ -42,7 +46,7 @@ class Drawing:
 
 
         if (self.game.free_camera_on):
-            self.game.surface.blit(self.game.free_camera.image, self.game.free_camera.rect)
+            self.game.surface.blit(self.game.free_camera.image, (self.game.free_camera.rect.topleft[0]+x, self.game.free_camera.rect.topleft[1]+y))
 
         
         self.draw_buttons()
