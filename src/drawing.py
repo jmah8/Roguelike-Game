@@ -3,7 +3,9 @@ import pygame
 from constant import *
 import fov
 import sprite
+import camera
 from button_manager import Button_Manager
+
 class Drawing:
     def __init__(self, game):
         self.game = game
@@ -34,20 +36,11 @@ class Drawing:
             self.game.map_surface.blit(self.game.free_camera.image, self.game.free_camera.rect)
 
         if (self.game.free_camera_on):
-            rect = self.game.free_camera.rect
+            x,y = camera.find_object_offset(self.game.free_camera, self.game.map_data)
         else:
-            rect = self.game.player.rect
+            x,y = camera.find_object_offset(self.game.player, self.game.map_data)
 
-        x = -rect.x + int(CAMERA_WIDTH / 2)
-        y = -rect.y + int(CAMERA_HEIGHT / 2)
-
-        x = min(0, x)
-        y = min(0, y)
-        x = max(-(self.game.map_data.width - CAMERA_WIDTH), x)
-        y = max(-(self.game.map_data.height - CAMERA_HEIGHT), y)
-
-
-        self.game.surface.blit(self.game.map_surface, (0, 0), (-x, -y, CAMERA_WIDTH, CAMERA_HEIGHT))
+        self.game.surface.blit(self.game.map_surface, (0, 0), (x, y, CAMERA_WIDTH, CAMERA_HEIGHT))
         
         self.draw_buttons()
         self.draw_grid()
@@ -58,7 +51,7 @@ class Drawing:
 
         self.draw_debug()
         self.draw_messages()
-        pygame.display.flip()
+        pygame.display.update()
 
     def draw_grid(self):
         for x in range(0, CAMERA_WIDTH, SPRITE_SIZE):
@@ -178,7 +171,6 @@ class Drawing:
     def draw_minimap_test(self):
         map_data = self.game.map_data
 
-
         resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
         minimap = pygame.Surface((resol, resol))
 
@@ -195,4 +187,3 @@ class Drawing:
         # InventoryButton
         self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
 
-        #
