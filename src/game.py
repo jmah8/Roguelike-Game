@@ -245,6 +245,8 @@ class Game:
             # Menu Buttons
             if event.key == pygame.K_p:
                 self.menu_manager.pause_menu()
+            if event.key == pygame.K_i:
+                self.menu_manager.inventory_menu()
 
 
 
