@@ -154,6 +154,16 @@ class Drawing:
                                         tile.rect.topleft[1] // scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
 
+        player_img = pygame.transform.scale(self.game.player.image,
+                    (self.game.player.rect.size[0] // scale_factor_x,
+                    self.game.player.rect.size[1] // scale_factor_y))
+        player_img_rect = player_img.get_rect()
+        player_img_rect.topleft = (self.game.player.rect.topleft[0] // scale_factor_x,
+                                    self.game.player.rect.topleft[1] // scale_factor_y)
+
+        minimap.blit(player_img, player_img_rect)
+
+
         self.game.surface.blit(minimap, (0, 0))
 
     def button(self, img, coords, game_surface):
