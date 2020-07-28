@@ -282,5 +282,3 @@ class Game:
             old_coord = coord
             self.clock.tick(20)
             self.drawing.draw()
-            # pygame.time.delay(50)
-

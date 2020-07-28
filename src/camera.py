@@ -44,3 +44,23 @@ class Camera:
         x = max(-(self.width - self.camera_width), x)
         y = max(-(self.height - self.camera_height), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)
+
+
+def find_object_offset(object, map_data):
+    """
+    Find where to draw the camera relative to the object
+
+    Args:
+        object (object): player to find where to
+            draw camera relative to
+        map_data (MapInfo): data of map
+    """
+    rect = object.rect 
+    x = -rect.x + int(CAMERA_WIDTH / 2)
+    y = -rect.y + int(CAMERA_HEIGHT / 2)
+
+    x = min(0, x)
+    y = min(0, y)
+    x = max(-(map_data.width - CAMERA_WIDTH), x)
+    y = max(-(map_data.height - CAMERA_HEIGHT), y)
+    return -x,-y
