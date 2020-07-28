@@ -1,21 +1,24 @@
 import pygame
+from constant import *
 
+class Menu_Manager:
+    """
+    Menu Manager to create the menus and handle key event to open
+    """
+    def __init__(self, game):
+        self.game = game
 
-class pause_menu():
-    menu_closed = False
+    def pause_menu(self):
+        """
+        Game turns on menu, if key is pressed
+        """
+        menu_closed = False
+        while not menu_closed:
+            events_list = pygame.event.get()
+            for event in events_list:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        menu_closed = True
 
-    while not menu_closed:
-        events_list = pygame.event.get()
-        for event in events_lists:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    menu_close = True
-
-class inventory_menu():
-    menu_closed = False
-    while not menu_closed:
-        events_list = pygame.event.get()
-        for event in events_lists:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    menu_close = True
+            self.game.drawing.draw_text(self.game.surface, ((CAMERA_WIDTH - FONT_SIZE)/2,(CAMERA_HEIGHT-FONT_SIZE)/2), WHITE, "PAUSED", BLACK)
+            pygame.display.flip()
