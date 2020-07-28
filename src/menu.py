@@ -9,9 +9,6 @@ class Menu_Manager:
         self.game = game
 
     def pause_menu(self):
-        """
-        Game turns on menu, if key is pressed
-        """
         menu_closed = False
         while not menu_closed:
             events_list = pygame.event.get()
@@ -22,3 +19,16 @@ class Menu_Manager:
 
             self.game.drawing.draw_text(self.game.surface, ((CAMERA_WIDTH - FONT_SIZE)/2,(CAMERA_HEIGHT-FONT_SIZE)/2), WHITE, "PAUSED", BLACK)
             pygame.display.flip()
+
+    def inventory_menu(self):
+        menu_closed = False
+        while not menu_closed:
+            events_list = pygame.event.get()
+            for event in events_list:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_i:
+                        menu_closed = True
+
+            # TODO: inventory layout
+
+
