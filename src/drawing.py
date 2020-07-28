@@ -34,13 +34,14 @@ class Drawing:
         else:
             rect = self.game.player.rect
 
-        x = -rect.x + int(self.game.camera.camera_width / 2)
-        y = -rect.y + int(self.game.camera.camera_height / 2)
+        x = -rect.x + int(CAMERA_WIDTH / 2)
+        y = -rect.y + int(CAMERA_HEIGHT / 2)
 
         x = min(0, x)
         y = min(0, y)
-        x = max(-(self.game.camera.width - self.game.camera.camera_width), x)
-        y = max(-(self.game.camera.height - self.game.camera.camera_height), y)
+        x = max(-(self.game.map_data.width - CAMERA_WIDTH), x)
+        y = max(-(self.game.map_data.height - CAMERA_HEIGHT), y)
+
 
         self.game.surface.blit(self.game.map_surface, (0, 0), (-x, -y, CAMERA_WIDTH, CAMERA_HEIGHT))
 
@@ -61,17 +62,17 @@ class Drawing:
         pygame.display.flip()
 
     def draw_grid(self):
-        for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
-            pygame.draw.line(self.game.surface, GREY, (x, 0), (x, self.game.camera.camera_height))
+        for x in range(0, CAMERA_WIDTH, SPRITE_SIZE):
+            pygame.draw.line(self.game.surface, GREY, (x, 0), (x, CAMERA_HEIGHT))
 
-        for y in range(0, self.game.camera.camera_height, SPRITE_SIZE):
-            pygame.draw.line(self.game.surface, GREY, (0, y), (self.game.camera.camera_width, y))
+        for y in range(0, CAMERA_HEIGHT, SPRITE_SIZE):
+            pygame.draw.line(self.game.surface, GREY, (0, y), (CAMERA_WIDTH, y))
 
     def draw_debug(self):
         """
         Draws FPS counter on top right of screen
         """
-        self.draw_text(self.game.surface, (self.game.camera.camera_width - 125, 15), WHITE,
+        self.draw_text(self.game.surface, (CAMERA_WIDTH - 125, 15), WHITE,
                        "FPS: " + str(int(self.game.clock.get_fps())), BLACK)
 
     def draw_text(self, display_surface, coord, text_color, text, text_bg_color=None):
@@ -112,7 +113,7 @@ class Drawing:
     def draw_messages(self):
         to_draw = self._messages_to_draw()
         text_height = self._text_height_helper(FONT_MESSAGE_TEXT)
-        y_pos = self.game.camera.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
+        y_pos = CAMERA_HEIGHT - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
         messages_drawn_counter = 0
         for message, color in to_draw:
             self.draw_text(self.game.surface, (TEXT_SPACE_BUFFER,
