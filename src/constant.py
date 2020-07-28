@@ -2,8 +2,10 @@ import pygame
 pygame.font.init()
 
 # Display constants
+# Amount of tiles on screen
 TILE_WIDTH = 16
 TILE_HEIGHT = 12
+
 SPRITE_SIZE = 64
 CAMERA_WIDTH = TILE_WIDTH * SPRITE_SIZE
 CAMERA_HEIGHT = TILE_HEIGHT * SPRITE_SIZE
@@ -20,7 +22,7 @@ DIST_FROM_SISTER_NODE_MIN = 2
 DIST_FROM_SISTER_NODE_MAX = 4
 
 # Minimap constants
-MINIMAP_SCALE = 4
+MINIMAP_SCALE = 2
 
 
 # Console map output

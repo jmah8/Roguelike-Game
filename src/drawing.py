@@ -20,39 +20,58 @@ class Drawing:
 
         # Draws all tiles
         for tile in self.game.all_tile:
-            self.game.surface.blit(tile.image, self.game.camera.apply(tile))
+            self.game.map_surface.blit(tile.image, tile.rect)
 
-        if (self.game.free_camera_on):
-            self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
 
         # Draws object if it is in player fov
         for obj in self.game.GAME_OBJECTS:
             if fov.check_if_in_fov(self.game, obj):
                 obj.update_anim()
-                self.game.surface.blit(obj.image, self.game.camera.apply(obj))
+                self.game.map_surface.blit(obj.image, obj.rect)
 
+        
+        if (self.game.free_camera_on):
+            self.game.map_surface.blit(self.game.free_camera.image, self.game.free_camera.rect)
+
+        if (self.game.free_camera_on):
+            rect = self.game.free_camera.rect
+        else:
+            rect = self.game.player.rect
+
+        x = -rect.x + int(CAMERA_WIDTH / 2)
+        y = -rect.y + int(CAMERA_HEIGHT / 2)
+
+        x = min(0, x)
+        y = min(0, y)
+        x = max(-(self.game.map_data.width - CAMERA_WIDTH), x)
+        y = max(-(self.game.map_data.height - CAMERA_HEIGHT), y)
+
+
+        self.game.surface.blit(self.game.map_surface, (0, 0), (-x, -y, CAMERA_WIDTH, CAMERA_HEIGHT))
+        
         self.draw_buttons()
         self.draw_grid()
 
         if (self.game.mini_map_on):
-            self.draw_minimap()
+            self.draw_minimap_test()
+
 
         self.draw_debug()
         self.draw_messages()
         pygame.display.flip()
 
     def draw_grid(self):
-        for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
-            pygame.draw.line(self.game.surface, GREY, (x, 0), (x, self.game.camera.camera_height))
+        for x in range(0, CAMERA_WIDTH, SPRITE_SIZE):
+            pygame.draw.line(self.game.surface, GREY, (x, 0), (x, CAMERA_HEIGHT))
 
-        for y in range(0, self.game.camera.camera_height, SPRITE_SIZE):
-            pygame.draw.line(self.game.surface, GREY, (0, y), (self.game.camera.camera_width, y))
+        for y in range(0, CAMERA_HEIGHT, SPRITE_SIZE):
+            pygame.draw.line(self.game.surface, GREY, (0, y), (CAMERA_WIDTH, y))
 
     def draw_debug(self):
         """
         Draws FPS counter on top right of screen
         """
-        self.draw_text(self.game.surface, (self.game.camera.camera_width - 125, 15), WHITE,
+        self.draw_text(self.game.surface, (CAMERA_WIDTH - 125, 15), WHITE,
                        "FPS: " + str(int(self.game.clock.get_fps())), BLACK)
 
     def draw_text(self, display_surface, coord, text_color, text, text_bg_color=None):
@@ -93,7 +112,7 @@ class Drawing:
     def draw_messages(self):
         to_draw = self._messages_to_draw()
         text_height = self._text_height_helper(FONT_MESSAGE_TEXT)
-        y_pos = self.game.camera.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
+        y_pos = CAMERA_HEIGHT - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
         messages_drawn_counter = 0
         for message, color in to_draw:
             self.draw_text(self.game.surface, (TEXT_SPACE_BUFFER,
@@ -137,7 +156,6 @@ class Drawing:
         # Minimap is shrunk down version of actual map and
         # so shows players, enemies and items
         minimap = pygame.Surface((resol, resol))
-        # map_data = self.game.map_data
         # scaled_map = pygame.transform.scale(self.game.surface,
         #     (MINIMAP_RESOLUTION))
         # minimap.blit(scaled_map, (0, 0))
@@ -153,6 +171,23 @@ class Drawing:
                 tile_img_rect.topleft = (tile.rect.topleft[0] // scale_factor_x,
                                         tile.rect.topleft[1] // scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
+
+        self.game.surface.blit(minimap, (0, 0))
+
+
+    def draw_minimap_test(self):
+        map_data = self.game.map_data
+
+
+        resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
+        minimap = pygame.Surface((resol, resol))
+
+        scale_factor_x = (map_data.width // resol)
+        scale_factor_y = (map_data.height // resol)
+
+        scaled_map = pygame.transform.scale(self.game.map_surface,
+            (map_data.width // scale_factor_x, map_data.height // scale_factor_y))
+        minimap.blit(scaled_map, (0, 0))
 
         self.game.surface.blit(minimap, (0, 0))
 
