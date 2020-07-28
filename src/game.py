@@ -91,6 +91,8 @@ class Game:
         self.camera = Camera(
             self.map_data.width, self.map_data.height)
 
+        self.map_surface = pygame.Surface((self.map_data.width, self.map_data.height))
+
 
         self.free_camera_on = False
         camera = components.Creature("Camera", 999, False, walk_through_tile=True)
@@ -147,9 +149,7 @@ class Game:
         """
         Draws camera and game
         """
-        if (not self.free_camera_on):
-            self.camera.update(self.player)
-        else:
+        if (self.free_camera_on):
             self.camera.update(self.free_camera)
         self.drawing.draw()
 
