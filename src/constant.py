@@ -10,12 +10,6 @@ CAMERA_HEIGHT = TILE_HEIGHT * SPRITE_SIZE
 RESOLUTION = (CAMERA_WIDTH, CAMERA_HEIGHT)
 TOPLEFT = (0, 0)
 
-# Minimap constants
-# Makes both equal to minimap square
-resol = max(RESOLUTION[0] // 4, RESOLUTION[1] // 4)
-MINIMAP_RESOLUTION = (resol, resol)
-MINIMAP_SCALE = 8
-
 # Map gen constants
 READ_FROM_FILE = False
 MAP_WIDTH = 40
@@ -24,6 +18,9 @@ SUB_DUNGEON_WIDTH = 10
 SUB_DUNGEON_HEIGHT = 10
 DIST_FROM_SISTER_NODE_MIN = 2
 DIST_FROM_SISTER_NODE_MAX = 4
+
+# Minimap constants
+MINIMAP_SCALE = 4
 
 
 # Console map output

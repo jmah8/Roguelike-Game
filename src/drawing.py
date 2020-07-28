@@ -31,11 +31,12 @@ class Drawing:
                 obj.update_anim()
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
+        self.draw_buttons()
+        self.draw_grid()
+
         if (self.game.mini_map_on):
             self.draw_minimap()
 
-        self.draw_buttons()
-        self.draw_grid()
         self.draw_debug()
         self.draw_messages()
         pygame.display.flip()
@@ -124,33 +125,41 @@ class Drawing:
         """
         Draws minimap on topleft of screen
         """
+        map_data = self.game.map_data
+        tile_array = self.game.tile_array
+
+        resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
+        scale_factor_x = (map_data.width // resol)
+        scale_factor_y = (map_data.height // resol)
+
+
         # Code below displays:
         # Minimap is shrunk down version of actual map and
         # so shows players, enemies and items
-        minimap = pygame.Surface(MINIMAP_RESOLUTION)
+        minimap = pygame.Surface((resol, resol))
         # map_data = self.game.map_data
         # scaled_map = pygame.transform.scale(self.game.surface,
         #     (MINIMAP_RESOLUTION))
         # minimap.blit(scaled_map, (0, 0))
 
         # Draws only map with fov but bad performance
-        map_data = self.game.map_data
-        tile_array = self.game.tile_array
         for y in range (map_data.tileheight):
             for x in range (map_data.tilewidth):
                 tile = tile_array[y][x]
                 tile_img = pygame.transform.scale(tile.image,
-                    (tile.rect.size[0] // (map_data.width // MINIMAP_RESOLUTION[0]),
-                    tile.rect.size[1] // (map_data.height // MINIMAP_RESOLUTION[1])))
+                    (tile.rect.size[0] // scale_factor_x,
+                    tile.rect.size[1] // scale_factor_y))
                 tile_img_rect = tile_img.get_rect()
-                tile_img_rect.topleft = (tile.rect.topleft[0] // (map_data.width // MINIMAP_RESOLUTION[0]),
-                                        tile.rect.topleft[1] // (map_data.height // MINIMAP_RESOLUTION[1]))
+                tile_img_rect.topleft = (tile.rect.topleft[0] // scale_factor_x,
+                                        tile.rect.topleft[1] // scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
 
         self.game.surface.blit(minimap, (0, 0))
 
     def button(self, img, coords, game_surface):
         self.button_surface.blit(img, coords)
+        # Makes button_surface transparent
+        self.button_surface.set_colorkey(BLACK)
         button_rect = img.get_rect()
         button_rect.topright = coords
         game_surface.blit(self.button_surface,
