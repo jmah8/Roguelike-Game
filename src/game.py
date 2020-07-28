@@ -280,6 +280,7 @@ class Game:
             dest_y = coord[1] - old_coord[1]
             self.current_group.update(dest_x, dest_y)
             old_coord = coord
+            self.clock.tick(20)
             self.drawing.draw()
-            pygame.time.delay(100)
+            # pygame.time.delay(50)
 

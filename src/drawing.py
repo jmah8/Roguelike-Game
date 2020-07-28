@@ -48,7 +48,6 @@ class Drawing:
 
 
         self.game.surface.blit(self.game.map_surface, (0, 0), (-x, -y, CAMERA_WIDTH, CAMERA_HEIGHT))
-
         
         self.draw_buttons()
         self.draw_grid()
