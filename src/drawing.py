@@ -146,20 +146,10 @@ class Drawing:
         for y in range (map_data.tileheight):
             for x in range (map_data.tilewidth):
                 tile = tile_array[y][x]
-                tile_img = pygame.transform.scale(tile.image,
-                    (tile.rect.size[0] // scale_factor_x,
-                    tile.rect.size[1] // scale_factor_y))
-                tile_img_rect = tile_img.get_rect()
-                tile_img_rect.topleft = (tile.rect.topleft[0] // scale_factor_x,
-                                        tile.rect.topleft[1] // scale_factor_y)
+                tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
 
-        player_img = pygame.transform.scale(self.game.player.image,
-                    (self.game.player.rect.size[0] // scale_factor_x,
-                    self.game.player.rect.size[1] // scale_factor_y))
-        player_img_rect = player_img.get_rect()
-        player_img_rect.topleft = (self.game.player.rect.topleft[0] // scale_factor_x,
-                                    self.game.player.rect.topleft[1] // scale_factor_y)
+        player_img, player_img_rect = sprite.scale_for_minimap(self.game.player, scale_factor_x, scale_factor_y)
 
         minimap.blit(player_img, player_img_rect)
 
