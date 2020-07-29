@@ -176,9 +176,17 @@ def load_minimap_tiles(game):
                          ((room.x * SPRITE_SIZE // scale_factor_x),
                           (room.y * SPRITE_SIZE // scale_factor_y),
                           # + 1 is to make paths directly touch room
-                          # without making to big of difference in size
+                          # without making too big of difference in size
                           (room.width * SPRITE_SIZE // scale_factor_x + 1),
                           (room.height * SPRITE_SIZE // scale_factor_y + 1)))
+
+    pygame.draw.rect(game.surface, RED,
+                     ((game.player.x * SPRITE_SIZE // scale_factor_x),
+                      (game.player.y * SPRITE_SIZE // scale_factor_y),
+                      # + 1 is to make player directly touch walls
+                      # without making too big of difference in size
+                      (game.player.rect.size[0] // scale_factor_x + 1),
+                      (game.player.rect.size[1] // scale_factor_y + 1)))
 
 
 def draw_map(p_map_array, game):

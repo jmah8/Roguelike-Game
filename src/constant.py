@@ -40,6 +40,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+
+
 # Enemy Attributes
 # FOV should be 1 bigger than actual FOV since player acts first
 # and so player can move out of enemy FOV before enemy acts
