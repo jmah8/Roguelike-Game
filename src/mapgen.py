@@ -4,24 +4,65 @@ from constant import *
 
 class Room:
     """
-    Class that represents a room
+    Class that represents a room/path
 
     Attributes:
         up_left ((int, int), arg): the coordinates of the topleft of the room
         down_right ((int, int), arg): the coordinates of the bottom right of the room
     """
+
     def __init__(self, up_left=None, down_right=None):
         self.up_left = up_left
         self.down_right = down_right
 
-
     def return_coords(self):
         """
         Return coordinates of room
+
+        Returns:
+            Coord of room's upleft and downright
         """
         return self.up_left[0], self.up_left[1], self.down_right[0], self.down_right[1]
 
+    @property
+    def x(self):
+        """
+        Returns the upper left x value
 
+        Returns:
+            up_left x value
+        """
+        return self.up_left[0]
+
+    @property
+    def y(self):
+        """
+        Returns the upper left y value
+
+        Returns:
+            up_left y value
+        """
+        return self.up_left[1]
+
+    @property
+    def width(self):
+        """
+        Returns the room width
+
+        Returns:
+            Room width
+        """
+        return self.down_right[0] - self.up_left[0]
+
+    @property
+    def height(self):
+        """
+        Returns the room height
+
+        Returns:
+            Room height
+        """
+        return self.down_right[1] - self.up_left[1]
 
 
 def find_common_x_between_rooms(left_room, right_room):
@@ -43,10 +84,8 @@ def find_common_x_between_rooms(left_room, right_room):
     # min x value that both rooms share in common
     lowest_common_x = max(left_room.up_left[0], right_room.up_left[0])
     # max x value that both rooms share in common
-    highest_common_x = min(left_room.down_right[0], right_room.down_right[0]) 
+    highest_common_x = min(left_room.down_right[0], right_room.down_right[0])
     return lowest_common_x, highest_common_x
-
-
 
 
 def find_common_y_between_rooms(left_room, right_room):
@@ -72,8 +111,6 @@ def find_common_y_between_rooms(left_room, right_room):
     return lowest_common_y, highest_common_y
 
 
-
-
 class Node:
     """
     Class that represents a node in the BST
@@ -86,18 +123,19 @@ class Node:
         right_child (Node, arg): right child of current node
         split_hor (Boolean): Whether node is split horizontally or vertically. 
             True if split horizontally false for vertical. None for no split
-        child_room_array = (Array): array of node's child's rooms
+        child_room_list: (List): list of node's child's rooms
+        path_list: (List): list of path in node's children
     """
-    def __init__ (self, up_left, down_right, left_child=None, right_child=None):
+
+    def __init__(self, up_left, down_right, left_child=None, right_child=None):
         self.up_left = up_left
         self.down_right = down_right
         self.room = Room()
         self.left_child = left_child
         self.right_child = right_child
-        self.split_hor = None 
-        self.child_room_array = []
-
-
+        self.split_hor = None
+        self.child_room_list = []
+        self.path_list = []
 
 
 class Tree:
@@ -114,8 +152,10 @@ class Tree:
         dist_from_sister_node_min (int, arg): min distance a room should be from it's sister room or edge
         dist_from_sister_node_max (int, arg): max distance a room should be from it's sister room or edge
     """
+
     def __init__(self, map_array, sub_dungeon_width=SUB_DUNGEON_WIDTH, sub_dungeon_height=SUB_DUNGEON_HEIGHT,
-                 dist_from_sister_node_min=DIST_FROM_SISTER_NODE_MIN, dist_from_sister_node_max=DIST_FROM_SISTER_NODE_MAX):
+                 dist_from_sister_node_min=DIST_FROM_SISTER_NODE_MIN,
+                 dist_from_sister_node_max=DIST_FROM_SISTER_NODE_MAX):
         y_len = len(map_array)
         x_len = len(map_array[0])
         self.root = Node((0, 0), (x_len - 1, y_len - 1))
@@ -125,9 +165,6 @@ class Tree:
         self.dist_from_sister_node_min = dist_from_sister_node_min
         self.dist_from_sister_node_max = dist_from_sister_node_max
 
-
-        
-
     def build_bsp(self):
         """
         Builds a bsp tree if root is not None
@@ -136,8 +173,6 @@ class Tree:
             self._split_room(self.root)
         else:
             print("Root is None")
-
-
 
     def _split_room(self, node):
         """
@@ -153,7 +188,8 @@ class Tree:
         Args:
             node (Node, arg): Node to split
         """
-        if (node.down_right[1] - node.up_left[1] < 2 * self.sub_dungeon_height and node.down_right[0] - node.up_left[0] < 2 * self.sub_dungeon_width):
+        if (node.down_right[1] - node.up_left[1] < 2 * self.sub_dungeon_height and node.down_right[0] - node.up_left[
+            0] < 2 * self.sub_dungeon_width):
             return node
         elif (node.down_right[1] - node.up_left[1] < 2 * self.sub_dungeon_height):
             self._split_vertical(node)
@@ -166,9 +202,6 @@ class Tree:
             else:
                 self._split_vertical(node)
 
-
-                
-
     def _split_horizontal(self, node):
         """
         Helper function to split node horizontally randomly, following sub_dungeon_height
@@ -176,7 +209,8 @@ class Tree:
         Args:
             node (Node, arg): node to split horizontally
         """
-        split_y = random.randint(node.up_left[1] + self.sub_dungeon_height, node.down_right[1] - self.sub_dungeon_height)
+        split_y = random.randint(node.up_left[1] + self.sub_dungeon_height,
+                                 node.down_right[1] - self.sub_dungeon_height)
         u_x = node.up_left[0]
         u_y = node.up_left[1]
         l_x = node.down_right[0]
@@ -187,8 +221,6 @@ class Tree:
         self._split_room(node.left_child)
         self._split_room(node.right_child)
 
-
-
     def _split_vertical(self, node):
         """
         Helper function to split node vertically randomly, following sub_dungeon_width
@@ -196,7 +228,7 @@ class Tree:
         Args:
             node (Node, arg): node to split vertically
         """
-        split_x = random.randint(node.up_left[0] + self.sub_dungeon_width , node.down_right[0] - self.sub_dungeon_width)
+        split_x = random.randint(node.up_left[0] + self.sub_dungeon_width, node.down_right[0] - self.sub_dungeon_width)
         u_x = node.up_left[0]
         u_y = node.up_left[1]
         l_x = node.down_right[0]
@@ -207,9 +239,6 @@ class Tree:
         self._split_room(node.left_child)
         self._split_room(node.right_child)
 
-
-
-
     def make_room(self):
         """
         Makes room in nodes if root is not None
@@ -218,9 +247,6 @@ class Tree:
             self._make_rooms(self.root)
         else:
             print("Root is None")
-
-
-
 
     def _make_rooms(self, node):
         # TODO: could change it so the SUB_DUNGEON width/height correspond to the actual room dimensions
@@ -243,17 +269,15 @@ class Tree:
         if (left == None and right == None):
             new_room = self._make_room_in_leaf_node(node)
         else:
-            node.child_room_array = node.child_room_array + left
-            node.child_room_array = node.child_room_array + right 
+            node.child_room_list = node.child_room_list + left
+            node.child_room_list = node.child_room_list + right
             # Choose one or the other
             new_room = self._get_room_from_random_child(node)
             # new_room = self._get_room_from_random_immediate_child(node)
 
-        node.child_room_array.append(new_room)
+        node.child_room_list.append(new_room)
 
-        return node.child_room_array
-
-
+        return node.child_room_list
 
     def _make_room_in_leaf_node(self, node):
         """
@@ -277,8 +301,6 @@ class Tree:
 
         return new_room
 
-
-    
     def _get_room_from_random_immediate_child(self, node):
         """
         Makes room in parent node by choosing a room from one of it's immediate children
@@ -298,8 +320,6 @@ class Tree:
         node.room = new_room
         return new_room
 
-
-
     def _get_room_from_random_child(self, node):
         """
         Makes room in parent node by choosing a room from any of it's children
@@ -307,15 +327,11 @@ class Tree:
         Args:
             node (Node): node to make room in
         """
-        room = random.choice(node.child_room_array)
+        room = random.choice(node.child_room_list)
 
-        new_room = room    
+        new_room = room
         node.room = new_room
         return new_room
-
-
-
-
 
     def build_path(self):
         """
@@ -326,9 +342,6 @@ class Tree:
             self._build_path_intelligent(self.root)
         else:
             print("Root is None")
-
-
-
 
     def _build_path(self, node):
         """
@@ -342,14 +355,14 @@ class Tree:
             node (Node, arg): node to build path for
         """
         if (node == None):
-            return 
+            return None
 
         left = self._build_path(node.left_child)
         right = self._build_path(node.right_child)
 
         # If leaf node do nothing
         if (node.left_child == None and node.right_child == None):
-            return
+            return None
 
         else:
             left_child = node.left_child
@@ -373,7 +386,7 @@ class Tree:
                 # | = where the node was split (represents nothing on actual map)
                 if (path_max_x < path_min_x):
                     self._hor_zigzag_path(left_child, right_child)
-                    
+
                 # There is a straight path to both rooms
                 else:
                     self._hor_straight_path(node, path_min_x, path_max_x)
@@ -406,11 +419,6 @@ class Tree:
                 else:
                     self._vert_straight_path(node, path_min_y, path_max_y)
 
-
-
-
-
-
     def _build_path_intelligent(self, node):
         """
         Recursively builds path to join sister nodes.
@@ -423,19 +431,17 @@ class Tree:
             node (Node, arg): node to build path for
         """
         if (node == None):
-            return 
+            return None
 
         left = self._build_path_intelligent(node.left_child)
         right = self._build_path_intelligent(node.right_child)
 
         # If leaf node do nothing
         if (node.left_child == None and node.right_child == None):
-            return
+            return None
 
         else:
             self.build_path_to_closest_rooms(node)
-
-
 
     def _hor_straight_path(self, node, path_min_x, path_max_x):
         """
@@ -452,7 +458,6 @@ class Tree:
         path_lr = (path_x + 1, node.right_child.room.up_left[1])
 
         self._draw_hor_straight_path_on_map(path_ul, path_lr)
-
 
     def _build_hor_straight_path(self, left_room, right_room):
         """
@@ -476,7 +481,6 @@ class Tree:
 
         self._draw_hor_straight_path_on_map(path_ul, path_lr)
 
-    
     def _draw_hor_straight_path_on_map(self, path_ul, path_lr):
         """
         Draws straight horizontal path from path_ul to path_lr
@@ -488,8 +492,7 @@ class Tree:
         for y in range(path_ul[1], path_lr[1]):
             for x in range(path_ul[0], path_lr[0]):
                 # if (self.map_array[y][x] == '1'):
-                    self.map_array[y][x] = PATH
-
+                self.map_array[y][x] = PATH
 
     def _vert_straight_path(self, node, path_min_y, path_max_y):
         """
@@ -504,9 +507,8 @@ class Tree:
 
         path_ul = (node.left_child.room.down_right[0] + 1, path_y)
         path_lr = (node.right_child.room.up_left[0], path_y + 1)
-    
-        self._draw_vert_straight_path_on_map(path_ul, path_lr)
 
+        self._draw_vert_straight_path_on_map(path_ul, path_lr)
 
     def _build_vert_straight_path(self, left_room, right_room):
         """
@@ -517,6 +519,9 @@ class Tree:
             right_room (Room, arg): right room to make path to        
             # path_min_y (int, arg): minimun y coordinate that the path must be
             # path_max_y (int, arg): maximum y coordinate that the path must be
+
+        Returns:
+
         """
         # TODO: could change these 2 lines to be in if, since in _build_path it
         #       calculated before calling this method, but in find_closest_room
@@ -527,9 +532,8 @@ class Tree:
 
         path_ul = (path_x, left_room.down_right[1] + 1)
         path_lr = (path_x + 1, right_room.up_left[1])
-    
-        self._draw_vert_straight_path_on_map(path_ul, path_lr)
 
+        self._draw_vert_straight_path_on_map(path_ul, path_lr)
 
     def _draw_vert_straight_path_on_map(self, path_ul, path_lr):
         """
@@ -542,8 +546,7 @@ class Tree:
         for y in range(path_ul[1], path_lr[1]):
             for x in range(path_ul[0], path_lr[0]):
                 # if (self.map_array[y][x] == '1'):
-                    self.map_array[y][x] = PATH
-
+                self.map_array[y][x] = PATH
 
     def _hor_zigzag_path(self, left_child, right_child):
         """
@@ -575,18 +578,17 @@ class Tree:
         # draw zig part for right child
         for y in range(right_child_up_y - right_y, right_child_up_y):
             # if (self.map_array[y][right_x] == '1'):
-                self.map_array[y][right_x] = PATH
+            self.map_array[y][right_x] = PATH
 
         # draw zig part for left child
         for y in range(left_child_down_y + 1, left_child_down_y + left_y):
             # if (self.map_array[y][left_x] == '1'):
-                self.map_array[y][left_x] = PATH
+            self.map_array[y][left_x] = PATH
 
         # draw zag part that connects the two zig parts
-        for x in range (low, high + 1):
+        for x in range(low, high + 1):
             # if (self.map_array[left_child_down_y + left_y][x] == '1'):
-                self.map_array[left_child_down_y + left_y][x] = PATH
-
+            self.map_array[left_child_down_y + left_y][x] = PATH
 
     def _vert_zigzag_path(self, left_child, right_child):
         """
@@ -617,21 +619,20 @@ class Tree:
         high = max(left_y, right_y)
 
         # draw zig part for left child
-        for x in range (left_child_down_x + 1, left_child_down_x + left_x):
+        for x in range(left_child_down_x + 1, left_child_down_x + left_x):
             # if (self.map_array[left_y][x] == '1'):
-                self.map_array[left_y][x] = PATH
+            self.map_array[left_y][x] = PATH
 
         # draw zig part for left child
-        for x in range (right_child_up_x - right_x, right_child_up_x):
+        for x in range(right_child_up_x - right_x, right_child_up_x):
             # if (self.map_array[right_y][x] == '1'):
-                self.map_array[right_y][x] = PATH
+            self.map_array[right_y][x] = PATH
 
         # draw zag part that connects the two zig parts
-        for y in range (low, high + 1):
+        for y in range(low, high + 1):
             # if (self.map_array[y][(left_child_down_x + left_x)] == '1'):
-                self.map_array[y][(left_child_down_x + left_x)] = PATH
+            self.map_array[y][(left_child_down_x + left_x)] = PATH
 
-    
     def build_path_to_closest_rooms(self, node):
         """
         Builds paths between adjacent children rooms
@@ -646,8 +647,8 @@ class Tree:
             # TODO: could shuffle list to make it more random
             # random.shuffle(node.left_child.child_room_array)
             # random.shuffle(node.right_child.child_room_array)
-            for l_room in (node.left_child.child_room_array):
-                for r_room in (node.right_child.child_room_array):
+            for l_room in (node.left_child.child_room_list):
+                for r_room in (node.right_child.child_room_list):
                     if (self._find_if_rooms_are_vert_adjacent(l_room, r_room)):
                         self._build_vert_straight_path(l_room, r_room)
                         return
@@ -659,14 +660,11 @@ class Tree:
             # TODO: could shuffle list to make it more random
             # random.shuffle(node.left_child.child_room_array)
             # random.shuffle(node.right_child.child_room_array)
-            for l_room in (node.left_child.child_room_array):
-                for r_room in (node.right_child.child_room_array):
+            for l_room in (node.left_child.child_room_list):
+                for r_room in (node.right_child.child_room_list):
                     if (self._find_if_rooms_are_hor_adjacent(l_room, r_room)):
                         self._build_hor_straight_path(l_room, r_room)
                         return
-
-
-    
 
     def _find_if_rooms_are_vert_adjacent(self, left_room, right_room):
         """
@@ -694,10 +692,9 @@ class Tree:
             diff_y = right_y - left_y
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE min and max
             return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
-        
+
         return False
 
-    
     def _find_if_rooms_are_hor_adjacent(self, left_room, right_room):
         """
         Return true if both rooms are horizontally adjacent
@@ -715,7 +712,6 @@ class Tree:
         # min and max y value that both rooms share in common
         path_min_y, path_max_y = find_common_y_between_rooms(left_room, right_room)
 
-
         # If both rooms are in the same y range = True, else false
         adj = path_min_y <= path_max_y
 
@@ -724,12 +720,9 @@ class Tree:
             right_x = right_room.up_left[0]
             diff_y = right_x - left_x
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE min and max
-            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2* DIST_FROM_SISTER_NODE_MAX))
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
 
         return False
-
-        
-
 
     def print_tree(self):
         """
@@ -755,7 +748,6 @@ class Tree:
             if (node.room.up_left != None and node.room.down_right != None):
                 print("room.up_left: " + str(node.room.up_left) + " , room.down_right: " + str(node.room.down_right))
             print("")
-    
 
     def print_map(self):
         """
@@ -763,7 +755,5 @@ class Tree:
         """
         for row in self.map_array:
             for val in row:
-                print (val, end='')
+                print(val, end='')
             print()
-
-

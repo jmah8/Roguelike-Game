@@ -70,19 +70,16 @@ class Game:
         if (READ_FROM_FILE):
             # Holds the map representation (chars)
             self.map_array = gamemap.load_map()
-            # Holds map info like width and height
-            self.map_data = gamemap.MapInfo(self.map_array)
-            # Holds actual tiles
-            self.tile_array = gamemap.draw_map(self.map_array, self)
 
         # This is for generating random maps
         else:
             # Holds the map representation (chars)
             self.map_array = gamemap.gen_map(self)
-            # Holds map info like width and height
-            self.map_data = gamemap.MapInfo(self.map_array)
-            # Holds actual tiles
-            self.tile_array = gamemap.draw_map(self.map_array, self)
+
+        # Holds map info like width and height
+        self.map_data = gamemap.MapInfo(self.map_array)
+        # Holds actual tiles
+        self.tile_array = gamemap.draw_map(self.map_array, self)
 
         self.wall_hack = False
 

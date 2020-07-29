@@ -35,7 +35,7 @@ class Drawing:
         self.draw_grid()
 
         if (self.game.mini_map_on):
-            self.draw_minimap()
+            gamemap.load_minimap_tiles(self.game)
 
         self.draw_debug()
         self.draw_messages()
