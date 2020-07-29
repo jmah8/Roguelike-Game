@@ -186,7 +186,7 @@ class Tree:
         Else split whichever way is possible 
 
         Args:
-            node (Node, arg): Node to split
+            node (Node): Node to split
         """
         if (node.down_right[1] - node.up_left[1] < 2 * self.sub_dungeon_height and node.down_right[0] - node.up_left[
             0] < 2 * self.sub_dungeon_width):
@@ -207,7 +207,7 @@ class Tree:
         Helper function to split node horizontally randomly, following sub_dungeon_height
 
         Args:
-            node (Node, arg): node to split horizontally
+            node (Node): node to split horizontally
         """
         split_y = random.randint(node.up_left[1] + self.sub_dungeon_height,
                                  node.down_right[1] - self.sub_dungeon_height)
@@ -226,7 +226,7 @@ class Tree:
         Helper function to split node vertically randomly, following sub_dungeon_width
 
         Args:
-            node (Node, arg): node to split vertically
+            node (Node): node to split vertically
         """
         split_x = random.randint(node.up_left[0] + self.sub_dungeon_width, node.down_right[0] - self.sub_dungeon_width)
         u_x = node.up_left[0]
@@ -252,11 +252,10 @@ class Tree:
         # TODO: could change it so the SUB_DUNGEON width/height correspond to the actual room dimensions
         #       instead of sub dungeon dimension
         """
-        Recursively makes room in the leaf nodes, while parents choose
-        random room from its children and returns children's room
+        Recursively makes room in the leaf nodes and returns children's room
 
         Args:
-            node (Node, arg): node to make room in
+            node (Node): node to make room in
 
         Returns:
             child_room_list (list): list of rooms in node's children
@@ -275,11 +274,6 @@ class Tree:
         else:
             node.child_room_list = node.child_room_list + left
             node.child_room_list = node.child_room_list + right
-            # Choose one or the other
-            # new_room = self._get_room_from_random_child(node)
-            # new_room = self._get_room_from_random_immediate_child(node)
-
-        # node.child_room_list.append(new_room)
 
         return node.child_room_list
 
@@ -288,7 +282,7 @@ class Tree:
         Makes room in leaf nodes only and returns the room made
 
         Args:
-            node (Node, arg): node to make room in
+            node (Node): node to make room in
         """
         ul_x = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
         ul_y = random.randint(self.dist_from_sister_node_min, self.dist_from_sister_node_max)
@@ -310,7 +304,7 @@ class Tree:
         Makes room in parent node by choosing a room from one of it's immediate children
 
         Args:
-            node (Node, arg): node to make room in
+            node (Node): node to make room in
         """
         ran = random.randint(0, 1)
         if (ran == 0):
@@ -356,7 +350,7 @@ class Tree:
         straight path from both rooms, randomly make a zigzag path to connect the 2 rooms
 
         Args:
-            node (Node, arg): node to build path for
+            node (Node): node to build path for
         """
         if (node == None):
             return None
@@ -425,14 +419,19 @@ class Tree:
 
     def _build_path_intelligent(self, node):
         """
-        Recursively builds path to join sister nodes.
+        Recursively builds path to join sister nodes adds paths to
+        list of child room and returns it
 
         Do nothing on leaf nodes. Else join the 2 children node's room with a random single tile path.
         This method will build paths more intelligently (ie no zigzags and cutting through rooms)
         and connect rooms close to where the children nodes were divided
 
         Args:
-            node (Node, arg): node to build path for
+            node (Node): node to build path for
+
+        Returns:
+            paths (list): list of all paths in node and
+                node's children
         """
         if (node == None):
             return None
@@ -460,9 +459,9 @@ class Tree:
         Helper function to build straight path for horizontally split node
 
         Args:
-            node (Node, arg): Current node to make path between 2 of it's children nodes
-            path_min_x (int, arg): minimun x coordinate that the path must be
-            path_max_x (int, arg): maximum x coordinate that the path must be
+            node (Node): Current node to make path between 2 of it's children nodes
+            path_min_x (int): minimun x coordinate that the path must be
+            path_max_x (int): maximum x coordinate that the path must be
         """
         path_x = random.randint(path_min_x, path_max_x)
 
@@ -476,14 +475,14 @@ class Tree:
         Helper function to build straight path for horizontally split node
         and return the path made
 
-        Arg
-            left_room (Room, arg): left room to make path from
-            right_room (Room, arg): right room to make path to
-            # path_min_x (int, arg): minimun x coordinate that the path must be
-            # path_max_x (int, arg): maximum x coordinate that the path must be
+        Args:
+            left_room (Room): left room to make path from
+            right_room (Room): right room to make path to
+            # path_min_x (int): minimun x coordinate that the path must be
+            # path_max_x (int): maximum x coordinate that the path must be
 
         Returns:
-            path between the 2 rooms
+            path made between the two rooms
         """
         # TODO: could change these 2 lines to be in if, since in _build_path it
         #       calculated before calling this method, but in find_closest_room
@@ -504,8 +503,8 @@ class Tree:
         Draws straight horizontal path from path_ul to path_lr
 
         Args:
-            path_ul ((int, int), arg): upper left of path coord
-            path_lr ((int, int), arg): lower right of path coord
+            path_ul ((int, int)): upper left of path coord
+            path_lr ((int, int)): lower right of path coord
         """
         for y in range(path_ul[1], path_lr[1] + 1):
             for x in range(path_ul[0], path_lr[0] + 1):
@@ -517,9 +516,9 @@ class Tree:
         Helper function to build straight path for vertically split node
 
         Args:
-            node (Node, arg): Current node to make path between 2 of it's children nodes
-            path_min_y (int, arg): minimun y coordinate that the path must be
-            path_max_y (int, arg): maximum y coordinate that the path must be
+            node (Node): Current node to make path between 2 of it's children nodes
+            path_min_y (int): minimun y coordinate that the path must be
+            path_max_y (int): maximum y coordinate that the path must be
         """
         path_y = random.randint(path_min_y, path_max_y)
 
@@ -534,10 +533,10 @@ class Tree:
         and returns the path made
 
         Args:
-            left_room (Room, arg): left room to make path from
-            right_room (Room, arg): right room to make path to        
-            # path_min_y (int, arg): minimun y coordinate that the path must be
-            # path_max_y (int, arg): maximum y coordinate that the path must be
+            left_room (Room): left room to make path from
+            right_room (Room): right room to make path to
+            # path_min_y (int): minimun y coordinate that the path must be
+            # path_max_y (int): maximum y coordinate that the path must be
 
         Returns:
             path made between the two rooms
@@ -561,8 +560,8 @@ class Tree:
         Draws straight vertical path from path_ul to path_lr
 
         Args:
-            path_ul ((int, int), arg): upper left of path coord
-            path_lr ((int, int), arg): lower right of path coord
+            path_ul ((int, int)): upper left of path coord
+            path_lr ((int, int)): lower right of path coord
         """
         for y in range(path_ul[1], path_lr[1] + 1):
             for x in range(path_ul[0], path_lr[0] + 1):
@@ -574,8 +573,8 @@ class Tree:
         Helper function to build a zigzag path for a horizontally split node
 
         Args:
-            left_child (Node, arg): left child to build path to
-            right_child (Node, arg): right child to build path to
+            left_child (Node): left child to build path to
+            right_child (Node): right child to build path to
 
         """
         left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
@@ -616,10 +615,10 @@ class Tree:
         Helper function to build a zigzag path for a vertically split node
 
         Args:
-            left_up ((int, int), arg): left child room's up left coordinate
-            left_down ((int, int), arg): left child room's down right coordinate
-            right_up ((int, int), arg): right child room's up left coordinate
-            right_down ((int, int), arg): right child room's down right coordinate
+            left_up ((int, int)): left child room's up left coordinate
+            left_down ((int, int)): left child room's down right coordinate
+            right_up ((int, int)): right child room's up left coordinate
+            right_down ((int, int)): right child room's down right coordinate
         """
         left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
         right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
@@ -656,18 +655,24 @@ class Tree:
 
     def build_path_to_closest_rooms(self, node):
         """
-        Builds paths between adjacent children rooms
+        Builds paths between adjacent children rooms and
+        returns path made
 
         Args:
-            node (Node, arg): node to build path between its children's room
+            node (Node): node to build path between its children's room
+
+        Returns:
+            path (Room): path made between two of node's children
         """
         if (node.split_hor):
             # Horizontally split means the two subdungeons are on top of each other
             # therefore we should find if it is vertically adjacent
 
-            # TODO: could shuffle list to make it more random
-            # random.shuffle(node.left_child.child_room_list)
-            # random.shuffle(node.right_child.child_room_list)
+            # NOTE:
+            # The 2 shuffle allows for paths to be formed
+            # between room/path and path/path.
+            random.shuffle(node.left_child.child_room_list)
+            random.shuffle(node.right_child.child_room_list)
             for l_room in (node.left_child.child_room_list):
                 for r_room in (node.right_child.child_room_list):
                     if (self._find_if_rooms_are_vert_adjacent(l_room, r_room)):
@@ -678,9 +683,11 @@ class Tree:
             # Vertically split means the two subdungeons are beside each other
             # therefore we should find if it is horizontally adjacent
 
-            # TODO: could shuffle list to make it more random
-            # random.shuffle(node.left_child.child_room_list)
-            # random.shuffle(node.right_child.child_room_list)
+            # NOTE:
+            # The 2 shuffle allows for paths to be formed
+            # between room/path and path/path.
+            random.shuffle(node.left_child.child_room_list)
+            random.shuffle(node.right_child.child_room_list)
             for l_room in (node.left_child.child_room_list):
                 for r_room in (node.right_child.child_room_list):
                     if (self._find_if_rooms_are_hor_adjacent(l_room, r_room)):
@@ -691,14 +698,14 @@ class Tree:
         """
         Return true if both rooms are vertically adjacent
 
-        Rooms are considered vertically adjacent if the rooms have at 
+        Rooms are considered vertically adjacent if the rooms have at
         least 1 common x coord and are children of the same parent node,
         meaning that the distance between them is between 2* DIST_FROM_SISTER_NODE
         min/max
 
         Args:
-            left_room (Room, arg): left room to check
-            right_room (Room, arg): right room to check
+            left_room (Room): left room to check
+            right_room (Room): right room to check
         """
 
         # min and max x value that both rooms share in common
@@ -711,7 +718,8 @@ class Tree:
             left_y = left_room.down_right[1]
             right_y = right_room.up_left[1]
             diff_y = right_y - left_y
-            # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE min and max
+            # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE
+            # min and max
             return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
 
         return False
@@ -726,8 +734,8 @@ class Tree:
         min/max
 
         Args:
-            left_room (Room, arg): left room to check
-            right_room (Room, arg): right room to check
+            left_room (Room): left room to check
+            right_room (Room): right room to check
         """
 
         # min and max y value that both rooms share in common
@@ -740,7 +748,8 @@ class Tree:
             left_x = left_room.down_right[0]
             right_x = right_room.up_left[0]
             diff_y = right_x - left_x
-            # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE min and max
+            # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE
+            # min and max
             return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
 
         return False
@@ -760,7 +769,7 @@ class Tree:
         Recursively prints tree information using post order traversal
 
         Args:
-            node (Node, arg): node to print information
+            node (Node): node to print information
         """
         if (node != None):
             self._print_tree(node.left_child)
