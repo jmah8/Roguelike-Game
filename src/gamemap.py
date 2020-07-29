@@ -138,8 +138,17 @@ def gen_map(game):
     tree.build_path()
     # tree.print_tree()
     tree.print_map()
+    game.map_tree = tree
     return map_array
 
+def load_minimap_tiles(game):
+    """
+    Loads the images for the minimap
+
+    Arg:
+        game (Game): game to load minimap to
+    """
+    list_of_rooms = game.map_tree.root.child_room_array
 
 def draw_map(p_map_array, game):
     """

@@ -1,4 +1,6 @@
 import pygame
+import os
+
 pygame.font.init()
 
 # Display constants
@@ -68,8 +70,10 @@ RED_POTION = 'items/consumables/potion_red.png'
 INVENTORY = 'ui/chest_closed_anim_f2.png'
 
 # FONTS
-FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
-FONT_MESSAGE_TEXT = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', 28)
+dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+font_path_name = os.path.join(dirname, 'fonts/FFF_Tusj.ttf')
+FONT_DEBUG_MESSAGE = pygame.font.Font(font_path_name, 28)
+FONT_MESSAGE_TEXT = pygame.font.Font(font_path_name, 28)
 TEXT_SPACE_BUFFER = 5
 
 # MESSAGE DEFAULTS

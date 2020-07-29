@@ -102,7 +102,7 @@ class Node:
 
 class Tree:
     """
-    Class that represent A BST 
+    Class that represent A BSP Tree 
 
     Each node in tree represents a subdungeon in the tree
 
@@ -765,3 +765,5 @@ class Tree:
             for val in row:
                 print (val, end='')
             print()
+
+

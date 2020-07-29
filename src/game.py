@@ -21,7 +21,7 @@ class Game:
         pygame.init()
         pygame.display.set_caption("Knight's Adventure")
         self.surface = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE)
-        self.minimap = None
+        self.map_tree = None
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(350, 75)
         self.running = True
@@ -44,6 +44,8 @@ class Game:
 
         # Group with all tiles
         self.all_tile = pygame.sprite.Group()
+        # Minimap group
+        self.minimap = pygame.sprite.Group()
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Player group
