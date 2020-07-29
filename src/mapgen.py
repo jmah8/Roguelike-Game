@@ -52,7 +52,7 @@ class Room:
         Returns:
             Room width
         """
-        return self.down_right[0] - self.up_left[0]
+        return self.down_right[0] - self.up_left[0] + 1
 
     @property
     def height(self):
@@ -62,7 +62,7 @@ class Room:
         Returns:
             Room height
         """
-        return self.down_right[1] - self.up_left[1]
+        return self.down_right[1] - self.up_left[1] + 1
 
 
 def find_common_x_between_rooms(left_room, right_room):
@@ -252,11 +252,14 @@ class Tree:
         # TODO: could change it so the SUB_DUNGEON width/height correspond to the actual room dimensions
         #       instead of sub dungeon dimension
         """
-        Recursively makes room in the leaf nodes and any parent node randomly chooses one of the child rooms
-        as its room
+        Recursively makes room in the leaf nodes, while parents choose
+        random room from its children and returns children's room
 
         Args:
             node (Node, arg): node to make room in
+
+        Returns:
+            child_room_list (list): list of rooms in node's children
         """
         # Return None if None node
         if (node == None):
@@ -268,14 +271,15 @@ class Tree:
 
         if (left == None and right == None):
             new_room = self._make_room_in_leaf_node(node)
+            node.child_room_list.append(new_room)
         else:
             node.child_room_list = node.child_room_list + left
             node.child_room_list = node.child_room_list + right
             # Choose one or the other
-            new_room = self._get_room_from_random_child(node)
+            # new_room = self._get_room_from_random_child(node)
             # new_room = self._get_room_from_random_immediate_child(node)
 
-        node.child_room_list.append(new_room)
+        # node.child_room_list.append(new_room)
 
         return node.child_room_list
 
@@ -441,7 +445,15 @@ class Tree:
             return None
 
         else:
-            self.build_path_to_closest_rooms(node)
+            paths = []
+            path = self.build_path_to_closest_rooms(node)
+            if left:
+                paths = paths + left
+            if right:
+                paths = paths + right
+            paths.append(path)
+            node.child_room_list = node.child_room_list + paths
+            return paths
 
     def _hor_straight_path(self, node, path_min_x, path_max_x):
         """
@@ -462,12 +474,16 @@ class Tree:
     def _build_hor_straight_path(self, left_room, right_room):
         """
         Helper function to build straight path for horizontally split node
+        and return the path made
 
         Arg
             left_room (Room, arg): left room to make path from
             right_room (Room, arg): right room to make path to
             # path_min_x (int, arg): minimun x coordinate that the path must be
             # path_max_x (int, arg): maximum x coordinate that the path must be
+
+        Returns:
+            path between the 2 rooms
         """
         # TODO: could change these 2 lines to be in if, since in _build_path it
         #       calculated before calling this method, but in find_closest_room
@@ -477,9 +493,11 @@ class Tree:
         path_y = random.randint(path_min_y, path_max_y)
 
         path_ul = (left_room.down_right[0] + 1, path_y)
-        path_lr = (right_room.up_left[0], path_y + 1)
+        path_lr = (right_room.up_left[0] - 1, path_y)
 
         self._draw_hor_straight_path_on_map(path_ul, path_lr)
+
+        return Room(path_ul, path_lr)
 
     def _draw_hor_straight_path_on_map(self, path_ul, path_lr):
         """
@@ -489,8 +507,8 @@ class Tree:
             path_ul ((int, int), arg): upper left of path coord
             path_lr ((int, int), arg): lower right of path coord
         """
-        for y in range(path_ul[1], path_lr[1]):
-            for x in range(path_ul[0], path_lr[0]):
+        for y in range(path_ul[1], path_lr[1] + 1):
+            for x in range(path_ul[0], path_lr[0] + 1):
                 # if (self.map_array[y][x] == '1'):
                 self.map_array[y][x] = PATH
 
@@ -513,6 +531,7 @@ class Tree:
     def _build_vert_straight_path(self, left_room, right_room):
         """
         Helper function to build straight path for vertically split node
+        and returns the path made
 
         Args:
             left_room (Room, arg): left room to make path from
@@ -521,7 +540,7 @@ class Tree:
             # path_max_y (int, arg): maximum y coordinate that the path must be
 
         Returns:
-
+            path made between the two rooms
         """
         # TODO: could change these 2 lines to be in if, since in _build_path it
         #       calculated before calling this method, but in find_closest_room
@@ -531,9 +550,11 @@ class Tree:
         path_x = random.randint(path_min_x, path_max_x)
 
         path_ul = (path_x, left_room.down_right[1] + 1)
-        path_lr = (path_x + 1, right_room.up_left[1])
+        path_lr = (path_x, right_room.up_left[1] - 1)
 
         self._draw_vert_straight_path_on_map(path_ul, path_lr)
+
+        return Room(path_ul, path_lr)
 
     def _draw_vert_straight_path_on_map(self, path_ul, path_lr):
         """
@@ -543,8 +564,8 @@ class Tree:
             path_ul ((int, int), arg): upper left of path coord
             path_lr ((int, int), arg): lower right of path coord
         """
-        for y in range(path_ul[1], path_lr[1]):
-            for x in range(path_ul[0], path_lr[0]):
+        for y in range(path_ul[1], path_lr[1] + 1):
+            for x in range(path_ul[0], path_lr[0] + 1):
                 # if (self.map_array[y][x] == '1'):
                 self.map_array[y][x] = PATH
 
@@ -645,26 +666,26 @@ class Tree:
             # therefore we should find if it is vertically adjacent
 
             # TODO: could shuffle list to make it more random
-            # random.shuffle(node.left_child.child_room_array)
-            # random.shuffle(node.right_child.child_room_array)
+            # random.shuffle(node.left_child.child_room_list)
+            # random.shuffle(node.right_child.child_room_list)
             for l_room in (node.left_child.child_room_list):
                 for r_room in (node.right_child.child_room_list):
                     if (self._find_if_rooms_are_vert_adjacent(l_room, r_room)):
-                        self._build_vert_straight_path(l_room, r_room)
-                        return
+                        path = self._build_vert_straight_path(l_room, r_room)
+                        return path
 
         else:
             # Vertically split means the two subdungeons are beside each other
             # therefore we should find if it is horizontally adjacent
 
             # TODO: could shuffle list to make it more random
-            # random.shuffle(node.left_child.child_room_array)
-            # random.shuffle(node.right_child.child_room_array)
+            # random.shuffle(node.left_child.child_room_list)
+            # random.shuffle(node.right_child.child_room_list)
             for l_room in (node.left_child.child_room_list):
                 for r_room in (node.right_child.child_room_list):
                     if (self._find_if_rooms_are_hor_adjacent(l_room, r_room)):
-                        self._build_hor_straight_path(l_room, r_room)
-                        return
+                        path = self._build_hor_straight_path(l_room, r_room)
+                        return path
 
     def _find_if_rooms_are_vert_adjacent(self, left_room, right_room):
         """

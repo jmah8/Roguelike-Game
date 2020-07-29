@@ -22,7 +22,7 @@ DIST_FROM_SISTER_NODE_MIN = 2
 DIST_FROM_SISTER_NODE_MAX = 4
 
 # Minimap constants
-MINIMAP_SCALE = 4
+MINIMAP_SCALE = 2
 
 
 # Console map output
