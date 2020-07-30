@@ -9,6 +9,9 @@ import drawing
 import pathfinding
 from camera import Camera
 import fov
+from menu_manager import Menu_Manager
+
+from drawing import Drawing
 
 pygame.font.init()
 
@@ -30,7 +33,8 @@ class Game:
         self.ENEMIES = []
         self.CREATURES = []
         self.ITEMS = []
-        self.drawing = drawing.Drawing(self)
+        self.drawing = Drawing(self)
+        self.menu_manager = Menu_Manager(self)
         self.mini_map_on = False
 
 
@@ -184,6 +188,8 @@ class Game:
             self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
                                                    pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
+
+            # Movement
             if event.key == pygame.K_a:
                 self.current_group.update(-1, 0)
             if event.key == pygame.K_d:
@@ -202,9 +208,12 @@ class Game:
                 self.current_group.update(0, 1)
             if event.key == pygame.K_x:
                 self.current_group.update(0, 0)
+
+            # Mini_map
             if event.key == pygame.K_TAB:
                 self.mini_map_on = not self.mini_map_on
 
+            # Pickup/Drop Item
             if event.key == pygame.K_t:
                 objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
                 for obj in objects_at_player:
@@ -233,6 +242,14 @@ class Game:
                         self._toggle_free_camera()
                         path = self.graph.find_path(start, goal, visited)
                         self._move_char_auto(path)
+
+            # Menu Buttons
+            if event.key == pygame.K_p:
+                self.menu_manager.pause_menu()
+            if event.key == pygame.K_i:
+                self.menu_manager.inventory_menu()
+
+
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
@@ -283,6 +300,5 @@ class Game:
             dest_y = coord[1] - old_coord[1]
             self.current_group.update(dest_x, dest_y)
             old_coord = coord
-            self._draw_game()
-            pygame.time.delay(100)
-
+            self.clock.tick(20)
+            self.drawing.draw()

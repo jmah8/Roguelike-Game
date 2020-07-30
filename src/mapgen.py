@@ -124,7 +124,7 @@ class Node:
         split_hor (Boolean): Whether node is split horizontally or vertically. 
             True if split horizontally false for vertical. None for no split
         child_room_list: (List): list of node's child's rooms
-        path_list: (List): list of path in node's children
+        # path_list: (List): list of path in node's children
     """
 
     def __init__(self, up_left, down_right, left_child=None, right_child=None):
@@ -135,7 +135,7 @@ class Node:
         self.right_child = right_child
         self.split_hor = None
         self.child_room_list = []
-        self.path_list = []
+        # self.path_list = []
 
 
 class Tree:

@@ -1,5 +1,6 @@
 import pygame
 from constant import *
+import object
 import os
 from sprite import *
 from mapgen import Tree

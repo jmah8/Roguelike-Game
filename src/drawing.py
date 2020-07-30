@@ -3,12 +3,12 @@ import pygame
 from constant import *
 import fov
 import sprite
-
+from button_manager import Button_Manager
 
 class Drawing:
     def __init__(self, game):
         self.game = game
-        self.button_surface = pygame.Surface((100, 100))
+        self.button_manager = Button_Manager()
 
     def draw(self):
         """
@@ -136,6 +136,7 @@ class Drawing:
         scale_factor_x = (map_data.width // resol)
         scale_factor_y = (map_data.height // resol)
 
+
         # Code below displays:
         # Minimap is shrunk down version of actual map and
         # so shows players, enemies and items
@@ -239,4 +240,5 @@ class Drawing:
 
     def draw_buttons(self):
         # InventoryButton
-        self.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
+        self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
+

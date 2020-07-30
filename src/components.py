@@ -170,7 +170,6 @@ class Ai_test:
 
         Args:
             diff (int): difference between self position and player
-            diff (int): difference between self position and player
         """
         if (diff > 0):
             move = -1
