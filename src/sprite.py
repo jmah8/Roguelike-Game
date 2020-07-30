@@ -64,6 +64,9 @@ def seen_sprite(image):
 def flip_anim(anim_array):
     """
     Flips animation image to face the other way
+
+    Arg:
+        anim_array (list): list of sprite's animation to flip
     """
     flip_anim = []
     for i in anim_array:
@@ -71,6 +74,22 @@ def flip_anim(anim_array):
     return flip_anim
 
 
+def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
+    """
+    Scales obj image by scale_factor x and y
+
+    Arg:
+        obj (object): object with image to scale
+        scale_factor_x (int): what to scale x by
+        scale_factor_y (int): what to scale y by
+    """
+    obj_img = pygame.transform.scale(obj.image,
+        (obj.rect.size[0] // scale_factor_x,
+        obj.rect.size[1] // scale_factor_y))
+    obj_img_rect = obj_img.get_rect()
+    obj_img_rect.topleft = (obj.rect.topleft[0] // scale_factor_x,
+                            obj.rect.topleft[1] // scale_factor_y)
+    return obj_img, obj_img_rect
 
 
 class GameSprites():

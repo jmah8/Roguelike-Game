@@ -7,6 +7,7 @@ from mapgen import Tree
 
 pygame.init()
 
+
 class Tile(pygame.sprite.Sprite):
     """
     Class for the tiles of map
@@ -17,6 +18,7 @@ class Tile(pygame.sprite.Sprite):
         game (game, arg): game with object data
         seen (bool): if tile was seen
     """
+
     def __init__(self, game, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
@@ -26,6 +28,7 @@ class Tile(pygame.sprite.Sprite):
         self.rect.y = y * SPRITE_SIZE
         self.game.all_tile.add(self)
         self.seen = False
+
 
 class Wall(Tile):
     """
@@ -37,6 +40,7 @@ class Wall(Tile):
         image (surface, arg): current image of wall
         game (game, arg): game with object data
     """
+
     def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
         self.image_explored = game.game_sprites.seen_wall_image
         self.image_unexplored = game.game_sprites.wall_image
@@ -45,9 +49,10 @@ class Wall(Tile):
             self.image_unexplored = image_unexplored
         if (image_explored):
             self.image_explored = image_explored
-        self.rect = self.image.get_rect()   
+        self.rect = self.image.get_rect()
         Tile.__init__(self, game, x, y)
         self.game.walls.add(self)
+
 
 class Floor(Tile):
     """
@@ -59,6 +64,7 @@ class Floor(Tile):
         image (surface, arg): current image of floor
         game (game, arg): game with object data
     """
+
     def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
         self.image_explored = game.game_sprites.seen_floor_image_1
         self.image_unexplored = game.game_sprites.floor_image_1
@@ -71,6 +77,7 @@ class Floor(Tile):
         Tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
 
+
 class MapInfo:
     """
     Load map info of map_array into MapInfo
@@ -81,13 +88,13 @@ class MapInfo:
         width (int): actual width of map
         height (int): actual height of map
     """
+
     def __init__(self, map_array):
         self.tilewidth = len(map_array[0])
         self.tileheight = len(map_array)
         self.width = self.tilewidth * SPRITE_SIZE
         self.height = self.tileheight * SPRITE_SIZE
 
-        
 
 def load_map():
     """
@@ -111,7 +118,7 @@ class MapInfo:
     Load map data from map_array
 
     Args:
-        map_array ([[char]char], arg): 2D array representing map to get 
+        map_array ([[char]char]): 2D array representing map to get
                                         data from
 
     Attribute:
@@ -120,6 +127,7 @@ class MapInfo:
         width (int): actual width of map
         height (int): actual height of map
     """
+
     def __init__(self, map_array):
         self.tilewidth = len(map_array[0])
         self.tileheight = len(map_array)
@@ -131,24 +139,26 @@ def gen_map(game):
     """
     Generates random map and prints resulting map into console. Also draws map to surface
     """
-    map_array = [["1" for x in range (0, MAP_WIDTH)] for y in range (0, MAP_HEIGHT)]
+    map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
     tree = Tree(map_array)
     tree.build_bsp()
     tree.make_room()
     tree.build_path()
     # tree.print_tree()
     tree.print_map()
+    game.map_tree = tree
     return map_array
 
 
 def draw_map(p_map_array, game):
+
     """
     Draws tiles to background using p_map_array and returns 
     array filled with Tiles
 
     Args:
-        p_map_array ([char[char]], arg): map to draw as background
-        game: (Game, arg): game with all game data
+        p_map_array ([char[char]]): map to draw as background
+        game: (Game): game with all game data
     """
     map_array = []
     for col, tiles in enumerate(p_map_array):
@@ -159,6 +169,7 @@ def draw_map(p_map_array, game):
             elif tile == FLOOR:
                 map_array_row.append(Floor(game, row, col))
             elif tile == PATH:
-                map_array_row.append(Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
+                map_array_row.append(
+                    Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
     return map_array

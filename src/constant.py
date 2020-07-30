@@ -1,4 +1,6 @@
 import pygame
+import os
+
 pygame.font.init()
 
 # Display constants
@@ -22,7 +24,7 @@ DIST_FROM_SISTER_NODE_MIN = 2
 DIST_FROM_SISTER_NODE_MAX = 4
 
 # Minimap constants
-MINIMAP_SCALE = 4
+MINIMAP_SCALE = 2
 
 
 # Console map output
@@ -40,6 +42,8 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+
+
 # Enemy Attributes
 # FOV should be 1 bigger than actual FOV since player acts first
 # and so player can move out of enemy FOV before enemy acts
@@ -70,11 +74,12 @@ RED_POTION = 'items/consumables/potion_red.png'
 INVENTORY = 'ui/chest_closed_anim_f2.png'
 
 # FONTS
+dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+font_path_name = os.path.join(dirname, 'fonts/FFF_Tusj.ttf')
 FONT_SIZE = 28
-FONT_DEBUG_MESSAGE = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', FONT_SIZE)
-FONT_MESSAGE_TEXT = pygame.font.Font('resource/fonts/FFF_Tusj.ttf', FONT_SIZE)
+FONT_DEBUG_MESSAGE = pygame.font.Font(font_path_name, 28)
+FONT_MESSAGE_TEXT = pygame.font.Font(font_path_name, 28)
 TEXT_SPACE_BUFFER = 5
-
 
 # MESSAGE DEFAULTS
 NUM_MESSAGES = 4

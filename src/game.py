@@ -15,6 +15,7 @@ from drawing import Drawing
 
 pygame.font.init()
 
+
 class Game:
     def __init__(self):
         """
@@ -23,7 +24,7 @@ class Game:
         pygame.init()
         pygame.display.set_caption("Knight's Adventure")
         self.surface = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE)
-        self.minimap = None
+        self.map_tree = None
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(350, 75)
         self.running = True
@@ -47,6 +48,8 @@ class Game:
 
         # Group with all tiles
         self.all_tile = pygame.sprite.Group()
+        # Minimap group
+        self.minimap = pygame.sprite.Group()
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Player group
@@ -71,19 +74,16 @@ class Game:
         if (READ_FROM_FILE):
             # Holds the map representation (chars)
             self.map_array = gamemap.load_map()
-            # Holds map info like width and height
-            self.map_data = gamemap.MapInfo(self.map_array)
-            # Holds actual tiles
-            self.tile_array = gamemap.draw_map(self.map_array, self)
 
         # This is for generating random maps
         else:
             # Holds the map representation (chars)
             self.map_array = gamemap.gen_map(self)
-            # Holds map info like width and height
-            self.map_data = gamemap.MapInfo(self.map_array)
-            # Holds actual tiles
-            self.tile_array = gamemap.draw_map(self.map_array, self)
+
+        # Holds map info like width and height
+        self.map_data = gamemap.MapInfo(self.map_array)
+        # Holds actual tiles
+        self.tile_array = gamemap.draw_map(self.map_array, self)
 
         self.wall_hack = False
 
@@ -91,10 +91,8 @@ class Game:
         self.graph.make_graph(self.map_array, self.map_data)
         self.graph.neighbour()
 
-        # self.camera = Camera(
-        #     self.map_data.width, self.map_data.height)
-
-        self.map_surface = pygame.Surface((self.map_data.width, self.map_data.height))
+        self.camera = Camera(
+            self.map_data.width, self.map_data.height)
 
 
         self.free_camera_on = False
@@ -145,7 +143,18 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            self.drawing.draw()
+            self._draw_game()
+
+
+    def _draw_game(self):
+        """
+        Draws camera and game
+        """
+        if (not self.free_camera_on):
+            self.camera.update(self.player)
+        else:
+            self.camera.update(self.free_camera)
+        self.drawing.draw()
 
 
     def events(self):
@@ -161,23 +170,23 @@ class Game:
             if self.playing:
                 self.playing = False
             self.running = False
-        # if event.type == pygame.VIDEORESIZE:
-        #     new_width = event.w
-        #     new_height = event.h
-        #     # Remove if statements if left and top should be empty
-        #     # else right and bottom is empty
-        #     if (new_width > self.map_data.width):
-        #         self.camera.camera_width = self.map_data.width
-        #     else:
-        #         self.camera.camera_width = event.w
+        if event.type == pygame.VIDEORESIZE:
+            new_width = event.w
+            new_height = event.h
+            # Remove if statements if left and top should be empty
+            # else right and bottom is empty
+            if (new_width > self.map_data.width):
+                self.camera.camera_width = self.map_data.width
+            else:
+                self.camera.camera_width = event.w
 
-        #     if (new_height > self.map_data.height):
-        #         self.camera.camera_height = self.map_data.height
-        #     else:
-        #         self.camera.camera_height = event.h
-        #     # This line is only used in pygame 1
-        #     self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
-        #                                            pygame.RESIZABLE)
+            if (new_height > self.map_data.height):
+                self.camera.camera_height = self.map_data.height
+            else:
+                self.camera.camera_height = event.h
+            # This line is only used in pygame 1
+            self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
+                                                   pygame.RESIZABLE)
         if event.type == pygame.KEYDOWN:
 
             # Movement
@@ -223,14 +232,9 @@ class Game:
                 self._toggle_free_camera()
             if event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
+                    # Generates path
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
-                    
-                    # If tile is not seen do nothing
-                    if (not self.tile_array[goal[1]][goal[0]].seen):
-                        return
-
-                    # Generates path
                     visited = self.graph.bfs(start, goal)
 
                     # If path is generated move player
