@@ -35,20 +35,20 @@ class Wall(Tile):
     Class for Wall
 
     Attributes:
-        image_unexplored (surface, arg): image of unexplored wall
-        image_explored (surface, arg): image of unexplored wall
+        image_seen (surface, arg): image of explored and seen wall
+        image_in_fov (surface, arg): image of wall when in fov
         image (surface, arg): current image of wall
         game (game, arg): game with object data
     """
 
     def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
-        self.image_explored = game.game_sprites.seen_wall_image
-        self.image_unexplored = game.game_sprites.wall_image
-        self.image = self.image_unexplored
+        self.image_seen = game.game_sprites.seen_wall_image
+        self.image_in_fov = game.game_sprites.wall_image
+        self.image = self.image_in_fov
         if (image_unexplored):
-            self.image_unexplored = image_unexplored
+            self.image_in_fov = image_unexplored
         if (image_explored):
-            self.image_explored = image_explored
+            self.image_seen = image_explored
         self.rect = self.image.get_rect()
         Tile.__init__(self, game, x, y)
         self.game.walls.add(self)
@@ -59,41 +59,23 @@ class Floor(Tile):
     Class for Floor
 
     Attributes:
-        image_unexplored (surface, arg): image of unexplored floor
-        image_explored (surface, arg): image of unexplored floor
+        image_seen (surface, arg): image of explored and seen wall
+        image_in_fov (surface, arg): image of wall when in fov
         image (surface, arg): current image of floor
         game (game, arg): game with object data
     """
 
     def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
-        self.image_explored = game.game_sprites.seen_floor_image_1
-        self.image_unexplored = game.game_sprites.floor_image_1
-        self.image = self.image_unexplored
+        self.image_seen = game.game_sprites.seen_floor_image_1
+        self.image_in_fov = game.game_sprites.floor_image_1
+        self.image = self.image_in_fov
         if (image_unexplored):
-            self.image_unexplored = image_unexplored
+            self.image_in_fov = image_unexplored
         if (image_explored):
-            self.image_explored = image_explored
+            self.image_seen = image_explored
         self.rect = self.image.get_rect()
         Tile.__init__(self, game, x, y)
         # self.game.floors.add(self)
-
-
-class MapInfo:
-    """
-    Load map info of map_array into MapInfo
-
-    Attribute:
-        tilewidth (int): # of tiles wide
-        tileheight (int): # of tiles tall
-        width (int): actual width of map
-        height (int): actual height of map
-    """
-
-    def __init__(self, map_array):
-        self.tilewidth = len(map_array[0])
-        self.tileheight = len(map_array)
-        self.width = self.tilewidth * SPRITE_SIZE
-        self.height = self.tileheight * SPRITE_SIZE
 
 
 def load_map():
@@ -126,6 +108,7 @@ class MapInfo:
         tileheight (int): # of tiles tall
         width (int): actual width of map
         height (int): actual height of map
+        unseen_tiles (set): set of unseen tiles coord tuple
     """
 
     def __init__(self, map_array):
@@ -133,6 +116,12 @@ class MapInfo:
         self.tileheight = len(map_array)
         self.width = self.tilewidth * SPRITE_SIZE
         self.height = self.tileheight * SPRITE_SIZE
+        self.unseen_tiles = set()
+
+        for y in range(self.tileheight):
+            for x in range(self.tilewidth):
+                if (not map_array[y][x] == WALL):
+                    self.unseen_tiles.add((x, y))
 
 
 def gen_map(game):
@@ -151,7 +140,6 @@ def gen_map(game):
 
 
 def draw_map(p_map_array, game):
-
     """
     Draws tiles to background using p_map_array and returns 
     array filled with Tiles

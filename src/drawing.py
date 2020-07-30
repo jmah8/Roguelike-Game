@@ -5,6 +5,7 @@ import fov
 import sprite
 from button_manager import Button_Manager
 
+
 class Drawing:
     def __init__(self, game):
         self.game = game
@@ -142,7 +143,6 @@ class Drawing:
         scale_factor_x = (map_data.width // resol)
         scale_factor_y = (map_data.height // resol)
 
-
         # Code below displays:
         # Minimap is shrunk down version of actual map and
         # so shows players, enemies and items
@@ -210,17 +210,17 @@ class Drawing:
             scale_factor_x (int): what to scale x by
             scale_factor_y (int): what to sclae y by
         """
-        for y in range(game.map_data.tileheight):
-            for x in range(game.map_data.tilewidth):
-                tile = game.tile_array[y][x]
-                if (isinstance(tile, gamemap.Floor) and not tile.seen):
-                    pygame.draw.rect(game.surface, BLACK,
-                                    ((tile.rect.topleft[0] // scale_factor_x),
-                                    (tile.rect.topleft[1] // scale_factor_y),
-                                     # + 2 is to make black cover everything since
-                                     # add +1 twice for player and room
-                                    (tile.rect.size[0] // scale_factor_x + 2),
-                                    (tile.rect.size[1] // scale_factor_y + 2)))
+        for tile in game.map_data.unseen_tiles:
+            tile_x = tile[0]
+            tile_y = tile[1]
+            pygame.draw.rect(game.surface, BLACK,
+                             ((tile_x // scale_factor_x),
+                              (tile_y // scale_factor_y),
+                              # + 2 is to make black cover everything since
+                              # add +1 twice for player and room
+                              (SPRITE_SIZE // scale_factor_x + 2),
+                              (SPRITE_SIZE // scale_factor_y + 2)))
+
 
     def _draw_minimap_rooms(self, game, scale_factor_x, scale_factor_y):
         """
@@ -269,4 +269,3 @@ class Drawing:
     def draw_buttons(self):
         # InventoryButton
         self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
-
