@@ -1,6 +1,5 @@
 import pygame
 from constant import *
-import object
 import os
 from sprite import *
 from mapgen import Tree
@@ -118,7 +117,7 @@ class MapInfo:
     Load map data from map_array
 
     Args:
-        map_array ([[char]char], arg): 2D array representing map to get 
+        map_array ([[char]char]): 2D array representing map to get
                                         data from
 
     Attribute:
@@ -150,45 +149,6 @@ def gen_map(game):
     return map_array
 
 
-def load_minimap_tiles(game):
-    """
-    Loads the images for the minimap
-
-    Arg:
-        game (Game): game to load minimap to
-    """
-    map_data = game.map_data
-
-    resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
-    scale_factor_x = (map_data.width // resol)
-    scale_factor_y = (map_data.height // resol)
-
-    # Add walls
-    pygame.draw.rect(game.surface, BLACK,
-                     (0, 0,
-                      game.map_data.width // scale_factor_x,
-                      game.map_data.height // scale_factor_y))
-
-    # Add rooms
-    list_of_rooms = game.map_tree.root.child_room_list
-    for room in list_of_rooms:
-        pygame.draw.rect(game.surface, WHITE,
-                         ((room.x * SPRITE_SIZE // scale_factor_x),
-                          (room.y * SPRITE_SIZE // scale_factor_y),
-                          # + 1 is to make paths directly touch room
-                          # without making too big of difference in size
-                          (room.width * SPRITE_SIZE // scale_factor_x + 1),
-                          (room.height * SPRITE_SIZE // scale_factor_y + 1)))
-
-    pygame.draw.rect(game.surface, RED,
-                     ((game.player.x * SPRITE_SIZE // scale_factor_x),
-                      (game.player.y * SPRITE_SIZE // scale_factor_y),
-                      # + 1 is to make player directly touch walls
-                      # without making too big of difference in size
-                      (game.player.rect.size[0] // scale_factor_x + 1),
-                      (game.player.rect.size[1] // scale_factor_y + 1)))
-
-
 def draw_map(p_map_array, game):
 
     """
@@ -196,8 +156,8 @@ def draw_map(p_map_array, game):
     array filled with Tiles
 
     Args:
-        p_map_array ([char[char]], arg): map to draw as background
-        game: (Game, arg): game with all game data
+        p_map_array ([char[char]]): map to draw as background
+        game: (Game): game with all game data
     """
     map_array = []
     for col, tiles in enumerate(p_map_array):

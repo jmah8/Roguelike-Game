@@ -169,7 +169,8 @@ class Ai_test:
         self closer to player
 
         Args:
-            diff (int, arg): difference between self position and player
+            diff (int): difference between self position and player
+            diff (int): difference between self position and player
         """
         if (diff > 0):
             move = -1

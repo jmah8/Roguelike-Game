@@ -4,6 +4,7 @@ from constant import *
 import fov
 import sprite
 
+
 class Drawing:
     def __init__(self, game):
         self.game = game
@@ -35,7 +36,7 @@ class Drawing:
         self.draw_grid()
 
         if (self.game.mini_map_on):
-            gamemap.load_minimap_tiles(self.game)
+            self.draw_minimap(self.game)
 
         self.draw_debug()
         self.draw_messages()
@@ -60,11 +61,11 @@ class Drawing:
         displays text at coord on given surface
 
         Args:
-            display_surface (surface, arg): surface to draw to
-            coord ((int, int), arg): coord to draw to
-            text_color (color, arg): color of text
-            text (string, arg): text to draw
-            text_bg_color (color, arg): background color of text
+            display_surface (surface): surface to draw to
+            coord ((int, int)): coord to draw to
+            text_color (color): color of text
+            text (string): text to draw
+            text_bg_color (color): background color of text
         """
         text_surface, text_rect = self._text_to_objects_helper(
             text, text_color, text_bg_color)
@@ -79,8 +80,8 @@ class Drawing:
 
         Args:
             inc_text (string): text to draw
-            inc_color (color, arg): color of text
-            inc_bg_color (color, arg): background color of text
+            inc_color (color): color of text
+            inc_bg_color (color): background color of text
         """
         if inc_bg_color:
             text_surface = FONT_DEBUG_MESSAGE.render(
@@ -97,12 +98,13 @@ class Drawing:
         messages_drawn_counter = 0
         for message, color in to_draw:
             self.draw_text(self.game.surface, (TEXT_SPACE_BUFFER,
-                                          (y_pos + messages_drawn_counter * text_height)), color, message, None)
+                                               (y_pos + messages_drawn_counter * text_height)), color, message, None)
             messages_drawn_counter += 1
 
     """
     Helper to retrieve height of font rect
     """
+
     def _text_height_helper(self, font):
         font_object = font.render('a', False, (0, 0, 0))
         font_rect = font_object.get_rect()
@@ -111,6 +113,7 @@ class Drawing:
     """
     Store most recent NUM_MESSAGES in GAME_MESSAGES in to_draw
     """
+
     def _messages_to_draw(self):
         if len(self.game.GAME_MESSAGES) <= NUM_MESSAGES:
             to_draw = self.game.GAME_MESSAGES
@@ -121,9 +124,10 @@ class Drawing:
     def print_game_message(self, ingame_message, message_color):
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
-    def draw_minimap(self):
+    def draw_minimap_copy_map(self):
         """
-        Draws minimap on topleft of screen
+        Draws minimap on topleft of screen. This minimap
+        is a replica of the actual map
         """
         map_data = self.game.map_data
         tile_array = self.game.tile_array
@@ -131,7 +135,6 @@ class Drawing:
         resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
         scale_factor_x = (map_data.width // resol)
         scale_factor_y = (map_data.height // resol)
-
 
         # Code below displays:
         # Minimap is shrunk down version of actual map and
@@ -143,8 +146,8 @@ class Drawing:
         # minimap.blit(scaled_map, (0, 0))
 
         # Draws only map with fov but bad performance
-        for y in range (map_data.tileheight):
-            for x in range (map_data.tilewidth):
+        for y in range(map_data.tileheight):
+            for x in range(map_data.tilewidth):
                 tile = tile_array[y][x]
                 tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
@@ -153,8 +156,76 @@ class Drawing:
 
         minimap.blit(player_img, player_img_rect)
 
-
         self.game.surface.blit(minimap, (0, 0))
+
+    def draw_minimap(self, game):
+        """
+        Draws minimap on topleft of screen. This is a
+        representation of the actual map
+
+        Arg:
+            game (Game): game to load minimap to
+        """
+        map_data = game.map_data
+
+        resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
+        scale_factor_x = (map_data.width // resol)
+        scale_factor_y = (map_data.height // resol)
+
+        self._draw_minimap_walls(game, scale_factor_x, scale_factor_y)
+        self._draw_minimap_rooms(game, scale_factor_x, scale_factor_y)
+        self._draw_minimap_player(game, scale_factor_x, scale_factor_y)
+
+    def _draw_minimap_player(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws player onto minimap
+
+        Args:
+            game (Game): Game to draw player on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        pygame.draw.rect(game.surface, RED,
+                         ((game.player.rect.topleft[0] // scale_factor_x),
+                          (game.player.rect.topleft[1] // scale_factor_y),
+                          # + 1 is to make player directly touch walls
+                          # without making too big of difference in size
+                          (game.player.rect.size[0] // scale_factor_x + 1),
+                          (game.player.rect.size[1] // scale_factor_y + 1)))
+
+    def _draw_minimap_rooms(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws rooms (and paths since paths are considered rooms)
+        onto minimap
+
+        Args:
+            game (Game): Game to draw rooms on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        list_of_rooms = game.map_tree.root.child_room_list
+        for room in list_of_rooms:
+            pygame.draw.rect(game.surface, WHITE,
+                             ((room.x * SPRITE_SIZE // scale_factor_x),
+                              (room.y * SPRITE_SIZE // scale_factor_y),
+                              # + 1 is to make paths directly touch room
+                              # without making too big of difference in size
+                              (room.width * SPRITE_SIZE // scale_factor_x + 1),
+                              (room.height * SPRITE_SIZE // scale_factor_y + 1)))
+
+    def _draw_minimap_walls(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws wall onto minimap
+
+        Args:
+            game (Game): Game to draw wall on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        pygame.draw.rect(game.surface, BLACK,
+                         (0, 0,
+                          game.map_data.width // scale_factor_x,
+                          game.map_data.height // scale_factor_y))
 
     def button(self, img, coords, game_surface):
         self.button_surface.blit(img, coords)
@@ -169,5 +240,3 @@ class Drawing:
     def draw_buttons(self):
         # InventoryButton
         self.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
-
-
