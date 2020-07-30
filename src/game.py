@@ -1,5 +1,7 @@
 import os
 import pygame
+
+import ai
 import gamemap
 from constant import *
 import object
@@ -106,13 +108,13 @@ class Game:
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com, container=player_container)
 
         creature_com = components.Creature("Slime", 3, True, enemy_group=self.player_group)
-        ai_component = components.SmartAi()
+        ai_component = ai.SmartAi()
         slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
 
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = components.Creature("Slime1", 3, True, enemy_group=self.player_group)
-        ai_component_1 = components.SmartAi()
+        ai_component_1 = ai.SmartAi()
         slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
 
