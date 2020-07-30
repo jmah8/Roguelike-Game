@@ -211,7 +211,6 @@ class Item:
                 self.owner.game.drawing.print_game_message("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
 
-                # need game object first
                 entity.game.GAME_OBJECTS.remove(self.owner)
 
     def drop_item(self, entity, x, y):
