@@ -100,6 +100,7 @@ class Game:
         self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
 
         player_container = components.Container()
+
         player_com = components.Creature("Viet", 10, enemy_group=self.enemy_group)
         self.player = object.object(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com, container=player_container)
@@ -116,7 +117,7 @@ class Game:
                                creature=creaturetest2, ai=ai_component_1)
 
         item_com = components.Item("Red Potion", 0, 0, True)
-        item_potion = object.object(self, 3, 3, "item", image=self.game_sprites.red_potion, item=item_com)
+        item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
 
         self.ITEMS = [item_potion]
         for i in self.ITEMS:
@@ -200,12 +201,14 @@ class Game:
             # Mini_map
             if event.key == pygame.K_TAB:
                 self.mini_map_on = not self.mini_map_on
-
             # Pickup/Drop Item
             if event.key == pygame.K_t:
                 objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
                 for obj in objects_at_player:
                     if obj.item: obj.item.pick_up(self.player)
+
+
+            # TODO: instead of dropping last item dropped, drop mouse event in inventory
             if event.key == pygame.K_g:
                 if len(self.player.container.inventory) > 0:
                     self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)

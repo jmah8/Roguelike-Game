@@ -72,6 +72,7 @@ WALL_1 = '16x16/tiles/wall/wall_1.png'
 RED_POTION = 'items/consumables/potion_red.png'
 
 INVENTORY = 'ui/chest_closed_anim_f2.png'
+EMPTY_INVENTORY_SLOT = 'items/empty_inventory_slot.png'
 
 # FONTS
 dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
