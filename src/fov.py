@@ -3,11 +3,28 @@ from gamemap import *
 
 
 def new_fov(game):
+    """
+    Makes new fov array
+
+    Args:
+        game: Game with game data
+
+    Returns:
+        new_fov (2D array): new fov array
+    """
     new_fov = [[0 for x in range (0, game.map_data.tilewidth)] for y in range (game.map_data.tileheight)]
     return new_fov
 
 
 def ray_casting(game, map_array, fov):
+    """
+    Calculates which tiles are seen
+
+    Args:
+        game: Game with game data
+        map_array: map_array with representation of map
+        fov: fov array telling which tile is seen
+    """
     for a in range(0, RAYS + 1, STEP):
         ax = sintable[a]
         ay = costable[a]
@@ -24,30 +41,40 @@ def ray_casting(game, map_array, fov):
                 
             fov[int(round(y))][int(round(x))] = 1
 
-            if isinstance(game.map_array[int(round(y))][int(round(x))], Wall):
+            if (map_array[int(round(y))][int(round(x))] == WALL):
                 break
     
     fov[game.player.y][game.player.x] = 1
 
 
 def draw_seen(game, map_array, fov):
+    """
+    Draws unseen tiles, seen tiles and explored tiles
+
+    Args:
+        game: Game with game data
+        map_array: map_array with representation of map
+        fov: fov array telling which tile is seen
+    """
     for y in range(0, game.map_data.tileheight):
         for x in range(0, game.map_data.tilewidth):
             tile = map_array[y][x]
             if (x, y) == (game.player.x, game.player.y):
-                tile.image = tile.image_unexplored
+                tile.image = tile.image_in_fov
             elif fov[y][x] == 1:
                 if isinstance(tile, Floor):
-                    tile.image = tile.image_unexplored
+                    tile.image = tile.image_in_fov
                 else:
-                    tile.image = tile.image_unexplored
+                    tile.image = tile.image_in_fov
                 tile.seen = True
+                if ((x, y) in game.map_data.unseen_tiles):
+                    game.map_data.unseen_tiles.remove((x, y))
             else:
                 tile = map_array[y][x]
                 if (not tile.seen):
                     tile.image = game.game_sprites.unseen_tile
                 else:
-                    tile.image = tile.image_explored
+                    tile.image = tile.image_seen
 
 
 def check_if_in_fov(game, obj):
