@@ -235,8 +235,7 @@ class Game:
                     # If path is generated move player
                     if (visited):
                         self._toggle_free_camera()
-                        path = self.graph.find_path(start, goal, visited)
-                        self._move_char_auto(path)
+                        self.auto_move_player(start, goal, visited)
 
             # Menu Buttons
             if event.key == pygame.K_p:
@@ -244,7 +243,21 @@ class Game:
             if event.key == pygame.K_i:
                 self.menu_manager.inventory_menu()
 
+            if event.key == pygame.K_v:
+                pathfinding.auto_path(self, self.graph)
 
+    def auto_move_player(self, start, goal, visited):
+        """
+        Automatically moves player from start to goal
+
+        Args:
+            start ((int,int)): where player is
+            goal ((int, int)): where to move player to
+            visited (dictionary): dictionary of path of nodes
+                to goal and the previous node
+        """
+        path = self.graph.find_path(start, goal, visited)
+        self.move_char_auto(path)
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
@@ -265,7 +278,7 @@ class Game:
         else:
             self.current_group = self.all_creature
 
-    def _move_char_auto(self, path):
+    def move_char_auto(self, path):
         """
         Moves current_group (player) according to path and draws character
         with slight delay to show walking animation

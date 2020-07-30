@@ -1,6 +1,7 @@
 from constant import *
 import pygame
 
+
 class Button_Manager:
     def __init__(self):
         self.button_surface = pygame.Surface((100, 100))
@@ -16,4 +17,3 @@ class Button_Manager:
         game_surface.blit(self.button_surface,
                           (game_surface.get_width() - SPRITE_SIZE, game_surface.get_height() - SPRITE_SIZE))
         return (img, button_rect)
-

@@ -214,8 +214,8 @@ class Drawing:
             tile_x = tile[0]
             tile_y = tile[1]
             pygame.draw.rect(game.surface, BLACK,
-                             ((tile_x // scale_factor_x),
-                              (tile_y // scale_factor_y),
+                             ((tile_x * SPRITE_SIZE// scale_factor_x),
+                              (tile_y * SPRITE_SIZE// scale_factor_y),
                               # + 2 is to make black cover everything since
                               # add +1 twice for player and room
                               (SPRITE_SIZE // scale_factor_x + 2),

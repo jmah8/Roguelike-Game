@@ -1,7 +1,9 @@
+import sys
 from constant import *
 import queue
 from dataclasses import dataclass, field
 from typing import Any
+
 
 class Node:
     """
@@ -13,7 +15,8 @@ class Node:
         edge (dictionary): dictionary with neighbours as keys
                             and their edge weights as values
     """
-    def __init__ (self, x, y):
+
+    def __init__(self, x, y):
         self.x = x
         self.y = y
         self.edges = {}
@@ -22,7 +25,7 @@ class Node:
 @dataclass(order=True)
 class PrioritizedItem:
     priority: int
-    item: Any=field(compare=False)
+    item: Any = field(compare=False)
 
 
 class Graph:
@@ -35,7 +38,8 @@ class Graph:
         walls (dictionary): dictionary with wall coord as key and
                             value of wall as value
     """
-    def __init__ (self):
+
+    def __init__(self):
         self.nodes = {}
         self.walls = {}
 
@@ -49,13 +53,13 @@ class Graph:
             map (2D array): 2D array representing map
             map_data (MapInfo): arg that holds map info
         """
-        for y in range (map_data.tileheight):
-            for x in range (map_data.tilewidth):
+        for y in range(map_data.tileheight):
+            for x in range(map_data.tilewidth):
                 if (not map[y][x] == WALL):
-                    self.nodes[(x,y)] = (Node(x,y))
+                    self.nodes[(x, y)] = (Node(x, y))
                 else:
-                    self.walls[(x,y)] = map[y][x]                    
-    
+                    self.walls[(x, y)] = map[y][x]
+
     def neighbour(self):
         """
         Adds edges to all nodes with edge weight of 1
@@ -67,7 +71,6 @@ class Graph:
                 neighbour = (node.x + dir[0], node.y + dir[1])
                 if (neighbour in self.nodes):
                     node.edges[neighbour] = 1
-
 
     def bfs(self, start, goal):
         """
@@ -144,7 +147,6 @@ class Graph:
 
         return visited
 
-    
     def a_star(self, start, goal):
         """
         A* search of graph. Start at start and end at goal
@@ -184,8 +186,6 @@ class Graph:
 
         return visited
 
-
-
     def find_path(self, start, goal, visited):
         path = []
         current = goal
@@ -219,4 +219,46 @@ def _distance(coord1, coord2):
     dx = abs(coord1[0] - coord2[0])
     dy = abs(coord1[1] - coord2[1])
     return D1 * (dx + dy) + (D2 - 2 * D1) * min(dx, dy)
+
+
+def auto_path(game, graph):
+    """
+    Automatically move the player to the
+    closest unseen tile
+
+    Args:
+        game (Game): Game with game data
+        graph (Graph): Graph with nodes
+    """
+    start, goal = _find_closest_tile(game)
+    visited = graph.bfs(start, goal)
+    if (visited):
+        game.auto_move_player(start, goal, visited)
+
+
+def _find_closest_tile(game):
+    """
+    Find closest unseen_tile from player
+
+    Closest tile is by distance, not amount of
+    tiles walked to get to it
+
+    Args:
+        game (Game): Game with all game data
+
+    Returns:
+        p_coord ((int, int)): player's coordinate (start)
+        closest_unseen_tile ((int, int)): closest unseen tile (goal)
+    """
+    closest_unseen_tile = None
+    closest_distance = sys.maxsize
+    p_coord = (game.player.x, game.player.y)
+    # Find the closest (by literal distance, not
+    # how many steps it would take) unseen tile
+    for tile in game.map_data.unseen_tiles:
+        dist = _distance(p_coord, tile)
+        if (closest_distance > dist):
+            closest_distance = dist
+            closest_unseen_tile = tile
+    return p_coord, closest_unseen_tile
 

@@ -59,20 +59,29 @@ def draw_seen(game, map_array, fov):
     for y in range(0, game.map_data.tileheight):
         for x in range(0, game.map_data.tilewidth):
             tile = map_array[y][x]
+            # If tile is where player is, it is seen
             if (x, y) == (game.player.x, game.player.y):
                 tile.image = tile.image_in_fov
+                # Remove player tile from unseen_tile
+                if ((x, y) in game.map_data.unseen_tiles):
+                    game.map_data.unseen_tiles.remove((x, y))
+            # If tile is seen switch to in fov sprite
             elif fov[y][x] == 1:
                 if isinstance(tile, Floor):
                     tile.image = tile.image_in_fov
                 else:
                     tile.image = tile.image_in_fov
                 tile.seen = True
+                # Remove seen tile from unseen_tile
                 if ((x, y) in game.map_data.unseen_tiles):
                     game.map_data.unseen_tiles.remove((x, y))
+            # Tile is not seen
             else:
                 tile = map_array[y][x]
+                # If never seen before make black
                 if (not tile.seen):
                     tile.image = game.game_sprites.unseen_tile
+                # Else shade tile black
                 else:
                     tile.image = tile.image_seen
 
