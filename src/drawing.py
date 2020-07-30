@@ -181,6 +181,7 @@ class Drawing:
 
         self._draw_minimap_walls(game, scale_factor_x, scale_factor_y)
         self._draw_minimap_rooms(game, scale_factor_x, scale_factor_y)
+        self._draw_unseen_tile(game, scale_factor_x, scale_factor_y)
         self._draw_minimap_player(game, scale_factor_x, scale_factor_y)
 
     def _draw_minimap_player(self, game, scale_factor_x, scale_factor_y):
@@ -199,6 +200,27 @@ class Drawing:
                           # without making too big of difference in size
                           (game.player.rect.size[0] // scale_factor_x + 1),
                           (game.player.rect.size[1] // scale_factor_y + 1)))
+
+    def _draw_unseen_tile(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws unseen tiles
+
+        Args:
+            game (Game): Game to draw unseen tile on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        for y in range(game.map_data.tileheight):
+            for x in range(game.map_data.tilewidth):
+                tile = game.tile_array[y][x]
+                if (isinstance(tile, gamemap.Floor) and not tile.seen):
+                    pygame.draw.rect(game.surface, BLACK,
+                                    ((tile.rect.topleft[0] // scale_factor_x),
+                                    (tile.rect.topleft[1] // scale_factor_y),
+                                     # + 2 is to make black cover everything since
+                                     # add +1 twice for player and room
+                                    (tile.rect.size[0] // scale_factor_x + 2),
+                                    (tile.rect.size[1] // scale_factor_y + 2)))
 
     def _draw_minimap_rooms(self, game, scale_factor_x, scale_factor_y):
         """
