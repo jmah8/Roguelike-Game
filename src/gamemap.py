@@ -1,9 +1,7 @@
-import pygame
-from constant import *
-import object
-import os
+import sys
 from sprite import *
 from mapgen import Tree
+from pathfinding import *
 
 pygame.init()
 
@@ -161,3 +159,59 @@ def draw_map(p_map_array, game):
                     Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
     return map_array
+
+
+def find_closest_unseen_tile(game):
+    """
+    Find closest unseen_tile from player
+
+    Closest tile is by distance, not amount of
+    tiles walked to get to it
+
+    Args:
+        game (Game): Game with all game data
+
+    Returns:
+        p_coord ((int, int)): player's coordinate (start)
+        closest_unseen_tile ((int, int)): closest unseen tile (goal)
+    """
+    closest_unseen_tile = None
+    closest_distance = sys.maxsize
+    p_coord = (game.player.x, game.player.y)
+    # Find the closest (by literal distance, not
+    # how many steps it would take) unseen tile
+    for tile in game.map_data.unseen_tiles:
+        dist = distance(p_coord, tile)
+        if closest_distance > dist:
+            closest_distance = dist
+            closest_unseen_tile = tile
+    return p_coord, closest_unseen_tile
+
+
+def find_closest_unseen_tile_walking_distance(game):
+    """
+    Find closest unseen_tile from player
+
+    Closest tile is by walking distance, ie how many tile
+    would you have to walk. Therefore this takes into account
+    walls
+
+    Args:
+        game (Game): Game with all game data
+
+    Returns:
+        p_coord ((int, int)): player's coordinate (start)
+        closest_unseen_tile ((int, int)): closest unseen tile (goal)
+    """
+    closest_unseen_tile = None
+    closest_distance = sys.maxsize
+    p_coord = (game.player.x, game.player.y)
+    # Find the closest unseen tile
+    for tile in game.map_data.unseen_tiles:
+        visited = game.graph.bfs(p_coord, tile)
+        if visited:
+            walking_distance = len(visited)
+            if closest_distance > walking_distance:
+                closest_distance = walking_distance
+                closest_unseen_tile = tile
+    return p_coord, closest_unseen_tile

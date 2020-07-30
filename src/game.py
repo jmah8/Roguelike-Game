@@ -244,7 +244,7 @@ class Game:
                 self.menu_manager.inventory_menu()
 
             if event.key == pygame.K_v:
-                pathfinding.auto_path(self, self.graph)
+                self.auto_path(self.graph)
 
     def auto_move_player(self, start, goal, visited):
         """
@@ -309,3 +309,15 @@ class Game:
             old_coord = coord
             self.clock.tick(20)
             self.drawing.draw()
+
+    def auto_path(self, graph):
+        """
+        Automatically move the player to the
+        closest unseen tile
+
+        Args:
+            graph (Graph): Graph with nodes representing the walkable tiles
+        """
+        start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
+        visited = graph.bfs(start, goal)
+        self.auto_move_player(start, goal, visited)

@@ -1,4 +1,3 @@
-import sys
 from constant import *
 import queue
 from dataclasses import dataclass, field
@@ -181,12 +180,25 @@ class Graph:
                 new_cost = current_cost[(node.x, node.y)] + node.edges[next]
                 if next not in current_cost or new_cost < current_cost[next]:
                     current_cost[next] = new_cost
-                    visiting.put(PrioritizedItem(new_cost + _distance(next, goal), self.nodes[next]))
+                    visiting.put(PrioritizedItem(new_cost + distance(next, goal), self.nodes[next]))
                     visited[next] = (node.x, node.y)
 
         return visited
 
     def find_path(self, start, goal, visited):
+        """
+        Reverses visited path so that we return a path
+        from start to goal
+
+        Args:
+            start ((int, int)): Start of path
+            goal ((int, int)): Goal of path
+            visited (dictionary): Dictionary of path of nodes
+                to goal and the previous node
+
+        Returns:
+
+        """
         path = []
         current = goal
         while not current == start:
@@ -197,7 +209,7 @@ class Graph:
         return path
 
 
-def _distance(coord1, coord2):
+def distance(coord1, coord2):
     """
     Returns distance between nodes using diagonal distance
 
@@ -220,45 +232,4 @@ def _distance(coord1, coord2):
     dy = abs(coord1[1] - coord2[1])
     return D1 * (dx + dy) + (D2 - 2 * D1) * min(dx, dy)
 
-
-def auto_path(game, graph):
-    """
-    Automatically move the player to the
-    closest unseen tile
-
-    Args:
-        game (Game): Game with game data
-        graph (Graph): Graph with nodes
-    """
-    start, goal = _find_closest_tile(game)
-    visited = graph.bfs(start, goal)
-    if (visited):
-        game.auto_move_player(start, goal, visited)
-
-
-def _find_closest_tile(game):
-    """
-    Find closest unseen_tile from player
-
-    Closest tile is by distance, not amount of
-    tiles walked to get to it
-
-    Args:
-        game (Game): Game with all game data
-
-    Returns:
-        p_coord ((int, int)): player's coordinate (start)
-        closest_unseen_tile ((int, int)): closest unseen tile (goal)
-    """
-    closest_unseen_tile = None
-    closest_distance = sys.maxsize
-    p_coord = (game.player.x, game.player.y)
-    # Find the closest (by literal distance, not
-    # how many steps it would take) unseen tile
-    for tile in game.map_data.unseen_tiles:
-        dist = _distance(p_coord, tile)
-        if (closest_distance > dist):
-            closest_distance = dist
-            closest_unseen_tile = tile
-    return p_coord, closest_unseen_tile
 

@@ -32,6 +32,3 @@ def start():
 
 
 start()
-
-
-i
