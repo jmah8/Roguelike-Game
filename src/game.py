@@ -143,19 +143,7 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.events()
-            self._draw_game()
-
-
-    def _draw_game(self):
-        """
-        Draws camera and game
-        """
-        if (not self.free_camera_on):
-            self.camera.update(self.player)
-        else:
-            self.camera.update(self.free_camera)
-        self.drawing.draw()
-
+            self.drawing.draw()
 
     def events(self):
         """
@@ -228,11 +216,15 @@ class Game:
                 if (self.wall_hack):
                     self.fov = [[1 for x in range(0, self.map_data.tilewidth)] for y in
                                 range(self.map_data.tileheight)]
+
             if event.key == pygame.K_m:
                 self._toggle_free_camera()
+
             if event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
                     # Generates path
+                    if (not self.tile_array[self.free_camera.y][self.free_camera.x].seen):
+                        return
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
                     visited = self.graph.bfs(start, goal)
@@ -267,7 +259,6 @@ class Game:
             self.free_camera.x = self.player.x
             self.free_camera.y = self.player.y
             self.free_camera.rect.topleft = self.player.rect.topleft
-            self.free_camera
         else:
             self.current_group = self.all_creature
 

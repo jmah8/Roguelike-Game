@@ -14,6 +14,12 @@ class Drawing:
         """
         Draws map and entities
         """
+        # Update what to lock camera on
+        if (not self.game.free_camera_on):
+            self.game.camera.update(self.game.player)
+        else:
+            self.game.camera.update(self.game.free_camera)
+
         if (not self.game.wall_hack):
             self.game.fov = fov.new_fov(self.game)
         fov.ray_casting(self.game, self.game.map_array, self.game.fov)
