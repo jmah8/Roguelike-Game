@@ -106,13 +106,13 @@ class Game:
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com, container=player_container)
 
         creature_com = components.Creature("Slime", 3, True, enemy_group=self.player_group)
-        ai_component = components.Ai_test()
+        ai_component = components.SmartAi()
         slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
 
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = components.Creature("Slime1", 3, True, enemy_group=self.player_group)
-        ai_component_1 = components.Ai_test()
+        ai_component_1 = components.SmartAi()
         slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
 
@@ -225,9 +225,10 @@ class Game:
 
             if event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
-                    # Generates path
+                    # If tile is unexplored do nothing
                     if (not self.tile_array[self.free_camera.y][self.free_camera.x].seen):
                         return
+                    # Generates path
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
                     visited = self.graph.bfs(start, goal)
@@ -236,6 +237,9 @@ class Game:
                     if (visited):
                         self._toggle_free_camera()
                         self.auto_move_player(start, goal, visited)
+            # Auto move
+            if event.key == pygame.K_v:
+                self.auto_path(self.graph)
 
             # Menu Buttons
             if event.key == pygame.K_p:
@@ -243,8 +247,6 @@ class Game:
             if event.key == pygame.K_i:
                 self.menu_manager.inventory_menu()
 
-            if event.key == pygame.K_v:
-                self.auto_path(self.graph)
 
     def auto_move_player(self, start, goal, visited):
         """
@@ -320,4 +322,5 @@ class Game:
         """
         start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
         visited = graph.bfs(start, goal)
-        self.auto_move_player(start, goal, visited)
+        if visited:
+            self.auto_move_player(start, goal, visited)
