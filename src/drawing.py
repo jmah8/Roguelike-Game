@@ -14,6 +14,9 @@ class Drawing:
     def draw(self):
         """
         Draws map and entities
+
+        Note: Always call game.clock.tick(FPS) before and pygame.display.flip()
+        after calling this method to update display
         """
         # Update what to lock camera on
         if (not self.game.free_camera_on):
@@ -47,7 +50,6 @@ class Drawing:
 
         self.draw_debug()
         self.draw_messages()
-        pygame.display.flip()
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -214,13 +216,12 @@ class Drawing:
             tile_x = tile[0]
             tile_y = tile[1]
             pygame.draw.rect(game.surface, BLACK,
-                             ((tile_x * SPRITE_SIZE// scale_factor_x),
-                              (tile_y * SPRITE_SIZE// scale_factor_y),
+                             ((tile_x * SPRITE_SIZE // scale_factor_x),
+                              (tile_y * SPRITE_SIZE // scale_factor_y),
                               # + 2 is to make black cover everything since
                               # add +1 twice for player and room
                               (SPRITE_SIZE // scale_factor_x + 2),
                               (SPRITE_SIZE // scale_factor_y + 2)))
-
 
     def _draw_minimap_rooms(self, game, scale_factor_x, scale_factor_y):
         """
@@ -269,3 +270,17 @@ class Drawing:
     def draw_buttons(self):
         # InventoryButton
         self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
+
+    def draw_tile_at_coord(self, x_coord, y_coord):
+        """
+        Draws tile at (x_coord, y_coord)
+
+        x and y _coord are coords on the map
+
+        Args:
+            x_coord (int): x coord to draw tile onto
+            y_coord (int): y coord to draw tile onto
+        """
+        mouse_surface = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
+        mouse_surface.fill(WHITE)
+        self.game.surface.blit(mouse_surface, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))

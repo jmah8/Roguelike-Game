@@ -39,7 +39,6 @@ class Game:
         self.menu_manager = Menu_Manager(self)
         self.mini_map_on = False
 
-
     def new(self):
         """
         Makes new map and entity and adds them to the relevant groups
@@ -70,7 +69,7 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
-        #button
+        # button
         # Load map data
         # This is for reading maps from text files
         if (READ_FROM_FILE):
@@ -96,7 +95,6 @@ class Game:
         self.camera = Camera(
             self.map_data.width, self.map_data.height)
 
-
         self.free_camera_on = False
         camera = components.Creature("Camera", 999, False, walk_through_tile=True)
         self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.spike, creature=camera)
@@ -105,7 +103,8 @@ class Game:
 
         player_com = components.Creature("Viet", 10, enemy_group=self.enemy_group)
         self.player = object.object(self,
-                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com, container=player_container)
+                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
+                                    container=player_container)
 
         creature_com = components.Creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
@@ -147,6 +146,7 @@ class Game:
             self.clock.tick(FPS)
             self.events()
             self.drawing.draw()
+            pygame.display.flip()
 
     def events(self):
         """
@@ -183,70 +183,108 @@ class Game:
             # Movement
             if event.key == pygame.K_a:
                 self.current_group.update(-1, 0)
-            if event.key == pygame.K_d:
+            elif event.key == pygame.K_d:
                 self.current_group.update(1, 0)
-            if event.key == pygame.K_w:
+            elif event.key == pygame.K_w:
                 self.current_group.update(0, -1)
-            if event.key == pygame.K_q:
+            elif event.key == pygame.K_q:
                 self.current_group.update(-1, -1)
-            if event.key == pygame.K_e:
+            elif event.key == pygame.K_e:
                 self.current_group.update(1, -1)
-            if event.key == pygame.K_z:
+            elif event.key == pygame.K_z:
                 self.current_group.update(-1, 1)
-            if event.key == pygame.K_c:
+            elif event.key == pygame.K_c:
                 self.current_group.update(1, 1)
-            if event.key == pygame.K_s:
+            elif event.key == pygame.K_s:
                 self.current_group.update(0, 1)
-            if event.key == pygame.K_x:
+            elif event.key == pygame.K_x:
                 self.current_group.update(0, 0)
 
             # Mini_map
-            if event.key == pygame.K_TAB:
+            elif event.key == pygame.K_TAB:
                 self.mini_map_on = not self.mini_map_on
+
             # Pickup/Drop Item
-            if event.key == pygame.K_t:
+            elif event.key == pygame.K_t:
                 objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
                 for obj in objects_at_player:
-                    if obj.item: obj.item.pick_up(self.player)
-
+                    if obj.item:
+                        obj.item.pick_up(self.player)
 
             # TODO: instead of dropping last item dropped, drop mouse event in inventory
-            if event.key == pygame.K_g:
+            elif event.key == pygame.K_g:
                 if len(self.player.container.inventory) > 0:
                     self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
 
-
-            if event.key == pygame.K_ESCAPE:
+            elif event.key == pygame.K_ESCAPE:
                 self.wall_hack = not self.wall_hack
                 if (self.wall_hack):
                     self.fov = [[1 for x in range(0, self.map_data.tilewidth)] for y in
                                 range(self.map_data.tileheight)]
 
-            if event.key == pygame.K_m:
+            elif event.key == pygame.K_m:
                 self._toggle_free_camera()
 
-            if event.key == pygame.K_RETURN:
+            elif event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
                     # If tile is unexplored do nothing
                     if (not self.tile_array[self.free_camera.y][self.free_camera.x].seen):
                         return
-                    # Generates path
                     start = (self.player.x, self.player.y)
                     goal = (self.free_camera.x, self.free_camera.y)
+                    # Generates path
                     visited = self.graph.bfs(start, goal)
-
                     # If path is generated move player
                     if (visited):
                         self._toggle_free_camera()
                         self.auto_move_player(start, goal, visited)
+
             # Auto move
-            if event.key == pygame.K_v:
+            elif event.key == pygame.K_v:
                 self.auto_path(self.graph)
 
+            elif event.key == pygame.K_SPACE:
+                mouse_select = True
+                while mouse_select:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    mouse_x = mouse_x // SPRITE_SIZE
+                    mouse_y = mouse_y // SPRITE_SIZE
+                    resol_x = self.camera.camera_width // SPRITE_SIZE
+                    resol_y = self.camera.camera_height // SPRITE_SIZE
+                    move_x = mouse_x
+                    move_y = mouse_y
+
+                    # If map is smaller than resol, this fixes the issue of
+                    # the mouse coord and map coord not being in sync
+                    if (self.map_data.tilewidth < resol_x):
+                        move_x = mouse_x - (resol_x - self.map_data.tilewidth)
+                    if (self.map_data.tileheight < resol_y):
+                        move_y = mouse_y - (resol_y - self.map_data.tileheight)
+
+                    start = (self.player.x, self.player.y)
+                    goal = (move_x, move_y)
+
+                    events = pygame.event.get()
+                    for event in events:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_SPACE:
+                                mouse_select = False
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            if event.button == 1:
+                                # Generates path
+                                visited = self.graph.bfs(start, goal)
+                                # If path is generated move player
+                                if (visited):
+                                    self.auto_move_player(start, goal, visited)
+                    self.clock.tick(FPS)
+                    self.drawing.draw()
+                    self.drawing.draw_tile_at_coord(mouse_x, mouse_y)
+                    pygame.display.flip()
+
             # Menu Buttons
-            if event.key == pygame.K_p:
+            elif event.key == pygame.K_p:
                 self.menu_manager.pause_menu()
-            if event.key == pygame.K_i:
+            elif event.key == pygame.K_i:
                 self.menu_manager.inventory_menu()
 
 
@@ -311,8 +349,9 @@ class Game:
             dest_y = coord[1] - old_coord[1]
             self.current_group.update(dest_x, dest_y)
             old_coord = coord
-            self.clock.tick(20)
             self.drawing.draw()
+            self.clock.tick(15)
+            pygame.display.flip()
 
     def auto_path(self, graph):
         """
