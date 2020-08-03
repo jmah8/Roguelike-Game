@@ -16,10 +16,6 @@ class Particle(pygame.sprite.Sprite):
     Attributes:
         x (arg, int): x position of particle
         y (arg, int): y position of particle
-        v_x (int): x velocity of particle
-        v_y (int): y velocity of particle
-        max_x (int): max x position of particle (after which it disappears)
-        max_y (int): max y position of particle (after which it disappears)
         group (arg, Group): group particle belongs to
     """
 
@@ -41,6 +37,18 @@ class Particle(pygame.sprite.Sprite):
 
 
 class DamageNumParticle(Particle):
+    """
+    Class that represents damage number above creature
+
+    Attributes:
+        x (arg, int): x position of particle
+        y (arg, int): y position of particle
+        v_x (int): x velocity of particle
+        v_y (int): y velocity of particle
+        max_x (int): max x position of particle (after which it disappears)
+        max_y (int): max y position of particle (after which it disappears)
+        group (arg, Group): group particle belongs to
+    """
     def __init__(self, x, y, damage, group):
         Particle.__init__(self, x, y, group)
         self.v_x = 2
@@ -53,7 +61,7 @@ class DamageNumParticle(Particle):
 
     def update(self):
         self.rect.topleft = (self.x, self.y)
-        self.x += self.v_x
+        # self.x += self.v_x
         self.y += self.v_y
         self.v_y += 0.25
         if self.y >= self.max_y or self.x >= self.max_x:

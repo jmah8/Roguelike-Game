@@ -201,6 +201,8 @@ class Game:
                 if (self.map_data.tileheight < resol_y):
                     move_y = mouse_y - (resol_y - self.map_data.tileheight)
 
+                if (not self.tile_array[move_y][move_x].seen):
+                    return
                 start = (self.player.x, self.player.y)
                 goal = (move_x, move_y)
                 visited = self.graph.bfs(start, goal)
