@@ -181,9 +181,8 @@ class Drawing:
         """
         map_data = game.map_data
 
-        resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
-        scale_factor_x = (map_data.width // resol)
-        scale_factor_y = (map_data.height // resol)
+        scale_factor_x = (map_data.width // (RESOLUTION[0] // MINIMAP_SCALE))
+        scale_factor_y = (map_data.height // (RESOLUTION[1] // MINIMAP_SCALE))
 
         self._draw_minimap_walls(game, scale_factor_x, scale_factor_y)
         self._draw_minimap_rooms(game, scale_factor_x, scale_factor_y)
