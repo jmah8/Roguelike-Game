@@ -51,6 +51,7 @@ class DamageNumParticle(Particle):
     """
     def __init__(self, x, y, damage, group):
         Particle.__init__(self, x, y, group)
+        self.x += SPRITE_SIZE/2
         self.v_x = 2
         self.v_y = -5
         self.max_x = self.x + SPRITE_SIZE
