@@ -161,6 +161,8 @@ class Game:
             if self.playing:
                 self.playing = False
             self.running = False
+
+        # For resizing window
         if event.type == pygame.VIDEORESIZE:
             new_width = event.w
             new_height = event.h
@@ -178,6 +180,35 @@ class Game:
             # This line is only used in pygame 1
             self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
                                                    pygame.RESIZABLE)
+        # Moving to where mouse is clicked
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                mouse_x = mouse_x // SPRITE_SIZE
+                mouse_y = mouse_y // SPRITE_SIZE
+                resol_x = self.camera.camera_width // SPRITE_SIZE
+                resol_y = self.camera.camera_height // SPRITE_SIZE
+                move_x = mouse_x
+                move_y = mouse_y
+
+                # If map is smaller than resol, this fixes the issue of
+                # the mouse coord and map coord not being in sync
+                if (self.map_data.tilewidth < resol_x):
+                    move_x = mouse_x - (resol_x - self.map_data.tilewidth)
+                if (self.map_data.tileheight < resol_y):
+                    move_y = mouse_y - (resol_y - self.map_data.tileheight)
+
+                start = (self.player.x, self.player.y)
+                goal = (move_x, move_y)
+                visited = self.graph.bfs(start, goal)
+                if (visited):
+                    path = self.graph.find_path(start, goal, visited)
+                    self.move_char_auto(path, True)
+                self.clock.tick(FPS)
+                self.drawing.draw()
+                pygame.display.flip()
+
+
         if event.type == pygame.KEYDOWN:
 
             # Movement
@@ -225,6 +256,7 @@ class Game:
             elif event.key == pygame.K_m:
                 self._toggle_free_camera()
 
+            # If free camera on, enter makes you auto move to free canera location
             elif event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
                     # If tile is unexplored do nothing
@@ -237,49 +269,52 @@ class Game:
                     # If path is generated move player
                     if (visited):
                         self._toggle_free_camera()
-                        self.auto_move_player(start, goal, visited)
+                        path = self.graph.find_path(start, goal, visited)
+                        self.move_char_auto(path)
 
             # Auto move
             elif event.key == pygame.K_v:
                 self.auto_path(self.graph)
 
-            elif event.key == pygame.K_SPACE:
-                mouse_select = True
-                while mouse_select:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    mouse_x = mouse_x // SPRITE_SIZE
-                    mouse_y = mouse_y // SPRITE_SIZE
-                    resol_x = self.camera.camera_width // SPRITE_SIZE
-                    resol_y = self.camera.camera_height // SPRITE_SIZE
-                    move_x = mouse_x
-                    move_y = mouse_y
-
-                    # If map is smaller than resol, this fixes the issue of
-                    # the mouse coord and map coord not being in sync
-                    if (self.map_data.tilewidth < resol_x):
-                        move_x = mouse_x - (resol_x - self.map_data.tilewidth)
-                    if (self.map_data.tileheight < resol_y):
-                        move_y = mouse_y - (resol_y - self.map_data.tileheight)
-
-                    start = (self.player.x, self.player.y)
-                    goal = (move_x, move_y)
-
-                    events = pygame.event.get()
-                    for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
-                                mouse_select = False
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            if event.button == 1:
-                                # Generates path
-                                visited = self.graph.bfs(start, goal)
-                                # If path is generated move player
-                                if (visited):
-                                    self.auto_move_player(start, goal, visited)
-                    self.clock.tick(FPS)
-                    self.drawing.draw()
-                    self.drawing.draw_tile_at_coord(mouse_x, mouse_y)
-                    pygame.display.flip()
+            # Show where mouse is and when pressed, move player there
+            # elif event.key == pygame.K_SPACE:
+            #     mouse_select = True
+            #     while mouse_select:
+            #         mouse_x, mouse_y = pygame.mouse.get_pos()
+            #         mouse_x = mouse_x // SPRITE_SIZE
+            #         mouse_y = mouse_y // SPRITE_SIZE
+            #         resol_x = self.camera.camera_width // SPRITE_SIZE
+            #         resol_y = self.camera.camera_height // SPRITE_SIZE
+            #         move_x = mouse_x
+            #         move_y = mouse_y
+            #
+            #         # If map is smaller than resol, this fixes the issue of
+            #         # the mouse coord and map coord not being in sync
+            #         if (self.map_data.tilewidth < resol_x):
+            #             move_x = mouse_x - (resol_x - self.map_data.tilewidth)
+            #         if (self.map_data.tileheight < resol_y):
+            #             move_y = mouse_y - (resol_y - self.map_data.tileheight)
+            #
+            #         start = (self.player.x, self.player.y)
+            #         goal = (move_x, move_y)
+            #
+            #         events = pygame.event.get()
+            #         for event in events:
+            #             if event.type == pygame.KEYDOWN:
+            #                 if event.key == pygame.K_SPACE:
+            #                     mouse_select = False
+            #             if event.type == pygame.MOUSEBUTTONDOWN:
+            #                 if event.button == 1:
+            #                     # Generates path
+            #                     visited = self.graph.bfs(start, goal)
+            #                     # If path is generated move player
+            #                     if (visited):
+            #                         path = self.graph.find_path(start, goal, visited)
+            #                         self.move_char_auto(path, False)
+            #         self.clock.tick(FPS)
+            #         self.drawing.draw()
+            #         self.drawing.draw_mouse()
+            #         pygame.display.flip()
 
             # Menu Buttons
             elif event.key == pygame.K_p:
@@ -288,18 +323,18 @@ class Game:
                 self.menu_manager.inventory_menu()
 
 
-    def auto_move_player(self, start, goal, visited):
-        """
-        Automatically moves player from start to goal
-
-        Args:
-            start ((int,int)): where player is
-            goal ((int, int)): where to move player to
-            visited (dictionary): dictionary of path of nodes
-                to goal and the previous node
-        """
-        path = self.graph.find_path(start, goal, visited)
-        self.move_char_auto(path)
+    # def auto_move_player(self, start, goal, visited):
+    #     """
+    #     Automatically moves player from start to goal
+    #
+    #     Args:
+    #         start ((int,int)): where player is
+    #         goal ((int, int)): where to move player to
+    #         visited (dictionary): dictionary of path of nodes
+    #             to goal and the previous node
+    #     """
+    #     path = self.graph.find_path(start, goal, visited)
+    #     self.move_char_auto(path)
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
@@ -320,7 +355,7 @@ class Game:
         else:
             self.current_group = self.all_creature
 
-    def move_char_auto(self, path):
+    def move_char_auto(self, path, ignore=False):
         """
         Moves current_group (player) according to path and draws character
         with slight delay to show walking animation
@@ -330,6 +365,8 @@ class Game:
 
         Args:
             path (list): path to take
+            ignore (boolean): if true, ignore monsters showing up in FOV and
+                continue moving, else stop and prevent movement
         """
         old_coord = (self.player.x, self.player.y)
         for coord in path:
@@ -339,11 +376,12 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     return
 
-            # If enemy in FOV stop auto moving
-            # If wall hack on disregard
-            for obj in self.enemy_group:
-                if (fov.check_if_in_fov(self, obj) and not self.wall_hack):
-                    return
+            if not ignore:
+                # If enemy in FOV stop auto moving
+                # If wall hack on disregard
+                for obj in self.enemy_group:
+                    if (fov.check_if_in_fov(self, obj) and not self.wall_hack):
+                        return
 
             dest_x = coord[0] - old_coord[0]
             dest_y = coord[1] - old_coord[1]
@@ -364,4 +402,5 @@ class Game:
         start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
         visited = graph.bfs(start, goal)
         if visited:
-            self.auto_move_player(start, goal, visited)
+            path = self.graph.find_path(start, goal, visited)
+            self.move_char_auto(path)

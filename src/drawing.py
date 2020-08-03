@@ -43,6 +43,7 @@ class Drawing:
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
         self.draw_buttons()
+        self.draw_mouse()
         self.draw_grid()
 
         if (self.game.mini_map_on):
@@ -271,16 +272,28 @@ class Drawing:
         # InventoryButton
         self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
 
-    def draw_tile_at_coord(self, x_coord, y_coord):
+    def draw_mouse(self):
         """
-        Draws tile at (x_coord, y_coord)
+        Draws mouse_select image at mouse position
+
+        Returns:
+
+        """
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_x = mouse_x // SPRITE_SIZE
+        mouse_y = mouse_y // SPRITE_SIZE
+
+        self.draw_img_at_coord(self.game.game_sprites.mouse_select, mouse_x, mouse_y)
+
+    def draw_img_at_coord(self, img, x_coord, y_coord):
+        """
+        Draws img at (x_coord, y_coord)
 
         x and y _coord are coords on the map
 
         Args:
+            img (sprite): image to draw at (x, y)
             x_coord (int): x coord to draw tile onto
             y_coord (int): y coord to draw tile onto
         """
-        mouse_surface = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
-        mouse_surface.fill(WHITE)
-        self.game.surface.blit(mouse_surface, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
+        self.game.surface.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))

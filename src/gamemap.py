@@ -188,6 +188,8 @@ def find_closest_unseen_tile(game):
     return p_coord, closest_unseen_tile
 
 
+# TODO: could optimize this since it is already finding visited and so can
+# return it instead of recalculating it
 def find_closest_unseen_tile_walking_distance(game):
     """
     Find closest unseen_tile from player

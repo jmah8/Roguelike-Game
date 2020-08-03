@@ -135,3 +135,4 @@ class GameSprites():
 
         #UI
         self.inventory_button = load_image(INVENTORY)
+        self.mouse_select = load_image(MOUSE_SELECT)
