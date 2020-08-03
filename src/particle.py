@@ -1,6 +1,12 @@
 import pygame
+import pygame.freetype
 from constant import *
 import drawing
+
+pygame.init()
+dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+font_path_name = os.path.join(dirname, 'fonts/FFF_Tusj.ttf')
+myfont = pygame.freetype.Font(font_path_name, 20)
 
 
 class Particle(pygame.sprite.Sprite):
@@ -23,12 +29,10 @@ class Particle(pygame.sprite.Sprite):
         self.x = x * SPRITE_SIZE
         self.y = y * SPRITE_SIZE
         self.v_x = 2
-        self.v_y = -6
+        self.v_y = -5
         self.max_x = self.x
         self.max_y = self.y
-        self.image = pygame.Surface((8, 8))
-        self.image.fill(RED)
-        self.rect = self.image.get_rect()
+        self.image, self.rect = myfont.render("1", RED)
         self.rect.x = x
         self.rect.y = y
         self.group = group
