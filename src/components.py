@@ -1,6 +1,6 @@
 from constant import *
 import pygame
-from particle import Particle
+from particle import *
 
 
 class Creature:
@@ -60,7 +60,7 @@ class Creature:
         self.owner.game.drawing.print_game_message(
             self.name_instance + "'s hp is at :" + str(self.hp), WHITE)
 
-        self.owner.game.particles.add(Particle(self.x, self.y, self.owner.game.particles))
+        self.owner.game.particles.add(DamageNumParticle(self.x, self.y, damage, self.owner.game.particles))
 
         if self.hp <= 0 and self.killable:
             self.die()
