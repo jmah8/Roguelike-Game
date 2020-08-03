@@ -62,6 +62,9 @@ class Game:
 
         self.item_group = pygame.sprite.Group()
 
+        # Particle group
+        self.particles = pygame.sprite.Group()
+
         # Switches current group to all creatures
         # the current group to move/update
         self.current_group = self.all_creature

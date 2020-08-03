@@ -46,6 +46,9 @@ class Drawing:
         self.draw_mouse()
         self.draw_grid()
 
+        self.game.particles.draw(self.game.surface)
+        self.game.particles.update()
+
         if (self.game.mini_map_on):
             self.draw_minimap(self.game)
 
