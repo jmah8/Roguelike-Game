@@ -122,8 +122,11 @@ class Game:
 
         item_com = components.Item("Red Potion", 0, 0, True)
         item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
+        item_sword_com = components.Item("Sword", 0,0, False)
+        item_sword = object.object(self, 4, 4, "item", image = self.game_sprites.sword, item = item_sword_com)
 
-        self.ITEMS = [item_potion]
+
+        self.ITEMS = [item_potion, item_sword]
         for i in self.ITEMS:
             self.item_group.add(i)
 
@@ -138,7 +141,7 @@ class Game:
         for e in self.ENEMIES:
             self.enemy_group.add(e)
 
-        self.GAME_OBJECTS = [item_potion, slime1, slime, self.player]
+        self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, self.player]
 
     def run(self):
         """
