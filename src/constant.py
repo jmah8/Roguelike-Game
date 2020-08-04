@@ -45,6 +45,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+INVENTORY_BEIGE = (239,228,176)
 
 
 # Enemy Attributes
@@ -73,6 +74,7 @@ FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
 
 WALL_1 = '16x16/tiles/wall/wall_1.png'
 RED_POTION = 'items/consumables/potion_red.png'
+SWORD = 'items/sword.png'
 
 INVENTORY = 'ui/chest_closed_anim_f2.png'
 EMPTY_INVENTORY_SLOT = 'items/empty_inventory_slot.png'

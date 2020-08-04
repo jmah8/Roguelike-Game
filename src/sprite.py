@@ -130,6 +130,8 @@ class GameSprites():
 
         #Items
         self.empty_inventory_slot = load_image(EMPTY_INVENTORY_SLOT)
+        self.sword = load_image(SWORD, -1)
+
         #Consumables
         self.red_potion = load_image(RED_POTION)
 

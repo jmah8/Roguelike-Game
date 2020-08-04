@@ -9,6 +9,7 @@ class Menu_Manager:
 
     def __init__(self, game):
         self.game = game
+        self.equipment_rects = []
 
     def pause_menu(self):
         menu_closed = False
@@ -35,7 +36,7 @@ class Menu_Manager:
         menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
         while not menu_closed:
             events_list = pygame.event.get()
-            menu_surface.fill(BLACK)
+            menu_surface.fill(INVENTORY_BEIGE)
             self.game.drawing.draw()
 
             menu_surface.blit(self._load_inventory_screen(), (0, menu_height/2))
@@ -89,13 +90,11 @@ class Menu_Manager:
 
     def _load_equipment_screen(self):
         """
-        Helper to create inventory with items
-        :return:  inventory_surface
+        Helper to create equipment_screen with items
+        :return:  equipment_surface
         """
         menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height / 2
         equipment_surface = pygame.Surface((menu_width, menu_height))
-
-        equipment_surface.blit(self.game.game_sprites.equip_screen, (0,0))
 
         helmet_tl, helmet_br = (243, 24), (294, 67)
         armor_tl, armor_br = (218, 70), (319, 185)
@@ -119,20 +118,32 @@ class Menu_Manager:
         gloves_rect = pygame.Rect(gloves_tl, ((gloves_br[0]-gloves_tl[0]), (gloves_br[1]-gloves_tl[1])))
         boots_rect = pygame.Rect(boots_tl, ((boots_br[0]-boots_tl[0]), (boots_br[1]-boots_tl[1])))
 
-        equip_dictionary = {
-            "main": None,
-            "off": None,
-            "helmet": None,
-            "armor": None,
-            "amulet": None,
-            "ring": None,
-            "pants": None,
-            "boots": None,
-            "gloves": None,
-        }
+        self.equipment_rects.append(helmet_rect)
+        self.equipment_rects.append(armor_rect)
+        self.equipment_rects.append(amulet_rect)
+        self.equipment_rects.append(main_rect)
+        self.equipment_rects.append(off_rect)
+        self.equipment_rects.append(ringL_rect)
+        self.equipment_rects.append(ringR_rect)
+        self.equipment_rects.append(pants_rect)
+        self.equipment_rects.append(gloves_rect)
+        self.equipment_rects.append(boots_rect)
 
+        for rect in self.equipment_rects:
+            pygame.draw.rect(equipment_surface, INVENTORY_BEIGE, rect)
 
-
+        equipment_surface.blit(self.game.game_sprites.equip_screen, (0, 0))
 
         return equipment_surface
 
+        # equip_dictionary = {
+        #     "main": None,
+        #     "off": None,
+        #     "helmet": None,
+        #     "armor": None,
+        #     "amulet": None,
+        #     "ring": None,
+        #     "pants": None,
+        #     "boots": None,
+        #     "gloves": None,
+        # }
