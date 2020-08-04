@@ -192,7 +192,7 @@ class Game:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
                 if button:
-                    button()
+                    button.menu_open()
 
                 mouse_x = mouse_x // SPRITE_SIZE
                 mouse_y = mouse_y // SPRITE_SIZE

@@ -45,5 +45,5 @@ class Button_Manager:
         final_y = mouse_y - self.y
         for button in self.button_list:
             if button.rect.collidepoint(final_x, final_y):
-                return button.menu_open
+                return button
         return None
