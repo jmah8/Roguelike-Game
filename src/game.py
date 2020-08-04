@@ -194,28 +194,38 @@ class Game:
                 if button:
                     button.menu_open()
 
+                # TODO: make mouse relative to map, not the actual screen
                 mouse_x = mouse_x // SPRITE_SIZE
                 mouse_y = mouse_y // SPRITE_SIZE
                 resol_x = self.camera.camera_width // SPRITE_SIZE
                 resol_y = self.camera.camera_height // SPRITE_SIZE
-                move_x = mouse_x
-                move_y = mouse_y
+
+                x, y = self.camera.camera_position
+                move_x = mouse_x + (x // SPRITE_SIZE)
+                move_y = mouse_y + (y // SPRITE_SIZE)
+
 
                 # If map is smaller than resol, this fixes the issue of
                 # the mouse coord and map coord not being in sync
                 if (self.map_data.tilewidth < resol_x):
+                    print("1")
                     move_x = mouse_x - (resol_x - self.map_data.tilewidth)
                 if (self.map_data.tileheight < resol_y):
+                    print("2")
                     move_y = mouse_y - (resol_y - self.map_data.tileheight)
 
                 if (not self.tile_array[move_y][move_x].seen):
                     return
                 start = (self.player.x, self.player.y)
                 goal = (move_x, move_y)
+                print(start)
+                print(goal)
                 visited = self.graph.bfs(start, goal)
                 if (visited):
+                    print("visit")
                     path = self.graph.find_path(start, goal, visited)
                     self.move_char_auto(path, True)
+                print("")
                 self.clock.tick(FPS)
                 self.drawing.draw()
                 pygame.display.flip()

@@ -44,3 +44,15 @@ class Camera:
         x = max(-(self.width - self.camera_width), x)
         y = max(-(self.height - self.camera_height), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)
+
+    @property
+    def camera_position(self):
+        """
+        Returns the camera coords
+
+        Returns:
+            x (int): x coord of camera
+            y (int): y coord of camera
+        """
+        x, y = self.camera.topleft
+        return -x, -y

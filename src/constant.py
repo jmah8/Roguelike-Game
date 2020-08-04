@@ -16,8 +16,8 @@ TOPLEFT = (0, 0)
 
 # Map gen constants
 READ_FROM_FILE = False
-MAP_WIDTH = 16
-MAP_HEIGHT = 12
+MAP_WIDTH = 30
+MAP_HEIGHT = 30
 SUB_DUNGEON_WIDTH = 4
 SUB_DUNGEON_HEIGHT = 4
 DIST_FROM_SISTER_NODE_MIN = 1
@@ -27,7 +27,7 @@ DIST_FROM_SISTER_NODE_MAX = 1
 MINIMAP_SCALE = 2
 
 # Buttton manager constants
-NUM_OF_BUTTONS = 2
+NUM_OF_BUTTONS = 3
 
 
 # Console map output
