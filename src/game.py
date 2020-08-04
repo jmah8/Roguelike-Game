@@ -194,12 +194,10 @@ class Game:
                 if button:
                     button.menu_open()
 
-                # TODO: make mouse relative to map, not the actual screen
                 mouse_x = mouse_x // SPRITE_SIZE
                 mouse_y = mouse_y // SPRITE_SIZE
                 resol_x = self.camera.camera_width // SPRITE_SIZE
                 resol_y = self.camera.camera_height // SPRITE_SIZE
-
                 x, y = self.camera.camera_position
                 move_x = mouse_x + (x // SPRITE_SIZE)
                 move_y = mouse_y + (y // SPRITE_SIZE)

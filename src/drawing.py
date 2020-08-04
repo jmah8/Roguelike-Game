@@ -104,6 +104,7 @@ class Drawing:
     def __init__(self, game):
         self.game = game
         self.button_manager = Button_Manager(game.surface)
+        self.test = False
 
     def draw(self):
         """
@@ -139,12 +140,16 @@ class Drawing:
         else:
             self.draw_mouse()
 
-        self.button_manager.draw_buttons(self.game.surface)
+        if self.test:
+            self.draw_minimap_copy_map()
 
-        self.draw_grid()
 
         self.game.particles.draw(self.game.surface)
         self.game.particles.update()
+
+        self.button_manager.draw_buttons(self.game.surface)
+
+        self.draw_grid()
 
         if (self.game.mini_map_on):
             draw_minimap(self.game)
@@ -152,9 +157,13 @@ class Drawing:
         self.draw_debug()
         self.draw_messages()
 
+    def toggle_test(self):
+        self.test = not self.test
+
     def add_buttons(self):
         self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory', self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
+        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'test', self.toggle_test)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -246,14 +255,17 @@ class Drawing:
         map_data = self.game.map_data
         tile_array = self.game.tile_array
 
-        resol = max(RESOLUTION[0] // MINIMAP_SCALE, RESOLUTION[1] // MINIMAP_SCALE)
-        scale_factor_x = (map_data.width // resol)
-        scale_factor_y = (map_data.height // resol)
+        resol_x = RESOLUTION[0] // MINIMAP_SCALE
+        resol_y = RESOLUTION[1] // MINIMAP_SCALE
+        scale_tile_width = RESOLUTION[0] // map_data.tilewidth
+        scale_tile_height = RESOLUTION[1] // map_data.tileheight
+        scale_factor_x = SPRITE_SIZE // scale_tile_width
+        scale_factor_y = SPRITE_SIZE // scale_tile_height
 
         # Code below displays:
         # Minimap is shrunk down version of actual map and
         # so shows players, enemies and items
-        minimap = pygame.Surface((resol, resol))
+        minimap = pygame.Surface((RESOLUTION[0], RESOLUTION[1]))
         # map_data = self.game.map_data
         # scaled_map = pygame.transform.scale(self.game.surface,
         #     (MINIMAP_RESOLUTION))
