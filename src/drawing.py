@@ -33,9 +33,6 @@ class Drawing:
         for tile in self.game.all_tile:
             self.game.surface.blit(tile.image, self.game.camera.apply(tile))
 
-        if (self.game.free_camera_on):
-            self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
-
         # Draws object if it is in player fov
         for obj in self.game.GAME_OBJECTS:
             if fov.check_if_in_fov(self.game, obj):
@@ -43,7 +40,13 @@ class Drawing:
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
         self.draw_buttons()
-        self.draw_mouse()
+
+        # Draw mouse select cursor depending on if free camera is on
+        if (self.game.free_camera_on):
+            self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
+        else:
+            self.draw_mouse()
+
         self.draw_grid()
 
         self.game.particles.draw(self.game.surface)
