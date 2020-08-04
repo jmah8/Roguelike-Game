@@ -53,9 +53,10 @@ class Button_Manager:
             img (sprite): image of button
             menu_option (function): function to call when button pressed
         """
-        button = Button(self.button_count, img, menu_option)
-        self.button_list.append(button)
-        self.button_count += 1
+        if (not self.button_count >= NUM_OF_BUTTONS):
+            button = Button(self.button_count, img, menu_option)
+            self.button_list.append(button)
+            self.button_count += 1
 
     def draw_buttons(self, game_surface):
         """

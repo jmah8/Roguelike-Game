@@ -44,6 +44,9 @@ class Menu_Manager:
             self.game.surface.blit(menu_surface, (menu_width, 0))
 
             for event in events_list:
+                # TODO: make it so clicking minimap button either open/close minimap
+                #       or close inventory, not both. Basically make minimap and inventory
+                #       icon both consistent
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -53,10 +56,8 @@ class Menu_Manager:
                             break
 
                 if event.type == pygame.KEYDOWN:
-                    # if event.key == pygame.K_TAB:
-                    #     self.game.mini_map_on = not self.game.mini_map_on
-                    #     if self.game.mini_map_on:
-                    #         self.game.drawing.draw_minimap(self.game)
+                    if event.key == pygame.K_TAB:
+                        self.game.toggle_minimap()
                     if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
                         menu_closed = True
             self.game.clock.tick(60)
