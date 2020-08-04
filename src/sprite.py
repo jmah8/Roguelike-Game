@@ -10,6 +10,7 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
     Args:
         name (string) : Pathname of image to convert
         colorkey ((int, int)) : Position of color to be transparent
+        sprite_size ((int, int)): Size of resulting image
     """
     dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
     pathname = os.path.join(dirname, name)
