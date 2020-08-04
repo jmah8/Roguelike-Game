@@ -349,7 +349,7 @@ class Game:
                 self.current_group.update(dest_x, dest_y)
                 old_coord = coord
                 self.drawing.draw()
-                self.clock.tick(15)
+                self.clock.tick(20)
                 pygame.display.flip()
 
     def auto_path(self, graph):
@@ -357,10 +357,16 @@ class Game:
         Automatically move the player to the
         closest unseen tile
 
+        If # of unseen tiles is low, can use find_closest_unseen_tile_walking_distance
+        without too much of a performance hit, else use the faster find_closest_unseen_tile
+
         Args:
             graph (Graph): Graph with nodes representing the walkable tiles
         """
-        start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
+        if len(self.map_data.unseen_tiles) < 75:
+            start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
+        else:
+            start, goal = gamemap.find_closest_unseen_tile(self)
         visited = graph.bfs(start, goal)
         if visited:
             path = self.graph.find_path(start, goal, visited)
