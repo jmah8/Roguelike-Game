@@ -79,6 +79,7 @@ SWORD = 'items/sword.png'
 INVENTORY = 'ui/chest_closed_anim_f2.png'
 EMPTY_INVENTORY_SLOT = 'items/empty_inventory_slot.png'
 MOUSE_SELECT = 'ui/mouse_select.png'
+MINIMAP_BUTTON = 'ui/minimap.png'
 
 EQUIP_SCREEN = 'items/equipment_screen.png'
 

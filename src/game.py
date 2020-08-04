@@ -245,7 +245,7 @@ class Game:
 
             # Mini_map
             elif event.key == pygame.K_TAB:
-                self.mini_map_on = not self.mini_map_on
+                self.toggle_minimap()
 
             # Pickup/Drop Item
             elif event.key == pygame.K_t:
@@ -366,3 +366,8 @@ class Game:
             path = self.graph.find_path(start, goal, visited)
             self.move_char_auto(path)
 
+    def toggle_minimap(self):
+        """
+        Toggles minimap
+        """
+        self.mini_map_on = not self.mini_map_on

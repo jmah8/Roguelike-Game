@@ -59,6 +59,7 @@ class Drawing:
 
     def add_buttons(self):
         self.button_manager.add_button(self.game.game_sprites.inventory_button, self.game.menu_manager.inventory_menu)
+        self.button_manager.add_button(self.game.game_sprites.minimap_button, self.game.toggle_minimap)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
