@@ -39,13 +39,13 @@ class Drawing:
                 obj.update_anim()
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
-        self.draw_buttons()
-
         # Draw mouse select cursor depending on if free camera is on
         if (self.game.free_camera_on):
             self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
         else:
             self.draw_mouse()
+
+        self.button_manager.draw_buttons(self.game.surface)
 
         self.draw_grid()
 
@@ -57,6 +57,9 @@ class Drawing:
 
         self.draw_debug()
         self.draw_messages()
+
+    def add_buttons(self):
+        self.button_manager.add_button(self.game.game_sprites.inventory_button, None)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -262,20 +265,6 @@ class Drawing:
                          (0, 0,
                           game.map_data.width // scale_factor_x,
                           game.map_data.height // scale_factor_y))
-
-    def button(self, img, coords, game_surface):
-        self.button_surface.blit(img, coords)
-        # Makes button_surface transparent
-        self.button_surface.set_colorkey(BLACK)
-        button_rect = img.get_rect()
-        button_rect.topright = coords
-        game_surface.blit(self.button_surface,
-                          (game_surface.get_width() - SPRITE_SIZE, game_surface.get_height() - SPRITE_SIZE))
-        return (img, button_rect)
-
-    def draw_buttons(self):
-        # InventoryButton
-        self.button_manager.button(self.game.game_sprites.inventory_button, (0, 0), self.game.surface)
 
     def draw_mouse(self):
         """

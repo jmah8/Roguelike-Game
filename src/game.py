@@ -1,6 +1,5 @@
 import os
 import pygame
-
 import ai
 import gamemap
 from constant import *
@@ -72,7 +71,6 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
-        # button
         # Load map data
         # This is for reading maps from text files
         if (READ_FROM_FILE):
@@ -139,6 +137,8 @@ class Game:
             self.enemy_group.add(e)
 
         self.GAME_OBJECTS = [item_potion, slime1, slime, self.player]
+
+        self.drawing.add_buttons()
 
     def run(self):
         """
@@ -358,3 +358,4 @@ class Game:
         if visited:
             path = self.graph.find_path(start, goal, visited)
             self.move_char_auto(path)
+
