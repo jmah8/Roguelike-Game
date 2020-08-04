@@ -2,7 +2,8 @@ import pygame
 from constant import *
 import os
 
-def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
+
+def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE), convert_alpha=True):
     """
     Load and convert image to surface and returns image and the image rect
     and makes color at colorkey transparent
@@ -11,6 +12,8 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
         name (string) : Pathname of image to convert
         colorkey ((int, int)) : Position of color to be transparent
         sprite_size ((int, int)): Size of resulting image
+        convert_alpha (bool): True if image already has transparent background,
+            otherwise False with colorkey set to make transparent background
     """
     dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
     pathname = os.path.join(dirname, name)
@@ -19,7 +22,10 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
     except pygame.error as message:
         print('Cannot load image:', name)
         raise SystemExit(name)
-    image = image.convert_alpha()
+    if convert_alpha:
+        image = image.convert_alpha()
+    else:
+        image = image.convert()
     image = pygame.transform.scale(image, sprite_size)
     if colorkey is not None:
         if colorkey == -1:
@@ -27,7 +33,8 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
         image.set_colorkey(colorkey, pygame.RLEACCEL)
     return image
 
-def load_anim(pathname, start_num, end_num):
+
+def load_anim(pathname, start_num, end_num, convert_alpha=True):
     """
     Load list of sprites animations
 
@@ -43,8 +50,8 @@ def load_anim(pathname, start_num, end_num):
     sprite_anim = []
     sprite_anim.append(load_image(pathname))
     tmp = pathname
-    for i in range (start_num, end_num):
-        tmp = tmp.replace(str(i), str(i+1))
+    for i in range(start_num, end_num):
+        tmp = tmp.replace(str(i), str(i + 1))
         sprite_anim.append(load_image(tmp))
     return sprite_anim
 
@@ -84,8 +91,8 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to scale y by
     """
     obj_img = pygame.transform.scale(obj.image,
-        (obj.rect.size[0] // scale_factor_x,
-        obj.rect.size[1] // scale_factor_y))
+                                     (obj.rect.size[0] // scale_factor_x,
+                                      obj.rect.size[1] // scale_factor_y))
     obj_img_rect = obj_img.get_rect()
     obj_img_rect.topleft = (obj.rect.topleft[0] // scale_factor_x,
                             obj.rect.topleft[1] // scale_factor_y)
@@ -96,6 +103,7 @@ class GameSprites():
     """
     Class that holds all the sprite images
     """
+
     def __init__(self):
         #  Environment
         self.wall_image = load_image(WALL_1)
@@ -110,33 +118,33 @@ class GameSprites():
 
         # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)
-        self.slime_run_anim = load_anim(SLIME_RUN, 0 , 5)
+        self.slime_run_anim = load_anim(SLIME_RUN, 0, 5)
         self.slime_dict = {
-            "idle_right" : self.slime_anim,
-            "idle_left" : flip_anim(self.slime_anim),
-            "run_right" : self.slime_run_anim,
-            "run_left" : flip_anim(self.slime_run_anim)
+            "idle_right": self.slime_anim,
+            "idle_left": flip_anim(self.slime_anim),
+            "run_right": self.slime_run_anim,
+            "run_left": flip_anim(self.slime_run_anim)
         }
 
         # Knight
         self.knight_anim = load_anim(KNIGHT, 0, 5)
         self.knight_run_anim = load_anim(KNIGHT_RUN, 0, 5)
         self.knight_dict = {
-            "idle_right" : self.knight_anim,
-            "idle_left" : flip_anim(self.knight_anim),
-            "run_right" : self.knight_run_anim,
-            "run_left" : flip_anim(self.knight_run_anim)
+            "idle_right": self.knight_anim,
+            "idle_left": flip_anim(self.knight_anim),
+            "run_right": self.knight_run_anim,
+            "run_left": flip_anim(self.knight_run_anim)
         }
 
-        #Items
+        # Items
         self.empty_inventory_slot = load_image(EMPTY_INVENTORY_SLOT)
         self.sword = load_image(SWORD, -1)
 
-        #Consumables
+        # Consumables
         self.red_potion = load_image(RED_POTION)
 
-        #UI
+        # UI
         self.inventory_button = load_image(INVENTORY)
         self.mouse_select = load_image(MOUSE_SELECT)
-        self.equip_screen = load_image(EQUIP_SCREEN, None, (8*64, 6*64))
+        self.equip_screen = load_image(EQUIP_SCREEN, None, (8 * 64, 6 * 64))
         self.minimap_button = load_image(MINIMAP_BUTTON)
