@@ -32,12 +32,16 @@ class Menu_Manager:
         """
         menu_closed = False
         menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height
-        menu_surface = pygame.Surface((menu_width, menu_height))
+        menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
         while not menu_closed:
             events_list = pygame.event.get()
             menu_surface.fill(BLACK)
+            self.game.drawing.draw()
+
             menu_surface.blit(self._load_inventory_screen(), (0, menu_height/2))
+            menu_surface.blit(self._load_equipment_screen(), (0, 0))
             self.game.surface.blit(menu_surface, (menu_width, 0))
+
             for event in events_list:
                 if event.type == pygame.KEYDOWN:
                     # if event.key == pygame.K_TAB:
@@ -54,14 +58,14 @@ class Menu_Manager:
         Helper to create inventory with items
         :return:  inventory_surface
         """
-        menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height
-        item_surface = pygame.Surface((menu_width, menu_height/2))
+        menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height / 2
+        item_surface = pygame.Surface((menu_width, menu_height))
         num_items_row = TILE_WIDTH // 2
         num_items_col = TILE_HEIGHT // 2
         counter = 0
 
         for i in range(0, num_items_row):
-            for j in range(0, num_items_col):
+            for j in range(0, num_items_col-1):
                 inventory_array = self.game.player.container.inventory
                 if len(inventory_array) >= counter + 1:
                     item = inventory_array[counter]
@@ -74,3 +78,35 @@ class Menu_Manager:
                     item_surface.blit(self.game.game_sprites.empty_inventory_slot, (
                         (0 + i * SPRITE_SIZE, 0 + j * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
         return item_surface
+
+    def _load_equipment_screen(self):
+        """
+        Helper to create inventory with items
+        :return:  inventory_surface
+        """
+        menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height / 2
+        equipment_surface = pygame.Surface((menu_width, menu_height))
+
+
+        # mainhand
+
+        # offhand
+
+        # armor
+
+        # helmet
+
+        # ring
+
+        # amulet
+
+        # pants
+
+        # boots
+
+        # gloves
+
+
+
+        return equipment_surface
+
