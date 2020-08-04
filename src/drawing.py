@@ -5,11 +5,10 @@ import fov
 import sprite
 from button_manager import Button_Manager
 
-
 class Drawing:
     def __init__(self, game):
         self.game = game
-        self.button_manager = Button_Manager()
+        self.button_manager = Button_Manager(game.surface)
 
     def draw(self):
         """
@@ -59,7 +58,7 @@ class Drawing:
         self.draw_messages()
 
     def add_buttons(self):
-        self.button_manager.add_button(self.game.game_sprites.inventory_button, None)
+        self.button_manager.add_button(self.game.game_sprites.inventory_button, self.game.menu_manager.inventory_menu)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):

@@ -26,6 +26,9 @@ DIST_FROM_SISTER_NODE_MAX = 1
 # Minimap constants
 MINIMAP_SCALE = 2
 
+# Buttton manager constants
+NUM_OF_BUTTONS = 2
+
 
 # Console map output
 WALL = '1'

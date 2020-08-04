@@ -43,6 +43,14 @@ class Menu_Manager:
             self.game.surface.blit(menu_surface, (menu_width, 0))
 
             for event in events_list:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        button = self.game.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+                        if button:
+                            menu_closed = True
+                            break
+
                 if event.type == pygame.KEYDOWN:
                     # if event.key == pygame.K_TAB:
                     #     self.game.mini_map_on = not self.game.mini_map_on

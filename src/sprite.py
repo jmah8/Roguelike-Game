@@ -19,7 +19,6 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
     except pygame.error as message:
         print('Cannot load image:', name)
         raise SystemExit(name)
-    # convert_alpha() is also an option
     image = image.convert_alpha()
     image = pygame.transform.scale(image, sprite_size)
     if colorkey is not None:
