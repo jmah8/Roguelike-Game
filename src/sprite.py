@@ -2,7 +2,7 @@ import pygame
 from constant import *
 import os
 
-def load_image(name, colorkey=None):
+def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE)):
     """
     Load and convert image to surface and returns image and the image rect
     and makes color at colorkey transparent
@@ -20,7 +20,7 @@ def load_image(name, colorkey=None):
         raise SystemExit(name)
     # convert_alpha() is also an option
     image = image.convert_alpha()
-    image = pygame.transform.scale(image, (SPRITE_SIZE, SPRITE_SIZE))
+    image = pygame.transform.scale(image, sprite_size)
     if colorkey is not None:
         if colorkey == -1:
             colorkey = image.get_at((0, 0))
