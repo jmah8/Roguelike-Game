@@ -75,6 +75,7 @@ INVENTORY = 'ui/chest_closed_anim_f2.png'
 EMPTY_INVENTORY_SLOT = 'items/empty_inventory_slot.png'
 MOUSE_SELECT = 'ui/mouse_select.png'
 
+EQUIP_SCREEN = 'items/equipment_screen.png'
 
 # FONTS
 dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')

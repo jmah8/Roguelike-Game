@@ -87,24 +87,42 @@ class Menu_Manager:
         menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height / 2
         equipment_surface = pygame.Surface((menu_width, menu_height))
 
+        equipment_surface.blit(self.game.game_sprites.equip_screen, (0,0))
 
-        # mainhand
+        helmet_tl, helmet_br = (243, 24), (294, 67)
+        armor_tl, armor_br = (218, 70), (319, 185)
+        amulet_tl, amulet_br = (323, 52), (361, 89)
+        main_tl, main_br = (38, 83), (114, 274)
+        off_tl, off_br = (390, 83), (466, 274)
+        ringL_tl, ringL_br = (176, 171), (214, 208)
+        ringR_tl, ringR_br = (323, 171), (361, 208)
+        pants_tl, pants_br = (218, 188), (319, 301)
+        gloves_tl, gloves_br = (134, 230), (209, 299)
+        boots_tl, boots_br = (232, 308), (305,356)
 
-        # offhand
+        helmet_rect = pygame.Rect(helmet_tl, ((helmet_br[0]-helmet_tl[0]), (helmet_br[1]-helmet_tl[1])))
+        armor_rect = pygame.Rect(armor_tl, ((armor_br[0]-armor_tl[0]), (armor_br[1]-armor_tl[1])))
+        amulet_rect = pygame.Rect(amulet_tl, ((amulet_br[0]-amulet_tl[0]), (amulet_br[1]-amulet_tl[1])))
+        main_rect = pygame.Rect(main_tl, ((main_br[0]-main_tl[0]), (main_br[1]-main_tl[1])))
+        off_rect = pygame.Rect(off_tl, ((off_br[0]-off_tl[0]), (off_br[1]-off_tl[1])))
+        ringL_rect = pygame.Rect(ringL_tl, ((ringL_br[0]-ringL_tl[0]), (ringL_br[1]-ringL_tl[1])))
+        ringR_rect = pygame.Rect(ringR_tl, ((ringR_br[0]-ringR_tl[0]), (ringR_br[1]-ringR_tl[1])))
+        pants_rect = pygame.Rect(pants_tl, ((pants_br[0]-pants_tl[0]), (pants_br[1]-pants_tl[1])))
+        gloves_rect = pygame.Rect(gloves_tl, ((gloves_br[0]-gloves_tl[0]), (gloves_br[1]-gloves_tl[1])))
+        boots_rect = pygame.Rect(boots_tl, ((boots_br[0]-boots_tl[0]), (boots_br[1]-boots_tl[1])))
 
-        # armor
+        equip_dictionary = {
+            "main": None,
+            "off": None,
+            "helmet": None,
+            "armor": None,
+            "amulet": None,
+            "ring": None,
+            "pants": None,
+            "boots": None,
+            "gloves": None,
+        }
 
-        # helmet
-
-        # ring
-
-        # amulet
-
-        # pants
-
-        # boots
-
-        # gloves
 
 
 
