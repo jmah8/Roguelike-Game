@@ -26,6 +26,32 @@ class Menu_Manager:
             self.game.clock.tick(60)
             pygame.display.update()
 
+    def map_menu(self):
+        """
+        Creates full map menu
+
+        Only input available is closing game or clicking any other button to close map
+        """
+        menu_closed = False
+        while not menu_closed:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    menu_closed = True
+                    break
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        button = self.game.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+                        if button:
+                            menu_closed = True
+                            break
+
+            self.game.drawing.draw_minimap_copy_map()
+            self.game.drawing.button_manager.draw_buttons(self.game.surface)
+            self.game.clock.tick(60)
+            pygame.display.update()
+
 
     def inventory_menu(self):
         """

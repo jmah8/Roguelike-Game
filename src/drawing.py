@@ -163,7 +163,7 @@ class Drawing:
     def add_buttons(self):
         self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory', self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
-        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'test', self.toggle_test)
+        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'test', self.game.menu_manager.map_menu)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -261,8 +261,6 @@ class Drawing:
         scale_tile_height = RESOLUTION[1] / map_data.tileheight
         scale_factor_x = SPRITE_SIZE / scale_tile_width
         scale_factor_y = SPRITE_SIZE / scale_tile_height
-        print(scale_tile_width, scale_tile_height)
-        print(scale_factor_x, scale_factor_y)
 
         # Code below displays:
         # Minimap is shrunk down version of actual map and
