@@ -91,11 +91,11 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to scale y by
     """
     obj_img = pygame.transform.scale(obj.image,
-                                     (obj.rect.size[0] // scale_factor_x,
-                                      obj.rect.size[1] // scale_factor_y))
+                                     (int(obj.rect.size[0] / scale_factor_x),
+                                      int(obj.rect.size[1] / scale_factor_y)))
     obj_img_rect = obj_img.get_rect()
-    obj_img_rect.topleft = (obj.rect.topleft[0] // scale_factor_x,
-                            obj.rect.topleft[1] // scale_factor_y)
+    obj_img_rect.topleft = (int(obj.rect.topleft[0] / scale_factor_x),
+                            int(obj.rect.topleft[1] // scale_factor_y))
     return obj_img, obj_img_rect
 
 

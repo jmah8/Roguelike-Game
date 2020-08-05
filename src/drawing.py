@@ -257,10 +257,12 @@ class Drawing:
 
         resol_x = RESOLUTION[0] // MINIMAP_SCALE
         resol_y = RESOLUTION[1] // MINIMAP_SCALE
-        scale_tile_width = RESOLUTION[0] // map_data.tilewidth
-        scale_tile_height = RESOLUTION[1] // map_data.tileheight
-        scale_factor_x = SPRITE_SIZE // scale_tile_width
-        scale_factor_y = SPRITE_SIZE // scale_tile_height
+        scale_tile_width = RESOLUTION[0] / map_data.tilewidth
+        scale_tile_height = RESOLUTION[1] / map_data.tileheight
+        scale_factor_x = SPRITE_SIZE / scale_tile_width
+        scale_factor_y = SPRITE_SIZE / scale_tile_height
+        print(scale_tile_width, scale_tile_height)
+        print(scale_factor_x, scale_factor_y)
 
         # Code below displays:
         # Minimap is shrunk down version of actual map and
