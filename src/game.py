@@ -11,6 +11,7 @@ import pathfinding
 from camera import Camera
 import fov
 from menu_manager import Menu_Manager
+import magic
 
 from drawing import Drawing
 
@@ -295,6 +296,53 @@ class Game:
                 self.menu_manager.pause_menu()
             elif event.key == pygame.K_i:
                 self.menu_manager.inventory_menu()
+
+            elif event.key == pygame.K_SPACE:
+                mouse_select = True
+                while mouse_select:
+                    events = pygame.event.get()
+                    for event in events:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_SPACE:
+                                mouse_select = False
+                                break
+                        if event.type == pygame.MOUSEBUTTONDOWN:
+                            if event.button == 1:
+                                mouse_x, mouse_y = pygame.mouse.get_pos()
+                                button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+                                if button:
+                                    mouse_select = False
+                                    break
+
+                                mouse_x = mouse_x // SPRITE_SIZE
+                                mouse_y = mouse_y // SPRITE_SIZE
+                                resol_x = self.camera.camera_width // SPRITE_SIZE
+                                resol_y = self.camera.camera_height // SPRITE_SIZE
+                                x, y = self.camera.camera_position
+                                move_x = mouse_x + (x // SPRITE_SIZE)
+                                move_y = mouse_y + (y // SPRITE_SIZE)
+
+                                # If map is smaller than resol, this fixes the issue of
+                                # the mouse coord and map coord not being in sync
+                                if (self.map_data.tilewidth < resol_x):
+                                    move_x = mouse_x - (resol_x - self.map_data.tilewidth)
+                                if (self.map_data.tileheight < resol_y):
+                                    move_y = mouse_y - (resol_y - self.map_data.tileheight)
+
+                                start = (self.player.x, self.player.y)
+                                goal = (move_x, move_y)
+
+                                line = magic.line(start, goal, self.map_array)
+                                print(line)
+                                magic.cast_fireball(self, self.player, 2, line)
+                                self.current_group.update(0, 0)
+                                mouse_select = False
+                                break
+
+                    self.clock.tick(FPS)
+                    self.drawing.draw()
+                    self.drawing.draw_mouse()
+                    pygame.display.flip()
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]

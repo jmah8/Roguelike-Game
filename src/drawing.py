@@ -89,6 +89,8 @@ def draw_minimap(game):
     Arg:
         game (Game): game to load minimap to
     """
+    minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
+
     map_data = game.map_data
 
     scale_factor_x = (map_data.width // (RESOLUTION[0] // MINIMAP_SCALE))
@@ -163,7 +165,7 @@ class Drawing:
     def add_buttons(self):
         self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory', self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
-        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'test', self.game.menu_manager.map_menu)
+        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'map', self.game.menu_manager.map_menu)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
