@@ -1,5 +1,6 @@
 from constant import *
 
+
 def diagonal_distance(start, end):
     """
     Finds the diagonl distance between start and end
@@ -99,7 +100,7 @@ def line(start, end, map):
     return points
 
 
-def cast_fireball (game, caster, damage, lines):
+def cast_fireball(game, caster, damage, lines):
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     creature_hit = False
@@ -114,3 +115,13 @@ def cast_fireball (game, caster, damage, lines):
                     creature_hit = True
                     break
 
+
+# TODO: make it so enemies wont target through their allies
+def cast_lightning(game, caster, damage, lines):
+    # get list of tiles from start to end
+    enemies = caster.creature.enemy_group
+    for (x, y) in lines:
+        for obj in game.CREATURES:
+            if enemies.has(obj):
+                if (obj.x, obj.y) == (x, y):
+                    obj.creature.take_damage(damage)
