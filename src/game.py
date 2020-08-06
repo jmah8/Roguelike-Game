@@ -121,9 +121,8 @@ class Game:
 
         item_com = components.Item("Red Potion", 0, 0, True)
         item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
-        item_sword_com = components.Item("Sword", 0,0, False)
-        item_sword = object.object(self, 4, 4, "item", image = self.game_sprites.sword, item = item_sword_com)
-
+        item_sword_com = components.Item("Sword", 0, 0, False)
+        item_sword = object.object(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
 
         self.ITEMS = [item_potion, item_sword]
         for i in self.ITEMS:
@@ -195,21 +194,7 @@ class Game:
                 if button:
                     button.menu_open()
 
-                mouse_x = mouse_x // SPRITE_SIZE
-                mouse_y = mouse_y // SPRITE_SIZE
-                resol_x = self.camera.camera_width // SPRITE_SIZE
-                resol_y = self.camera.camera_height // SPRITE_SIZE
-                x, y = self.camera.camera_position
-                move_x = mouse_x + (x // SPRITE_SIZE)
-                move_y = mouse_y + (y // SPRITE_SIZE)
-
-
-                # If map is smaller than resol, this fixes the issue of
-                # the mouse coord and map coord not being in sync
-                if (self.map_data.tilewidth < resol_x):
-                    move_x = mouse_x - (resol_x - self.map_data.tilewidth)
-                if (self.map_data.tileheight < resol_y):
-                    move_y = mouse_y - (resol_y - self.map_data.tileheight)
+                move_x, move_y = self._get_mouse_coord()
 
                 if (not self.tile_array[move_y][move_x].seen):
                     return
@@ -222,7 +207,6 @@ class Game:
                 self.clock.tick(FPS)
                 self.drawing.draw()
                 pygame.display.flip()
-
 
         if event.type == pygame.KEYDOWN:
 
@@ -271,7 +255,7 @@ class Game:
             elif event.key == pygame.K_m:
                 self._toggle_free_camera()
 
-            # If free camera on, enter makes you auto move to free canera location
+            # If free camera on, enter makes you auto move to free camera location
             elif event.key == pygame.K_RETURN:
                 if (self.free_camera_on):
                     # If tile is unexplored do nothing
@@ -314,27 +298,16 @@ class Game:
                                     mouse_select = False
                                     break
 
-                                mouse_x = mouse_x // SPRITE_SIZE
-                                mouse_y = mouse_y // SPRITE_SIZE
-                                resol_x = self.camera.camera_width // SPRITE_SIZE
-                                resol_y = self.camera.camera_height // SPRITE_SIZE
-                                x, y = self.camera.camera_position
-                                move_x = mouse_x + (x // SPRITE_SIZE)
-                                move_y = mouse_y + (y // SPRITE_SIZE)
-
-                                # If map is smaller than resol, this fixes the issue of
-                                # the mouse coord and map coord not being in sync
-                                if (self.map_data.tilewidth < resol_x):
-                                    move_x = mouse_x - (resol_x - self.map_data.tilewidth)
-                                if (self.map_data.tileheight < resol_y):
-                                    move_y = mouse_y - (resol_y - self.map_data.tileheight)
+                                move_x, move_y = self._get_mouse_coord()
 
                                 start = (self.player.x, self.player.y)
                                 goal = (move_x, move_y)
 
                                 line = magic.line(start, goal, self.map_array)
                                 print(line)
-                                magic.cast_fireball(self, self.player, 2, line)
+                                magic.cast_lightning(self, self.player, 2, line)
+                                # TODO: maybe change this since if player has ai but cast fireball,
+                                #       player would move + cast fireball at the same time
                                 self.current_group.update(0, 0)
                                 mouse_select = False
                                 break
@@ -355,7 +328,7 @@ class Game:
         else make it follow player
         """
         self.free_camera_on = not self.free_camera_on
-        if (self.free_camera_on):
+        if self.free_camera_on:
             self.current_group = self.camera_group
             self.free_camera.x = self.player.x
             self.free_camera.y = self.player.y
@@ -391,7 +364,7 @@ class Game:
                     # If enemy in FOV stop auto moving
                     # If wall hack on disregard
                     for obj in self.enemy_group:
-                        if (fov.check_if_in_fov(self, obj) and not self.wall_hack):
+                        if fov.check_if_in_fov(self, obj) and not self.wall_hack:
                             return
 
                 dest_x = coord[0] - old_coord[0]
@@ -427,3 +400,38 @@ class Game:
         Toggles minimap
         """
         self.mini_map_on = not self.mini_map_on
+
+    def _get_mouse_coord(self):
+        """
+        Returns mouse coordinate on map, taking into account
+        size of map
+
+        First converts the mouse position to coordinate. Since mouse
+        position is found relative to screen, add to it the camera position
+        to get the mouse's map coordinate. Then
+
+        Returns:
+            mouse_x, mouse_y ((int, int)): Coordinate of mouse on map
+        """
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        # Converts the mouse position to coordinate (relative to screen)
+        mouse_x = mouse_x // SPRITE_SIZE
+        mouse_y = mouse_y // SPRITE_SIZE
+        # Add camera position to get the mouse's map coordinate
+        x, y = self.camera.camera_position
+        mouse_x = mouse_x + (x // SPRITE_SIZE)
+        mouse_y = mouse_y + (y // SPRITE_SIZE)
+        # Find the amount of tiles on screen
+        screen_x = self.camera.camera_width // SPRITE_SIZE
+        screen_y = self.camera.camera_height // SPRITE_SIZE
+
+        # If map is smaller than screen x/y, this fixes the issue of
+        # the mouse coord and map coord not being in sync
+
+        # If map is smaller than screen, than subtract it by # of tiles not in map
+        if (self.map_data.tilewidth < screen_x):
+            mouse_x = mouse_x - (screen_x - self.map_data.tilewidth)
+        if (self.map_data.tileheight < screen_y):
+            mouse_y = mouse_y - (screen_y - self.map_data.tileheight)
+
+        return mouse_x, mouse_y
