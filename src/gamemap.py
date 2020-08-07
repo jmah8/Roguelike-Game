@@ -129,7 +129,7 @@ def gen_map(game):
     map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
     tree = Tree(map_array)
     tree.build_bsp()
-    tree.make_room()
+    tree.build_rooms()
     tree.build_path()
     # tree.print_tree()
     tree.print_map()

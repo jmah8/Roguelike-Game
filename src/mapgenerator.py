@@ -280,16 +280,16 @@ class Tree:
         self._build_bsp(node.left_child)
         self._build_bsp(node.right_child)
 
-    def make_room(self):
+    def build_rooms(self):
         """
         Makes room in nodes if root is not None
         """
         if self.root is not None:
-            self._make_rooms(self.root)
+            self._build_room(self.root)
         else:
             print("Root is None")
 
-    def _make_rooms(self, node):
+    def _build_room(self, node):
         # TODO: could change it so the SUB_DUNGEON width/height correspond to the actual room dimensions
         #       instead of sub dungeon dimension
         """
@@ -306,11 +306,11 @@ class Tree:
             return None
 
         # Post order traversal of nodes 
-        left = self._make_rooms(node.left_child)
-        right = self._make_rooms(node.right_child)
+        left = self._build_room(node.left_child)
+        right = self._build_room(node.right_child)
 
         if left is None and right is None:
-            new_room = self._make_room_in_leaf_node(node)
+            new_room = self._build_room_in_leaf_node(node)
             node.child_room_list.append(new_room)
         else:
             node.child_room_list = node.child_room_list + left
@@ -318,7 +318,7 @@ class Tree:
 
         return node.child_room_list
 
-    def _make_room_in_leaf_node(self, node):
+    def _build_room_in_leaf_node(self, node):
         """
         Makes room in leaf nodes only and returns the room made
 
@@ -488,7 +488,7 @@ class Tree:
             if right:
                 paths = paths + right
             paths.append(path)
-            node.child_room_list = node.child_room_list + paths
+            # node.child_room_list = node.child_room_list + paths
             node.path_list = node.path_list + paths
             return paths
 
@@ -686,7 +686,48 @@ class Tree:
             # if (self.map_array[y][(left_child_down_x + left_x)] == '1'):
             self.map_array[y][(left_child_down_x + left_x)] = PATH
 
+    def _build_path_between_paths_vert(self, node):
+        # Horizontally split means the two paths are on top of each other
+        # therefore we should find if it is vertically adjacent
+        for l_path in node.left_child.path_list:
+            for r_path in node.right_child.path_list:
+                if self._find_if_paths_are_vert_adjacent(l_path, r_path):
+                    path = self._build_vert_straight_path(l_path, r_path)
+                    return path
+        return None
+
+    def _build_path_between_rooms_vert(self, node):
+        # Horizontally split means the two subdungeons are on top of each other
+        # therefore we should find if it is vertically adjacent
+        for l_room in node.left_child.child_room_list:
+            for r_room in node.right_child.child_room_list:
+                if self._find_if_rooms_are_vert_adjacent(l_room, r_room):
+                    path = self._build_vert_straight_path(l_room, r_room)
+                    return path
+        return None
+
+    def _build_path_between_paths_hor(self, node):
+        # Vertically split means the two subdungeons are beside each other
+        # therefore we should find if it is horizontally adjacent
+        for l_path in node.left_child.path_list:
+            for r_path in node.right_child.path_list:
+                if self._find_if_paths_are_hor_adjacent(l_path, r_path):
+                    path = self._build_hor_straight_path(l_path, r_path)
+                    return path
+        return None
+
+    def _build_path_between_rooms_hor(self, node):
+        # Vertically split means the two subdungeons are beside each other
+        # therefore we should find if it is horizontally adjacent
+        for l_room in node.left_child.child_room_list:
+            for r_room in node.right_child.child_room_list:
+                if self._find_if_rooms_are_hor_adjacent(l_room, r_room):
+                    path = self._build_hor_straight_path(l_room, r_room)
+                    return path
+        return None
+
     def build_path_to_closest_rooms(self, node):
+
         """
         Builds paths between adjacent children rooms and
         returns path made
@@ -701,31 +742,23 @@ class Tree:
             # Horizontally split means the two subdungeons are on top of each other
             # therefore we should find if it is vertically adjacent
 
-            # NOTE:
-            # The 2 shuffle allows for paths to be formed
-            # between room/path and path/path.
-            random.shuffle(node.left_child.child_room_list)
-            random.shuffle(node.right_child.child_room_list)
-            for l_room in node.left_child.child_room_list:
-                for r_room in node.right_child.child_room_list:
-                    if self._find_if_rooms_are_vert_adjacent(l_room, r_room):
-                        path = self._build_vert_straight_path(l_room, r_room)
-                        return path
+            path = self._build_path_between_paths_vert(node)
+            if path is not None:
+                return path
+            else:
+                path = self._build_path_between_rooms_vert(node)
+                return path
 
         else:
             # Vertically split means the two subdungeons are beside each other
             # therefore we should find if it is horizontally adjacent
 
-            # NOTE:
-            # The 2 shuffle allows for paths to be formed
-            # between room/path and path/path.
-            random.shuffle(node.left_child.child_room_list)
-            random.shuffle(node.right_child.child_room_list)
-            for l_room in node.left_child.child_room_list:
-                for r_room in node.right_child.child_room_list:
-                    if self._find_if_rooms_are_hor_adjacent(l_room, r_room):
-                        path = self._build_hor_straight_path(l_room, r_room)
-                        return path
+            path = self._build_path_between_paths_hor(node)
+            if path is not None:
+                return path
+            else:
+                path = self._build_path_between_rooms_hor(node)
+                return path
 
     def _find_if_rooms_are_vert_adjacent(self, left_room, right_room):
         """
@@ -748,12 +781,41 @@ class Tree:
         adj = path_min_x <= path_max_x
 
         if adj:
-            left_y = left_room.down_right[1]
-            right_y = right_room.up_left[1]
+            left_y = left_room.down_right_y
+            right_y = right_room.up_left_y
             diff_y = right_y - left_y
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE
             # min and max
             return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
+
+        return False
+
+    def _find_if_paths_are_vert_adjacent(self, left_path, right_path):
+        """
+        Return true if both paths are vertically adjacent
+
+        Path are considered vertically adjacent if the rooms have at
+        least 1 common x coord and the distance between them is between
+        2x DIST_FROM_SISTER_NODE_MIN and 2x SUB_DUNGEON_WIDTH
+
+        Args:
+            left_path (Room): left room to check
+            right_path (Room): right room to check
+        """
+
+        # min and max x value that both rooms share in common
+        path_min_x, path_max_x = find_common_x_between_rooms(left_path, right_path)
+
+        # If both rooms are in the same x range = True, else False
+        adj = path_min_x <= path_max_x
+
+        if adj:
+            left_y = left_path.down_right_y
+            right_y = right_path.up_left_y
+            diff_y = right_y - left_y
+            # Return if paths are adjacent to each other, ie if the distance between
+            # are 2x DIST_FROM_SISTER_NODE_MIN and 2x SUB_DUNGEON_WIDTH
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * (SUB_DUNGEON_HEIGHT - DIST_FROM_SISTER_NODE_MIN)))
 
         return False
 
@@ -778,12 +840,41 @@ class Tree:
         adj = path_min_y <= path_max_y
 
         if adj:
-            left_x = left_room.down_right[0]
-            right_x = right_room.up_left[0]
+            left_x = left_room.down_right_x
+            right_x = right_room.up_left_x
             diff_y = right_x - left_x
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE
             # min and max
             return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
+
+        return False
+
+    def _find_if_paths_are_hor_adjacent(self, left_path, right_path):
+        """
+        Return true if both paths are horizontally adjacent
+
+        Paths are considered horizontally adjacent if the rooms have at
+        least 1 common y coord and the distance between them is between
+        2x DIST_FROM_SISTER_NODE_MIN and 2x SUB_DUNGEON_WIDTH
+
+        Args:
+            left_path (Room): left room to check
+            right_path (Room): right room to check
+        """
+
+        # min and max y value that both rooms share in common
+        path_min_y, path_max_y = find_common_y_between_rooms(left_path, right_path)
+
+        # If both rooms are in the same y range = True, else false
+        adj = path_min_y <= path_max_y
+
+        if adj:
+            left_x = left_path.down_right_x
+            right_x = right_path.up_left_x
+            diff_y = right_x - left_x
+            # Return if paths are adjacent to each other, ie if the distance between
+            # are 2x DIST_FROM_SISTER_NODE_MIN and 2x SUB_DUNGEON_WIDTH
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 *( SUB_DUNGEON_WIDTH - DIST_FROM_SISTER_NODE_MIN)))
 
         return False
 

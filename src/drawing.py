@@ -44,7 +44,6 @@ def _draw_unseen_tile(game, scale_factor_x, scale_factor_y):
                           (SPRITE_SIZE // scale_factor_x + 2),
                           (SPRITE_SIZE // scale_factor_y + 2)))
 
-
 def _draw_minimap_rooms(game, scale_factor_x, scale_factor_y):
     """
     Draws rooms (and paths since paths are considered rooms)
@@ -55,11 +54,11 @@ def _draw_minimap_rooms(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    list_of_rooms = game.map_tree.root.child_room_list
+    list_of_rooms = game.map_tree.root.child_room_list + game.map_tree.root.path_list
     for room in list_of_rooms:
         pygame.draw.rect(game.surface, WHITE,
-                         ((room.x * SPRITE_SIZE // scale_factor_x),
-                          (room.y * SPRITE_SIZE // scale_factor_y),
+                         ((room.up_left_x * SPRITE_SIZE // scale_factor_x),
+                          (room.up_left_y * SPRITE_SIZE // scale_factor_y),
                           # + 1 is to make paths directly touch room
                           # without making too big of difference in size
                           (room.width * SPRITE_SIZE // scale_factor_x + 1),
