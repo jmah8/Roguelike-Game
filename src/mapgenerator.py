@@ -343,38 +343,6 @@ class Tree:
 
         return new_room
 
-    def _get_room_from_random_immediate_child(self, node):
-        """
-        Makes room in parent node by choosing a room from one of it's immediate children
-
-        Args:
-            node (Node): node to make room in
-        """
-        ran = random.randint(0, 1)
-        if ran == 0:
-            up_left = node.left_child.room.up_left
-            down_right = node.left_child.room.down_right
-        else:
-            up_left = node.right_child.room.up_left
-            down_right = node.right_child.room.down_right
-
-        new_room = Room(up_left, down_right)
-        node.room = new_room
-        return new_room
-
-    def _get_room_from_random_child(self, node):
-        """
-        Makes room in parent node by choosing a room from any of it's children
-
-        Args:
-            node (Node): node to make room in
-        """
-        room = random.choice(node.child_room_list)
-
-        new_room = room
-        node.room = new_room
-        return new_room
-
     def build_path(self):
         """
         Builds path to join sister nodes
@@ -384,77 +352,6 @@ class Tree:
             self._build_path_intelligent(self.root)
         else:
             print("Root is None")
-
-    def _build_path(self, node):
-        """
-        Recursively builds path to join sister nodes.
-
-        Do nothing on leaf nodes. Else join the 2 children node's room with a random
-        single tile path. Will cut through other rooms and paths. If there is no
-        straight path from both rooms, randomly make a zigzag path to connect the 2 rooms
-
-        Args:
-            node (Node): node to build path for
-        """
-        if node is None:
-            return None
-
-        # If leaf node do nothing
-        if node.left_child is None and node.right_child is None:
-            return None
-
-        else:
-            left_child = node.left_child
-            right_child = node.right_child
-
-            # If node was split horizontally
-            if node.split_hor:
-                path_min_x, path_max_x = find_common_x_between_rooms(left_child.room, right_child.room)
-
-                # Case: where left child is lower than right child (ie no straight path to both rooms)
-                # 1111|1111
-                # 1111|1001
-                # 1111|1001
-                # 1111|1111
-                # 1000|1111
-                # 1000|1111
-                # 1111|1111
-
-                # 1 = wall
-                # 0 = floor
-                # | = where the node was split (represents nothing on actual map)
-                if path_max_x < path_min_x:
-                    self._hor_zigzag_path(left_child, right_child)
-
-                # There is a straight path to both rooms
-                else:
-                    self._hor_straight_path(node, path_min_x, path_max_x)
-
-            # If node was vertically split
-            else:
-                path_min_y, path_max_y = find_common_y_between_rooms(left_child.room, right_child.room)
-
-                # Case: where left child (top one) is more to the right than the right child (bottom one)
-                # (ie no straight path to both rooms)
-                # 11111111
-                # 11111001
-                # 11111001
-                # 11111111
-                # --------
-                # 11111111
-                # 10001111
-                # 10001111
-                # 11111111
-
-                # 1 = wall
-                # 0 = floor
-                # - = where node was split (represents nothing on actual map)
-                if path_max_y < path_min_y:
-                    self._vert_zigzag_path(left_child, right_child)
-
-                # Else there is a straight path to both rooms
-                else:
-                    self._vert_straight_path(node, path_min_y, path_max_y)
 
     def _build_path_intelligent(self, node):
         """
@@ -493,22 +390,6 @@ class Tree:
             # node.child_room_list = node.child_room_list + paths
             node.path_list = node.path_list + paths
             return paths
-
-    def _hor_straight_path(self, node, path_min_x, path_max_x):
-        """
-        Helper function to build straight path for horizontally split node
-
-        Args:
-            node (Node): Current node to make path between 2 of it's children nodes
-            path_min_x (int): minimun x coordinate that the path must be
-            path_max_x (int): maximum x coordinate that the path must be
-        """
-        path_x = random.randint(path_min_x, path_max_x)
-
-        path_ul = (path_x, node.left_child.room.down_right_y + 1)
-        path_lr = (path_x + 1, node.right_child.room.up_left_y)
-
-        self._draw_hor_straight_path_on_map(path_ul, path_lr)
 
     def _build_hor_straight_path(self, left_room, right_room):
         """
@@ -550,22 +431,6 @@ class Tree:
             for x in range(path_ul[0], path_lr[0] + 1):
                 self.map_array[y][x] = PATH
 
-    def _vert_straight_path(self, node, path_min_y, path_max_y):
-        """
-        Helper function to build straight path for vertically split node
-
-        Args:
-            node (Node): Current node to make path between 2 of it's children nodes
-            path_min_y (int): minimun y coordinate that the path must be
-            path_max_y (int): maximum y coordinate that the path must be
-        """
-        path_y = random.randint(path_min_y, path_max_y)
-
-        path_ul = (node.left_child.room.down_right_x + 1, path_y)
-        path_lr = (node.right_child.room.up_left_x, path_y + 1)
-
-        self._draw_vert_straight_path_on_map(path_ul, path_lr)
-
     def _build_vert_straight_path(self, left_room, right_room):
         """
         Helper function to build straight path for vertically split node
@@ -605,88 +470,6 @@ class Tree:
         for y in range(path_ul[1], path_lr[1] + 1):
             for x in range(path_ul[0], path_lr[0] + 1):
                 self.map_array[y][x] = PATH
-
-    def _hor_zigzag_path(self, left_child, right_child):
-        """
-        Helper function to build a zigzag path for a horizontally split node
-
-        Args:
-            left_child (Node): left child to build path to
-            right_child (Node): right child to build path to
-        """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
-
-        # x coord of path connecting the left room
-        left_x = random.randint(left_child_up_x, left_child_down_x)
-        # x coord of path connecting the right room
-        right_x = random.randint(right_child_up_x, right_child_down_x)
-
-        diff_y = right_child_up_y - left_child_down_y
-
-        # make sure that the path has atleast one square sticking straigh 
-        # out from children before zigzagging
-        left_y = random.randint(2, diff_y - 2)
-        right_y = diff_y - left_y
-
-        low = min(left_x, right_x)
-        high = max(left_x, right_x)
-
-        # draw zig part for right child
-        for y in range(right_child_up_y - right_y, right_child_up_y):
-            # if (self.map_array[y][right_x] == '1'):
-            self.map_array[y][right_x] = PATH
-
-        # draw zig part for left child
-        for y in range(left_child_down_y + 1, left_child_down_y + left_y):
-            # if (self.map_array[y][left_x] == '1'):
-            self.map_array[y][left_x] = PATH
-
-        # draw zag part that connects the two zig parts
-        for x in range(low, high + 1):
-            # if (self.map_array[left_child_down_y + left_y][x] == '1'):
-            self.map_array[left_child_down_y + left_y][x] = PATH
-
-    def _vert_zigzag_path(self, left_child, right_child):
-        """
-        Helper function to build a zigzag path for a vertically split node
-
-        Args:
-            left_child (Node): left child to build path to
-            right_child (Node): right child to build path to
-        """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
-
-        # y coord of path connecting the left room
-        left_y = random.randint(left_child_up_y, left_child_down_y)
-        # y coord of path connecting the right room
-        right_y = random.randint(right_child_up_y, right_child_down_y)
-
-        diff_x = right_child_up_x - left_child_down_x
-
-        # make sure that the path has atleast one square sticking straigh 
-        # out from children before zigzagging
-        left_x = random.randint(2, diff_x - 2)
-        right_x = diff_x - left_x
-
-        low = min(left_y, right_y)
-        high = max(left_y, right_y)
-
-        # draw zig part for left child
-        for x in range(left_child_down_x + 1, left_child_down_x + left_x):
-            # if (self.map_array[left_y][x] == '1'):
-            self.map_array[left_y][x] = PATH
-
-        # draw zig part for left child
-        for x in range(right_child_up_x - right_x, right_child_up_x):
-            # if (self.map_array[right_y][x] == '1'):
-            self.map_array[right_y][x] = PATH
-
-        # draw zag part that connects the two zig parts
-        for y in range(low, high + 1):
-            # if (self.map_array[y][(left_child_down_x + left_x)] == '1'):
-            self.map_array[y][(left_child_down_x + left_x)] = PATH
 
     def _build_path_between_paths_vert(self, node):
         """
@@ -964,3 +747,224 @@ class Tree:
             for val in row:
                 print(val, end='')
             print()
+
+# All code below is for build_path
+    def _get_room_from_random_immediate_child(self, node):
+        """
+        Makes room in parent node by choosing a room from one of it's immediate children
+
+        Args:
+            node (Node): node to make room in
+        """
+        ran = random.randint(0, 1)
+        if ran == 0:
+            up_left = node.left_child.room.up_left
+            down_right = node.left_child.room.down_right
+        else:
+            up_left = node.right_child.room.up_left
+            down_right = node.right_child.room.down_right
+
+        new_room = Room(up_left, down_right)
+        node.room = new_room
+        return new_room
+
+    def _get_room_from_random_child(self, node):
+        """
+        Makes room in parent node by choosing a room from any of it's children
+
+        Args:
+            node (Node): node to make room in
+        """
+        room = random.choice(node.child_room_list)
+
+        new_room = room
+        node.room = new_room
+        return new_room
+
+    def _build_path(self, node):
+        """
+        Recursively builds path to join sister nodes.
+
+        Do nothing on leaf nodes. Else join the 2 children node's room with a random
+        single tile path. Will cut through other rooms and paths. If there is no
+        straight path from both rooms, randomly make a zigzag path to connect the 2 rooms
+
+        Args:
+            node (Node): node to build path for
+        """
+        if node is None:
+            return None
+
+        self._build_path(node.left_child)
+        self._build_path(node.right_child)
+
+        # If leaf node do nothing
+        if node.left_child is None and node.right_child is None:
+            return None
+
+        else:
+            left_child = node.left_child
+            right_child = node.right_child
+
+            # If node was split horizontally
+            if node.split_hor:
+                path_min_x, path_max_x = find_common_x_between_rooms(left_child.room, right_child.room)
+
+                # Case: where left child is lower than right child (ie no straight path to both rooms)
+                # 1111|1111
+                # 1111|1001
+                # 1111|1001
+                # 1111|1111
+                # 1000|1111
+                # 1000|1111
+                # 1111|1111
+
+                # 1 = wall
+                # 0 = floor
+                # | = where the node was split (represents nothing on actual map)
+                if path_max_x < path_min_x:
+                    self._hor_zigzag_path(left_child, right_child)
+
+                # There is a straight path to both rooms
+                else:
+                    self._hor_straight_path(node, path_min_x, path_max_x)
+
+            # If node was vertically split
+            else:
+                path_min_y, path_max_y = find_common_y_between_rooms(left_child.room, right_child.room)
+
+                # Case: where left child (top one) is more to the right than the right child (bottom one)
+                # (ie no straight path to both rooms)
+                # 11111111
+                # 11111001
+                # 11111001
+                # 11111111
+                # --------
+                # 11111111
+                # 10001111
+                # 10001111
+                # 11111111
+
+                # 1 = wall
+                # 0 = floor
+                # - = where node was split (represents nothing on actual map)
+                if path_max_y < path_min_y:
+                    self._vert_zigzag_path(left_child, right_child)
+
+                # Else there is a straight path to both rooms
+                else:
+                    self._vert_straight_path(node, path_min_y, path_max_y)
+
+    def _hor_straight_path(self, node, path_min_x, path_max_x):
+        """
+        Helper function to build straight path for horizontally split node
+
+        Args:
+            node (Node): Current node to make path between 2 of it's children nodes
+            path_min_x (int): minimun x coordinate that the path must be
+            path_max_x (int): maximum x coordinate that the path must be
+        """
+        path_x = random.randint(path_min_x, path_max_x)
+
+        path_ul = (path_x, node.left_child.room.down_right_y + 1)
+        path_lr = (path_x, node.right_child.room.up_left_y - 1)
+
+        self._draw_hor_straight_path_on_map(path_ul, path_lr)
+
+    def _vert_straight_path(self, node, path_min_y, path_max_y):
+        """
+        Helper function to build straight path for vertically split node
+
+        Args:
+            node (Node): Current node to make path between 2 of it's children nodes
+            path_min_y (int): minimun y coordinate that the path must be
+            path_max_y (int): maximum y coordinate that the path must be
+        """
+        path_y = random.randint(path_min_y, path_max_y)
+
+        path_ul = (node.left_child.room.down_right_x + 1, path_y)
+        path_lr = (node.right_child.room.up_left_x - 1, path_y)
+
+        self._draw_vert_straight_path_on_map(path_ul, path_lr)
+
+    def _hor_zigzag_path(self, left_child, right_child):
+        """
+        Helper function to build a zigzag path for a horizontally split node
+
+        Args:
+            left_child (Node): left child to build path to
+            right_child (Node): right child to build path to
+        """
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
+
+        # x coord of path connecting the left room
+        left_x = random.randint(left_child_up_x, left_child_down_x)
+        # x coord of path connecting the right room
+        right_x = random.randint(right_child_up_x, right_child_down_x)
+
+        diff_y = right_child_up_y - left_child_down_y
+
+        # make sure that the path has atleast one square sticking straigh 
+        # out from children before zigzagging
+        left_y = random.randint(2, diff_y - 2)
+        right_y = diff_y - left_y
+
+        low = min(left_x, right_x)
+        high = max(left_x, right_x)
+
+        # draw zig part for right child
+        for y in range(right_child_up_y - right_y, right_child_up_y):
+            # if (self.map_array[y][right_x] == '1'):
+            self.map_array[y][right_x] = PATH
+
+        # draw zig part for left child
+        for y in range(left_child_down_y + 1, left_child_down_y + left_y):
+            # if (self.map_array[y][left_x] == '1'):
+            self.map_array[y][left_x] = PATH
+
+        # draw zag part that connects the two zig parts
+        for x in range(low, high + 1):
+            # if (self.map_array[left_child_down_y + left_y][x] == '1'):
+            self.map_array[left_child_down_y + left_y][x] = PATH
+
+    def _vert_zigzag_path(self, left_child, right_child):
+        """
+        Helper function to build a zigzag path for a vertically split node
+
+        Args:
+            left_child (Node): left child to build path to
+            right_child (Node): right child to build path to
+        """
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
+
+        # y coord of path connecting the left room
+        left_y = random.randint(left_child_up_y, left_child_down_y)
+        # y coord of path connecting the right room
+        right_y = random.randint(right_child_up_y, right_child_down_y)
+
+        diff_x = right_child_up_x - left_child_down_x
+
+        # make sure that the path has atleast one square sticking straigh 
+        # out from children before zigzagging
+        left_x = random.randint(2, diff_x - 2)
+        right_x = diff_x - left_x
+
+        low = min(left_y, right_y)
+        high = max(left_y, right_y)
+
+        # draw zig part for left child
+        for x in range(left_child_down_x + 1, left_child_down_x + left_x):
+            # if (self.map_array[left_y][x] == '1'):
+            self.map_array[left_y][x] = PATH
+
+        # draw zig part for left child
+        for x in range(right_child_up_x - right_x, right_child_up_x):
+            # if (self.map_array[right_y][x] == '1'):
+            self.map_array[right_y][x] = PATH
+
+        # draw zag part that connects the two zig parts
+        for y in range(low, high + 1):
+            # if (self.map_array[y][(left_child_down_x + left_x)] == '1'):
+            self.map_array[y][(left_child_down_x + left_x)] = PATH
