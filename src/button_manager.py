@@ -55,7 +55,7 @@ class Button_Manager:
                 unique
             menu_option (function): function to call when button pressed
         """
-        if (not self.button_count >= NUM_OF_BUTTONS):
+        if not self.button_count >= NUM_OF_BUTTONS:
             button = Button(self.button_count, img, menu_option)
             if button_id not in self.button_dict:
                 self.button_dict[button_id] = button

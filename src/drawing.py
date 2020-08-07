@@ -5,102 +5,6 @@ import fov
 import sprite
 from button_manager import Button_Manager
 
-
-def _draw_minimap_player(game, scale_factor_x, scale_factor_y):
-    """
-    Draws player onto minimap
-
-    Args:
-        game (Game): Game to draw player on
-        scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
-    """
-    pygame.draw.rect(game.surface, RED,
-                     ((game.player.rect.topleft[0] // scale_factor_x),
-                      (game.player.rect.topleft[1] // scale_factor_y),
-                      # + 1 is to make player directly touch walls
-                      # without making too big of difference in size
-                      (game.player.rect.size[0] // scale_factor_x + 1),
-                      (game.player.rect.size[1] // scale_factor_y + 1)))
-
-
-def _draw_unseen_tile(game, scale_factor_x, scale_factor_y):
-    """
-    Draws unseen tiles
-
-    Args:
-        game (Game): Game to draw unseen tile on
-        scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
-    """
-    for tile in game.map_data.unseen_tiles:
-        tile_x = tile[0]
-        tile_y = tile[1]
-        pygame.draw.rect(game.surface, BLACK,
-                         ((tile_x * SPRITE_SIZE // scale_factor_x),
-                          (tile_y * SPRITE_SIZE // scale_factor_y),
-                          # + 2 is to make black cover everything since
-                          # add +1 twice for player and room
-                          (SPRITE_SIZE // scale_factor_x + 2),
-                          (SPRITE_SIZE // scale_factor_y + 2)))
-
-def _draw_minimap_rooms(game, scale_factor_x, scale_factor_y):
-    """
-    Draws rooms (and paths since paths are considered rooms)
-    onto minimap
-
-    Args:
-        game (Game): Game to draw rooms on
-        scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
-    """
-    list_of_rooms = game.map_tree.root.child_room_list + game.map_tree.root.path_list
-    for room in list_of_rooms:
-        pygame.draw.rect(game.surface, WHITE,
-                         ((room.up_left_x * SPRITE_SIZE // scale_factor_x),
-                          (room.up_left_y * SPRITE_SIZE // scale_factor_y),
-                          # + 1 is to make paths directly touch room
-                          # without making too big of difference in size
-                          (room.width * SPRITE_SIZE // scale_factor_x + 1),
-                          (room.height * SPRITE_SIZE // scale_factor_y + 1)))
-
-
-def _draw_minimap_walls(game, scale_factor_x, scale_factor_y):
-    """
-    Draws wall onto minimap
-
-    Args:
-        game (Game): Game to draw wall on
-        scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
-    """
-    pygame.draw.rect(game.surface, BLACK,
-                     (0, 0,
-                      game.map_data.width // scale_factor_x,
-                      game.map_data.height // scale_factor_y))
-
-
-def draw_minimap(game):
-    """
-    Draws minimap on topleft of screen. This is a
-    representation of the actual map
-
-    Arg:
-        game (Game): game to load minimap to
-    """
-    minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
-
-    map_data = game.map_data
-
-    scale_factor_x = (map_data.width // (RESOLUTION[0] // MINIMAP_SCALE))
-    scale_factor_y = (map_data.height // (RESOLUTION[1] // MINIMAP_SCALE))
-
-    _draw_minimap_walls(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_rooms(game, scale_factor_x, scale_factor_y)
-    _draw_unseen_tile(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_player(game, scale_factor_x, scale_factor_y)
-
-
 class Drawing:
     def __init__(self, game):
         self.game = game
@@ -152,8 +56,8 @@ class Drawing:
 
         self.draw_grid()
 
-        if (self.game.mini_map_on):
-            draw_minimap(self.game)
+        if self.game.mini_map_on:
+            self.draw_minimap(self.game)
 
         self.draw_debug()
         self.draw_messages()
@@ -256,8 +160,6 @@ class Drawing:
         map_data = self.game.map_data
         tile_array = self.game.tile_array
 
-        resol_x = RESOLUTION[0] // MINIMAP_SCALE
-        resol_y = RESOLUTION[1] // MINIMAP_SCALE
         scale_tile_width = RESOLUTION[0] / map_data.tilewidth
         scale_tile_height = RESOLUTION[1] / map_data.tileheight
         scale_factor_x = SPRITE_SIZE / scale_tile_width
@@ -272,7 +174,6 @@ class Drawing:
         #     (MINIMAP_RESOLUTION))
         # minimap.blit(scaled_map, (0, 0))
 
-        # Draws only map with fov but bad performance
         for y in range(map_data.tileheight):
             for x in range(map_data.tilewidth):
                 tile = tile_array[y][x]
@@ -310,3 +211,96 @@ class Drawing:
             y_coord (int): y coord to draw tile onto
         """
         self.game.surface.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
+
+    def _draw_minimap_player(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws player onto minimap
+
+        Args:
+            game (Game): Game to draw player on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        pygame.draw.rect(game.surface, RED,
+                         ((game.player.rect.topleft[0] // scale_factor_x),
+                          (game.player.rect.topleft[1] // scale_factor_y),
+                          # + 1 is to make player directly touch walls
+                          # without making too big of difference in size
+                          (game.player.rect.size[0] // scale_factor_x + 1),
+                          (game.player.rect.size[1] // scale_factor_y + 1)))
+
+    def _draw_unseen_tile(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws unseen tiles
+
+        Args:
+            game (Game): Game to draw unseen tile on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        for tile in game.map_data.unseen_tiles:
+            tile_x = tile[0]
+            tile_y = tile[1]
+            pygame.draw.rect(game.surface, BLACK,
+                             ((tile_x * SPRITE_SIZE // scale_factor_x),
+                              (tile_y * SPRITE_SIZE // scale_factor_y),
+                              # + 2 is to make black cover everything since
+                              # add +1 twice for player and room
+                              (SPRITE_SIZE // scale_factor_x + 2),
+                              (SPRITE_SIZE // scale_factor_y + 2)))
+
+    def _draw_minimap_rooms(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws rooms (and paths since paths are considered rooms)
+        onto minimap
+
+        Args:
+            game (Game): Game to draw rooms on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        list_of_rooms = game.map_tree.root.child_room_list + game.map_tree.root.path_list
+        for room in list_of_rooms:
+            pygame.draw.rect(game.surface, WHITE,
+                             ((room.up_left_x * SPRITE_SIZE // scale_factor_x),
+                              (room.up_left_y * SPRITE_SIZE // scale_factor_y),
+                              # + 1 is to make paths directly touch room
+                              # without making too big of difference in size
+                              (room.width * SPRITE_SIZE // scale_factor_x + 1),
+                              (room.height * SPRITE_SIZE // scale_factor_y + 1)))
+
+    def _draw_minimap_walls(self, game, scale_factor_x, scale_factor_y):
+        """
+        Draws wall onto minimap
+
+        Args:
+            game (Game): Game to draw wall on
+            scale_factor_x (int): what to scale x by
+            scale_factor_y (int): what to sclae y by
+        """
+        pygame.draw.rect(game.surface, BLACK,
+                         (0, 0,
+                          game.map_data.width // scale_factor_x,
+                          game.map_data.height // scale_factor_y))
+
+    def draw_minimap(self, game):
+        """
+        Draws minimap on topleft of screen. This is a
+        representation of the actual map
+
+        Arg:
+            game (Game): game to load minimap to
+        """
+        minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
+
+        map_data = game.map_data
+
+        scale_factor_width = minimap_width / map_data.tilewidth
+        scale_factor_height = minimap_height / map_data.tileheight
+        scale_factor_x = SPRITE_SIZE / scale_factor_width
+        scale_factor_y = SPRITE_SIZE / scale_factor_height
+
+        self._draw_minimap_walls(game, scale_factor_x, scale_factor_y)
+        self._draw_minimap_rooms(game, scale_factor_x, scale_factor_y)
+        self._draw_unseen_tile(game, scale_factor_x, scale_factor_y)
+        self._draw_minimap_player(game, scale_factor_x, scale_factor_y)

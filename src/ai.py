@@ -63,23 +63,22 @@ class SmartAi:
         else wander
         """
         creature = self.owner.creature
-        x_coord = creature.x
-        y_coord = creature.y
+        creature_x = creature.x
+        creature_y = creature.y
         player_x = self.owner.game.player.x
         player_y = self.owner.game.player.y
-        # Diff in monster and player coord
-        diff_x = x_coord - player_x
-        diff_y = y_coord - player_y
+        diff_x = creature_x - player_x
+        diff_y = creature_y - player_y
 
         # If player is not in enemy FOV wander
-        if (abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV):
+        if abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV:
             creature.move(random.choice(
                 [0, 1, -1]), random.choice([0, 1, -1]))
         # Else move towards player using shortest path
         else:
             # Find path to player if no path creature has no path calculated
-            if (not creature.current_path):
-                start = (x_coord, y_coord)
+            if not creature.current_path:
+                start = (creature_x, creature_y)
                 goal = (player_x, player_y)
                 visited = self.owner.game.graph.bfs(start, goal)
 
@@ -88,7 +87,7 @@ class SmartAi:
                     creature.current_path = path
 
             dest = creature.current_path.pop(0)
-            dest_x = dest[0] - x_coord
-            dest_y = dest[1] - y_coord
+            dest_x = dest[0] - creature_x
+            dest_y = dest[1] - creature_y
 
             creature.move(dest_x, dest_y)
