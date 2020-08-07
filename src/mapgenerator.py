@@ -315,6 +315,8 @@ class Tree:
         else:
             node.child_room_list = node.child_room_list + left
             node.child_room_list = node.child_room_list + right
+            # Only required for _build_path and not _build_path_intelligently
+            # node.room = self._get_room_from_random_child(node)
 
         return node.child_room_list
 
@@ -387,8 +389,8 @@ class Tree:
         """
         Recursively builds path to join sister nodes.
 
-        Do nothing on leaf nodes. Else join the 2 children node's room with a random 
-        single tile path. Will cut through other rooms and paths. If there is no 
+        Do nothing on leaf nodes. Else join the 2 children node's room with a random
+        single tile path. Will cut through other rooms and paths. If there is no
         straight path from both rooms, randomly make a zigzag path to connect the 2 rooms
 
         Args:
@@ -687,6 +689,16 @@ class Tree:
             self.map_array[y][(left_child_down_x + left_x)] = PATH
 
     def _build_path_between_paths_vert(self, node):
+        """
+        Builds path between paths if they are vertically adjacent
+         and returns path made, else return None
+
+        Args:
+            node (Node): Node to build path between its children's room
+
+        Returns:
+            path (Room): Path made between two of node's children
+        """
         # Horizontally split means the two paths are on top of each other
         # therefore we should find if it is vertically adjacent
         for l_path in node.left_child.path_list:
@@ -697,6 +709,16 @@ class Tree:
         return None
 
     def _build_path_between_rooms_vert(self, node):
+        """
+        Builds path between rooms if there are vertically adjacent
+        and returns path made, else return None
+
+        Args:
+            node (Node): Node to build path between its children's room
+
+        Returns:
+            path (Room): Path made between two of node's children
+        """
         # Horizontally split means the two subdungeons are on top of each other
         # therefore we should find if it is vertically adjacent
         for l_room in node.left_child.child_room_list:
@@ -707,6 +729,16 @@ class Tree:
         return None
 
     def _build_path_between_paths_hor(self, node):
+        """
+        Builds path between paths if they are vertically adjacent
+        and returns path made, else return None
+
+        Args:
+            node (Node): Node to build path between its children's room
+
+        Returns:
+            path (Room): Path made between two of node's children
+        """
         # Vertically split means the two subdungeons are beside each other
         # therefore we should find if it is horizontally adjacent
         for l_path in node.left_child.path_list:
@@ -717,6 +749,16 @@ class Tree:
         return None
 
     def _build_path_between_rooms_hor(self, node):
+        """
+        Builds path between rooms if they are vertically adjacent
+        and returns path made, else return None
+
+        Args:
+            node (Node): Node to build path between its children's room
+
+        Returns:
+            path (Room): Path made between two of node's children
+        """
         # Vertically split means the two subdungeons are beside each other
         # therefore we should find if it is horizontally adjacent
         for l_room in node.left_child.child_room_list:
@@ -726,6 +768,7 @@ class Tree:
                     return path
         return None
 
+    # TODO: could add paths to path_list in here to make map more connected
     def build_path_to_closest_rooms(self, node):
 
         """
@@ -742,6 +785,9 @@ class Tree:
             # Horizontally split means the two subdungeons are on top of each other
             # therefore we should find if it is vertically adjacent
 
+            # Only this required for _build_path
+            # return self._build_path_between_rooms_vert(node)
+
             path = self._build_path_between_paths_vert(node)
             if path is not None:
                 return path
@@ -752,6 +798,9 @@ class Tree:
         else:
             # Vertically split means the two subdungeons are beside each other
             # therefore we should find if it is horizontally adjacent
+
+            # Only this required for _build_path
+            # return self._build_path_between_rooms_hor(node)
 
             path = self._build_path_between_paths_hor(node)
             if path is not None:
@@ -786,7 +835,8 @@ class Tree:
             diff_y = right_y - left_y
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE
             # min and max
-            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and \
+                   (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
 
         return False
 
@@ -814,8 +864,9 @@ class Tree:
             right_y = right_path.up_left_y
             diff_y = right_y - left_y
             # Return if paths are adjacent to each other, ie if the distance between
-            # are 2x DIST_FROM_SISTER_NODE_MIN and 2x SUB_DUNGEON_WIDTH
-            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * (SUB_DUNGEON_HEIGHT - DIST_FROM_SISTER_NODE_MIN)))
+            # are 2x DIST_FROM_SISTER_NODE_MIN and 2x (SUB_DUNGEON_WIDTH - DIST_FROM_SISTER_NODE_MIN)
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and \
+                   (diff_y <= (2 * (SUB_DUNGEON_HEIGHT - DIST_FROM_SISTER_NODE_MIN)))
 
         return False
 
@@ -845,7 +896,8 @@ class Tree:
             diff_y = right_x - left_x
             # Return if rooms are adjacent to each other, ie if the distance between them are 2 DIST_FROM_SISTER_NODE
             # min and max
-            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and \
+                   (diff_y <= (2 * DIST_FROM_SISTER_NODE_MAX))
 
         return False
 
@@ -873,8 +925,9 @@ class Tree:
             right_x = right_path.up_left_x
             diff_y = right_x - left_x
             # Return if paths are adjacent to each other, ie if the distance between
-            # are 2x DIST_FROM_SISTER_NODE_MIN and 2x SUB_DUNGEON_WIDTH
-            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and (diff_y <= (2 *( SUB_DUNGEON_WIDTH - DIST_FROM_SISTER_NODE_MIN)))
+            # are 2x DIST_FROM_SISTER_NODE_MIN and 2x (SUB_DUNGEON_WIDTH - DIST_FROM_SISTER_NODE_MIN)
+            return (diff_y >= (2 * DIST_FROM_SISTER_NODE_MIN)) and \
+                   (diff_y <= (2 *(SUB_DUNGEON_WIDTH - DIST_FROM_SISTER_NODE_MIN)))
 
         return False
 
