@@ -15,8 +15,7 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE), conv
         convert_alpha (bool): True if image already has transparent background,
             otherwise False with colorkey set to make transparent background
     """
-    dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
-    pathname = os.path.join(dirname, name)
+    pathname = os.path.join(RESOURCE_PATH, name)
     try:
         image = pygame.image.load(pathname)
     except pygame.error as message:

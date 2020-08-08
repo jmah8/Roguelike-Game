@@ -309,6 +309,7 @@ class Tree:
         left = self._build_room(node.left_child)
         right = self._build_room(node.right_child)
 
+        # Leaf node
         if left is None and right is None:
             new_room = self._build_room_in_leaf_node(node)
             node.child_room_list.append(new_room)
@@ -387,6 +388,7 @@ class Tree:
             if right:
                 paths = paths + right
             paths.append(path)
+            # For _build_path
             # node.child_room_list = node.child_room_list + paths
             node.path_list = node.path_list + paths
             return paths
@@ -555,11 +557,11 @@ class Tree:
     def build_path_to_closest_rooms(self, node):
 
         """
-        Builds paths between adjacent children rooms and
-        returns path made
+        Tries to build paths between adjacent children paths and if not possible,
+        build paths between rooms and returns path made
 
         Args:
-            node (Node): node to build path between its children's room
+            node (Node): node to build path between its children's room/paths
 
         Returns:
             path (Room): path made between two of node's children

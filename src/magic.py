@@ -100,11 +100,20 @@ def line(start, end, map):
     return points
 
 
-def cast_fireball(game, caster, damage, lines):
+def cast_fireball(game, caster, damage, line):
+    """
+    Throws fireball following line stopping at first enemy hit.
+    
+    Args:
+        game (Game): Game with game data
+        caster (Creature): Creature that casted fireball
+        damage (int): Damage fireball will do to enemy
+        line (List): List of coordinates for fireball to follow
+    """
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     creature_hit = False
-    for (x, y) in lines:
+    for (x, y) in line:
         if creature_hit:
             break
         # damage first enemy in list of tile
@@ -117,10 +126,19 @@ def cast_fireball(game, caster, damage, lines):
 
 
 # TODO: make it so enemies wont target through their allies
-def cast_lightning(game, caster, damage, lines):
+def cast_lightning(game, caster, damage, line):
+    """
+    Throws lightning following line, hitting all enemies in path.
+
+    Args:
+        game (Game): Game with game data
+        caster (Creature): Creature that casted lightning
+        damage (int): Damage fireball will do to enemy
+        line (List): List of coordinates for lightning to follow
+    """
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
-    for (x, y) in lines:
+    for (x, y) in line:
         for obj in game.CREATURES:
             if enemies.has(obj):
                 if (obj.x, obj.y) == (x, y):

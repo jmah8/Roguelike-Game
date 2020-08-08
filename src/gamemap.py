@@ -118,7 +118,7 @@ class MapInfo:
 
         for y in range(self.tileheight):
             for x in range(self.tilewidth):
-                if (not map_array[y][x] == WALL):
+                if not map_array[y][x] == WALL:
                     self.unseen_tiles.add((x, y))
 
 

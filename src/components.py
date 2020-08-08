@@ -39,7 +39,6 @@ class Creature:
         """
         return self.owner.x
 
-
     @property
     def y(self):
         """
@@ -64,7 +63,6 @@ class Creature:
 
         if self.hp <= 0 and self.killable:
             self.die()
-            
 
     def die(self):
         """
@@ -95,7 +93,7 @@ class Creature:
         self.owner.rect.topleft = (
             self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
-        if (not self.walk_through_tile):
+        if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
             creature_collide_with_wall = pygame.sprite.spritecollideany(
                 self.owner, self.owner.game.walls)
@@ -104,12 +102,11 @@ class Creature:
                 self.reverse_move(dx, dy)
 
         # check to see if entity collided with enemy and if so don't move
-        if (self.enemy_group):
+        if self.enemy_group:
             creature_hit = pygame.sprite.spritecollideany(self.owner, self.enemy_group)
             if creature_hit:
                 self.reverse_move(dx, dy)
                 self.attack(creature_hit, 1)
-
 
     def _update_anim_status(self, dx, dy):
         """
@@ -123,18 +120,17 @@ class Creature:
             dx (int): change in x
             dy (int): change in y
         """
-        if (dx > 0):
+        if dx > 0:
             self.owner.right = True
             self.owner.left = False
             self.owner.moving = True
-        elif (dx < 0):
+        elif dx < 0:
             self.owner.right = False
             self.owner.left = True
             self.owner.moving = True
-        
-        if (not dy == 0):
-            self.owner.moving = True
 
+        if not dy == 0:
+            self.owner.moving = True
 
     def reverse_move(self, dx, dy):
         """
@@ -158,22 +154,22 @@ class Creature:
             damage (int): damage to do to object
         """
         self.owner.game.drawing.print_game_message(self.name_instance + " attacks " + target.creature.name_instance
-                                           + " for " + str(damage) + " damage", WHITE)
+                                                   + " for " + str(damage) + " damage", WHITE)
         target.creature.take_damage(damage)
 
 
 class Container:
-    def __init__(self, volume=10.0, inventory = []):
+    def __init__(self, volume=10.0, inventory=[]):
         self.inventory = inventory
         self.volume = volume
-
 
     ## TODO Get Name Inventory()
     ## TODO Get volume of container()
     ## TODO get weight of inventory()
 
+
 class Item:
-    def __init__(self, name, weight = 0.0, volume = 0.0, consumable = None):
+    def __init__(self, name, weight=0.0, volume=0.0, consumable=None):
         self.name = name
         self.weight = weight
         self.volume = volume
@@ -185,6 +181,7 @@ class Item:
     Add item to inventory
     Remove item from game_objects 
     '''
+
     def pick_up(self, entity):
         if entity.container:
             if entity.container.volume + self.volume > entity.container.volume:
@@ -206,7 +203,7 @@ class Item:
         entity.container.inventory.remove(self.owner)
         self.owner.x = x
         self.owner.y = y
-        self.owner.rect.topleft = (x*SPRITE_SIZE,y*SPRITE_SIZE)
+        self.owner.rect.topleft = (x * SPRITE_SIZE, y * SPRITE_SIZE)
         self.owner.game.drawing.print_game_message(self.name + " Item Dropped", WHITE)
 
     ## TODO use_item()

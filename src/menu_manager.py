@@ -37,8 +37,7 @@ class Menu_Manager:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
-                    menu_closed = True
-                    break
+                    pygame.quit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         mouse_x, mouse_y = pygame.mouse.get_pos()

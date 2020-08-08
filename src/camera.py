@@ -1,5 +1,6 @@
 from constant import *
 
+
 class Camera:
     """
     Camera that "follows" player around
@@ -13,6 +14,7 @@ class Camera:
         height (int): height of whole map
         camera (rect): rect of whole map
     """
+
     def __init__(self, width, height, camera_width=CAMERA_WIDTH, camera_height=CAMERA_HEIGHT):
         self.camera = pygame.Rect(0, 0, width, height)
         self.width = width
@@ -28,7 +30,7 @@ class Camera:
             entity (object): object to apply offset to
         """
         return entity.rect.move(self.camera.topleft)
-    
+
     def update(self, player):
         """
         Update the camera based on player position

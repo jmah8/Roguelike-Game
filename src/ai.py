@@ -1,6 +1,6 @@
 import random
 
-from constant import SLIME_FOV
+from constant import *
 
 
 def _calculate_change_in_position(diff):
@@ -24,6 +24,7 @@ class Ai_test:
     """
     Once per turn, execute
     """
+
     def __init__(self):
         self.owner = None
 
@@ -54,6 +55,7 @@ class SmartAi:
     Attributes:
         owner (Object): owner of ai
     """
+
     def __init__(self):
         self.owner = None
 
@@ -63,12 +65,9 @@ class SmartAi:
         else wander
         """
         creature = self.owner.creature
-        creature_x = creature.x
-        creature_y = creature.y
-        player_x = self.owner.game.player.x
-        player_y = self.owner.game.player.y
-        diff_x = creature_x - player_x
-        diff_y = creature_y - player_y
+        player = self.owner.game.player
+        diff_x = creature.x - player.x
+        diff_y = creature.y - player.y
 
         # If player is not in enemy FOV wander
         if abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV:
@@ -78,16 +77,25 @@ class SmartAi:
         else:
             # Find path to player if no path creature has no path calculated
             if not creature.current_path:
-                start = (creature_x, creature_y)
-                goal = (player_x, player_y)
-                visited = self.owner.game.graph.bfs(start, goal)
-
-                if (visited):
-                    path = self.owner.game.graph.find_path(start, goal, visited)
-                    creature.current_path = path
+                self._make_path_to_player(creature, player)
 
             dest = creature.current_path.pop(0)
-            dest_x = dest[0] - creature_x
-            dest_y = dest[1] - creature_y
+            dest_x = dest[0] - creature.x
+            dest_y = dest[1] - creature.y
 
             creature.move(dest_x, dest_y)
+
+    def _make_path_to_player(self, creature, player):
+        """
+        Makes path to player
+
+        Args:
+            creature (Creature): Creature to make path for
+            player (Creature): The player the creature paths to
+        """
+        start = (creature.x, creature.y)
+        goal = (player.x, player.y)
+        visited = self.owner.game.graph.bfs(start, goal)
+        if visited:
+            path = self.owner.game.graph.find_path(start, goal, visited)
+            creature.current_path = path

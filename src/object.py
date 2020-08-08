@@ -72,7 +72,7 @@ class object(pygame.sprite.Sprite):
         Updates objects sprite depending on time passed
         and if it is moving and direction it is facing
         """
-        if (self.anim):
+        if self.anim:
             clock = self.game.clock.get_fps()
 
             if clock > 0.0:
@@ -95,7 +95,6 @@ class object(pygame.sprite.Sprite):
                     self.image = self.anim["run_left"][self.anim_frame]
                 else:
                     self.image = self.anim["idle_left"][self.anim_frame]
-                
 
     def update(self, dx, dy):
         """

@@ -23,21 +23,28 @@ class Game:
         """
         Initializes pygame
         """
+        # Pygame screen
         pygame.init()
         pygame.display.set_caption("Knight's Adventure")
         self.surface = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE)
-        self.map_tree = None
-        self.clock = pygame.time.Clock()
+
+        # Repeat keys when held down
         pygame.key.set_repeat(350, 75)
+
+        self.clock = pygame.time.Clock()
+
         self.running = True
+
+        self.drawing = Drawing(self)
+        self.menu_manager = Menu_Manager(self)
+
+        self.mini_map_on = False
+        self.map_tree = None
         self.GAME_MESSAGES = []
         self.GAME_OBJECTS = []
         self.ENEMIES = []
         self.CREATURES = []
         self.ITEMS = []
-        self.drawing = Drawing(self)
-        self.menu_manager = Menu_Manager(self)
-        self.mini_map_on = False
 
     def new(self):
         """
@@ -281,6 +288,7 @@ class Game:
             elif event.key == pygame.K_i:
                 self.menu_manager.inventory_menu()
 
+            # Use magic
             elif event.key == pygame.K_SPACE:
                 mouse_select = True
                 while mouse_select:
@@ -295,6 +303,7 @@ class Game:
                                 mouse_x, mouse_y = pygame.mouse.get_pos()
                                 button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
                                 if button:
+                                    button.menu_open()
                                     mouse_select = False
                                     break
 
