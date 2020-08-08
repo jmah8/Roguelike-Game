@@ -66,10 +66,7 @@ def draw_seen(game, map_array, fov):
                     game.map_data.unseen_tiles.remove((x, y))
             # If tile is seen switch to in fov sprite
             elif fov[y][x] == 1:
-                if isinstance(tile, Floor):
-                    tile.image = tile.image_in_fov
-                else:
-                    tile.image = tile.image_in_fov
+                tile.image = tile.image_in_fov
                 tile.seen = True
                 # Remove seen tile from unseen_tile
                 if (x, y) in game.map_data.unseen_tiles:

@@ -18,6 +18,17 @@ from drawing import Drawing
 pygame.font.init()
 
 
+# class GameData:
+#     def __init__(self):
+#         self.mini_map_on = False
+#         self.map_tree = None
+#         self.GAME_MESSAGES = []
+#         self.GAME_OBJECTS = []
+#         self.ENEMIES = []
+#         self.CREATURES = []
+#         self.ITEMS = []
+
+
 class Game:
     def __init__(self):
         """
@@ -157,174 +168,216 @@ class Game:
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
-            self.events()
+            self.handle_events()
             self.drawing.draw()
             pygame.display.flip()
 
-    def events(self):
+    def handle_events(self):
         """
         Handle player input
         """
         events = pygame.event.get()
         for event in events:
-            self._game_handle_keys(event)
+            if event.type == pygame.QUIT:
+                if self.playing:
+                    self.playing = False
+                self.running = False
 
-    def _game_handle_keys(self, event):
-        if event.type == pygame.QUIT:
-            if self.playing:
-                self.playing = False
-            self.running = False
+            # For resizing window
+            if event.type == pygame.VIDEORESIZE:
+                self._handle_screen_resize(event)
 
-        # For resizing window
-        if event.type == pygame.VIDEORESIZE:
-            new_width = event.w
-            new_height = event.h
-            # Remove if statements if left and top should be empty
-            # else right and bottom is empty
-            if (new_width > self.map_data.width):
-                self.camera.camera_width = self.map_data.width
-            else:
-                self.camera.camera_width = event.w
+            # Moving to where mouse is clicked
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self._handle_mouse_event(event)
 
-            if (new_height > self.map_data.height):
-                self.camera.camera_height = self.map_data.height
-            else:
-                self.camera.camera_height = event.h
-            # This line is only used in pygame 1
-            self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
-                                                   pygame.RESIZABLE)
-        # Moving to where mouse is clicked
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
-                if button:
-                    button.menu_open()
+            # Keyboard press
+            if event.type == pygame.KEYDOWN:
+                self._handle_keyboard_event(event)
 
-                move_x, move_y = self._get_mouse_coord()
+    def _handle_screen_resize(self, event):
+        """
+        Handles screen resize event
 
-                if (not self.tile_array[move_y][move_x].seen):
-                    return
-                start = (self.player.x, self.player.y)
-                goal = (move_x, move_y)
-                visited = self.graph.bfs(start, goal)
-                if (visited):
-                    path = self.graph.find_path(start, goal, visited)
-                    self.move_char_auto(path, True)
+        Args:
+            event (Event): Screen resize event to handle
+        """
+        new_width = event.w
+        new_height = event.h
+        # Remove if statements if left and top should be empty
+        # else right and bottom is empty
+        if new_width > self.map_data.width:
+            self.camera.camera_width = self.map_data.width
+        else:
+            self.camera.camera_width = event.w
+
+        if new_height > self.map_data.height:
+            self.camera.camera_height = self.map_data.height
+        else:
+            self.camera.camera_height = event.h
+        # This line is only used in pygame 1
+        self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
+                                               pygame.RESIZABLE)
+
+    def _handle_keyboard_event(self, event):
+        """
+        Handles keyboard event
+
+        Args:
+            event (Event): Keyboard event to handle
+        """
+        # Movement
+        if event.key == pygame.K_a:
+            self.current_group.update(-1, 0)
+        elif event.key == pygame.K_d:
+            self.current_group.update(1, 0)
+        elif event.key == pygame.K_w:
+            self.current_group.update(0, -1)
+        elif event.key == pygame.K_q:
+            self.current_group.update(-1, -1)
+        elif event.key == pygame.K_e:
+            self.current_group.update(1, -1)
+        elif event.key == pygame.K_z:
+            self.current_group.update(-1, 1)
+        elif event.key == pygame.K_c:
+            self.current_group.update(1, 1)
+        elif event.key == pygame.K_s:
+            self.current_group.update(0, 1)
+        elif event.key == pygame.K_x:
+            self.current_group.update(0, 0)
+
+        # Mini_map
+        elif event.key == pygame.K_TAB:
+            self.toggle_minimap()
+
+        # Pickup/Drop Item
+        elif event.key == pygame.K_t:
+            objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
+            for obj in objects_at_player:
+                if obj.item:
+                    obj.item.pick_up(self.player)
+
+        # TODO: instead of dropping last item dropped, drop mouse event in inventory
+        elif event.key == pygame.K_g:
+            if len(self.player.container.inventory) > 0:
+                self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
+
+        elif event.key == pygame.K_ESCAPE:
+            self._toggle_wallhack()
+
+        elif event.key == pygame.K_m:
+            self._toggle_free_camera()
+
+        # If free camera on, enter makes you auto move to free camera location
+        elif event.key == pygame.K_RETURN:
+            self._mouse_to_free_camera()
+
+        # Auto move
+        elif event.key == pygame.K_v:
+            self.auto_path(self.graph)
+
+        # Menu Buttons
+        elif event.key == pygame.K_p:
+            self.menu_manager.pause_menu()
+        elif event.key == pygame.K_i:
+            self.menu_manager.inventory_menu()
+
+        # Use magic
+        elif event.key == pygame.K_SPACE:
+            magic_cast = True
+            while magic_cast:
+                events = pygame.event.get()
+                for event in events:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            magic_cast = False
+                            break
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            mouse_x, mouse_y = pygame.mouse.get_pos()
+                            button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+                            if button:
+                                button.menu_open()
+                                magic_cast = False
+                                break
+
+                            move_x, move_y = self._get_mouse_coord()
+
+                            start = (self.player.x, self.player.y)
+                            goal = (move_x, move_y)
+
+                            line = magic.line(start, goal, self.map_array)
+                            print(line)
+                            magic.cast_lightning(self, self.player, 2, line)
+                            # TODO: maybe change this since if player has ai but cast fireball,
+                            #       player would move + cast fireball at the same time
+                            self.current_group.update(0, 0)
+                            magic_cast = False
+                            break
+
                 self.clock.tick(FPS)
                 self.drawing.draw()
+                self.drawing.draw_mouse()
                 pygame.display.flip()
 
-        if event.type == pygame.KEYDOWN:
-
-            # Movement
-            if event.key == pygame.K_a:
-                self.current_group.update(-1, 0)
-            elif event.key == pygame.K_d:
-                self.current_group.update(1, 0)
-            elif event.key == pygame.K_w:
-                self.current_group.update(0, -1)
-            elif event.key == pygame.K_q:
-                self.current_group.update(-1, -1)
-            elif event.key == pygame.K_e:
-                self.current_group.update(1, -1)
-            elif event.key == pygame.K_z:
-                self.current_group.update(-1, 1)
-            elif event.key == pygame.K_c:
-                self.current_group.update(1, 1)
-            elif event.key == pygame.K_s:
-                self.current_group.update(0, 1)
-            elif event.key == pygame.K_x:
-                self.current_group.update(0, 0)
-
-            # Mini_map
-            elif event.key == pygame.K_TAB:
-                self.toggle_minimap()
-
-            # Pickup/Drop Item
-            elif event.key == pygame.K_t:
-                objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
-                for obj in objects_at_player:
-                    if obj.item:
-                        obj.item.pick_up(self.player)
-
-            # TODO: instead of dropping last item dropped, drop mouse event in inventory
-            elif event.key == pygame.K_g:
-                if len(self.player.container.inventory) > 0:
-                    self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
-
-            elif event.key == pygame.K_ESCAPE:
-                self.wall_hack = not self.wall_hack
-                if (self.wall_hack):
-                    self.fov = [[1 for x in range(0, self.map_data.tilewidth)] for y in
-                                range(self.map_data.tileheight)]
-
-            elif event.key == pygame.K_m:
+    def _mouse_to_free_camera(self):
+        """
+        Moves to free camera location
+        """
+        if self.free_camera_on:
+            # If tile is unexplored do nothing
+            if not self.tile_array[self.free_camera.y][self.free_camera.x].seen:
+                return
+            start = (self.player.x, self.player.y)
+            goal = (self.free_camera.x, self.free_camera.y)
+            # Generates path
+            visited = self.graph.bfs(start, goal)
+            # If path is generated move player
+            if visited:
                 self._toggle_free_camera()
+                path = self.graph.find_path(start, goal, visited)
+                self.move_char_auto(path)
 
-            # If free camera on, enter makes you auto move to free camera location
-            elif event.key == pygame.K_RETURN:
-                if (self.free_camera_on):
-                    # If tile is unexplored do nothing
-                    if (not self.tile_array[self.free_camera.y][self.free_camera.x].seen):
-                        return
-                    start = (self.player.x, self.player.y)
-                    goal = (self.free_camera.x, self.free_camera.y)
-                    # Generates path
-                    visited = self.graph.bfs(start, goal)
-                    # If path is generated move player
-                    if (visited):
-                        self._toggle_free_camera()
-                        path = self.graph.find_path(start, goal, visited)
-                        self.move_char_auto(path)
+    def _toggle_wallhack(self):
+        """
+        Toggles wallhack. If wallhack is on, then show whole map in player FOV
+        else turn back to normal fov
+        """
+        self.wall_hack = not self.wall_hack
+        if self.wall_hack:
+            self.fov = [[1 for x in range(0, self.map_data.tilewidth)] for y in
+                        range(self.map_data.tileheight)]
 
-            # Auto move
-            elif event.key == pygame.K_v:
-                self.auto_path(self.graph)
+    def _handle_mouse_event(self, event):
+        """
+        Handles mouse clicks
 
-            # Menu Buttons
-            elif event.key == pygame.K_p:
-                self.menu_manager.pause_menu()
-            elif event.key == pygame.K_i:
-                self.menu_manager.inventory_menu()
+        Args:
+            event (Event): Event to handle
+        """
+        if event.button == 1:
+            # Check if button clicked
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+            if button:
+                button.menu_open()
+                return
 
-            # Use magic
-            elif event.key == pygame.K_SPACE:
-                mouse_select = True
-                while mouse_select:
-                    events = pygame.event.get()
-                    for event in events:
-                        if event.type == pygame.KEYDOWN:
-                            if event.key == pygame.K_SPACE:
-                                mouse_select = False
-                                break
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            if event.button == 1:
-                                mouse_x, mouse_y = pygame.mouse.get_pos()
-                                button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
-                                if button:
-                                    button.menu_open()
-                                    mouse_select = False
-                                    break
+            # Move player to mouse click
+            move_x, move_y = self._get_mouse_coord()
 
-                                move_x, move_y = self._get_mouse_coord()
+            if not self.tile_array[move_y][move_x].seen:
+                return
+            start = (self.player.x, self.player.y)
+            goal = (move_x, move_y)
+            visited = self.graph.bfs(start, goal)
+            if (visited):
+                path = self.graph.find_path(start, goal, visited)
+                self.move_char_auto(path, True)
 
-                                start = (self.player.x, self.player.y)
-                                goal = (move_x, move_y)
-
-                                line = magic.line(start, goal, self.map_array)
-                                print(line)
-                                magic.cast_lightning(self, self.player, 2, line)
-                                # TODO: maybe change this since if player has ai but cast fireball,
-                                #       player would move + cast fireball at the same time
-                                self.current_group.update(0, 0)
-                                mouse_select = False
-                                break
-
-                    self.clock.tick(FPS)
-                    self.drawing.draw()
-                    self.drawing.draw_mouse()
-                    pygame.display.flip()
+            self.clock.tick(FPS)
+            self.drawing.draw()
+            pygame.display.flip()
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]

@@ -5,11 +5,11 @@ import fov
 import sprite
 from button_manager import Button_Manager
 
+
 class Drawing:
     def __init__(self, game):
         self.game = game
         self.button_manager = Button_Manager(game.surface)
-        self.test = False
 
     def draw(self):
         """
@@ -19,12 +19,12 @@ class Drawing:
         after calling this method to update display
         """
         # Update what to lock camera on
-        if (not self.game.free_camera_on):
+        if not self.game.free_camera_on:
             self.game.camera.update(self.game.player)
         else:
             self.game.camera.update(self.game.free_camera)
 
-        if (not self.game.wall_hack):
+        if not self.game.wall_hack:
             self.game.fov = fov.new_fov(self.game)
         fov.ray_casting(self.game, self.game.map_array, self.game.fov)
         fov.draw_seen(self.game, self.game.tile_array, self.game.fov)
@@ -40,14 +40,10 @@ class Drawing:
                 self.game.surface.blit(obj.image, self.game.camera.apply(obj))
 
         # Draw mouse select cursor depending on if free camera is on
-        if (self.game.free_camera_on):
+        if self.game.free_camera_on:
             self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
         else:
             self.draw_mouse()
-
-        if self.test:
-            self.draw_minimap_copy_map()
-
 
         self.game.particles.draw(self.game.surface)
         self.game.particles.update()
@@ -62,11 +58,9 @@ class Drawing:
         self.draw_debug()
         self.draw_messages()
 
-    def toggle_test(self):
-        self.test = not self.test
-
     def add_buttons(self):
-        self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory', self.game.menu_manager.inventory_menu)
+        self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory',
+                                       self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'map', self.game.menu_manager.map_menu)
 
@@ -165,14 +159,7 @@ class Drawing:
         scale_factor_x = SPRITE_SIZE / scale_tile_width
         scale_factor_y = SPRITE_SIZE / scale_tile_height
 
-        # Code below displays:
-        # Minimap is shrunk down version of actual map and
-        # so shows players, enemies and items
         minimap = pygame.Surface((RESOLUTION[0], RESOLUTION[1]))
-        # map_data = self.game.map_data
-        # scaled_map = pygame.transform.scale(self.game.surface,
-        #     (MINIMAP_RESOLUTION))
-        # minimap.blit(scaled_map, (0, 0))
 
         for y in range(map_data.tileheight):
             for x in range(map_data.tilewidth):
