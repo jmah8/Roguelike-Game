@@ -52,8 +52,8 @@ class Graph:
             map (2D array): 2D array representing map
             map_data (MapInfo): arg that holds map info
         """
-        for y in range(map_data.tileheight):
-            for x in range(map_data.tilewidth):
+        for y in range(map_data.map_height):
+            for x in range(map_data.map_width):
                 if (not map[y][x] == WALL):
                     self.nodes[(x, y)] = (Node(x, y))
                 else:

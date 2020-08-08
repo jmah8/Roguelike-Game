@@ -359,8 +359,8 @@ class Game:
         """
         self.wall_hack = not self.wall_hack
         if self.wall_hack:
-            self.fov = [[1 for x in range(0, self.map_data.tilewidth)] for y in
-                        range(self.map_data.tileheight)]
+            self.fov = [[1 for x in range(0, self.map_data.map_width)] for y in
+                        range(self.map_data.map_height)]
 
     def _handle_mouse_event(self, event):
         """
@@ -509,9 +509,9 @@ class Game:
         # the mouse coord and map coord not being in sync
 
         # If map is smaller than screen, than subtract it by # of tiles not in map
-        if (self.map_data.tilewidth < screen_x):
-            mouse_x = mouse_x - (screen_x - self.map_data.tilewidth)
-        if (self.map_data.tileheight < screen_y):
-            mouse_y = mouse_y - (screen_y - self.map_data.tileheight)
+        if (self.map_data.map_width < screen_x):
+            mouse_x = mouse_x - (screen_x - self.map_data.map_width)
+        if (self.map_data.map_height < screen_y):
+            mouse_y = mouse_y - (screen_y - self.map_data.map_height)
 
         return mouse_x, mouse_y

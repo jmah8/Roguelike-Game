@@ -102,23 +102,35 @@ class MapInfo:
                                         data from
 
     Attribute:
-        tilewidth (int): # of tiles wide
-        tileheight (int): # of tiles tall
-        width (int): actual width of map
-        height (int): actual height of map
+        map_width (int): # of tiles wide
+        map_height (int): # of tiles tall
+        width (int): width of map in pixels
+        height (int): height of map in pixels
         unseen_tiles (set): set of unseen tiles coord tuple
     """
 
     def __init__(self, map_array):
-        self.tilewidth = len(map_array[0])
-        self.tileheight = len(map_array)
-        self.width = self.tilewidth * SPRITE_SIZE
-        self.height = self.tileheight * SPRITE_SIZE
+        self.map_width = len(map_array[0])
+        self.map_height = len(map_array)
+        self.width = self.map_width * SPRITE_SIZE
+        self.height = self.map_height * SPRITE_SIZE
         self.unseen_tiles = set()
-        
 
-        for y in range(self.tileheight):
-            for x in range(self.tilewidth):
+        # if READ_FROM_FILE:
+        #     # Holds the map representation (chars)
+        #     self.map_array = load_map()
+        #
+        # # This is for generating random maps
+        # else:
+        #     # Holds the map representation (chars)
+        #     self.map_array = gen_map(self)
+        #
+        # # Holds actual tiles
+        # self.tile_array = draw_map(self.map_array, self)
+
+
+        for y in range(self.map_height):
+            for x in range(self.map_width):
                 if not map_array[y][x] == WALL:
                     self.unseen_tiles.add((x, y))
 
@@ -132,7 +144,6 @@ def gen_map(game):
     tree.build_bsp()
     tree.build_rooms()
     tree.build_path()
-    # tree.print_tree()
     tree.print_map()
     game.map_tree = tree
     return map_array
