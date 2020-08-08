@@ -115,6 +115,7 @@ class MapInfo:
         self.width = self.tilewidth * SPRITE_SIZE
         self.height = self.tileheight * SPRITE_SIZE
         self.unseen_tiles = set()
+        
 
         for y in range(self.tileheight):
             for x in range(self.tilewidth):

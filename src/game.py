@@ -92,7 +92,7 @@ class Game:
 
         # Load map data
         # This is for reading maps from text files
-        if (READ_FROM_FILE):
+        if READ_FROM_FILE:
             # Holds the map representation (chars)
             self.map_array = gamemap.load_map()
 
@@ -270,7 +270,7 @@ class Game:
 
         # If free camera on, enter makes you auto move to free camera location
         elif event.key == pygame.K_RETURN:
-            self._mouse_to_free_camera()
+            self._move_to_free_camera()
 
         # Auto move
         elif event.key == pygame.K_v:
@@ -284,43 +284,57 @@ class Game:
 
         # Use magic
         elif event.key == pygame.K_SPACE:
-            magic_cast = True
-            while magic_cast:
-                events = pygame.event.get()
-                for event in events:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_SPACE:
-                            magic_cast = False
-                            break
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        if event.button == 1:
-                            mouse_x, mouse_y = pygame.mouse.get_pos()
-                            button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
-                            if button:
-                                button.menu_open()
-                                magic_cast = False
-                                break
+            self._magic_targetting_menu()
 
-                            move_x, move_y = self._get_mouse_coord()
-
-                            start = (self.player.x, self.player.y)
-                            goal = (move_x, move_y)
-
-                            line = magic.line(start, goal, self.map_array)
-                            print(line)
-                            magic.cast_lightning(self, self.player, 2, line)
-                            # TODO: maybe change this since if player has ai but cast fireball,
-                            #       player would move + cast fireball at the same time
-                            self.current_group.update(0, 0)
+    def _magic_targetting_menu(self):
+        """
+        Selects target for spell and cast magic and updates display
+        """
+        magic_cast = True
+        while magic_cast:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        magic_cast = False
+                        break
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+                        if button:
+                            button.menu_open()
                             magic_cast = False
                             break
 
-                self.clock.tick(FPS)
-                self.drawing.draw()
-                self.drawing.draw_mouse()
-                pygame.display.flip()
+                        self._cast_magic()
+                        magic_cast = False
+                        break
 
-    def _mouse_to_free_camera(self):
+            self.clock.tick(FPS)
+            self.drawing.draw()
+            self.drawing.draw_mouse()
+            pygame.display.flip()
+
+    def _cast_magic(self):
+        """
+        Casts lightning at mouse location and prints out the line
+        it travels through currently
+
+        Returns:
+
+        """
+        move_x, move_y = self._get_mouse_coord()
+        start = (self.player.x, self.player.y)
+        goal = (move_x, move_y)
+        line = magic.line(start, goal, self.map_array)
+        print(line)
+        magic.cast_lightning(self, self.player, 2, line)
+        # TODO: maybe change this since if player has ai but cast fireball,
+        #       player would move + cast fireball at the same time
+        self.current_group.update(0, 0)
+
+    def _move_to_free_camera(self):
         """
         Moves to free camera location
         """
@@ -371,7 +385,7 @@ class Game:
             start = (self.player.x, self.player.y)
             goal = (move_x, move_y)
             visited = self.graph.bfs(start, goal)
-            if (visited):
+            if visited:
                 path = self.graph.find_path(start, goal, visited)
                 self.move_char_auto(path, True)
 
@@ -429,10 +443,12 @@ class Game:
                         if fov.check_if_in_fov(self, obj) and not self.wall_hack:
                             return
 
+                # Move to next coord in path
                 dest_x = coord[0] - old_coord[0]
                 dest_y = coord[1] - old_coord[1]
                 self.current_group.update(dest_x, dest_y)
                 old_coord = coord
+
                 self.drawing.draw()
                 self.clock.tick(20)
                 pygame.display.flip()
@@ -452,7 +468,9 @@ class Game:
             start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
         else:
             start, goal = gamemap.find_closest_unseen_tile(self)
+
         visited = graph.bfs(start, goal)
+
         if visited:
             path = self.graph.find_path(start, goal, visited)
             self.move_char_auto(path)
