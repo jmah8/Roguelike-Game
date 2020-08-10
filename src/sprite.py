@@ -145,5 +145,5 @@ class GameSprites():
         # UI
         self.inventory_button = load_image(INVENTORY)
         self.mouse_select = load_image(MOUSE_SELECT)
-        self.equip_screen = load_image(EQUIP_SCREEN, None, (8 * 64, 6 * 64))
+        self.equip_screen = load_image(EQUIP_SCREEN, None, (TILE_WIDTH // 2 * SPRITE_SIZE, TILE_HEIGHT // 2 * SPRITE_SIZE))
         self.minimap_button = load_image(MINIMAP_BUTTON)

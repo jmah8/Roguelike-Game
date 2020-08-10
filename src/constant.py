@@ -15,7 +15,7 @@ RESOLUTION = (CAMERA_WIDTH, CAMERA_HEIGHT)
 TOPLEFT = (0, 0)
 
 # Map gen constants
-READ_FROM_FILE = True
+READ_FROM_FILE = False
 MAP_WIDTH = 50
 MAP_HEIGHT = 40
 SUB_DUNGEON_WIDTH = 4
@@ -27,7 +27,7 @@ DIST_FROM_SISTER_NODE_MAX = 1
 # Minimap constants
 MINIMAP_SCALE = 2
 
-# Buttton manager constants
+# Button manager constants
 NUM_OF_BUTTONS = 3
 
 
