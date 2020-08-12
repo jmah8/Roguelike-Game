@@ -1,5 +1,6 @@
 from constant import *
 import pygame
+from exceptions import *
 
 
 class Button:
@@ -10,7 +11,6 @@ class Button:
         image (arg, image): image of button
         rect (arg, rect): rect of image
         menu_open (arg, function): function to call when button clicked
-
     """
     def __init__(self, x, image, menu_open):
         self.image = image
@@ -61,7 +61,7 @@ class Button_Manager:
                 self.button_dict[button_id] = button
                 self.button_count += 1
             else:
-                print("Button already exist")
+                raise ButtonExistException("Button exist")
 
     def draw_buttons(self, game_surface):
         """

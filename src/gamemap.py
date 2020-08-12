@@ -1,6 +1,6 @@
 import sys
 from sprite import *
-from mapgenerator import Tree
+from map_generator import Tree
 from pathfinding import *
 
 pygame.init()

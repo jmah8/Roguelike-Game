@@ -8,14 +8,14 @@ from constant import *
 import object
 import creature
 import sprite
-import drawing
+import draw
 import pathfinding
 from camera import Camera
 import fov
 from menu_manager import Menu_Manager
 import magic
 
-from drawing import Drawing
+from draw import Drawing
 
 pygame.font.init()
 

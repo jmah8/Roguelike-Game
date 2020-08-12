@@ -1,6 +1,7 @@
 import gamemap
 import random
 from constant import *
+from exceptions import *
 
 
 class Room:
@@ -217,7 +218,7 @@ class Tree:
         if self.root is not None:
             self._build_bsp(self.root)
         else:
-            print("Root is None")
+            raise NullRoot("Root is null")
 
     def _build_bsp(self, node):
         """
@@ -282,12 +283,12 @@ class Tree:
 
     def build_rooms(self):
         """
-        Makes room in nodes if root is not None
+        Makes room in nodes if root is not None, else throws NullRoot exception
         """
         if self.root is not None:
             self._build_room(self.root)
         else:
-            print("Root is None")
+            raise NullRoot("Root is None")
 
     def _build_room(self, node):
         # TODO: could change it so the SUB_DUNGEON width/height correspond to the actual room dimensions
@@ -346,13 +347,14 @@ class Tree:
 
     def build_path(self):
         """
-        Builds path to join sister nodes
+        Builds path to join sister nodes if root is not None, else
+        throws NullRoot exception
         """
         if self.root is not None:
             # self._build_path(self.root)
             self._build_path_intelligent(self.root)
         else:
-            print("Root is None")
+            raise NullRoot("Root is null")
 
     def _build_path_intelligent(self, node):
         """
@@ -718,13 +720,15 @@ class Tree:
 
     def print_tree(self):
         """
-        Prints tree information if root is not None.
+        Prints tree information if root is not None, else throws NullRoot exception
 
         Prints the up_left and down_right coordinate of node and room up_left and down_right
         if node has room
         """
         if self.root is not None:
             self._print_tree(self.root)
+        else:
+            raise NullRoot("Root is null")
 
     def _print_tree(self, node):
         """

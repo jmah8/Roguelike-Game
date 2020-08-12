@@ -1,7 +1,7 @@
 import pygame
 import pygame.freetype
 from constant import *
-import drawing
+import draw
 
 pygame.init()
 dirname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')

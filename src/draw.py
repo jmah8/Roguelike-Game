@@ -69,6 +69,9 @@ class Drawing:
         self.draw_messages()
 
     def add_buttons(self):
+        """
+        Adds clickable buttons to bottom of screen
+        """
         self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory',
                                        self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
