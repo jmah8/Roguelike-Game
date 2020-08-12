@@ -46,7 +46,7 @@ def load_anim(pathname, start_num, end_num, convert_alpha=True):
         end_num (int): image file name end #
     """
     sprite_anim = []
-    sprite_anim.append(load_image(pathname))
+    sprite_anim.append(load_image(pathname, convert_alpha=convert_alpha))
     tmp = pathname
     for i in range(start_num, end_num):
         tmp = tmp.replace(str(i), str(i + 1))
@@ -97,7 +97,7 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
     return obj_img, obj_img_rect
 
 
-class GameSprites():
+class GameSprites:
     """
     Class that holds all the sprite images
     """
@@ -105,11 +105,19 @@ class GameSprites():
     def __init__(self):
         #  Environment
         self.wall_image = load_image(WALL_1)
+
         self.floor_image_1 = load_image(FLOOR_1)
         self.floor_image_2 = load_image(FLOOR_2)
+
         self.spike = load_image(SPIKE)
+
         self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.unseen_tile.fill(BLACK)
+
+        self.select_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
+        self.select_tile.fill(YELLOW)
+        self.select_tile.set_alpha(75)
+
         self.seen_wall_image = seen_sprite(self.wall_image)
         self.seen_floor_image_1 = seen_sprite(self.floor_image_1)
         self.seen_floor_image_2 = seen_sprite(self.floor_image_2)
@@ -146,3 +154,8 @@ class GameSprites():
         self.mouse_select = load_image(MOUSE_SELECT)
         self.equip_screen = load_image(EQUIP_SCREEN, None, (TILE_WIDTH // 2 * SPRITE_SIZE, TILE_HEIGHT // 2 * SPRITE_SIZE))
         self.minimap_button = load_image(MINIMAP_BUTTON)
+
+
+        self.magic = {
+            "fireball": load_image(FIREBALL)
+        }

@@ -138,7 +138,7 @@ class Game:
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = creature.Creature("Slime1", 3, True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
-        slime1 = object.object(self, 2, 3, "enemy", anim=self.game_sprites.slime_dict,
+        slime1 = object.object(self, 20, 23, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
         item_com = item.Item("Red Potion", 0, 0, True)
         item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
@@ -285,40 +285,9 @@ class Game:
 
         # Use magic
         elif event.key == pygame.K_SPACE:
-            self._magic_targetting_menu()
+            self.menu_manager.magic_targetting_menu()
 
-    # TODO: could move this to menu_manager
-    def _magic_targetting_menu(self):
-        """
-        Selects target for spell and cast magic and updates display
-        """
-        magic_cast = True
-        while magic_cast:
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        magic_cast = False
-                        break
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        mouse_x, mouse_y = pygame.mouse.get_pos()
-                        button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
-                        if button:
-                            button.menu_open()
-                            magic_cast = False
-                            break
-
-                        self._cast_magic()
-                        magic_cast = False
-                        break
-
-            self.clock.tick(FPS)
-            self.drawing.draw()
-            self.drawing.draw_mouse()
-            pygame.display.flip()
-
-    def _cast_magic(self):
+    def cast_magic(self):
         """
         Casts lightning at mouse location and prints out the line
         it travels through currently
@@ -326,7 +295,7 @@ class Game:
         Returns:
 
         """
-        move_x, move_y = self._get_mouse_coord()
+        move_x, move_y = self.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_array)
@@ -380,7 +349,7 @@ class Game:
                 return
 
             # Move player to mouse click
-            move_x, move_y = self._get_mouse_coord()
+            move_x, move_y = self.get_mouse_coord()
 
             if not self.tile_array[move_y][move_x].seen:
                 return
@@ -483,7 +452,7 @@ class Game:
         """
         self.mini_map_on = not self.mini_map_on
 
-    def _get_mouse_coord(self):
+    def get_mouse_coord(self):
         """
         Returns mouse coordinate on map, taking into account
         size of map
@@ -517,3 +486,33 @@ class Game:
             mouse_y = mouse_y - (screen_y - self.map_data.map_height)
 
         return mouse_x, mouse_y
+
+    def get_relative_screen_coord(self, x, y):
+        """
+        Returns the coord of (x_coord, y_coord) relative to the camera/screen
+
+        Args:
+            x (int): x coord to translate
+            y (int): y coord to translate
+
+        Returns:
+            relative_x, relative_y ((int, int)): Coordinate of (x_coord, y_coord) on screen
+        """
+        # Add camera position to get the mouse's map coordinate
+        camera_x, camera_y = self.camera.camera_position
+        relative_x = x - (camera_x // SPRITE_SIZE)
+        relative_y = y - (camera_y // SPRITE_SIZE)
+        # Find the amount of tiles on screen
+        screen_x = self.camera.camera_width // SPRITE_SIZE
+        screen_y = self.camera.camera_height // SPRITE_SIZE
+
+        # If map is smaller than screen x/y, this fixes the issue of
+        # the mouse coord and map coord not being in sync
+
+        # If map is smaller than screen, than subtract it by # of tiles not in map
+        if self.map_data.map_width < screen_x:
+            relative_x = relative_x - (screen_x - self.map_data.map_width)
+        if self.map_data.map_height < screen_y:
+            relative_y = relative_y - (screen_y - self.map_data.map_height)
+
+        return relative_x, relative_y

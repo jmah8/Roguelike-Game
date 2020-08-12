@@ -159,9 +159,9 @@ class Drawing:
     def print_game_message(self, ingame_message, message_color):
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
-    def draw_minimap_copy_map(self):
+    def draw_map(self):
         """
-        Draws minimap on topleft of screen. This minimap
+        Draws map. This map
         is a replica of the actual map
         """
         map_data = self.game.map_data
@@ -211,6 +211,17 @@ class Drawing:
             y_coord (int): y coord to draw tile onto
         """
         self.game_surface.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
+
+    def draw_magic_path(self, line):
+        """
+        Highlights the path the spell will take
+
+        Args:
+            line (List): List of coords the spell will pass through
+        """
+        for (x, y) in line:
+            relative_x, relative_y = self.game.get_relative_screen_coord(x, y)
+            self.draw_img_at_coord(self.game.game_sprites.select_tile, relative_x, relative_y)
 
     def _draw_minimap_player_generated_map(self, game, scale_factor_x, scale_factor_y):
         """
@@ -434,3 +445,4 @@ class Drawing:
             self._draw_minimap_loaded_map(game)
         else:
             self._draw_minimap_generated_map(game)
+

@@ -43,6 +43,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 INVENTORY_BEIGE = (239,228,176)
 
 
@@ -84,6 +85,8 @@ MOUSE_SELECT = 'ui/mouse_select.png'
 MINIMAP_BUTTON = 'ui/minimap.png'
 
 EQUIP_SCREEN = 'items/equipment_screen.png'
+
+FIREBALL = 'magic/fireball.png'
 
 # FONTS
 font_path_name = os.path.join(RESOURCE_PATH, 'fonts/FFF_Tusj.ttf')

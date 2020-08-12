@@ -1,5 +1,6 @@
 import pygame
 from constant import *
+import magic
 
 
 class Menu_Manager:
@@ -46,10 +47,46 @@ class Menu_Manager:
                             menu_closed = True
                             break
 
-            self.game.drawing.draw_minimap_copy_map()
+            self.game.drawing.draw_map()
             self.game.drawing.button_manager.draw_buttons(self.game.surface)
             self.game.clock.tick(60)
             pygame.display.update()
+
+        # TODO: could move this to menu_manager
+
+    def magic_targetting_menu(self):
+        """
+        Selects target for spell and cast magic and updates display
+        """
+        magic_cast = True
+        while magic_cast:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        magic_cast = False
+                        break
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        mouse_x, mouse_y = pygame.mouse.get_pos()
+                        button = self.game.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+                        if button:
+                            button.menu_open()
+                            magic_cast = False
+                            break
+
+                        self.game.cast_magic()
+                        magic_cast = False
+                        break
+
+            self.game.clock.tick(FPS)
+            self.game.drawing.draw()
+            self.game.drawing.draw_mouse()
+            m_x, m_y = self.game.get_mouse_coord()
+            line = magic.line(self.game.player.position, (m_x, m_y), self.game.map_array)
+            print(line)
+            self.game.drawing.draw_magic_path(line)
+            pygame.display.flip()
 
     def inventory_menu(self):
         """

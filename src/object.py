@@ -67,6 +67,16 @@ class object(pygame.sprite.Sprite):
         if container:
             container.owner = self
 
+    @property
+    def position(self):
+        """
+        Returns object's position
+
+        Returns:
+            Object's position
+        """
+        return self.x, self.y
+
     def update_anim(self):
         """
         Updates objects sprite depending on time passed
