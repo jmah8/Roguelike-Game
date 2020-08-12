@@ -7,9 +7,18 @@ from button_manager import Button_Manager
 
 
 class Drawing:
-    def __init__(self, game):
+    def __init__(self, game, game_surface):
+        """
+        Class that draws the game
+
+        Attributes:
+            game (arg, Game): Game with game data
+            game_surface (arg, Surface): Surface to draw on
+            button_manager (ButtonManager): Class that holds the bottom buttons
+        """
         self.game = game
-        self.button_manager = Button_Manager(game.surface)
+        self.game_surface = game_surface
+        self.button_manager = Button_Manager(self.game_surface)
 
     def draw(self):
         """
@@ -25,30 +34,31 @@ class Drawing:
             self.game.camera.update(self.game.free_camera)
 
         if not self.game.wall_hack:
-            self.game.fov = fov.new_fov(self.game)
-        fov.ray_casting(self.game, self.game.map_array, self.game.fov)
-        fov.draw_seen(self.game, self.game.tile_array, self.game.fov)
+            self.game.fov = fov.new_fov(self.game.map_data)
+
+        fov.ray_casting(self.game.map_data, self.game.map_array, self.game.fov, self.game.player)
+        fov.draw_seen(self.game.map_data, self.game.tile_array, self.game.fov, self.game.game_sprites.unseen_tile)
 
         # Draws all tiles
         for tile in self.game.all_tile:
-            self.game.surface.blit(tile.image, self.game.camera.apply(tile))
+            self.game_surface.blit(tile.image, self.game.camera.apply(tile))
 
         # Draws object if it is in player fov
         for obj in self.game.GAME_OBJECTS:
             if fov.check_if_in_fov(self.game, obj):
                 obj.update_anim()
-                self.game.surface.blit(obj.image, self.game.camera.apply(obj))
+                self.game_surface.blit(obj.image, self.game.camera.apply(obj))
 
         # Draw mouse select cursor depending on if free camera is on
         if self.game.free_camera_on:
-            self.game.surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
+            self.game_surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
         else:
             self.draw_mouse()
 
-        self.game.particles.draw(self.game.surface)
+        self.game.particles.draw(self.game_surface)
         self.game.particles.update()
 
-        self.button_manager.draw_buttons(self.game.surface)
+        self.button_manager.draw_buttons(self.game_surface)
 
         self.draw_grid()
 
@@ -66,16 +76,16 @@ class Drawing:
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
-            pygame.draw.line(self.game.surface, GREY, (x, 0), (x, self.game.camera.camera_height))
+            pygame.draw.line(self.game_surface, GREY, (x, 0), (x, self.game.camera.camera_height))
 
         for y in range(0, self.game.camera.camera_height, SPRITE_SIZE):
-            pygame.draw.line(self.game.surface, GREY, (0, y), (self.game.camera.camera_width, y))
+            pygame.draw.line(self.game_surface, GREY, (0, y), (self.game.camera.camera_width, y))
 
     def draw_debug(self):
         """
         Draws FPS counter on top right of screen
         """
-        self.draw_text(self.game.surface, (self.game.camera.camera_width - 125, 15), WHITE,
+        self.draw_text(self.game_surface, (self.game.camera.camera_width - 125, 15), WHITE,
                        "FPS: " + str(int(self.game.clock.get_fps())), BLACK)
 
     def draw_text(self, display_surface, coord, text_color, text, text_bg_color=None):
@@ -119,7 +129,7 @@ class Drawing:
         y_pos = self.game.camera.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
         messages_drawn_counter = 0
         for message, color in to_draw:
-            self.draw_text(self.game.surface, (TEXT_SPACE_BUFFER,
+            self.draw_text(self.game_surface, (TEXT_SPACE_BUFFER,
                                                (y_pos + messages_drawn_counter * text_height)), color, message, None)
             messages_drawn_counter += 1
 
@@ -171,7 +181,7 @@ class Drawing:
 
         minimap.blit(player_img, player_img_rect)
 
-        self.game.surface.blit(minimap, (0, 0))
+        self.game_surface.blit(minimap, (0, 0))
 
     def draw_mouse(self):
         """
@@ -197,7 +207,7 @@ class Drawing:
             x_coord (int): x coord to draw tile onto
             y_coord (int): y coord to draw tile onto
         """
-        self.game.surface.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
+        self.game_surface.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
 
     def _draw_minimap_player_generated_map(self, game, scale_factor_x, scale_factor_y):
         """
@@ -208,7 +218,7 @@ class Drawing:
             scale_factor_x (int): what to scale x by
             scale_factor_y (int): what to sclae y by
         """
-        pygame.draw.rect(game.surface, BLUE,
+        pygame.draw.rect(self.game_surface, BLUE,
                          ((game.player.rect.topleft[0] / scale_factor_x),
                           (game.player.rect.topleft[1] / scale_factor_y),
                           # + 1 is to make player directly touch walls
@@ -227,7 +237,7 @@ class Drawing:
         """
         for tile in game.map_data.unseen_tiles:
             tile_x, tile_y = tile
-            pygame.draw.rect(game.surface, BLACK,
+            pygame.draw.rect(self.game_surface, BLACK,
                              ((tile_x * SPRITE_SIZE / scale_factor_x),
                               (tile_y * SPRITE_SIZE / scale_factor_y),
                               # + 2 is to make black cover everything since
@@ -247,7 +257,7 @@ class Drawing:
         """
         list_of_rooms = game.map_tree.root.child_room_list + game.map_tree.root.path_list
         for room in list_of_rooms:
-            pygame.draw.rect(game.surface, WHITE,
+            pygame.draw.rect(self.game_surface, WHITE,
                              ((room.up_left_x * SPRITE_SIZE / scale_factor_x),
                               (room.up_left_y * SPRITE_SIZE / scale_factor_y),
                               # + 1 is to make paths directly touch room
@@ -264,7 +274,7 @@ class Drawing:
             scale_factor_x (int): what to scale x by
             scale_factor_y (int): what to sclae y by
         """
-        pygame.draw.rect(game.surface, BLACK,
+        pygame.draw.rect(self.game_surface, BLACK,
                          (0, 0,
                           game.map_data.width / scale_factor_x,
                           game.map_data.height / scale_factor_y))
@@ -327,7 +337,7 @@ class Drawing:
             scale_factor_y (int): what to sclae y by
         """
         player = game.player
-        pygame.draw.rect(game.surface, BLUE,
+        pygame.draw.rect(self.game_surface, BLUE,
                          (player.rect.topleft[0] // scale_factor_x, player.rect.topleft[1] // scale_factor_y,
                           player.rect.size[0] // scale_factor_x + 1, player.rect.size[1] // scale_factor_y + 1))
 
@@ -347,18 +357,18 @@ class Drawing:
             for x in range(map_data.map_width):
                 tile = game.tile_array[y][x]
                 if isinstance(tile, gamemap.Wall):
-                    pygame.draw.rect(game.surface, BLACK,
+                    pygame.draw.rect(self.game_surface, BLACK,
                                      (tile.rect.topleft[0] / scale_factor_x, tile.rect.topleft[1] / scale_factor_y,
                                       tile.rect.size[0] / scale_factor_x + 1, tile.rect.size[1] / scale_factor_y + 1))
                 elif isinstance(tile, gamemap.Floor):
                     if tile.seen:
-                        pygame.draw.rect(game.surface, WHITE,
+                        pygame.draw.rect(self.game_surface, WHITE,
                                          (tile.rect.topleft[0] / scale_factor_x,
                                           tile.rect.topleft[1] / scale_factor_y,
                                           tile.rect.size[0] / scale_factor_x + 1,
                                           tile.rect.size[1] / scale_factor_y + 1))
                     else:
-                        pygame.draw.rect(game.surface, BLACK,
+                        pygame.draw.rect(self.game_surface, BLACK,
                                          (tile.rect.topleft[0] / scale_factor_x,
                                           tile.rect.topleft[1] / scale_factor_y,
                                           tile.rect.size[0] / scale_factor_x + 1,
@@ -380,7 +390,7 @@ class Drawing:
         """
         for item in game.ITEMS:
             if game.tile_array[item.y][item.x].seen:
-                pygame.draw.rect(game.surface, GREEN,
+                pygame.draw.rect(self.game_surface, GREEN,
                                  ((item.rect.topleft[0] / scale_factor_x),
                                   (item.rect.topleft[1] / scale_factor_y),
                                   # + 1 is to make items directly touch walls
@@ -401,7 +411,7 @@ class Drawing:
         """
         for enemy in game.ENEMIES:
             if game.fov[enemy.y][enemy.x]:
-                pygame.draw.rect(game.surface, RED,
+                pygame.draw.rect(self.game_surface, RED,
                                  ((enemy.rect.topleft[0] / scale_factor_x),
                                   (enemy.rect.topleft[1] / scale_factor_y),
                                   # + 1 is to make items directly touch walls
