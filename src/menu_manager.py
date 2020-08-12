@@ -51,7 +51,6 @@ class Menu_Manager:
             self.game.clock.tick(60)
             pygame.display.update()
 
-
     def inventory_menu(self):
         """
         create screens for inventory + equipment menus
@@ -64,7 +63,7 @@ class Menu_Manager:
             menu_surface.fill(INVENTORY_BEIGE)
             self.game.drawing.draw()
 
-            menu_surface.blit(self._load_inventory_screen(), (0, menu_height/2))
+            menu_surface.blit(self._load_inventory_screen(), (0, menu_height / 2))
             menu_surface.blit(self._load_equipment_screen(), (0, 0))
             self.game.surface.blit(menu_surface, (menu_width, 0))
 
@@ -72,11 +71,14 @@ class Menu_Manager:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         mouse_x, mouse_y = pygame.mouse.get_pos()
-                        inventory_button = self.game.drawing.button_manager.check_if_specific_button_pressed('inventory', mouse_x, mouse_y)
+                        inventory_button = self.game.drawing.button_manager.check_if_specific_button_pressed(
+                            'inventory', mouse_x, mouse_y)
                         if inventory_button:
                             menu_closed = True
                             break
-                        minimap_button = self.game.drawing.button_manager.check_if_specific_button_pressed('minimap', mouse_x, mouse_y)
+                        minimap_button = self.game.drawing.button_manager.check_if_specific_button_pressed('minimap',
+                                                                                                           mouse_x,
+                                                                                                           mouse_y)
                         if minimap_button:
                             self.game.toggle_minimap()
                             break
@@ -101,7 +103,7 @@ class Menu_Manager:
         counter = 0
 
         for i in range(0, num_items_row):
-            for j in range(0, num_items_col-1):
+            for j in range(0, num_items_col - 1):
                 inventory_array = self.game.player.container.inventory
                 if len(inventory_array) >= counter + 1:
                     item = inventory_array[counter]
@@ -132,18 +134,18 @@ class Menu_Manager:
         ringR_tl, ringR_br = (323, 171), (361, 208)
         pants_tl, pants_br = (218, 188), (319, 301)
         gloves_tl, gloves_br = (134, 230), (209, 299)
-        boots_tl, boots_br = (232, 308), (305,356)
+        boots_tl, boots_br = (232, 308), (305, 356)
 
-        helmet_rect = pygame.Rect(helmet_tl, ((helmet_br[0]-helmet_tl[0]), (helmet_br[1]-helmet_tl[1])))
-        armor_rect = pygame.Rect(armor_tl, ((armor_br[0]-armor_tl[0]), (armor_br[1]-armor_tl[1])))
-        amulet_rect = pygame.Rect(amulet_tl, ((amulet_br[0]-amulet_tl[0]), (amulet_br[1]-amulet_tl[1])))
-        main_rect = pygame.Rect(main_tl, ((main_br[0]-main_tl[0]), (main_br[1]-main_tl[1])))
-        off_rect = pygame.Rect(off_tl, ((off_br[0]-off_tl[0]), (off_br[1]-off_tl[1])))
-        ringL_rect = pygame.Rect(ringL_tl, ((ringL_br[0]-ringL_tl[0]), (ringL_br[1]-ringL_tl[1])))
-        ringR_rect = pygame.Rect(ringR_tl, ((ringR_br[0]-ringR_tl[0]), (ringR_br[1]-ringR_tl[1])))
-        pants_rect = pygame.Rect(pants_tl, ((pants_br[0]-pants_tl[0]), (pants_br[1]-pants_tl[1])))
-        gloves_rect = pygame.Rect(gloves_tl, ((gloves_br[0]-gloves_tl[0]), (gloves_br[1]-gloves_tl[1])))
-        boots_rect = pygame.Rect(boots_tl, ((boots_br[0]-boots_tl[0]), (boots_br[1]-boots_tl[1])))
+        helmet_rect = pygame.Rect(helmet_tl, ((helmet_br[0] - helmet_tl[0]), (helmet_br[1] - helmet_tl[1])))
+        armor_rect = pygame.Rect(armor_tl, ((armor_br[0] - armor_tl[0]), (armor_br[1] - armor_tl[1])))
+        amulet_rect = pygame.Rect(amulet_tl, ((amulet_br[0] - amulet_tl[0]), (amulet_br[1] - amulet_tl[1])))
+        main_rect = pygame.Rect(main_tl, ((main_br[0] - main_tl[0]), (main_br[1] - main_tl[1])))
+        off_rect = pygame.Rect(off_tl, ((off_br[0] - off_tl[0]), (off_br[1] - off_tl[1])))
+        ringL_rect = pygame.Rect(ringL_tl, ((ringL_br[0] - ringL_tl[0]), (ringL_br[1] - ringL_tl[1])))
+        ringR_rect = pygame.Rect(ringR_tl, ((ringR_br[0] - ringR_tl[0]), (ringR_br[1] - ringR_tl[1])))
+        pants_rect = pygame.Rect(pants_tl, ((pants_br[0] - pants_tl[0]), (pants_br[1] - pants_tl[1])))
+        gloves_rect = pygame.Rect(gloves_tl, ((gloves_br[0] - gloves_tl[0]), (gloves_br[1] - gloves_tl[1])))
+        boots_rect = pygame.Rect(boots_tl, ((boots_br[0] - boots_tl[0]), (boots_br[1] - boots_tl[1])))
 
         self.equipment_rects.append(helmet_rect)
         self.equipment_rects.append(armor_rect)

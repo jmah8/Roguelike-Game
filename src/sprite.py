@@ -1,4 +1,3 @@
-import pygame
 from constant import *
 import os
 

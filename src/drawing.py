@@ -409,7 +409,6 @@ class Drawing:
                                   (enemy.rect.size[0] / scale_factor_x + 1),
                                   (enemy.rect.size[1] / scale_factor_y + 1)))
 
-
     def draw_minimap(self, game):
         """
         Draws minimap on topleft of screen. This is a
