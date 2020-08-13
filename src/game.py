@@ -133,12 +133,12 @@ class Game:
                                     container=player_container)
         creature_com = creature.Creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
-        slime = object.object(self, 4, 3, "enemy", anim=self.game_sprites.slime_dict,
+        slime = object.object(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = creature.Creature("Slime1", 3, True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
-        slime1 = object.object(self, 8, 6, "enemy", anim=self.game_sprites.slime_dict,
+        slime1 = object.object(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
         item_com = item.Item("Red Potion", 0, 0, True)
         item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
