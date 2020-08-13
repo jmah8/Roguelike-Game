@@ -11,9 +11,9 @@ def _calculate_change_in_position(diff):
     Args:
         diff (int): difference between self position and player
     """
-    if (diff > 0):
+    if diff > 0:
         move = -1
-    elif (diff < 0):
+    elif diff < 0:
         move = 1
     else:
         move = 0
