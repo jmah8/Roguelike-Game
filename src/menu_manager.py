@@ -1,6 +1,6 @@
-import pygame
 from constant import *
 import magic
+import game_text
 
 
 class Menu_Manager:
@@ -21,7 +21,7 @@ class Menu_Manager:
                     if event.key == pygame.K_p:
                         menu_closed = True
 
-            self.game.drawing.draw_text(self.game.surface,
+            game_text.draw_text(self.game.surface,
                                         ((CAMERA_WIDTH - FONT_SIZE) / 2, (CAMERA_HEIGHT - FONT_SIZE) / 2), WHITE,
                                         "PAUSED", BLACK)
             self.game.clock.tick(60)
