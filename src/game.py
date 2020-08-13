@@ -31,7 +31,6 @@ pygame.font.init()
 #         self.ITEMS = []
 
 
-
 class Game:
     def __init__(self):
         """
@@ -481,9 +480,9 @@ class Game:
         # the mouse coord and map coord not being in sync
 
         # If map is smaller than screen, than subtract it by # of tiles not in map
-        if (self.map_data.map_width < screen_x):
+        if self.map_data.map_width < screen_x:
             mouse_x = mouse_x - (screen_x - self.map_data.map_width)
-        if (self.map_data.map_height < screen_y):
+        if self.map_data.map_height < screen_y:
             mouse_y = mouse_y - (screen_y - self.map_data.map_height)
 
         return mouse_x, mouse_y

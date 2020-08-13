@@ -102,7 +102,14 @@ class Drawing:
                                 None)
             messages_drawn_counter += 1
 
-    def print_game_message(self, ingame_message, message_color):
+    def add_game_message_to_print(self, ingame_message, message_color):
+        """
+        Adds game message to print
+
+        Args:
+            ingame_message (String): Message to add
+            message_color (Color): Color of message
+        """
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
     def draw_map(self):
