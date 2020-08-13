@@ -52,9 +52,9 @@ class Creature:
         Creature takes damage to hp and if hp is <= 0 and killable == True, it dies
         """
         self.hp -= damage
-        self.owner.game.drawing.print_game_message(
+        self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " took " + str(damage) + " damage", RED)
-        self.owner.game.drawing.print_game_message(
+        self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.hp), WHITE)
 
         self.owner.game.particles.add(DamageNumParticle(self.x, self.y, damage, self.owner.game.particles))
@@ -66,7 +66,7 @@ class Creature:
         """
         Prints that object is dead and removes it from all_creature and enemies group
         """
-        self.owner.game.drawing.print_game_message(
+        self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
         self.owner.game.all_creature.remove(self.owner)
         self.owner.game.GAME_OBJECTS.remove(self.owner)
@@ -151,6 +151,6 @@ class Creature:
             target (object): object to attack
             damage (int): damage to do to object
         """
-        self.owner.game.drawing.print_game_message(self.name_instance + " attacks " + target.creature.name_instance
-                                                   + " for " + str(damage) + " damage", WHITE)
+        self.owner.game.drawing.add_game_message_to_print(self.name_instance + " attacks " + target.creature.name_instance
+                                                          + " for " + str(damage) + " damage", WHITE)
         target.creature.take_damage(damage)
