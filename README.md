@@ -58,7 +58,7 @@ A work in progress roguelike game made with Pygame where the player has to fight
 # Known bugs
 - Items, player and enemies sometimes spawn in walls depending on map generation
 - Enemies spawning in wall will crash game when trying to move
-- Player spawning in wall will crash game when using mouse or free camera to move but no keyboard
+- Player spawning in wall will crash game when using mouse or free camera to move but not keyboard
 
 # Credits:  
 ## Sprites:
