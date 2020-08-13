@@ -53,6 +53,7 @@ A work in progress roguelike game made with Pygame where the player has to fight
 - Different classes
 - Player stats
 - Win and lose condition
+- Major refactoring of code
 
 # Known bugs
 - Items, player and enemies sometimes spawn in walls depending on map generation
