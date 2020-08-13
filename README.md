@@ -1,5 +1,5 @@
 # Roguelike Game
-A working progress roguelike game where the player has to fight enemies and complete a currently undecided objective to win.
+A work in progress roguelike game made with Pygame where the player has to fight enemies and complete a currently undecided objective to win.
 
 ![Animation](resource/readme/Animation.gif)
 
@@ -52,6 +52,7 @@ A working progress roguelike game where the player has to fight enemies and comp
 - Better ai
 - Different classes
 - Player stats
+- Win and lose condition
 
 # Known bugs
 - Items, player and enemy sometimes spawn into walls depending on map generation
