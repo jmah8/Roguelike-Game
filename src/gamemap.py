@@ -144,7 +144,7 @@ def gen_map(game):
     tree.build_bsp()
     tree.build_rooms()
     tree.build_path()
-    tree.print_map()
+    # tree.print_map()
     game.map_tree = tree
     return map_array
 
