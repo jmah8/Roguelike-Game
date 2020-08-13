@@ -5,6 +5,9 @@ def diagonal_distance(start, end):
     """
     Finds the diagonl distance between start and end
 
+    Taken from:
+        https://www.redblobgames.com/grids/line-drawing.html
+
     Args:
         start ((int, int)): Start of line to calculate diagonal distance
         end ((int, int)): End of line to calculate diagonal distance
@@ -24,6 +27,9 @@ def round_point(position):
     """
     Rounds float to int
 
+    Taken from:
+        https://www.redblobgames.com/grids/line-drawing.html
+
     Args:
         position ((int, int)): Position to round to int
 
@@ -38,6 +44,9 @@ def lerp_point(start, end, t):
     """
     Returns position between start and end,
     depending on t
+
+    Taken from:
+        https://www.redblobgames.com/grids/line-drawing.html
 
     Args:
         start ((int, int)): Start point of line
@@ -60,6 +69,9 @@ def lerp(num1, num2, t):
     """
     Gives number between num1 and num2,
     depending on t
+
+    Taken from:
+        https://www.redblobgames.com/grids/line-drawing.html
     
     Args:
         num1 (int): First number to choose number between
@@ -77,6 +89,9 @@ def line(start, end, map):
     """
     Draws line from start to end, stopping at any wall,
     returning the tiles the line passes through
+
+    Taken from:
+        https://www.redblobgames.com/grids/line-drawing.html
 
     Args:
         start ((int, int)): Start position of line

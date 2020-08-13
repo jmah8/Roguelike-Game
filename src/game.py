@@ -125,20 +125,20 @@ class Game:
 
     def _add_creatures(self):
         camera = creature.Creature("Camera", 999, False, walk_through_tile=True)
-        self.free_camera = object.object(self, 6, 6, "camera", image=self.game_sprites.mouse_select, creature=camera)
+        self.free_camera = object.object(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
         player_container = container.Container()
-        player_com = creature.Creature("Viet", 10, enemy_group=self.enemy_group)
+        player_com = creature.Creature("Knight", 10, enemy_group=self.enemy_group)
         self.player = object.object(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
                                     container=player_container)
         creature_com = creature.Creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
-        slime = object.object(self, 2, 2, "enemy", anim=self.game_sprites.slime_dict,
+        slime = object.object(self, 4, 3, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = creature.Creature("Slime1", 3, True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
-        slime1 = object.object(self, 20, 23, "enemy", anim=self.game_sprites.slime_dict,
+        slime1 = object.object(self, 8, 6, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
         item_com = item.Item("Red Potion", 0, 0, True)
         item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)

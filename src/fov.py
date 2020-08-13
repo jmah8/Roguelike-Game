@@ -19,6 +19,9 @@ def ray_casting(map_data, map_array, fov, player):
     """
     Calculates which tiles are seen
 
+    Taken from:
+        http://www.roguebasin.com/index.php?title=Raycasting_in_python
+
     Args:
         player (Object): Player object
         map_data (MapInfo): Game with game data
@@ -50,6 +53,9 @@ def ray_casting(map_data, map_array, fov, player):
 def draw_seen(map_data, tile_array, fov, unseen_tile):
     """
     Draws unseen tiles, seen tiles and explored tiles
+
+    Taken from:
+        http://www.roguebasin.com/index.php?title=Raycasting_in_python
 
     Args:
         unseen_tile (Sprite): Sprite to draw for unseen tiles
