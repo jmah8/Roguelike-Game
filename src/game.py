@@ -31,6 +31,7 @@ pygame.font.init()
 #         self.ITEMS = []
 
 
+
 class Game:
     def __init__(self):
         """
