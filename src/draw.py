@@ -27,27 +27,10 @@ class Drawing:
         Note: Always call game.clock.tick(FPS) before and pygame.display.flip()
         after calling this method to update display
         """
-        # Update what to lock camera on
-        if not self.game.free_camera_on:
-            self.game.camera.update(self.game.player)
-        else:
-            self.game.camera.update(self.game.free_camera)
-
-        if not self.game.wall_hack:
-            self.game.fov = fov.new_fov(self.game.map_data)
-
-        fov.ray_casting(self.game.map_data, self.game.map_array, self.game.fov, self.game.player)
-        fov.draw_seen(self.game.map_data, self.game.tile_array, self.game.fov, self.game.game_sprites.unseen_tile)
-
         # Draws all tiles
-        for tile in self.game.all_tile:
-            self.game_surface.blit(tile.image, self.game.camera.apply(tile))
+        self.draw_tiles()
 
-        # Draws object if it is in player fov
-        for obj in self.game.GAME_OBJECTS:
-            if fov.check_if_in_fov(self.game, obj):
-                obj.update_anim()
-                self.game_surface.blit(obj.image, self.game.camera.apply(obj))
+        self.draw_game_objects()
 
         # Draw mouse select cursor depending on if free camera is on
         if self.game.free_camera_on:
@@ -55,7 +38,7 @@ class Drawing:
         else:
             self.draw_mouse()
 
-        self.game.particles.draw(self.game_surface)
+        self.draw_particles()
         self.game.particles.update()
 
         self.button_manager.draw_buttons(self.game_surface)
@@ -67,6 +50,30 @@ class Drawing:
 
         self.draw_debug()
         self.draw_messages()
+
+    def draw_tiles(self):
+        """
+        Draws all tiles shifted by camera
+        """
+        for tile in self.game.all_tile:
+            self.game_surface.blit(tile.image, self.game.camera.apply(tile))
+
+    def draw_game_objects(self):
+        """
+        Draws all game objects shifted by camera
+        """
+        # Draws object if it is in player fov
+        for obj in self.game.GAME_OBJECTS:
+            if fov.check_if_in_fov(self.game, obj):
+                obj.update_anim()
+                self.game_surface.blit(obj.image, self.game.camera.apply(obj))
+
+    def draw_particles(self):
+        """
+        Draws all particles shifted by camera
+        """
+        for particle in self.game.particles:
+            self.game_surface.blit(particle.image, self.game.camera.apply(particle))
 
     def add_buttons(self):
         """
@@ -173,7 +180,7 @@ class Drawing:
             line (List): List of coords the spell will pass through
         """
         for (x, y) in line:
-            relative_x, relative_y = self.game.get_relative_screen_coord(x, y)
+            relative_x, relative_y = self.game.get_relative_screen_coord(x, y, self.game.map_data, self.game.camera)
             self.draw_img_at_coord(self.game.game_sprites.select_tile, relative_x, relative_y)
 
     def draw_minimap(self, game):

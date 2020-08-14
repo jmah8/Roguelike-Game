@@ -50,9 +50,9 @@ def ray_casting(map_data, map_array, fov, player):
     fov[player.y][player.x] = 1
 
 
-def draw_seen(map_data, tile_array, fov, unseen_tile):
+def change_seen(map_data, tile_array, fov, unseen_tile):
     """
-    Draws unseen tiles, seen tiles and explored tiles
+    Changes tile's sprite depending on if it's unseen, seen or explored tiles
 
     Taken from:
         http://www.roguebasin.com/index.php?title=Raycasting_in_python
