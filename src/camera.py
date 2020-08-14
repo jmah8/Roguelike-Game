@@ -9,10 +9,11 @@ class Camera:
     player moves and it offsets everything else relative to
     the camera's offset
 
-    Args:
-        width (int): width of whole map
-        height (int): height of whole map
-        camera (rect): rect of whole map
+    Attributes:
+        width (arg, int): width of whole map
+        height (arg, int): height of whole map
+        camera_width (int): width of camera
+        camera_height (int): height of camera
     """
 
     def __init__(self, width, height, camera_width=CAMERA_WIDTH, camera_height=CAMERA_HEIGHT):

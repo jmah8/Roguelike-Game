@@ -1,3 +1,4 @@
+import game
 from constant import *
 import magic
 import game_text
@@ -82,7 +83,7 @@ class Menu_Manager:
             self.game.clock.tick(FPS)
             self.game.drawing.draw()
             self.game.drawing.draw_mouse()
-            m_x, m_y = self.game.get_mouse_coord()
+            m_x, m_y = game.get_mouse_coord(self.game.map_data, self.game.camera)
             line = magic.line(self.game.player.position, (m_x, m_y), self.game.map_array)
             print(line)
             self.game.drawing.draw_magic_path(line)

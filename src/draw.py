@@ -173,7 +173,7 @@ class Drawing:
             line (List): List of coords the spell will pass through
         """
         for (x, y) in line:
-            relative_x, relative_y = self.game.get_relative_screen_coord(x, y)
+            relative_x, relative_y = self.game.get_relative_screen_coord(x, y, self.game.map_data, self.game.camera)
             self.draw_img_at_coord(self.game.game_sprites.select_tile, relative_x, relative_y)
 
     def draw_minimap(self, game):
