@@ -244,8 +244,24 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.handle_events()
-            self.drawing.draw()
+            self.draw()
+            # self.drawing.draw()
             pygame.display.flip()
+
+    def draw(self):
+        # Update what to lock camera on
+        if not self.free_camera_on:
+            self.camera.update(self.player)
+        else:
+            self.camera.update(self.free_camera)
+
+        if not self.wall_hack:
+            self.fov = fov.new_fov(self.map_data)
+
+        fov.ray_casting(self.map_data, self.map_array, self.fov, self.player)
+        fov.change_seen(self.map_data, self.tile_array, self.fov, self.game_sprites.unseen_tile)
+
+        self.drawing.draw()
 
     def handle_events(self):
         """
@@ -435,7 +451,7 @@ class Game:
                 self.move_char_auto(path, True)
 
             self.clock.tick(FPS)
-            self.drawing.draw()
+            self.draw()
             pygame.display.flip()
 
     def map_objects_at_coords(self, coord_x, coord_y):
@@ -494,7 +510,7 @@ class Game:
                 self.current_group.update(dest_x, dest_y)
                 old_coord = coord
 
-                self.drawing.draw()
+                self.draw()
                 self.clock.tick(20)
                 pygame.display.flip()
 

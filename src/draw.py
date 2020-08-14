@@ -27,18 +27,6 @@ class Drawing:
         Note: Always call game.clock.tick(FPS) before and pygame.display.flip()
         after calling this method to update display
         """
-        # Update what to lock camera on
-        if not self.game.free_camera_on:
-            self.game.camera.update(self.game.player)
-        else:
-            self.game.camera.update(self.game.free_camera)
-
-        if not self.game.wall_hack:
-            self.game.fov = fov.new_fov(self.game.map_data)
-
-        fov.ray_casting(self.game.map_data, self.game.map_array, self.game.fov, self.game.player)
-        fov.draw_seen(self.game.map_data, self.game.tile_array, self.game.fov, self.game.game_sprites.unseen_tile)
-
         # Draws all tiles
         for tile in self.game.all_tile:
             self.game_surface.blit(tile.image, self.game.camera.apply(tile))
