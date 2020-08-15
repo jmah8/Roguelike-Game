@@ -4,6 +4,7 @@ from constant import *
 import fov
 import sprite
 from button_manager import Button_Manager
+import game
 
 
 class Drawing:
@@ -161,12 +162,12 @@ class Drawing:
 
     def draw_img_at_coord(self, img, x_coord, y_coord):
         """
-        Draws img at (x_coord, y_coord)
+        Draws img at (x_coord, y_coord) relative to screen
 
-        x and y _coord are coords on the map
+        x and y coord are coords on the map
 
         Args:
-            img (sprite): image to draw at (x, y)
+            img (sprite): image to update at (x, y)
             x_coord (int): x coord to draw tile onto
             y_coord (int): y coord to draw tile onto
         """
@@ -180,7 +181,7 @@ class Drawing:
             line (List): List of coords the spell will pass through
         """
         for (x, y) in line:
-            relative_x, relative_y = self.game.get_relative_screen_coord(x, y, self.game.map_data, self.game.camera)
+            relative_x, relative_y = game.get_relative_screen_coord(x, y, self.game.map_data, self.game.camera)
             self.draw_img_at_coord(self.game.game_sprites.select_tile, relative_x, relative_y)
 
     def draw_minimap(self, game):
