@@ -22,6 +22,7 @@ class Camera:
         self.camera = pygame.Rect(0, 0, map_width, map_height)
         self.map_width = map_width
         self.map_height = map_height
+
         self.camera_width = camera_width
         self.camera_height = camera_height
 
@@ -69,6 +70,10 @@ class Camera:
         """
         Returns the coord of (x_coord, y_coord) relative to the camera/screen
 
+        Used for drawing images where calling apply is not possible
+        since drawing at x = 15, y = 15 will draw it off the screen
+        depending on screen size since apply is called to everything
+
         Args:
             x (int): x coord to translate
             y (int): y coord to translate
@@ -90,8 +95,8 @@ class Camera:
         # If map is smaller than screen, than subtract it by # of tiles not in map
         if self.map_width_tile < screen_x:
             relative_x = relative_x - (screen_x - self.map_width_tile)
-        if self.map_height.tile < screen_y:
-            relative_y = relative_y - (screen_y - self.map_height.tile)
+        if self.map_height_tile < screen_y:
+            relative_y = relative_y - (screen_y - self.map_height_tile)
 
         return relative_x, relative_y
 
@@ -103,10 +108,6 @@ class Camera:
         First converts the mouse position to coordinate. Since mouse
         position is found relative to screen, add to it the camera position
         to get the mouse's map coordinate.
-
-        Args:
-            map_data (MapInfo): Class that holds map info
-            camera (Camera): Camera that is following player
 
         Returns:
             mouse_x, mouse_y ((int, int)): Coordinate of mouse on map
@@ -127,9 +128,9 @@ class Camera:
         # the mouse coord and map coord not being in sync
 
         # If map is smaller than screen, than subtract it by # of tiles not in map
-        if self.map_width.tile < screen_x:
-            mouse_x = mouse_x - (screen_x - self.map_width.tile)
-        if self.map_height.tile < screen_y:
-            mouse_y = mouse_y - (screen_y - self.map_height.tile)
+        if self.map_width_tile < screen_x:
+            mouse_x = mouse_x - (screen_x - self.map_width_tile)
+        if self.map_height_tile < screen_y:
+            mouse_y = mouse_y - (screen_y - self.map_height_tile)
 
         return mouse_x, mouse_y
