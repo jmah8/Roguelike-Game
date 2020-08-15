@@ -1,4 +1,5 @@
 import os
+
 import pygame
 import ai
 import container
@@ -154,8 +155,6 @@ class Game:
         # Enemy group
         self.enemy_group = pygame.sprite.Group()
 
-        self.item_group = pygame.sprite.Group()
-
         # Particle group
         self.particles = pygame.sprite.Group()
 
@@ -193,18 +192,23 @@ class Game:
 
         self.free_camera_on = False
 
-        self._add_creatures()
+        self._add_objects()
 
         self.drawing.add_buttons()
 
-    def _add_creatures(self):
+    def _add_objects(self):
+        """
+        Adds objects to groups
+        """
         camera = creature.Creature("Camera", 999, False, walk_through_tile=True)
         self.free_camera = object.object(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
+
         player_container = container.Container()
         player_com = creature.Creature("Knight", 10, enemy_group=self.enemy_group)
         self.player = object.object(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
                                     container=player_container)
+
         creature_com = creature.Creature("Slime", 3, True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
         slime = object.object(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
@@ -214,14 +218,8 @@ class Game:
         ai_component_1 = ai.SmartAi()
         slime1 = object.object(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
-        item_com = item.Item("Red Potion", 0, 0, True)
-        item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
-        item_sword_com = item.Item("Sword", 0, 0, False)
-        item_sword = object.object(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
 
-        self.ITEMS = [item_potion, item_sword]
-        for i in self.ITEMS:
-            self.item_group.add(i)
+        item_potion, item_sword = self._add_items()
 
         self.CREATURES = [self.player, slime, slime1]
         for c in self.CREATURES:
@@ -236,6 +234,20 @@ class Game:
 
         self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, self.player]
 
+    def _add_items(self):
+        """
+        Adds items to game
+        """
+        item_com = item.Item("Red Potion", 0, 0, True)
+        item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
+
+        item_sword_com = item.Item("Sword", 0, 0, False)
+        item_sword = object.object(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
+
+        self.ITEMS = [item_potion, item_sword]
+
+        return item_potion, item_sword
+
     def run(self):
         """
         Main game loop which takes in process player input updates screen
@@ -244,11 +256,11 @@ class Game:
         while self.playing:
             self.clock.tick(FPS)
             self.handle_events()
-            self.draw()
-            # self.drawing.draw()
+            self.update()
+            # self.drawing.update()
             pygame.display.flip()
 
-    def draw(self):
+    def update(self):
         # Update what to lock camera on
         if not self.free_camera_on:
             self.camera.update(self.player)
@@ -390,7 +402,7 @@ class Game:
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_array)
         print(line)
-        magic.cast_lightning(self, self.player, 2, line)
+        magic.cast_fireball(self, self.player, 2, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
@@ -443,6 +455,7 @@ class Game:
 
             if not self.tile_array[move_y][move_x].seen:
                 return
+
             start = (self.player.x, self.player.y)
             goal = (move_x, move_y)
             visited = self.graph.bfs(start, goal)
@@ -451,7 +464,7 @@ class Game:
                 self.move_char_auto(path, True)
 
             self.clock.tick(FPS)
-            self.draw()
+            self.update()
             pygame.display.flip()
 
     def map_objects_at_coords(self, coord_x, coord_y):
@@ -510,7 +523,7 @@ class Game:
                 self.current_group.update(dest_x, dest_y)
                 old_coord = coord
 
-                self.draw()
+                self.update()
                 self.clock.tick(20)
                 pygame.display.flip()
 
