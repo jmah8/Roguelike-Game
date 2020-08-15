@@ -57,7 +57,7 @@ class Creature:
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.hp), WHITE)
 
-        self.owner.game.particles.add(DamageNumParticle(self.x, self.y, damage, self.owner.game.particles))
+        DamageNumParticle(self.x, self.y, damage, self.owner.game.particles)
 
         if self.hp <= 0 and self.killable:
             self.die()

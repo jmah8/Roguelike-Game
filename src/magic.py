@@ -1,5 +1,7 @@
 from constant import *
-import game
+import game as g
+import pygame
+import particle
 
 
 def diagonal_distance(start, end):
@@ -116,16 +118,19 @@ def line(start, end, map):
     return points
 
 
-def cast_fireball(g, caster, damage, line):
+def cast_fireball(game, caster, damage, line):
     """
     Throws fireball following line stopping at first enemy hit.
     
     Args:
-        g (Game): Game with game data
+        game (Game): Game with game data
         caster (Creature): Creature that casted fireball
         damage (int): Damage fireball will do to enemy
         line (List): List of coordinates for fireball to follow
     """
+    particle_group = []
+    particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
+
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     creature_hit = False
@@ -133,41 +138,47 @@ def cast_fireball(g, caster, damage, line):
         if creature_hit:
             break
         # damage first enemy in list of tile
-        for obj in g.CREATURES:
+        for obj in game.CREATURES:
             if enemies.has(obj):
                 if (obj.x, obj.y) == (x, y):
                     obj.creature.take_damage(damage)
                     creature_hit = True
                     break
 
-        g.update()
-        relative_x, relative_y = game.get_relative_screen_coord(x, y, g.map_data, g.camera)
-        g.drawing.draw_img_at_coord(g.game_sprites.magic['fireball'], relative_x, relative_y)
-        g.clock.tick(30)
+        game.update()
+        for magic in particle_group:
+            game.surface.blit(magic.image, game.camera.apply(magic))
+            magic.update()
+        game.clock.tick(20)
         pygame.display.update()
 
 
 # TODO: make it so enemies wont target through their allies
-def cast_lightning(g, caster, damage, line):
+def cast_lightning(game, caster, damage, line):
     """
     Throws lightning following line, hitting all enemies in path.
 
     Args:
-        g (Game): Game with game data
+        game (Game): Game with game data
         caster (Creature): Creature that casted lightning
         damage (int): Damage fireball will do to enemy
         line (List): List of coordinates for lightning to follow
     """
+    particle_group = []
+    particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
+
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     for (x, y) in line:
-        for obj in g.CREATURES:
+        for obj in game.CREATURES:
             if enemies.has(obj):
                 if (obj.x, obj.y) == (x, y):
                     obj.creature.take_damage(damage)
 
-        g.update()
-        relative_x, relative_y = game.get_relative_screen_coord(x, y, g.map_data, g.camera)
-        g.drawing.draw_img_at_coord(g.game_sprites.magic['fireball'], relative_x, relative_y)
-        g.clock.tick(30)
+        game.update()
+        for magic in particle_group:
+            game.surface.blit(magic.image, game.camera.apply(magic))
+            magic.update()
+        game.clock.tick(20)
         pygame.display.update()
+

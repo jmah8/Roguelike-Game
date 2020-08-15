@@ -11,7 +11,7 @@ def new_fov(map_data):
     Returns:
         new_fov (2D array): new fov array
     """
-    new_fov = [[0 for x in range(0, map_data.map_width)] for y in range(map_data.map_height)]
+    new_fov = [[0 for x in range(0, map_data.tile_width)] for y in range(map_data.tile_height)]
     return new_fov
 
 
@@ -39,7 +39,7 @@ def ray_casting(map_data, map_array, fov, player):
             x += ax
             y += ay
 
-            if x < 0 or y < 0 or x > map_data.map_width - 1 or y > map_data.map_height - 1:
+            if x < 0 or y < 0 or x > map_data.tile_width - 1 or y > map_data.tile_height - 1:
                 break
 
             fov[int(round(y))][int(round(x))] = 1
@@ -63,8 +63,8 @@ def change_seen(map_data, tile_array, fov, unseen_tile):
         tile_array (2D array): tile array of map
         fov (2D array): fov array telling which tile is seen
     """
-    for y in range(0, map_data.map_height):
-        for x in range(0, map_data.map_width):
+    for y in range(0, map_data.tile_height):
+        for x in range(0, map_data.tile_width):
             tile = tile_array[y][x]
             # If tile is where player is, it is seen
             # if (x, y) == (game.player.x, game.player.y):

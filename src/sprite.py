@@ -157,5 +157,6 @@ class GameSprites:
 
 
         self.magic = {
-            "fireball": load_image(FIREBALL)
+            "fireball": load_image(FIREBALL),
+            "lightning": load_image(LIGHTNING)
         }

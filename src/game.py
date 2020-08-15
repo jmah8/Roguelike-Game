@@ -33,79 +33,6 @@ pygame.font.init()
 #         self.camera = None
 
 
-def get_relative_screen_coord(x, y, map_data, camera):
-    """
-    Returns the coord of (x_coord, y_coord) relative to the camera/screen
-
-    Args:
-        camera (Camera): Camera that is following player
-        map_data (MapInfo): Class that holds map info
-        x (int): x coord to translate
-        y (int): y coord to translate
-
-    Returns:
-        relative_x, relative_y ((int, int)): Coordinate of (x_coord, y_coord) on screen
-    """
-    # Add camera position to get the mouse's map coordinate
-    camera_x, camera_y = camera.camera_position
-    relative_x = x - (camera_x // SPRITE_SIZE)
-    relative_y = y - (camera_y // SPRITE_SIZE)
-    # Find the amount of tiles on screen
-    screen_x = camera.camera_width // SPRITE_SIZE
-    screen_y = camera.camera_height // SPRITE_SIZE
-
-    # If map is smaller than screen x/y, this fixes the issue of
-    # the mouse coord and map coord not being in sync
-
-    # If map is smaller than screen, than subtract it by # of tiles not in map
-    if map_data.map_width < screen_x:
-        relative_x = relative_x - (screen_x - map_data.map_width)
-    if map_data.map_height < screen_y:
-        relative_y = relative_y - (screen_y - map_data.map_height)
-
-    return relative_x, relative_y
-
-
-def get_mouse_coord(map_data, camera):
-    """
-    Returns mouse coordinate on map, taking into account
-    size of map
-
-    First converts the mouse position to coordinate. Since mouse
-    position is found relative to screen, add to it the camera position
-    to get the mouse's map coordinate.
-
-    Args:
-        map_data (MapInfo): Class that holds map info
-        camera (Camera): Camera that is following player
-
-    Returns:
-        mouse_x, mouse_y ((int, int)): Coordinate of mouse on map
-    """
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    # Converts the mouse position to coordinate (relative to screen)
-    mouse_x = mouse_x // SPRITE_SIZE
-    mouse_y = mouse_y // SPRITE_SIZE
-    # Add camera position to get the mouse's map coordinate
-    x, y = camera.camera_position
-    mouse_x = mouse_x + (x // SPRITE_SIZE)
-    mouse_y = mouse_y + (y // SPRITE_SIZE)
-    # Find the amount of tiles on screen
-    screen_x = camera.camera_width // SPRITE_SIZE
-    screen_y = camera.camera_height // SPRITE_SIZE
-
-    # If map is smaller than screen x/y, this fixes the issue of
-    # the mouse coord and map coord not being in sync
-
-    # If map is smaller than screen, than subtract it by # of tiles not in map
-    if map_data.map_width < screen_x:
-        mouse_x = mouse_x - (screen_x - map_data.map_width)
-    if map_data.map_height < screen_y:
-        mouse_y = mouse_y - (screen_y - map_data.map_height)
-
-    return mouse_x, mouse_y
-
-
 class Game:
     def __init__(self):
         """
@@ -156,7 +83,7 @@ class Game:
         self.enemy_group = pygame.sprite.Group()
 
         # Particle group
-        self.particles = pygame.sprite.Group()
+        self.particles = []
 
         # Switches current group to all creatures
         # the current group to move/update
@@ -177,18 +104,17 @@ class Game:
             self.map_array = gamemap.gen_map(self)
 
         # Holds map info like width and height
-        self.map_data = gamemap.MapInfo(self.map_array)
+        self.map_info = gamemap.MapInfo(self.map_array)
         # Holds actual tiles
         self.tile_array = gamemap.draw_map(self.map_array, self)
 
         self.wall_hack = False
 
         self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_array, self.map_data)
+        self.graph.make_graph(self.map_array, self.map_info)
         self.graph.neighbour()
 
-        self.camera = Camera(
-            self.map_data.width, self.map_data.height)
+        self.camera = Camera(self.map_info)
 
         self.free_camera_on = False
 
@@ -268,10 +194,10 @@ class Game:
             self.camera.update(self.free_camera)
 
         if not self.wall_hack:
-            self.fov = fov.new_fov(self.map_data)
+            self.fov = fov.new_fov(self.map_info)
 
-        fov.ray_casting(self.map_data, self.map_array, self.fov, self.player)
-        fov.change_seen(self.map_data, self.tile_array, self.fov, self.game_sprites.unseen_tile)
+        fov.ray_casting(self.map_info, self.map_array, self.fov, self.player)
+        fov.change_seen(self.map_info, self.tile_array, self.fov, self.game_sprites.unseen_tile)
 
         self.drawing.draw()
 
@@ -309,13 +235,13 @@ class Game:
         new_height = event.h
         # Remove if statements if left and top should be empty
         # else right and bottom is empty
-        if new_width > self.map_data.width:
-            self.camera.camera_width = self.map_data.width
+        if new_width > self.map_info.pixel_width:
+            self.camera.camera_width = self.map_info.pixel_width
         else:
             self.camera.camera_width = event.w
 
-        if new_height > self.map_data.height:
-            self.camera.camera_height = self.map_data.height
+        if new_height > self.map_info.pixel_height:
+            self.camera.camera_height = self.map_info.pixel_height
         else:
             self.camera.camera_height = event.h
         # This line is only used in pygame 1
@@ -397,12 +323,12 @@ class Game:
         Returns:
 
         """
-        move_x, move_y = get_mouse_coord(self.map_data, self.camera)
+        move_x, move_y = self.camera.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_array)
-
-        magic.cast_fireball(self, self.player, 2, line)
+        print(line)
+        magic.cast_lightning(self, self.player, 2, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
@@ -432,8 +358,8 @@ class Game:
         """
         self.wall_hack = not self.wall_hack
         if self.wall_hack:
-            self.fov = [[1 for x in range(0, self.map_data.map_width)] for y in
-                        range(self.map_data.map_height)]
+            self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
+                        range(self.map_info.tile_height)]
 
     def _handle_mouse_event(self, event):
         """
@@ -451,7 +377,7 @@ class Game:
                 return
 
             # Move player to mouse click
-            move_x, move_y = get_mouse_coord(self.map_data, self.camera)
+            move_x, move_y = self.camera.get_mouse_coord()
 
             if not self.tile_array[move_y][move_x].seen:
                 return
@@ -538,7 +464,7 @@ class Game:
         Args:
             graph (Graph): Graph with nodes representing the walkable tiles
         """
-        if len(self.map_data.unseen_tiles) < 75:
+        if len(self.map_info.unseen_tiles) < 75:
             start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
         else:
             start, goal = gamemap.find_closest_unseen_tile(self)

@@ -40,7 +40,8 @@ class Drawing:
             self.draw_mouse()
 
         self.draw_particles()
-        self.game.particles.update()
+        for particle in self.game.particles:
+            particle.update()
 
         self.button_manager.draw_buttons(self.game_surface)
 
@@ -125,18 +126,18 @@ class Drawing:
         Draws map. This map
         is a replica of the actual map
         """
-        map_data = self.game.map_data
+        map_data = self.game.map_info
         tile_array = self.game.tile_array
 
-        scale_tile_width = RESOLUTION[0] / map_data.map_width
-        scale_tile_height = RESOLUTION[1] / map_data.map_height
+        scale_tile_width = RESOLUTION[0] / map_data.tile_width
+        scale_tile_height = RESOLUTION[1] / map_data.tile_height
         scale_factor_x = SPRITE_SIZE / scale_tile_width
         scale_factor_y = SPRITE_SIZE / scale_tile_height
 
         minimap = pygame.Surface((RESOLUTION[0], RESOLUTION[1]))
 
-        for y in range(map_data.map_height):
-            for x in range(map_data.map_width):
+        for y in range(map_data.tile_height):
+            for x in range(map_data.tile_width):
                 tile = tile_array[y][x]
                 tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
@@ -181,7 +182,7 @@ class Drawing:
             line (List): List of coords the spell will pass through
         """
         for (x, y) in line:
-            relative_x, relative_y = game.get_relative_screen_coord(x, y, self.game.map_data, self.game.camera)
+            relative_x, relative_y = self.game.camera.get_relative_screen_coord(x, y)
             self.draw_img_at_coord(self.game.game_sprites.select_tile, relative_x, relative_y)
 
     def draw_minimap(self, game):
