@@ -164,6 +164,9 @@ def cast_lightning(game, caster, damage, line):
         damage (int): Damage fireball will do to enemy
         line (List): List of coordinates for lightning to follow
     """
+    particle_group = []
+    particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
+
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     for (x, y) in line:
@@ -173,7 +176,9 @@ def cast_lightning(game, caster, damage, line):
                     obj.creature.take_damage(damage)
 
         game.update()
-        relative_x, relative_y = g.get_relative_screen_coord(x, y, game.map_data, game.camera)
-        game.drawing.draw_img_at_coord(game.game_sprites.magic['fireball'], relative_x, relative_y)
-        game.clock.tick(30)
+        for magic in particle_group:
+            game.surface.blit(magic.image, game.camera.apply(magic))
+            magic.update()
+        game.clock.tick(20)
         pygame.display.update()
+

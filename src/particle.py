@@ -44,7 +44,6 @@ class MagicParticle(Particle):
         Particle.__init__(self, x, y, list)
         self.index = 0
         self.max_index = len(line)
-        print(self.max_index)
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
