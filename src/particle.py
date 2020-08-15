@@ -23,17 +23,17 @@ class Particle(pygame.sprite.Sprite):
     #       so x and y aren't in sync just like the mouse cursor
     def __init__(self, x, y, group):
         pygame.sprite.Sprite.__init__(self)
-        self.x = x * SPRITE_SIZE
-        self.y = y * SPRITE_SIZE
+        self.x = x
+        self.y = y
         self.group = group
-        # self.v_x = 2
-        # self.v_y = -5
-        # self.max_x = self.x
-        # self.max_y = self.y
-        # self.image, self.rect = myfont.render("1", RED)
-        # self.rect.x = x
-        # self.rect.y = y
-        # self.group = group
+
+
+# class MagicParticle(Particle):
+#
+#     def __init__(self, x, y, group, image, list):
+#         Particle.__init__(self, x, y, group)
+#         self.image = image
+#         self.rect =
 
 
 class DamageNumParticle(Particle):
@@ -51,19 +51,18 @@ class DamageNumParticle(Particle):
     """
     def __init__(self, x, y, damage, group):
         Particle.__init__(self, x, y, group)
-        self.x += SPRITE_SIZE/2
-        self.v_x = 2
-        self.v_y = -5
+        self.x += 0.5
+        self.v_x = 2 / SPRITE_SIZE
+        self.v_y = -5 / SPRITE_SIZE
         self.max_x = self.x + SPRITE_SIZE
         self.max_y = self.y
         self.image, self.rect = myfont.render(str(damage), RED)
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
 
     def update(self):
-        self.rect.topleft = (self.x, self.y)
-        # self.x += self.v_x
+        self.x += self.v_x
         self.y += self.v_y
-        self.v_y += 0.25
+        self.v_y += 0.25 / SPRITE_SIZE
+        self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
         if self.y >= self.max_y or self.x >= self.max_x:
             self.group.remove(self)

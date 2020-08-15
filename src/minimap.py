@@ -27,7 +27,7 @@ def _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y):
     Args:
         game (Game): Game to draw unseen tile on
         scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
+        scale_factor_y (int): what to scale y by
     """
     for tile in game.map_data.unseen_tiles:
         tile_x, tile_y = tile
