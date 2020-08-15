@@ -156,7 +156,7 @@ class Game:
         self.enemy_group = pygame.sprite.Group()
 
         # Particle group
-        self.particles = pygame.sprite.Group()
+        self.particles = []
 
         # Switches current group to all creatures
         # the current group to move/update

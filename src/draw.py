@@ -40,7 +40,8 @@ class Drawing:
             self.draw_mouse()
 
         self.draw_particles()
-        self.game.particles.update()
+        for particle in self.game.particles:
+            particle.update()
 
         self.button_manager.draw_buttons(self.game_surface)
 
