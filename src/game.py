@@ -104,18 +104,17 @@ class Game:
             self.map_array = gamemap.gen_map(self)
 
         # Holds map info like width and height
-        self.map_data = gamemap.MapInfo(self.map_array)
+        self.map_info = gamemap.MapInfo(self.map_array)
         # Holds actual tiles
         self.tile_array = gamemap.draw_map(self.map_array, self)
 
         self.wall_hack = False
 
         self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_array, self.map_data)
+        self.graph.make_graph(self.map_array, self.map_info)
         self.graph.neighbour()
 
-        self.camera = Camera(
-            self.map_data.width, self.map_data.height)
+        self.camera = Camera(self.map_info)
 
         self.free_camera_on = False
 
@@ -195,10 +194,10 @@ class Game:
             self.camera.update(self.free_camera)
 
         if not self.wall_hack:
-            self.fov = fov.new_fov(self.map_data)
+            self.fov = fov.new_fov(self.map_info)
 
-        fov.ray_casting(self.map_data, self.map_array, self.fov, self.player)
-        fov.change_seen(self.map_data, self.tile_array, self.fov, self.game_sprites.unseen_tile)
+        fov.ray_casting(self.map_info, self.map_array, self.fov, self.player)
+        fov.change_seen(self.map_info, self.tile_array, self.fov, self.game_sprites.unseen_tile)
 
         self.drawing.draw()
 
@@ -236,13 +235,13 @@ class Game:
         new_height = event.h
         # Remove if statements if left and top should be empty
         # else right and bottom is empty
-        if new_width > self.map_data.width:
-            self.camera.camera_width = self.map_data.width
+        if new_width > self.map_info.pixel_width:
+            self.camera.camera_width = self.map_info.pixel_width
         else:
             self.camera.camera_width = event.w
 
-        if new_height > self.map_data.height:
-            self.camera.camera_height = self.map_data.height
+        if new_height > self.map_info.pixel_height:
+            self.camera.camera_height = self.map_info.pixel_height
         else:
             self.camera.camera_height = event.h
         # This line is only used in pygame 1
@@ -359,8 +358,8 @@ class Game:
         """
         self.wall_hack = not self.wall_hack
         if self.wall_hack:
-            self.fov = [[1 for x in range(0, self.map_data.map_width)] for y in
-                        range(self.map_data.map_height)]
+            self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
+                        range(self.map_info.tile_height)]
 
     def _handle_mouse_event(self, event):
         """
@@ -465,7 +464,7 @@ class Game:
         Args:
             graph (Graph): Graph with nodes representing the walkable tiles
         """
-        if len(self.map_data.unseen_tiles) < 75:
+        if len(self.map_info.unseen_tiles) < 75:
             start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
         else:
             start, goal = gamemap.find_closest_unseen_tile(self)

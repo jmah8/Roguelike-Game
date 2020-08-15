@@ -102,18 +102,18 @@ class MapInfo:
                                         data from
 
     Attribute:
-        map_width (int): # of tiles wide
-        map_height (int): # of tiles tall
-        width (int): width of map in pixels
-        height (int): height of map in pixels
+        tile_width (int): # of tiles wide
+        tile_height (int): # of tiles tall
+        pixel_width (int): pixel_width of map in pixels
+        pixel_height (int): pixel_height of map in pixels
         unseen_tiles (set): set of unseen tiles coord tuple
     """
 
     def __init__(self, map_array):
-        self.map_width = len(map_array[0])
-        self.map_height = len(map_array)
-        self.width = self.map_width * SPRITE_SIZE
-        self.height = self.map_height * SPRITE_SIZE
+        self.tile_width = len(map_array[0])
+        self.tile_height = len(map_array)
+        self.pixel_width = self.tile_width * SPRITE_SIZE
+        self.pixel_height = self.tile_height * SPRITE_SIZE
         self.unseen_tiles = set()
 
         # if READ_FROM_FILE:
@@ -129,8 +129,8 @@ class MapInfo:
         # self.tile_array = draw_map(self.map_array, self)
 
 
-        for y in range(self.map_height):
-            for x in range(self.map_width):
+        for y in range(self.tile_height):
+            for x in range(self.tile_width):
                 if not map_array[y][x] == WALL:
                     self.unseen_tiles.add((x, y))
 
@@ -192,7 +192,7 @@ def find_closest_unseen_tile(game):
     p_coord = (game.player.x, game.player.y)
     # Find the closest (by literal distance, not
     # how many steps it would take) unseen tile
-    for tile in game.map_data.unseen_tiles:
+    for tile in game.map_info.unseen_tiles:
         dist = distance(p_coord, tile)
         if closest_distance > dist:
             closest_distance = dist
@@ -222,7 +222,7 @@ def find_closest_unseen_tile_walking_distance(game):
     closest_distance = sys.maxsize
     p_coord = (game.player.x, game.player.y)
     # Find the closest unseen tile
-    for tile in game.map_data.unseen_tiles:
+    for tile in game.map_info.unseen_tiles:
         visited = game.graph.bfs(p_coord, tile)
         if visited:
             walking_distance = len(visited)

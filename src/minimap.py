@@ -29,7 +29,7 @@ def _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to scale y by
     """
-    for tile in game.map_data.unseen_tiles:
+    for tile in game.map_info.unseen_tiles:
         tile_x, tile_y = tile
         pygame.draw.rect(game.surface, BLACK,
                          ((tile_x * SPRITE_SIZE / scale_factor_x),
@@ -72,8 +72,8 @@ def _draw_minimap_walls_generated_map(game, scale_factor_x, scale_factor_y):
     """
     pygame.draw.rect(game.surface, BLACK,
                      (0, 0,
-                      game.map_data.width / scale_factor_x,
-                      game.map_data.height / scale_factor_y))
+                      game.map_info.pixel_width / scale_factor_x,
+                      game.map_info.pixel_height / scale_factor_y))
 
 
 def draw_minimap_generated_map(game):
@@ -87,10 +87,10 @@ def draw_minimap_generated_map(game):
     """
     minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
 
-    map_data = game.map_data
+    map_data = game.map_info
 
-    scale_factor_width = minimap_width / map_data.map_width
-    scale_factor_height = minimap_height / map_data.map_height
+    scale_factor_width = minimap_width / map_data.tile_width
+    scale_factor_height = minimap_height / map_data.tile_height
     scale_factor_x = SPRITE_SIZE / scale_factor_width
     scale_factor_y = SPRITE_SIZE / scale_factor_height
 
@@ -112,9 +112,9 @@ def draw_minimap_loaded_map(game):
         game (Game): game to load minimap to
     """
     minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
-    map_data = game.map_data
-    scale_factor_width = minimap_width / map_data.map_width
-    scale_factor_height = minimap_height / map_data.map_height
+    map_data = game.map_info
+    scale_factor_width = minimap_width / map_data.tile_width
+    scale_factor_height = minimap_height / map_data.tile_height
     scale_factor_x = SPRITE_SIZE / scale_factor_width
     scale_factor_y = SPRITE_SIZE / scale_factor_height
 
@@ -152,9 +152,9 @@ def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_
         scale_factor_x (int): How much to scale x by
         scale_factor_y (int): How mucg to scale y by
     """
-    map_data = game.map_data
-    for y in range(map_data.map_height):
-        for x in range(map_data.map_width):
+    map_data = game.map_info
+    for y in range(map_data.tile_height):
+        for x in range(map_data.tile_width):
             tile = game.tile_array[y][x]
             if isinstance(tile, gamemap.Wall):
                 pygame.draw.rect(game.surface, BLACK,

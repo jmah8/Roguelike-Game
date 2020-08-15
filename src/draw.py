@@ -126,18 +126,18 @@ class Drawing:
         Draws map. This map
         is a replica of the actual map
         """
-        map_data = self.game.map_data
+        map_data = self.game.map_info
         tile_array = self.game.tile_array
 
-        scale_tile_width = RESOLUTION[0] / map_data.map_width
-        scale_tile_height = RESOLUTION[1] / map_data.map_height
+        scale_tile_width = RESOLUTION[0] / map_data.tile_width
+        scale_tile_height = RESOLUTION[1] / map_data.tile_height
         scale_factor_x = SPRITE_SIZE / scale_tile_width
         scale_factor_y = SPRITE_SIZE / scale_tile_height
 
         minimap = pygame.Surface((RESOLUTION[0], RESOLUTION[1]))
 
-        for y in range(map_data.map_height):
-            for x in range(map_data.map_width):
+        for y in range(map_data.tile_height):
+            for x in range(map_data.tile_width):
                 tile = tile_array[y][x]
                 tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
