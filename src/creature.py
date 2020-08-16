@@ -1,4 +1,43 @@
 from particle import *
+import json
+
+
+class CreatureStat:
+
+    def __init__(self, hp, mp, strength, dexterity, intelligence, level=1):
+        """
+        Stats of a creature
+
+        Args:
+            hp (int): hp of creature
+            mp (int): mp of creature
+            strength (int): strength of creature
+            dexterity (int): dexterity of creature
+            intelligence (int): intelligence of creature
+            level (int): level of creature
+
+        Attributes:
+            exp (int): experience points creature has
+        """
+        self.max_hp = hp
+        self.max_mp = mp
+        self.hp = hp
+        self.mp = mp
+        self.level = level
+        self.strength = strength
+        self.dexterity = dexterity
+        self.intelligence = intelligence
+
+    def calc_damage(self):
+        """
+        Return damage dealt scaling with level and strength
+
+        Returns:
+            damage (int): damage entity with stat will do
+
+        """
+        damage = (self.level + self.strength) // 2
+        return damage
 
 
 class Creature:
@@ -9,7 +48,7 @@ class Creature:
 
     Attributes:
         name_instance (arg, string) : Name of creature
-        hp (arg, int) : HP of creature
+        stat (arg, int) : stat of creature
         owner (object) : object that has self as creature component
         killable (arg, boolean) : if creature is killable
         enemy_group (arg, group): group creature can attack
@@ -17,15 +56,30 @@ class Creature:
         current_path (arg, List): List of path from start to goal
     """
 
-    def __init__(self, name_instance, hp, killable=None, enemy_group=None, walk_through_tile=False, current_path=None):
+    def __init__(self, name_instance, killable=None, enemy_group=None, walk_through_tile=False, current_path=None):
         self.name_instance = name_instance
-        self.maxhp = hp
-        self.hp = hp
         self.owner = None
         self.killable = killable
         self.enemy_group = enemy_group
         self.walk_through_tile = walk_through_tile
         self.current_path = current_path
+        self.stat = self._load_stat()
+
+    def _load_stat(self):
+        """
+        Loads stat specific to creature of name_instance and returns it
+
+        Returns:
+            stat (Stat): Stat of creature with name_instance
+        """
+        with open('./data/creature.json') as f:
+            data = json.load(f)
+
+        if self.name_instance in data.keys():
+            str = data[self.name_instance]
+            stat = CreatureStat(str["hp"], str["mp"], str["strength"],
+                        str["dexterity"], str["intelligence"])
+            return stat
 
     @property
     def x(self):
@@ -51,15 +105,15 @@ class Creature:
         """
         Creature takes damage to hp and if hp is <= 0 and killable == True, it dies
         """
-        self.hp -= damage
+        self.stat.hp -= damage
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " took " + str(damage) + " damage", RED)
         self.owner.game.drawing.add_game_message_to_print(
-            self.name_instance + "'s hp is at :" + str(self.hp), WHITE)
+            self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
         DamageNumParticle(self.x, self.y, damage, self.owner.game.particles)
 
-        if self.hp <= 0 and self.killable:
+        if self.stat.hp <= 0 and self.killable:
             self.die()
 
     def die(self):
@@ -96,7 +150,7 @@ class Creature:
         if self.enemy_group:
             for enemy in self.enemy_group:
                 if (enemy.x, enemy.y) == (self.x + dx, self.y + dy):
-                    self.attack(enemy, 1)
+                    self.attack(enemy, self.stat.calc_damage())
                     return
 
         self.owner.x += dx
@@ -136,6 +190,7 @@ class Creature:
             target (object): object to attack
             damage (int): damage to do to object
         """
-        self.owner.game.drawing.add_game_message_to_print(self.name_instance + " attacks " + target.creature.name_instance
-                                                          + " for " + str(damage) + " damage", WHITE)
+        self.owner.game.drawing.add_game_message_to_print(
+            self.name_instance + " attacks " + target.creature.name_instance
+            + " for " + str(damage) + " damage", WHITE)
         target.creature.take_damage(damage)
