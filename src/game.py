@@ -123,21 +123,21 @@ class Game:
         """
         Adds objects to groups
         """
-        camera = creature.Creature("Camera", 999, False, walk_through_tile=True)
+        camera = creature.Creature("Camera", False, walk_through_tile=True)
         self.free_camera = object.object(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
 
         player_container = container.Container()
-        player_com = creature.Creature("Knight", 10, enemy_group=self.enemy_group)
+        player_com = creature.Creature("knight", enemy_group=self.enemy_group)
         self.player = object.object(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
                                     container=player_container)
 
-        creature_com = creature.Creature("Slime", 3, True, enemy_group=self.player_group)
+        creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
         slime = object.object(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
         # TODO: Fix ai for creatures merging when stepping onto same tile
-        creaturetest2 = creature.Creature("Slime1", 3, True, enemy_group=self.player_group)
+        creaturetest2 = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
         slime1 = object.object(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
@@ -157,6 +157,7 @@ class Game:
         self.enemy_group += self.ENEMIES
 
         self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, self.player]
+
 
     def _add_items(self):
         """
@@ -326,7 +327,7 @@ class Game:
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_array)
         print(line)
-        magic.cast_lightning(self, self.player, 2, line)
+        magic.cast_fireball(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)

@@ -118,18 +118,21 @@ def line(start, end, map):
     return points
 
 
-def cast_fireball(game, caster, damage, line):
+def cast_fireball(game, caster, line):
     """
     Throws fireball following line stopping at first enemy hit.
     
     Args:
         game (Game): Game with game data
-        caster (Creature): Creature that casted fireball
-        damage (int): Damage fireball will do to enemy
+        caster (Object): Creature that casted fireball
         line (List): List of coordinates for fireball to follow
     """
+    base_damage = 2
+
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
+
+    damage = caster.creature.stat.calc_magic_damage(base_damage)
 
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
@@ -154,18 +157,21 @@ def cast_fireball(game, caster, damage, line):
 
 
 # TODO: make it so enemies wont target through their allies
-def cast_lightning(game, caster, damage, line):
+def cast_lightning(game, caster, line):
     """
     Throws lightning following line, hitting all enemies in path.
 
     Args:
         game (Game): Game with game data
-        caster (Creature): Creature that casted lightning
-        damage (int): Damage fireball will do to enemy
+        caster (Object): Creature that casted lightning
         line (List): List of coordinates for lightning to follow
     """
+    base_damage = 1
+
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
+
+    damage = caster.creature.stat.calc_magic_damage(base_damage)
 
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
