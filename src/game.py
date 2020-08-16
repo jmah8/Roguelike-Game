@@ -103,7 +103,7 @@ class Game:
         # Holds map info like width and height
         self.map_info = gamemap.MapInfo(self.map_array)
         # Holds actual tiles
-        self.tile_array = gamemap.draw_map(self.map_array, self)
+        self.tile_array = gamemap.draw_map(self.map_array, self.game_sprites, self.walls, self.floors)
 
         self.wall_hack = False
 

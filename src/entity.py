@@ -1,9 +1,4 @@
-import os
-import pygame
 from constant import *
-from sprite import *
-
-pygame.init()
 
 class Entity(pygame.sprite.Sprite):
     """
@@ -30,7 +25,7 @@ class Entity(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.x = x
-        self.y = y 
+        self.y = y
         self.object_id = object_id
         self.anim = anim
         self.image = image
@@ -39,7 +34,7 @@ class Entity(pygame.sprite.Sprite):
             self.image = anim['idle_right'][0]
 
         self.rect = self.image.get_rect()
-        self.rect.topleft = (self.x*SPRITE_SIZE, self.y*SPRITE_SIZE)
+        self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
 
         self.left = False
         self.right = True
@@ -48,8 +43,7 @@ class Entity(pygame.sprite.Sprite):
         if (anim):
             self.flicker_speed = ANIMATION_SPEED / len(self.anim) / 1.0
             self.flicker_timer = 0.0
-            self.anim_frame = 0     
-
+            self.anim_frame = 0
 
         self.creature = creature
         if creature:
@@ -87,7 +81,7 @@ class Entity(pygame.sprite.Sprite):
 
             if clock > 0.0:
                 self.flicker_timer += 1 / clock
-            
+
             if self.flicker_timer >= self.flicker_speed:
                 self.flicker_timer = 0.0
 

@@ -130,7 +130,7 @@ class Drawing:
         """
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
-    def draw_map(self):
+    def draw_map_menu(self):
         """
         Draws map. This map
         is a replica of the actual map
