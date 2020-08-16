@@ -99,10 +99,10 @@ class Creature:
 
         # check to see if entity collided with enemy and if so don't move
         if self.enemy_group:
-            creature_hit = pygame.sprite.spritecollideany(self.owner, self.enemy_group)
-            if creature_hit:
-                self.reverse_move(dx, dy)
-                self.attack(creature_hit, 1)
+            for enemy in self.enemy_group:
+                if (enemy.x, enemy.y) == (self.x, self.y):
+                    self.reverse_move(dx, dy)
+                    self.attack(enemy, 1)
 
     def _update_anim_status(self, dx, dy):
         """
