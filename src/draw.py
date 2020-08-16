@@ -35,7 +35,7 @@ class Drawing:
 
         # Draw mouse select cursor depending on if free camera is on
         if self.game.free_camera_on:
-            self.game_surface.blit(self.game.free_camera.image, self.game.camera.apply(self.game.free_camera))
+            self.draw_at_camera_offset(self.game.free_camera)
         else:
             self.draw_mouse()
 
@@ -53,12 +53,21 @@ class Drawing:
         self.draw_debug()
         self.draw_messages()
 
+    def draw_at_camera_offset(self, obj):
+        """
+        Draws obj on surface taking into account camera offset
+
+        Args:
+            obj (Object): object to draw
+        """
+        self.game_surface.blit(obj.image, self.game.camera.apply(obj))
+
     def draw_tiles(self):
         """
         Draws all tiles shifted by camera
         """
-        for tile in self.game.all_tile:
-            self.game_surface.blit(tile.image, self.game.camera.apply(tile))
+        for tile in self.game.walls + self.game.floors:
+            self.draw_at_camera_offset(tile)
 
     def draw_game_objects(self):
         """
@@ -68,14 +77,14 @@ class Drawing:
         for obj in self.game.GAME_OBJECTS:
             if fov.check_if_in_fov(self.game, obj):
                 obj.update_anim()
-                self.game_surface.blit(obj.image, self.game.camera.apply(obj))
+                self.draw_at_camera_offset(obj)
 
     def draw_particles(self):
         """
         Draws all particles shifted by camera
         """
         for particle in self.game.particles:
-            self.game_surface.blit(particle.image, self.game.camera.apply(particle))
+            self.draw_at_camera_offset(particle)
 
     def add_buttons(self):
         """
@@ -151,9 +160,6 @@ class Drawing:
     def draw_mouse(self):
         """
         Draws mouse_select image at mouse position
-
-        Returns:
-
         """
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_x = mouse_x // SPRITE_SIZE

@@ -65,22 +65,19 @@ class Game:
         """
         Makes new map and entity and adds them to the relevant groups
         """
-        # Group with all walls
-        self.walls = pygame.sprite.Group()
-        # self.floors = pygame.sprite.Group()
+        # List with all walls
+        self.walls = []
+        # List with all floors
+        self.floors = []
 
-        # Group with all tiles
-        self.all_tile = pygame.sprite.Group()
-        # Minimap group
-        self.minimap = pygame.sprite.Group()
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Player group
-        self.player_group = pygame.sprite.GroupSingle()
+        self.player_group = []
         # Free camera group
         self.camera_group = pygame.sprite.GroupSingle()
         # Enemy group
-        self.enemy_group = pygame.sprite.Group()
+        self.enemy_group = []
 
         # Particle group
         self.particles = []
@@ -147,16 +144,17 @@ class Game:
 
         item_potion, item_sword = self._add_items()
 
+
         self.CREATURES = [self.player, slime, slime1]
         for c in self.CREATURES:
             self.all_creature.add(c)
 
-        self.player.add(self.player_group)
+        self.player_group.append(self.player)
+
         self.camera_group.add(self.free_camera)
 
         self.ENEMIES = [slime, slime1]
-        for e in self.ENEMIES:
-            self.enemy_group.add(e)
+        self.enemy_group += self.ENEMIES
 
         self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, self.player]
 
