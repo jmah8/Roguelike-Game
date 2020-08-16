@@ -23,7 +23,7 @@ def ray_casting(map_data, map_array, fov, player):
         http://www.roguebasin.com/index.php?title=Raycasting_in_python
 
     Args:
-        player (Object): Player object
+        player (Object): Player Entity
         map_data (MapInfo): Game with game data
         map_array (2D array): map_array with representation of map
         fov (2D array): fov array telling which tile is seen

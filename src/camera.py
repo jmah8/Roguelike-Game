@@ -26,7 +26,7 @@ class Camera:
         Apply camera offset to entity 
 
         Args:
-            entity (object): object to apply offset to
+            entity (object): Entity to apply offset to
         """
         return entity.rect.move(self.camera.topleft)
 

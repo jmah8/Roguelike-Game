@@ -84,7 +84,7 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
     Scales obj image by scale_factor x and y
 
     Arg:
-        obj (object): object with image to scale
+        obj (Entity): Entity with image to scale
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to scale y by
     """

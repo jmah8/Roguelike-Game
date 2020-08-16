@@ -6,7 +6,7 @@ import container
 import gamemap
 import item
 from constant import *
-import object
+import entity
 import creature
 import sprite
 import draw
@@ -124,22 +124,22 @@ class Game:
         Adds objects to groups
         """
         camera = creature.Creature("Camera", False, walk_through_tile=True)
-        self.free_camera = object.object(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
+        self.free_camera = entity.Entity(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
 
         player_container = container.Container()
         player_com = creature.Creature("knight", enemy_group=self.enemy_group)
-        self.player = object.object(self,
+        self.player = entity.Entity(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
                                     container=player_container)
 
         creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
-        slime = object.object(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
+        slime = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
-        slime1 = object.object(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
+        slime1 = entity.Entity(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
 
         item_potion, item_sword = self._add_items()
@@ -164,10 +164,10 @@ class Game:
         Adds items to game
         """
         item_com = item.Item("Red Potion", 0, 0, True)
-        item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
+        item_potion = entity.Entity(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
 
         item_sword_com = item.Item("Sword", 0, 0, False)
-        item_sword = object.object(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
+        item_sword = entity.Entity(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
 
         self.ITEMS = [item_potion, item_sword]
 

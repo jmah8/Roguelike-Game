@@ -65,7 +65,7 @@ class Creature:
     Attributes:
         name_instance (arg, string) : Name of creature
         stat (arg, int) : stat of creature
-        owner (object) : object that has self as creature component
+        owner (object) : Entity that has self as creature component
         killable (arg, boolean) : if creature is killable
         enemy_group (arg, group): group creature can attack
         walk_through_tile (arg, boolean): if creature can walk through tiles like walls
@@ -136,7 +136,7 @@ class Creature:
 
     def die(self):
         """
-        Prints that object is dead and removes it from all_creature and enemies group
+        Prints that Entity is dead and removes it from all_creature and enemies group
         """
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
@@ -205,8 +205,8 @@ class Creature:
         Attack target creature for damage
 
         Args:
-            target (object): object to attack
-            damage (int): damage to do to object
+            target (object): Entity to attack
+            damage (int): damage to do to Entity
         """
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " attacks " + target.creature.name_instance
