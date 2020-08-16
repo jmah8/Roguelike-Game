@@ -28,15 +28,30 @@ class CreatureStat:
         self.dexterity = dexterity
         self.intelligence = intelligence
 
-    def calc_damage(self):
+    def calc_phys_damage(self):
         """
-        Return damage dealt scaling with level and strength
+        Return damage dealt from hitting,
+        scaling with level and strength
 
         Returns:
-            damage (int): damage entity with stat will do
+            damage (int): damage self with stat will do
 
         """
         damage = (self.level + self.strength) // 2
+        return damage
+
+    def calc_magic_damage(self, base_damage):
+        """
+        Returns damage dealt from using spell
+        scaling with level and intelligence
+
+        Args:
+            base_damage (int): base damage of spell
+
+        Returns:
+            damage (int): damage spell will do when casted by self
+        """
+        damage = (self.level + self.intelligence) * base_damage // 4
         return damage
 
 
@@ -78,8 +93,10 @@ class Creature:
         if self.name_instance in data.keys():
             str = data[self.name_instance]
             stat = CreatureStat(str["hp"], str["mp"], str["strength"],
-                        str["dexterity"], str["intelligence"])
+                                str["dexterity"], str["intelligence"])
             return stat
+
+        return None
 
     @property
     def x(self):
@@ -150,7 +167,7 @@ class Creature:
         if self.enemy_group:
             for enemy in self.enemy_group:
                 if (enemy.x, enemy.y) == (self.x + dx, self.y + dy):
-                    self.attack(enemy, self.stat.calc_damage())
+                    self.attack(enemy, self.stat.calc_phys_damage())
                     return
 
         self.owner.x += dx
