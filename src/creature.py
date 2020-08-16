@@ -77,8 +77,8 @@ class Creature:
         Moves entity's position if tile is not a tile or enemy
         else do nothing if wall or attack if enemy
 
-        Moves entity by dx and dy on map. If entity collides with
-        wall or enemy, stop it from moving by actually reversing the move
+        Checks if thing self is moving into is a wall or enemy and
+        if it is don't move and do nothing or attack respectively
 
         Args:
             dx (int): int to change entity's x coord
@@ -86,23 +86,23 @@ class Creature:
         """
         self._update_anim_status(dx, dy)
 
-        self.owner.x += dx
-        self.owner.y += dy
-        self.owner.rect.topleft = (
-            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
-
         if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
             for wall in self.owner.game.walls:
-                if (wall.x, wall.y) == (self.x, self.y):
-                    self.reverse_move(dx, dy)
+                if (wall.x, wall.y) == (self.x + dx, self.y + dy):
+                    return
 
         # check to see if entity collided with enemy and if so don't move
         if self.enemy_group:
             for enemy in self.enemy_group:
-                if (enemy.x, enemy.y) == (self.x, self.y):
-                    self.reverse_move(dx, dy)
+                if (enemy.x, enemy.y) == (self.x + dx, self.y + dy):
                     self.attack(enemy, 1)
+                    return
+
+        self.owner.x += dx
+        self.owner.y += dy
+        self.owner.rect.topleft = (
+            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
     def _update_anim_status(self, dx, dy):
         """
@@ -127,19 +127,6 @@ class Creature:
 
         if not dy == 0:
             self.owner.moving = True
-
-    def reverse_move(self, dx, dy):
-        """
-        Reverse the move
-
-        Args:
-            dx (int): int to change entity's x coord
-            dy (int): int to change entity's y coord
-        """
-        self.owner.x -= dx
-        self.owner.y -= dy
-        self.owner.rect.topleft = (
-            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
     def attack(self, target, damage):
         """
