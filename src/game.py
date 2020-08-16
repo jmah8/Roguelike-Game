@@ -66,11 +66,12 @@ class Game:
         Makes new map and entity and adds them to the relevant groups
         """
         # Group with all walls
-        self.walls = pygame.sprite.Group()
-        # self.floors = pygame.sprite.Group()
+        self.walls = []
+
+        self.floors = []
 
         # Group with all tiles
-        self.all_tile = pygame.sprite.Group()
+        # self.all_tile = pygame.sprite.Group()
         # Minimap group
         self.minimap = pygame.sprite.Group()
         # Group with all creatures

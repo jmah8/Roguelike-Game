@@ -93,11 +93,9 @@ class Creature:
 
         if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
-            creature_collide_with_wall = pygame.sprite.spritecollideany(
-                self.owner, self.owner.game.walls)
-
-            if creature_collide_with_wall:
-                self.reverse_move(dx, dy)
+            for wall in self.owner.game.walls:
+                if (wall.x, wall.y) == (self.x, self.y):
+                    self.reverse_move(dx, dy)
 
         # check to see if entity collided with enemy and if so don't move
         if self.enemy_group:

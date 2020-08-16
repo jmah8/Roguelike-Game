@@ -15,17 +15,20 @@ class Tile(pygame.sprite.Sprite):
         y (int, arg): y position of tile
         game (game, arg): game with object data
         seen (bool): if tile was seen
+        list (arg, list): list to add tile to
     """
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, list):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.x = x
         self.y = y
         self.rect.x = x * SPRITE_SIZE
         self.rect.y = y * SPRITE_SIZE
-        self.game.all_tile.add(self)
+        self.list = list
+        self.list.append(self)
         self.seen = False
+
 
 
 class Wall(Tile):
@@ -39,7 +42,7 @@ class Wall(Tile):
         game (game, arg): game with object data
     """
 
-    def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
+    def __init__(self, game, x, y, list, image_unexplored=None, image_explored=None):
         self.image_seen = game.game_sprites.seen_wall_image
         self.image_in_fov = game.game_sprites.wall_image
         self.image = self.image_in_fov
@@ -48,8 +51,8 @@ class Wall(Tile):
         if (image_explored):
             self.image_seen = image_explored
         self.rect = self.image.get_rect()
-        Tile.__init__(self, game, x, y)
-        self.game.walls.add(self)
+        Tile.__init__(self, game, x, y, list)
+        # self.game.walls.add(self)
 
 
 class Floor(Tile):
@@ -63,7 +66,7 @@ class Floor(Tile):
         game (game, arg): game with object data
     """
 
-    def __init__(self, game, x, y, image_unexplored=None, image_explored=None):
+    def __init__(self, game, x, y, list, image_unexplored=None, image_explored=None):
         self.image_seen = game.game_sprites.seen_floor_image_1
         self.image_in_fov = game.game_sprites.floor_image_1
         self.image = self.image_in_fov
@@ -72,7 +75,7 @@ class Floor(Tile):
         if (image_explored):
             self.image_seen = image_explored
         self.rect = self.image.get_rect()
-        Tile.__init__(self, game, x, y)
+        Tile.__init__(self, game, x, y, list)
         # self.game.floors.add(self)
 
 
@@ -163,12 +166,12 @@ def draw_map(p_map_array, game):
         map_array_row = []
         for row, tile in enumerate(tiles):
             if tile == WALL:
-                map_array_row.append(Wall(game, row, col))
+                map_array_row.append(Wall(game, row, col, game.walls))
             elif tile == FLOOR:
-                map_array_row.append(Floor(game, row, col))
+                map_array_row.append(Floor(game, row, col, game.floors))
             elif tile == PATH:
                 map_array_row.append(
-                    Floor(game, row, col, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
+                    Floor(game, row, col, game.floors, game.game_sprites.floor_image_2, game.game_sprites.seen_floor_image_2))
         map_array.append(map_array_row)
     return map_array
 

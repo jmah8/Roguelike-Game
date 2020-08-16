@@ -66,7 +66,7 @@ class Drawing:
         """
         Draws all tiles shifted by camera
         """
-        for tile in self.game.all_tile:
+        for tile in self.game.walls + self.game.floors:
             self.draw_at_camera_offset(tile)
 
     def draw_game_objects(self):
