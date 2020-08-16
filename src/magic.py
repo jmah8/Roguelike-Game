@@ -1,3 +1,5 @@
+import json
+import os
 from constant import *
 import game as g
 import pygame
@@ -127,7 +129,7 @@ def cast_fireball(game, caster, line):
         caster (Object): Creature that casted fireball
         line (List): List of coordinates for fireball to follow
     """
-    base_damage = 2
+    base_damage = data["fireball"]["damage"]
 
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
@@ -166,7 +168,7 @@ def cast_lightning(game, caster, line):
         caster (Object): Creature that casted lightning
         line (List): List of coordinates for lightning to follow
     """
-    base_damage = 1
+    base_damage = data["lightning"]["damage"]
 
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
@@ -188,3 +190,6 @@ def cast_lightning(game, caster, line):
         game.clock.tick(20)
         pygame.display.update()
 
+
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:
+    data = json.load(f)
