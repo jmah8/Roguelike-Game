@@ -14,6 +14,14 @@ CAMERA_HEIGHT = TILE_HEIGHT * SPRITE_SIZE
 RESOLUTION = (CAMERA_WIDTH, CAMERA_HEIGHT)
 TOPLEFT = (0, 0)
 
+# Player
+HP_BAR_WIDTH = SPRITE_SIZE * 3
+HP_BAR_HEIGHT = SPRITE_SIZE / 3
+MP_BAR_WIDTH = SPRITE_SIZE * 3
+MP_BAR_HEIGHT = SPRITE_SIZE / 3
+EXP_BAR_WIDTH = SPRITE_SIZE * 3
+EXP_BAR_HEIGHT = SPRITE_SIZE / 6
+
 # Map gen constants
 READ_FROM_FILE = False
 MAP_WIDTH = 30
@@ -29,7 +37,6 @@ MINIMAP_SCALE = 2
 
 # Button manager constants
 NUM_OF_BUTTONS = 3
-
 
 # Console map output
 WALL = '1'
@@ -54,7 +61,6 @@ SLIME_FOV = 3
 
 # Resource path
 RESOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
-
 
 # Image path
 KNIGHT = 'knight/knight_idle_anim_f0.png'

@@ -18,12 +18,13 @@ class CreatureStat:
             level (int): level of creature
 
         Attributes:
-            exp (int): experience points creature has
+            exp (int): experience points creature has (in percent)
         """
         self.max_hp = hp
         self.max_mp = mp
         self.hp = hp
         self.mp = mp
+        self.exp = 0
         self.level = level
         self.strength = strength
         self.dexterity = dexterity
@@ -52,9 +53,30 @@ class CreatureStat:
         Returns:
             damage (int): damage spell will do when casted by self
         """
-        damage = (self.level + self.intelligence) * base_damage // 4
+        damage = (self.level + self.intelligence) * base_damage // 2
         return damage
 
+    def calc_exp_gained_from_self(self, player_level):
+        """
+        Returns exp gained from player slaying self.
+
+        Level gained is based on difference in levels.
+        With larger increase in exp when player is >=
+        level of self
+
+        Args:
+            player_level (int): Level of thing that slayed self
+
+        Returns:
+            exp_gained (int): exp gained by slayer
+        """
+        if player_level > self.level:
+            scale = 5
+        else:
+            scale = 20
+
+        exp_gained = abs(player_level - self.level) + 1 * scale
+        return exp_gained
 
 class Creature:
     """
@@ -122,6 +144,9 @@ class Creature:
     def take_damage(self, damage):
         """
         Creature takes damage to hp and if hp is <= 0 and killable == True, it dies
+
+        Returns:
+            bool: if creature died return true else return false
         """
         self.stat.hp -= damage
         self.owner.game.drawing.add_game_message_to_print(
@@ -129,10 +154,13 @@ class Creature:
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
-        DamageNumParticle(self.x, self.y, damage, self.owner.game.particles)
+        NumberParticle(self.x, self.y, damage, self.owner.game.particles, RED)
 
         if self.stat.hp <= 0 and self.killable:
             self.die()
+            return True
+
+        return False
 
     def die(self):
         """
@@ -211,4 +239,17 @@ class Creature:
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " attacks " + target.creature.name_instance
             + " for " + str(damage) + " damage", WHITE)
-        target.creature.take_damage(damage)
+        if target.creature.take_damage(damage):
+            self.gain_exp(target)
+
+    def gain_exp(self, enemy):
+        """
+        Enemy to gain exp from
+
+        Args:
+            enemy (Entity): Entity with creature stats to gain exp from
+        """
+        exp = enemy.creature.stat.calc_exp_gained_from_self(self.stat.level)
+        self.stat.exp += exp
+        NumberParticle(self.x, self.y, exp, self.owner.game.particles, YELLOW)
+

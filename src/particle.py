@@ -63,7 +63,7 @@ class MagicParticle(Particle):
             self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
 
 
-class DamageNumParticle(Particle):
+class NumberParticle(Particle):
     """
     Class that represents damage number above creature
 
@@ -75,15 +75,16 @@ class DamageNumParticle(Particle):
         max_x (int): max x position of particle (after which it disappears)
         max_y (int): max y position of particle (after which it disappears)
         list (arg, Group): group particle belongs to
+        color (arg, RGB): color of particle
     """
-    def __init__(self, x, y, damage, list):
+    def __init__(self, x, y, damage, list, colour):
         Particle.__init__(self, x, y, list)
         self.x += 0.5
         self.v_x = 2 / SPRITE_SIZE
         self.v_y = -5 / SPRITE_SIZE
         self.max_x = self.x + SPRITE_SIZE
         self.max_y = self.y
-        self.image, self.rect = myfont.render(str(damage), RED)
+        self.image, self.rect = myfont.render(str(damage), colour)
         self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
 
     def update(self):

@@ -130,31 +130,36 @@ def cast_fireball(game, caster, line):
         line (List): List of coordinates for fireball to follow
     """
     base_damage = data["fireball"]["damage"]
+    mp_cost = data["fireball"]["cost"]
 
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
 
     damage = caster.creature.stat.calc_magic_damage(base_damage)
 
-    # get list of tiles from start to end
-    enemies = caster.creature.enemy_group
-    creature_hit = False
-    for (x, y) in line:
-        if creature_hit:
-            break
-        # damage first enemy in list of tile
-        for obj in enemies:
-            if (obj.x, obj.y) == (x, y):
-                obj.creature.take_damage(damage)
-                creature_hit = True
+    # If caster has enough mp to cast magic
+    if caster.creature.stat.mp - mp_cost >= 0:
+        caster.creature.stat.mp -= mp_cost
+        # get list of tiles from start to end
+        enemies = caster.creature.enemy_group
+        creature_hit = False
+        for (x, y) in line:
+            if creature_hit:
                 break
+            # damage first enemy in list of tile
+            for enemy in enemies:
+                if (enemy.x, enemy.y) == (x, y):
+                    if enemy.creature.take_damage(damage):
+                        caster.creature.gain_exp(enemy)
+                    creature_hit = True
+                    break
 
-        game.update()
-        for magic in particle_group:
-            game.surface.blit(magic.image, game.camera.apply(magic))
-            magic.update()
-        game.clock.tick(20)
-        pygame.display.update()
+            game.update()
+            for magic in particle_group:
+                game.surface.blit(magic.image, game.camera.apply(magic))
+                magic.update()
+            game.clock.tick(20)
+            pygame.display.update()
 
 
 # TODO: make it so enemies wont target through their allies
@@ -168,25 +173,30 @@ def cast_lightning(game, caster, line):
         line (List): List of coordinates for lightning to follow
     """
     base_damage = data["lightning"]["damage"]
+    mp_cost = data["lightning"]["cost"]
 
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
 
     damage = caster.creature.stat.calc_magic_damage(base_damage)
 
-    # get list of tiles from start to end
-    enemies = caster.creature.enemy_group
-    for (x, y) in line:
-        for obj in enemies:
-            if (obj.x, obj.y) == (x, y):
-                obj.creature.take_damage(damage)
+    # If caster has enough mp to cast magic
+    if caster.creature.stat.mp - mp_cost >= 0:
+        caster.creature.stat.mp -= mp_cost
+        # get list of tiles from start to end
+        enemies = caster.creature.enemy_group
+        for (x, y) in line:
+            for enemy in enemies:
+                if (enemy.x, enemy.y) == (x, y):
+                    if enemy.creature.take_damage(damage):
+                        caster.creature.gain_exp(enemy)
 
-        game.update()
-        for magic in particle_group:
-            game.surface.blit(magic.image, game.camera.apply(magic))
-            magic.update()
-        game.clock.tick(20)
-        pygame.display.update()
+            game.update()
+            for magic in particle_group:
+                game.surface.blit(magic.image, game.camera.apply(magic))
+                magic.update()
+            game.clock.tick(20)
+            pygame.display.update()
 
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:
