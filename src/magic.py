@@ -143,12 +143,11 @@ def cast_fireball(game, caster, line):
         if creature_hit:
             break
         # damage first enemy in list of tile
-        for obj in game.CREATURES:
-            if obj in enemies:
-                if (obj.x, obj.y) == (x, y):
-                    obj.creature.take_damage(damage)
-                    creature_hit = True
-                    break
+        for obj in enemies:
+            if (obj.x, obj.y) == (x, y):
+                obj.creature.take_damage(damage)
+                creature_hit = True
+                break
 
         game.update()
         for magic in particle_group:
@@ -178,10 +177,9 @@ def cast_lightning(game, caster, line):
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     for (x, y) in line:
-        for obj in game.CREATURES:
-            if obj in enemies:
-                if (obj.x, obj.y) == (x, y):
-                    obj.creature.take_damage(damage)
+        for obj in enemies:
+            if (obj.x, obj.y) == (x, y):
+                obj.creature.take_damage(damage)
 
         game.update()
         for magic in particle_group:
