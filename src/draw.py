@@ -58,7 +58,7 @@ class Drawing:
         Draws obj on surface taking into account camera offset
 
         Args:
-            obj (Object): object to draw
+            obj (Object): Entity to draw
         """
         self.game_surface.blit(obj.image, self.game.camera.apply(obj))
 
@@ -73,7 +73,7 @@ class Drawing:
         """
         Draws all game objects shifted by camera
         """
-        # Draws object if it is in player fov
+        # Draws Entity if it is in player fov
         for obj in self.game.GAME_OBJECTS:
             if fov.check_if_in_fov(self.game, obj):
                 obj.update_anim()
@@ -130,13 +130,13 @@ class Drawing:
         """
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
-    def draw_map(self):
+    def draw_map_menu(self):
         """
         Draws map. This map
         is a replica of the actual map
         """
         map_data = self.game.map_info
-        tile_array = self.game.tile_array
+        tile_array = self.game.map_info.tile_array
 
         scale_tile_width = RESOLUTION[0] / map_data.tile_width
         scale_tile_height = RESOLUTION[1] / map_data.tile_height

@@ -84,7 +84,7 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
     Scales obj image by scale_factor x and y
 
     Arg:
-        obj (object): object with image to scale
+        obj (Entity): Entity with image to scale
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to scale y by
     """
@@ -105,9 +105,13 @@ class GameSprites:
     def __init__(self):
         #  Environment
         self.wall_image = load_image(WALL_1)
+        self.seen_wall_image = seen_sprite(self.wall_image)
 
         self.floor_image_1 = load_image(FLOOR_1)
+        self.seen_floor_image_1 = seen_sprite(self.floor_image_1)
+
         self.floor_image_2 = load_image(FLOOR_2)
+        self.seen_floor_image_2 = seen_sprite(self.floor_image_2)
 
         self.spike = load_image(SPIKE)
 
@@ -117,10 +121,6 @@ class GameSprites:
         self.select_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.select_tile.fill(YELLOW)
         self.select_tile.set_alpha(75)
-
-        self.seen_wall_image = seen_sprite(self.wall_image)
-        self.seen_floor_image_1 = seen_sprite(self.floor_image_1)
-        self.seen_floor_image_2 = seen_sprite(self.floor_image_2)
 
         # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)

@@ -1,3 +1,5 @@
+import json
+import os
 from constant import *
 import game as g
 import pygame
@@ -127,7 +129,7 @@ def cast_fireball(game, caster, line):
         caster (Object): Creature that casted fireball
         line (List): List of coordinates for fireball to follow
     """
-    base_damage = 2
+    base_damage = data["fireball"]["damage"]
 
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
@@ -141,12 +143,11 @@ def cast_fireball(game, caster, line):
         if creature_hit:
             break
         # damage first enemy in list of tile
-        for obj in game.CREATURES:
-            if obj in enemies:
-                if (obj.x, obj.y) == (x, y):
-                    obj.creature.take_damage(damage)
-                    creature_hit = True
-                    break
+        for obj in enemies:
+            if (obj.x, obj.y) == (x, y):
+                obj.creature.take_damage(damage)
+                creature_hit = True
+                break
 
         game.update()
         for magic in particle_group:
@@ -166,7 +167,7 @@ def cast_lightning(game, caster, line):
         caster (Object): Creature that casted lightning
         line (List): List of coordinates for lightning to follow
     """
-    base_damage = 1
+    base_damage = data["lightning"]["damage"]
 
     particle_group = []
     particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
@@ -176,10 +177,9 @@ def cast_lightning(game, caster, line):
     # get list of tiles from start to end
     enemies = caster.creature.enemy_group
     for (x, y) in line:
-        for obj in game.CREATURES:
-            if obj in enemies:
-                if (obj.x, obj.y) == (x, y):
-                    obj.creature.take_damage(damage)
+        for obj in enemies:
+            if (obj.x, obj.y) == (x, y):
+                obj.creature.take_damage(damage)
 
         game.update()
         for magic in particle_group:
@@ -188,3 +188,6 @@ def cast_lightning(game, caster, line):
         game.clock.tick(20)
         pygame.display.update()
 
+
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:
+    data = json.load(f)

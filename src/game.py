@@ -6,7 +6,7 @@ import container
 import gamemap
 import item
 from constant import *
-import object
+import entity
 import creature
 import sprite
 import draw
@@ -54,7 +54,6 @@ class Game:
         self.menu_manager = Menu_Manager(self)
 
         self.mini_map_on = False
-        self.map_tree = None
         self.GAME_MESSAGES = []
         self.GAME_OBJECTS = []
         self.ENEMIES = []
@@ -89,26 +88,13 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
-        # Load map data
-        # This is for reading maps from text files
-        if READ_FROM_FILE:
-            # Holds the map representation (chars)
-            self.map_array = gamemap.load_map()
-
-        # This is for generating random maps
-        else:
-            # Holds the map representation (chars)
-            self.map_array = gamemap.gen_map(self)
-
         # Holds map info like width and height
-        self.map_info = gamemap.MapInfo(self.map_array)
-        # Holds actual tiles
-        self.tile_array = gamemap.draw_map(self.map_array, self)
+        self.map_info = gamemap.MapInfo(self)
 
         self.wall_hack = False
 
         self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_array, self.map_info)
+        self.graph.make_graph(self.map_info.map_array, self.map_info)
         self.graph.neighbour()
 
         self.camera = Camera(self.map_info)
@@ -124,22 +110,22 @@ class Game:
         Adds objects to groups
         """
         camera = creature.Creature("Camera", False, walk_through_tile=True)
-        self.free_camera = object.object(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
+        self.free_camera = entity.Entity(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
 
         player_container = container.Container()
         player_com = creature.Creature("knight", enemy_group=self.enemy_group)
-        self.player = object.object(self,
+        self.player = entity.Entity(self,
                                     6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
                                     container=player_container)
 
         creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
-        slime = object.object(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
+        slime = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
         # TODO: Fix ai for creatures merging when stepping onto same tile
         creaturetest2 = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
-        slime1 = object.object(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
+        slime1 = entity.Entity(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
                                creature=creaturetest2, ai=ai_component_1)
 
         item_potion, item_sword = self._add_items()
@@ -164,10 +150,10 @@ class Game:
         Adds items to game
         """
         item_com = item.Item("Red Potion", 0, 0, True)
-        item_potion = object.object(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
+        item_potion = entity.Entity(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
 
         item_sword_com = item.Item("Sword", 0, 0, False)
-        item_sword = object.object(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
+        item_sword = entity.Entity(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
 
         self.ITEMS = [item_potion, item_sword]
 
@@ -195,8 +181,8 @@ class Game:
         if not self.wall_hack:
             self.fov = fov.new_fov(self.map_info)
 
-        fov.ray_casting(self.map_info, self.map_array, self.fov, self.player)
-        fov.change_seen(self.map_info, self.tile_array, self.fov, self.game_sprites.unseen_tile)
+        fov.ray_casting(self.map_info, self.map_info.map_array, self.fov, self.player)
+        fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
 
         self.drawing.draw()
 
@@ -325,9 +311,8 @@ class Game:
         move_x, move_y = self.camera.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
-        line = magic.line(start, goal, self.map_array)
-        print(line)
-        magic.cast_fireball(self, self.player, line)
+        line = magic.line(start, goal, self.map_info.map_array)
+        magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
@@ -338,7 +323,7 @@ class Game:
         """
         if self.free_camera_on:
             # If tile is unexplored do nothing
-            if not self.tile_array[self.free_camera.y][self.free_camera.x].seen:
+            if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
                 return
             start = (self.player.x, self.player.y)
             goal = (self.free_camera.x, self.free_camera.y)
@@ -378,7 +363,7 @@ class Game:
             # Move player to mouse click
             move_x, move_y = self.camera.get_mouse_coord()
 
-            if not self.tile_array[move_y][move_x].seen:
+            if not self.map_info.tile_array[move_y][move_x].seen:
                 return
 
             start = (self.player.x, self.player.y)
