@@ -108,13 +108,15 @@ def load_map():
 
 class MapInfo:
     """
-    Load map data from map_array
+    Load map data from map_array or generates map. Holds map arrays
 
     Args:
-        map_array ([[char]char]): 2D array representing map to get
-                                        data from
+        game (Game): game with all game data
 
     Attribute:
+        map_array (2D array): array with map representation
+        self.map_tree (Tree): BSP tree of map
+        tile_array (2D array): array with tiles
         tile_width (int): # of tiles wide
         tile_height (int): # of tiles tall
         pixel_width (int): pixel_width of map in pixels
@@ -122,47 +124,53 @@ class MapInfo:
         unseen_tiles (set): set of unseen tiles coord tuple
     """
 
-    def __init__(self, map_array):
-        self.tile_width = len(map_array[0])
-        self.tile_height = len(map_array)
+    def __init__(self, game):
+
+        if READ_FROM_FILE:
+            # Holds the map representation (chars)
+            self.map_array = load_map()
+            self.map_tree = None
+
+        # This is for generating random maps
+        else:
+            # Holds the map representation (chars)
+            self.map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
+            self.map_tree = gen_map(self.map_array)
+
+        # Holds actual tiles
+        self.tile_array = draw_map(self.map_array, game.game_sprites, game.walls, game.floors)
+
+        self.tile_width = len(self.map_array[0])
+        self.tile_height = len(self.map_array)
         self.pixel_width = self.tile_width * SPRITE_SIZE
         self.pixel_height = self.tile_height * SPRITE_SIZE
         self.unseen_tiles = set()
 
-        # if READ_FROM_FILE:
-        #     # Holds the map representation (chars)
-        #     self.map_array = load_map()
-        #
-        # # This is for generating random maps
-        # else:
-        #     # Holds the map representation (chars)
-        #     self.map_array = gen_map()
-        #
-        # # Holds actual tiles
-        # self.tile_array = draw_map_menu(self.map_array, self)
-
-
         for y in range(self.tile_height):
             for x in range(self.tile_width):
-                if not map_array[y][x] == WALL:
+                if not self.map_array[y][x] == WALL:
                     self.unseen_tiles.add((x, y))
 
 
-def gen_map(game):
+def gen_map(map_array):
     """
     Generates random map and prints resulting map into console. Also draws map to surface
+
+    Args:
+        map_array (2D array): array with map representation
+
+    Returns:
+        tree (Tree): BSP tree of map
     """
-    map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
     tree = Tree(map_array)
     tree.build_bsp()
     tree.build_rooms()
     tree.build_path()
     tree.print_map()
-    game.map_tree = tree
-    return map_array
+    return tree
 
 
-def draw_map(p_map_array, sprite_dict, wall_list, floor_list):
+def draw_map(map_array, sprite_dict, wall_list, floor_list):
     """
     Draws tiles to background using p_map_array and returns 
     array filled with Tiles
@@ -170,23 +178,26 @@ def draw_map(p_map_array, sprite_dict, wall_list, floor_list):
     Args:
         floor_list (list): list containing floor tiles
         wall_list (list): list containing wall tiles
-        p_map_array ([char[char]]): map to draw as background
-        sprite_dict: (Game): game with all game data
+        map_array ([char[char]]): map to draw as background
+        sprite_dict: (GameSprites): dict with all sprites
+
+    Returns:
+        tile_array (2D array): array with tiles
     """
-    map_array = []
-    for col, tiles in enumerate(p_map_array):
-        map_array_row = []
+    tile_array = []
+    for col, tiles in enumerate(map_array):
+        tile_array_row = []
         for row, tile in enumerate(tiles):
             if tile == WALL:
-                map_array_row.append(Wall(sprite_dict, row, col, wall_list))
+                tile_array_row.append(Wall(sprite_dict, row, col, wall_list))
             elif tile == FLOOR:
-                map_array_row.append(Floor(sprite_dict, row, col, floor_list))
+                tile_array_row.append(Floor(sprite_dict, row, col, floor_list))
             elif tile == PATH:
-                map_array_row.append(
+                tile_array_row.append(
                     Floor(sprite_dict, row, col, floor_list, sprite_dict.floor_image_2,
                           sprite_dict.seen_floor_image_2))
-        map_array.append(map_array_row)
-    return map_array
+        tile_array.append(tile_array_row)
+    return tile_array
 
 
 def find_closest_unseen_tile(game):

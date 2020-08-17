@@ -54,7 +54,6 @@ class Game:
         self.menu_manager = Menu_Manager(self)
 
         self.mini_map_on = False
-        self.map_tree = None
         self.GAME_MESSAGES = []
         self.GAME_OBJECTS = []
         self.ENEMIES = []
@@ -89,26 +88,13 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
-        # Load map data
-        # This is for reading maps from text files
-        if READ_FROM_FILE:
-            # Holds the map representation (chars)
-            self.map_array = gamemap.load_map()
-
-        # This is for generating random maps
-        else:
-            # Holds the map representation (chars)
-            self.map_array = gamemap.gen_map(self)
-
         # Holds map info like width and height
-        self.map_info = gamemap.MapInfo(self.map_array)
-        # Holds actual tiles
-        self.tile_array = gamemap.draw_map(self.map_array, self.game_sprites, self.walls, self.floors)
+        self.map_info = gamemap.MapInfo(self)
 
         self.wall_hack = False
 
         self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_array, self.map_info)
+        self.graph.make_graph(self.map_info.map_array, self.map_info)
         self.graph.neighbour()
 
         self.camera = Camera(self.map_info)
@@ -195,8 +181,8 @@ class Game:
         if not self.wall_hack:
             self.fov = fov.new_fov(self.map_info)
 
-        fov.ray_casting(self.map_info, self.map_array, self.fov, self.player)
-        fov.change_seen(self.map_info, self.tile_array, self.fov, self.game_sprites.unseen_tile)
+        fov.ray_casting(self.map_info, self.map_info.map_array, self.fov, self.player)
+        fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
 
         self.drawing.draw()
 
@@ -325,7 +311,7 @@ class Game:
         move_x, move_y = self.camera.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
-        line = magic.line(start, goal, self.map_array)
+        line = magic.line(start, goal, self.map_info.map_array)
         magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
@@ -337,7 +323,7 @@ class Game:
         """
         if self.free_camera_on:
             # If tile is unexplored do nothing
-            if not self.tile_array[self.free_camera.y][self.free_camera.x].seen:
+            if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
                 return
             start = (self.player.x, self.player.y)
             goal = (self.free_camera.x, self.free_camera.y)
@@ -377,7 +363,7 @@ class Game:
             # Move player to mouse click
             move_x, move_y = self.camera.get_mouse_coord()
 
-            if not self.tile_array[move_y][move_x].seen:
+            if not self.map_info.tile_array[move_y][move_x].seen:
                 return
 
             start = (self.player.x, self.player.y)

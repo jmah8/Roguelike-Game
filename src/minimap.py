@@ -50,7 +50,7 @@ def _draw_minimap_rooms_generated_map(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    list_of_rooms = game.map_tree.root.child_room_list + game.map_tree.root.path_list
+    list_of_rooms = game.map_info.map_tree.root.child_room_list + game.map_info.map_tree.root.path_list
     for room in list_of_rooms:
         pygame.draw.rect(game.surface, WHITE,
                          ((room.up_left_x * SPRITE_SIZE / scale_factor_x),
@@ -155,7 +155,7 @@ def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_
     map_data = game.map_info
     for y in range(map_data.tile_height):
         for x in range(map_data.tile_width):
-            tile = game.tile_array[y][x]
+            tile = game.map_info.tile_array[y][x]
             if isinstance(tile, gamemap.Wall):
                 pygame.draw.rect(game.surface, BLACK,
                                  (tile.rect.topleft[0] / scale_factor_x, tile.rect.topleft[1] / scale_factor_y,
@@ -190,7 +190,7 @@ def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
         scale_factor_y (int): How mucg to scale y by
     """
     for item in game.ITEMS:
-        if game.tile_array[item.y][item.x].seen:
+        if game.map_info.tile_array[item.y][item.x].seen:
             pygame.draw.rect(game.surface, GREEN,
                              ((item.rect.topleft[0] / scale_factor_x),
                               (item.rect.topleft[1] / scale_factor_y),

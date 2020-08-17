@@ -136,7 +136,7 @@ class Drawing:
         is a replica of the actual map
         """
         map_data = self.game.map_info
-        tile_array = self.game.tile_array
+        tile_array = self.game.map_info.tile_array
 
         scale_tile_width = RESOLUTION[0] / map_data.tile_width
         scale_tile_height = RESOLUTION[1] / map_data.tile_height
