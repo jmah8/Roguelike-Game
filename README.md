@@ -39,6 +39,8 @@ A work in progress roguelike game made with Pygame where the player has to fight
 - Random map generation
 - Pathfinding
 - FOV
+- Player and enemy stats
+- Randomly generated monsters and items (work in progress!)
 - Castable magic (work in progress!)
 - Inventory system (work in progress!)
 
@@ -48,17 +50,13 @@ A work in progress roguelike game made with Pygame where the player has to fight
 - Add magic to cast selection menu 
 - Saving and loading
 - Traversing through floors
-- Randomly generated monsters and items
 - Better ai
 - Different classes
-- Player stats
 - Win and lose condition
 - Major refactoring of code
 
 # Known bugs
-- Items, player and enemies sometimes spawn in walls depending on map generation
-- Enemies spawning in wall will crash game when trying to move
-- Player spawning in wall will crash game when using mouse or free camera to move but not keyboard
+- Items sometimes spawn in walls depending on map generation
 
 # Credits:  
 ## Sprites:
