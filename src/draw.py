@@ -40,12 +40,12 @@ class Drawing:
             self.draw_mouse()
 
         self.draw_particles()
-        for particle in self.game.particles:
-            particle.update()
 
         self.button_manager.draw_buttons(self.game_surface)
 
         self.draw_grid()
+
+        self.draw_player_stats(self.game.player)
 
         if self.game.mini_map_on:
             self.draw_minimap(self.game)
@@ -81,10 +81,11 @@ class Drawing:
 
     def draw_particles(self):
         """
-        Draws all particles shifted by camera
+        Draws all particles shifted by camera and updates them after
         """
         for particle in self.game.particles:
             self.draw_at_camera_offset(particle)
+            particle.update()
 
     def add_buttons(self):
         """
@@ -203,3 +204,16 @@ class Drawing:
             minimap.draw_minimap_loaded_map(game)
         else:
             minimap.draw_minimap_generated_map(game)
+
+    def draw_player_stats(self, player):
+        hp = player.creature.stat.hp / player.creature.stat.max_hp
+        mp = player.creature.stat.mp / player.creature.stat.max_mp
+        exp = player.creature.stat.exp / 100
+        pygame.draw.rect(self.game_surface, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
+        pygame.draw.rect(self.game_surface, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
+        pygame.draw.rect(self.game_surface, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
+
+
+
+
+

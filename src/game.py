@@ -15,6 +15,7 @@ from camera import Camera
 import fov
 from menu_manager import Menu_Manager
 import magic
+from creature_gen import *
 
 from draw import Drawing
 
@@ -56,9 +57,6 @@ class Game:
         self.mini_map_on = False
         self.GAME_MESSAGES = []
         self.GAME_OBJECTS = []
-        self.ENEMIES = []
-        self.CREATURES = []
-        self.ITEMS = []
 
     def new(self):
         """
@@ -109,41 +107,51 @@ class Game:
         """
         Adds objects to groups
         """
-        camera = creature.Creature("Camera", False, walk_through_tile=True)
-        self.free_camera = entity.Entity(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
+        self.free_camera = generate_free_camera(self)
+        # camera = creature.Creature("Camera", False, walk_through_tile=True)
+        # self.free_camera = entity.Entity(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
+        #
 
-        player_container = container.Container()
-        player_com = creature.Creature("knight", enemy_group=self.enemy_group)
-        self.player = entity.Entity(self,
-                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
-                                    container=player_container)
+        self.player = generate_player(self.map_info.map_tree, self)
+        # player_container = container.Container()
+        # player_com = creature.Creature("knight", enemy_group=self.enemy_group)
+        # self.player = entity.Entity(self,
+        #                             6, 5, "player", anim=self.game_sprites.knight_dict, creature=player_com,
+        #                             container=player_container)
 
-        creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
-        ai_component = ai.SmartAi()
-        slime = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
-                              creature=creature_com, ai=ai_component)
-        # TODO: Fix ai for creatures merging when stepping onto same tile
-        creaturetest2 = creature.Creature("slime", True, enemy_group=self.player_group)
-        ai_component_1 = ai.SmartAi()
-        slime1 = entity.Entity(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
-                               creature=creaturetest2, ai=ai_component_1)
+        generate_enemies(self.map_info.map_tree, self)
+        # creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
+        # ai_component = ai.SmartAi()
+        # slime = entity.Entity(self, 4, 4, "enemy", anim=self.game_sprites.slime_dict,
+        #                       creature=creature_com, ai=ai_component)
+        #
+        # # TODO: Fix ai for creatures merging when stepping onto same tile
+        # creature_com1 = creature.Creature("slime", True, enemy_group=self.player_group)
+        # ai_component_1 = ai.SmartAi()
+        # slime1 = entity.Entity(self, 4, 5, "enemy", anim=self.game_sprites.slime_dict,
+        #                        creature=creature_com1, ai=ai_component_1)
+        #
+        # creature_com2 = creature.Creature("goblin", True, enemy_group=self.player_group)
+        # ai_component_2 = ai.SmartAi()
+        # goblin = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.goblin_dict,
+        #                        creature=creature_com2, ai=ai_component_2)
+        #
+        # creature_com3 = creature.Creature("skeleton", True, enemy_group=self.player_group)
+        # ai_component_3 = ai.SmartAi()
+        # skeleton = entity.Entity(self, 5, 4, "enemy", anim=self.game_sprites.skeleton_dict,
+        #                        creature=creature_com3, ai=ai_component_3)
 
         item_potion, item_sword = self._add_items()
 
-
-        self.CREATURES = [self.player, slime, slime1]
-        for c in self.CREATURES:
-            self.all_creature.add(c)
 
         self.player_group.append(self.player)
 
         self.camera_group.add(self.free_camera)
 
-        self.ENEMIES = [slime, slime1]
-        self.enemy_group += self.ENEMIES
+        for c in self.enemy_group + self.player_group:
+            self.all_creature.add(c)
 
-        self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, self.player]
-
+        self.GAME_OBJECTS += self.enemy_group + self.player_group + self.ITEMS
 
     def _add_items(self):
         """
@@ -312,7 +320,7 @@ class Game:
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_info.map_array)
-        magic.cast_lightning(self, self.player, line)
+        magic.cast_fireball(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
