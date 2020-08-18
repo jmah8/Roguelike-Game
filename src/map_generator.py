@@ -19,6 +19,7 @@ class Room:
         self.up_left = up_left
         self.down_right = down_right
 
+    @property
     def coords(self):
         """
         Return coordinates of room
@@ -903,8 +904,8 @@ class Tree:
             left_child (Node): left child to build path to
             right_child (Node): right child to build path to
         """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.coords()
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.coords
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.coords
 
         # x coord of path connecting the left room
         left_x = random.randint(left_child_up_x, left_child_down_x)
@@ -944,8 +945,8 @@ class Tree:
             left_child (Node): left child to build path to
             right_child (Node): right child to build path to
         """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.coords()
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.coords
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.coords
 
         # y coord of path connecting the left room
         left_y = random.randint(left_child_up_y, left_child_down_y)
