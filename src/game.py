@@ -1,23 +1,13 @@
-import os
-
-import pygame
-import ai
-import container
-import gamemap
-import item
-from constant import *
-import entity
-import creature
-import sprite
-import draw
-import pathfinding
-from camera import Camera
 import fov
-from menu_manager import Menu_Manager
+import gamemap
 import magic
-from creature_gen import *
-
+import pathfinding
+import sprite
+from camera import Camera
+from constant import *
 from draw import Drawing
+from entity_generator import *
+from menu_manager import Menu_Manager
 
 pygame.font.init()
 
@@ -30,7 +20,7 @@ pygame.font.init()
 #         self.GAME_OBJECTS = []
 #         self.ENEMIES = []
 #         self.CREATURES = []
-#         self.ITEMS = []
+#         self.item_group = []
 #         self.camera = None
 
 
@@ -79,6 +69,8 @@ class Game:
         # Particle group
         self.particles = []
 
+        self.item_group = []
+
         # Switches current group to all creatures
         # the current group to move/update
         self.current_group = self.all_creature
@@ -99,50 +91,22 @@ class Game:
 
         self.free_camera_on = False
 
-        self._add_objects()
+        self._add_entities()
 
         self.drawing.add_buttons()
 
-    def _add_objects(self):
+    def _add_entities(self):
         """
         Adds objects to groups
         """
         self.free_camera = generate_free_camera(self)
-        # camera = creature.Creature("Camera", False, walk_through_tile=True)
-        # self.free_camera = entity.Entity(self, 0, 0, "camera", image=self.game_sprites.mouse_select, creature=camera)
-        #
 
         self.player = generate_player(self.map_info.map_tree, self)
-        # player_container = container.Container()
-        # player_com = creature.Creature("knight", enemy_group=self.enemy_group)
-        # self.player = entity.Entity(self,
-        #                             6, 5, "player", anim=self.game_sprites.knight_dict, creature=player_com,
-        #                             container=player_container)
 
-        generate_enemies(self.map_info.map_tree, self)
-        # creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
-        # ai_component = ai.SmartAi()
-        # slime = entity.Entity(self, 4, 4, "enemy", anim=self.game_sprites.slime_dict,
-        #                       creature=creature_com, ai=ai_component)
-        #
-        # # TODO: Fix ai for creatures merging when stepping onto same tile
-        # creature_com1 = creature.Creature("slime", True, enemy_group=self.player_group)
-        # ai_component_1 = ai.SmartAi()
-        # slime1 = entity.Entity(self, 4, 5, "enemy", anim=self.game_sprites.slime_dict,
-        #                        creature=creature_com1, ai=ai_component_1)
-        #
-        # creature_com2 = creature.Creature("goblin", True, enemy_group=self.player_group)
-        # ai_component_2 = ai.SmartAi()
-        # goblin = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.goblin_dict,
-        #                        creature=creature_com2, ai=ai_component_2)
-        #
-        # creature_com3 = creature.Creature("skeleton", True, enemy_group=self.player_group)
-        # ai_component_3 = ai.SmartAi()
-        # skeleton = entity.Entity(self, 5, 4, "enemy", anim=self.game_sprites.skeleton_dict,
-        #                        creature=creature_com3, ai=ai_component_3)
+        # TODO: Fix ai for creatures merging when stepping onto same tile
+        self.enemy_group += generate_enemies(self.map_info.map_tree, self)
 
-        item_potion, item_sword = self._add_items()
-
+        self.item_group += generate_items(self.map_info.map_tree, self)
 
         self.player_group.append(self.player)
 
@@ -151,21 +115,7 @@ class Game:
         for c in self.enemy_group + self.player_group:
             self.all_creature.add(c)
 
-        self.GAME_OBJECTS += self.enemy_group + self.player_group + self.ITEMS
-
-    def _add_items(self):
-        """
-        Adds items to game
-        """
-        item_com = item.Item("Red Potion", 0, 0, True)
-        item_potion = entity.Entity(self, 6, 7, "item", image=self.game_sprites.red_potion, item=item_com)
-
-        item_sword_com = item.Item("Sword", 0, 0, False)
-        item_sword = entity.Entity(self, 4, 4, "item", image=self.game_sprites.sword, item=item_sword_com)
-
-        self.ITEMS = [item_potion, item_sword]
-
-        return item_potion, item_sword
+        self.GAME_OBJECTS += self.enemy_group + self.player_group + self.item_group
 
     def run(self):
         """
