@@ -3,6 +3,7 @@ import creature
 import entity
 import ai
 import container
+import item
 
 
 def generate_enemies(tree, game):
@@ -12,33 +13,40 @@ def generate_enemies(tree, game):
     Args:
         tree (BSP tree): Tree representing rooms
         game (Game): Game with all game data
+
+    Returns:
+        enemy_list (List): List of generated enemies
     """
+    enemy_list = []
     # get all rooms in map
     for child_room in tree.root.child_room_list:
         # generate monster in room
-        _generate_enemies(child_room, game)
+        _generate_enemies(child_room, game, enemy_list)
+
+    return enemy_list
 
 
-def _generate_enemies(room, game):
+def _generate_enemies(room, game, enemy_list):
     """
     Generates a random monster in room at random coords
 
     Args:
         room (Room): Room to generate monste rin
         game (Game): Game with all game data
+        enemy_list (list): list to append created enemy to
     """
     x1, y1, x2, y2 = room.coords
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
-    r = random.randint(0, 2)
-    if r == 0:
+    random_num = random.randint(0, 2)
+    if random_num == 0:
         new_enemy = _generate_slime(x, y, game)
-    elif r == 1:
+    elif random_num == 1:
         new_enemy = _generate_goblin(x, y, game)
     else:
         new_enemy = _generate_skeleton(x, y, game)
 
-    game.enemy_group.append(new_enemy)
+    enemy_list.append(new_enemy)
 
 
 def _generate_slime(x, y, game):
@@ -52,8 +60,9 @@ def _generate_slime(x, y, game):
     """
     ai_gen = ai.SmartAi()
     creature_gen = creature.Creature("slime", True, game.player_group)
-    enemy_gen = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.slime_dict, creature=creature_gen, ai=ai_gen)
-    return enemy_gen
+    generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.slime_dict, creature=creature_gen,
+                                    ai=ai_gen)
+    return generated_enemy
 
 
 def _generate_goblin(x, y, game):
@@ -67,8 +76,9 @@ def _generate_goblin(x, y, game):
     """
     ai_gen = ai.SmartAi()
     creature_gen = creature.Creature("goblin", True, game.player_group)
-    enemy_gen = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.goblin_dict, creature=creature_gen, ai=ai_gen)
-    return enemy_gen
+    generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.goblin_dict, creature=creature_gen,
+                                    ai=ai_gen)
+    return generated_enemy
 
 
 def _generate_skeleton(x, y, game):
@@ -82,8 +92,9 @@ def _generate_skeleton(x, y, game):
     """
     ai_gen = ai.SmartAi()
     creature_gen = creature.Creature("skeleton", True, game.player_group)
-    enemy_gen = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.skeleton_dict, creature=creature_gen, ai=ai_gen)
-    return enemy_gen
+    generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.skeleton_dict, creature=creature_gen,
+                                    ai=ai_gen)
+    return generated_enemy
 
 
 def generate_player(tree, game):
@@ -120,3 +131,74 @@ def generate_free_camera(game):
     camera = creature.Creature("Camera", False, walk_through_tile=True)
     free_camera = entity.Entity(game, 0, 0, "camera", image=game.game_sprites.mouse_select, creature=camera)
     return free_camera
+
+
+def generate_items(tree, game):
+    """
+    Randomly generates items in rooms
+
+    Args:
+        tree (BSP tree): Tree representing rooms
+        game (Game): Game with all game data
+
+    Returns:
+        item_list (List): list of all items generated
+    """
+    item_list = []
+    # get all rooms in map
+    for child_room in tree.root.child_room_list:
+        random_num = random.randint(0, 100)
+        # 50% chance of spawning item
+        if random_num < 50:
+            _generate_item(child_room, game, item_list)
+
+    return item_list
+
+
+def _generate_item(room, game, item_list):
+    """
+    Generates a item in room at random coords and appends to item_list
+
+    Args:
+        room (Room): Room to generate monste rin
+        game (Game): Game with all game data
+        item_list (list): list to append created item to
+    """
+    x1, y1, x2, y2 = room.coords
+    x = random.randint(x1, x2)
+    y = random.randint(y1, y2)
+    random_num = random.randint(0, 1)
+    if random_num == 0:
+        new_item = _generate_potion(x, y, game)
+    else:
+        new_item = _generate_sword(x, y, game)
+
+    item_list.append(new_item)
+
+
+def _generate_potion(x, y, game):
+    """
+    Generates potion at coords (x, y)
+
+    Args:
+        x (int): x coord to generate item at
+        y (int): y coord to generate item at
+        game (Game): Game with all game data
+    """
+    item_com = item.Item("Red Potion", 0, 0, True)
+    generated_item = entity.Entity(game, x, y, "item", image=game.game_sprites.red_potion, item=item_com)
+    return generated_item
+
+
+def _generate_sword(x, y, game):
+    """
+    Generates sword at coords (x, y)
+
+    Args:
+        x (int): x coord to generate item at
+        y (int): y coord to generate item at
+        game (Game): Game with all game data
+    """
+    item_sword_com = item.Item("Sword", 0, 0, False)
+    generated_item = entity.Entity(game, x, y, "item", image=game.game_sprites.sword, item=item_sword_com)
+    return generated_item

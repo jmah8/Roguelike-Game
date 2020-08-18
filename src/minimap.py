@@ -182,14 +182,12 @@ def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
     In this case seen items mean the tile it is on is seen
     This is used for both minimaps
 
-
-
     Args:
         game (Game): Game to draw item to
         scale_factor_x (int): How much to scale x by
         scale_factor_y (int): How mucg to scale y by
     """
-    for item in game.ITEMS:
+    for item in game.item_group:
         if game.map_info.tile_array[item.y][item.x].seen:
             pygame.draw.rect(game.surface, GREEN,
                              ((item.rect.topleft[0] / scale_factor_x),
