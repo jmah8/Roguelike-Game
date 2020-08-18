@@ -24,13 +24,14 @@ A work in progress roguelike game made with Pygame where the player has to fight
 | t   | Pickup item |
 | g   | Drop all items |
 | ESC | Toggle FOV limitations |
-| m   | Toggle free camera |
+| m   | Toggle camera |
 | v   | Auto explore |
 | p   | Pause |
 | I   | Toggle inventory screen |
 | SPACE | Toggle magic selection screen |
 | Mouse left click | Move to mouse cursor |
 | SPACE + Mouse left click | Fire magic spell |
+| m + Movement keys | Move camera around |
 | m + ENTER | Move to camera location |
 
 # Features:
@@ -40,7 +41,7 @@ A work in progress roguelike game made with Pygame where the player has to fight
 - Pathfinding
 - FOV
 - Player and enemy stats
-- Randomly generated monsters and items (work in progress!)
+- Randomly generated monsters and items
 - Castable magic (work in progress!)
 - Inventory system (work in progress!)
 
@@ -54,9 +55,6 @@ A work in progress roguelike game made with Pygame where the player has to fight
 - Different classes
 - Win and lose condition
 - Major refactoring of code
-
-# Known bugs
-- Items sometimes spawn in walls depending on map generation
 
 # Credits:  
 ## Sprites:
