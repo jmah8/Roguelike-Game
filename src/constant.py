@@ -63,11 +63,17 @@ SLIME_FOV = 3
 RESOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
 
 # Image path
-KNIGHT = 'knight/knight_idle_anim_f0.png'
-KNIGHT_RUN = 'knight/knight_run_anim_f0.png'
+KNIGHT = 'creatures/knight/knight_idle_anim_f0.png'
+KNIGHT_RUN = 'creatures/knight/knight_run_anim_f0.png'
 
-SLIME = 'slime/slime_idle_anim_f0.png'
-SLIME_RUN = 'slime/slime_run_anim_f0.png'
+SLIME = 'creatures/slime/slime_idle_anim_f0.png'
+SLIME_RUN = 'creatures/slime/slime_run_anim_f0.png'
+
+GOBLIN = 'creatures/goblin/goblin_idle_anim_f0.png'
+GOBLIN_RUN = 'creatures/goblin/goblin_run_anim_f0.png'
+
+SKELETON = 'creatures/skeleton/skelet_idle_anim_f0.png'
+SKELETON_RUN = 'creatures/skeleton/skelet_run_anim_f0.png'
 
 SPIKE = '16x16/tiles/floor/spikes_anim_f0.png'
 SPIKE_1 = '16x16/tiles/floor/spikes_anim_f6.png'

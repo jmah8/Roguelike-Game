@@ -2,6 +2,9 @@ from particle import *
 import json
 import os
 
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creature.json')) as f:
+    data = json.load(f)
+
 
 class CreatureStat:
 
@@ -110,8 +113,6 @@ class Creature:
         Returns:
             stat (Stat): Stat of creature with name_instance
         """
-        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creature.json')) as f:
-            data = json.load(f)
 
         if self.name_instance in data.keys():
             str = data[self.name_instance]

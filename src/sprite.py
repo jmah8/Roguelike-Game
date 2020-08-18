@@ -16,6 +16,7 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE), conv
     """
     pathname = os.path.join(RESOURCE_PATH, name)
     try:
+        print(pathname)
         image = pygame.image.load(pathname)
     except pygame.error as message:
         print('Cannot load image:', name)
@@ -130,6 +131,24 @@ class GameSprites:
             "idle_left": flip_anim(self.slime_anim),
             "run_right": self.slime_run_anim,
             "run_left": flip_anim(self.slime_run_anim)
+        }
+
+        self.goblin_anim = load_anim(GOBLIN, 0, 5)
+        self.goblin_run_anim = load_anim(GOBLIN_RUN, 0, 5)
+        self.goblin_dict = {
+            "idle_right": self.goblin_anim,
+            "idle_left": flip_anim(self.goblin_anim),
+            "run_right": self.goblin_run_anim,
+            "run_left": flip_anim(self.goblin_run_anim)
+        }
+
+        self.skeleton_anim = load_anim(SKELETON, 0, 3)
+        self.skeleton_run_anim = load_anim(SKELETON_RUN, 0, 3)
+        self.skeleton_dict = {
+            "idle_right": self.skeleton_anim,
+            "idle_left": flip_anim(self.skeleton_anim),
+            "run_right": self.skeleton_run_anim,
+            "run_left": flip_anim(self.skeleton_run_anim)
         }
 
         # Knight

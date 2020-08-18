@@ -56,9 +56,6 @@ class Game:
         self.mini_map_on = False
         self.GAME_MESSAGES = []
         self.GAME_OBJECTS = []
-        self.ENEMIES = []
-        self.CREATURES = []
-        self.ITEMS = []
 
     def new(self):
         """
@@ -115,35 +112,44 @@ class Game:
         player_container = container.Container()
         player_com = creature.Creature("knight", enemy_group=self.enemy_group)
         self.player = entity.Entity(self,
-                                    6, 6, "player", anim=self.game_sprites.knight_dict, creature=player_com,
+                                    6, 5, "player", anim=self.game_sprites.knight_dict, creature=player_com,
                                     container=player_container)
 
         creature_com = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component = ai.SmartAi()
-        slime = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.slime_dict,
+        slime = entity.Entity(self, 4, 4, "enemy", anim=self.game_sprites.slime_dict,
                               creature=creature_com, ai=ai_component)
+
         # TODO: Fix ai for creatures merging when stepping onto same tile
-        creaturetest2 = creature.Creature("slime", True, enemy_group=self.player_group)
+        creature_com1 = creature.Creature("slime", True, enemy_group=self.player_group)
         ai_component_1 = ai.SmartAi()
-        slime1 = entity.Entity(self, 5, 6, "enemy", anim=self.game_sprites.slime_dict,
-                               creature=creaturetest2, ai=ai_component_1)
+        slime1 = entity.Entity(self, 4, 5, "enemy", anim=self.game_sprites.slime_dict,
+                               creature=creature_com1, ai=ai_component_1)
+
+        creature_com2 = creature.Creature("goblin", True, enemy_group=self.player_group)
+        ai_component_2 = ai.SmartAi()
+        goblin = entity.Entity(self, 5, 5, "enemy", anim=self.game_sprites.goblin_dict,
+                               creature=creature_com2, ai=ai_component_2)
+
+        creature_com3 = creature.Creature("skeleton", True, enemy_group=self.player_group)
+        ai_component_3 = ai.SmartAi()
+        skeleton = entity.Entity(self, 5, 4, "enemy", anim=self.game_sprites.skeleton_dict,
+                               creature=creature_com3, ai=ai_component_3)
 
         item_potion, item_sword = self._add_items()
 
-
-        self.CREATURES = [self.player, slime, slime1]
-        for c in self.CREATURES:
-            self.all_creature.add(c)
 
         self.player_group.append(self.player)
 
         self.camera_group.add(self.free_camera)
 
-        self.ENEMIES = [slime, slime1]
+        self.ENEMIES = [slime, slime1, goblin, skeleton]
         self.enemy_group += self.ENEMIES
 
-        self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, self.player]
+        for c in self.ENEMIES + self.player_group:
+            self.all_creature.add(c)
 
+        self.GAME_OBJECTS = [item_potion, item_sword, slime1, slime, goblin, skeleton, self.player]
 
     def _add_items(self):
         """

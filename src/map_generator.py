@@ -8,6 +8,8 @@ class Room:
     """
     Class that represents a room/path
 
+    The coords are the start/end of actual room ie walkable tiles
+
     Attributes:
         up_left ((int, int), arg): the coordinates of the topleft of the room
         down_right ((int, int), arg): the coordinates of the bottom right of the room
@@ -17,7 +19,7 @@ class Room:
         self.up_left = up_left
         self.down_right = down_right
 
-    def return_coords(self):
+    def coords(self):
         """
         Return coordinates of room
 
@@ -901,8 +903,8 @@ class Tree:
             left_child (Node): left child to build path to
             right_child (Node): right child to build path to
         """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.coords()
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.coords()
 
         # x coord of path connecting the left room
         left_x = random.randint(left_child_up_x, left_child_down_x)
@@ -942,8 +944,8 @@ class Tree:
             left_child (Node): left child to build path to
             right_child (Node): right child to build path to
         """
-        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.return_coords()
-        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.return_coords()
+        left_child_up_x, left_child_up_y, left_child_down_x, left_child_down_y = left_child.room.coords()
+        right_child_up_x, right_child_up_y, right_child_down_x, right_child_down_y = right_child.room.coords()
 
         # y coord of path connecting the left room
         left_y = random.randint(left_child_up_y, left_child_down_y)
