@@ -108,3 +108,12 @@ class Entity(pygame.sprite.Sprite):
             self.ai.take_turn()
         else:
             self.creature.move(dx, dy)
+
+        if self.creature.stat:
+            # Regenerates hp and mp of creatures
+            if self.game.turn_count % REGEN_TIME == 0:
+                if self.creature.stat.hp + 1 < self.creature.stat.max_hp:
+                    self.creature.stat.hp += 1
+                if self.creature.stat.max_mp + 1 < self.creature.stat.max_mp:
+                    self.creature.stat.mp += 1
+

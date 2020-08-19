@@ -39,24 +39,36 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
+        self.turn_count = 0
+
         self.running = True
+
+        # Load in all sprites
+        self.game_sprites = sprite.GameSprites()
 
         self.drawing = Drawing(self, self.surface)
         self.menu_manager = Menu_Manager(self)
 
+        self.drawing.add_buttons()
+
+        self.wall_hack = False
+        self.free_camera_on = False
         self.mini_map_on = False
+
         self.GAME_MESSAGES = []
-        self.GAME_OBJECTS = []
 
     def new(self):
         """
-        Makes new map and entity and adds them to the relevant groups
+        Makes new map and entities
         """
-        # List with all walls
-        self.walls = []
-        # List with all floors
-        self.floors = []
+        self._generate_new_map()
 
+        self._populate_map()
+
+    def _populate_map(self):
+        """
+        Adds entities to map
+        """
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Player group
@@ -71,34 +83,12 @@ class Game:
 
         self.item_group = []
 
+        self.GAME_OBJECTS = []
+
         # Switches current group to all creatures
         # the current group to move/update
         self.current_group = self.all_creature
 
-        # Load in all sprites
-        self.game_sprites = sprite.GameSprites()
-
-        # Holds map info like width and height
-        self.map_info = gamemap.MapInfo(self)
-
-        self.wall_hack = False
-
-        self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_info.map_array, self.map_info)
-        self.graph.neighbour()
-
-        self.camera = Camera(self.map_info)
-
-        self.free_camera_on = False
-
-        self._add_entities()
-
-        self.drawing.add_buttons()
-
-    def _add_entities(self):
-        """
-        Adds objects to groups
-        """
         self.free_camera = generate_free_camera(self)
 
         self.player = generate_player(self.map_info.map_tree, self)
@@ -117,6 +107,23 @@ class Game:
 
         self.GAME_OBJECTS += self.enemy_group + self.player_group + self.item_group
 
+    def _generate_new_map(self):
+        """
+        Generates new map with corresponding camera and graph
+        """
+        # List with all walls
+        self.walls = []
+        # List with all floors
+        self.floors = []
+        # Holds map info like width and height
+        self.map_info = gamemap.MapInfo(self)
+
+        self.camera = Camera(self.map_info)
+
+        self.graph = pathfinding.Graph()
+        self.graph.make_graph(self.map_info)
+        self.graph.neighbour()
+
     def run(self):
         """
         Main game loop which takes in process player input updates screen
@@ -126,7 +133,6 @@ class Game:
             self.clock.tick(FPS)
             self.handle_events()
             self.update()
-            # self.drawing.update()
             pygame.display.flip()
 
     def update(self):
@@ -201,22 +207,31 @@ class Game:
         # Movement
         if event.key == pygame.K_a:
             self.current_group.update(-1, 0)
+            self.turn_count += 1
         elif event.key == pygame.K_d:
             self.current_group.update(1, 0)
+            self.turn_count += 1
         elif event.key == pygame.K_w:
             self.current_group.update(0, -1)
+            self.turn_count += 1
         elif event.key == pygame.K_q:
             self.current_group.update(-1, -1)
+            self.turn_count += 1
         elif event.key == pygame.K_e:
             self.current_group.update(1, -1)
+            self.turn_count += 1
         elif event.key == pygame.K_z:
             self.current_group.update(-1, 1)
+            self.turn_count += 1
         elif event.key == pygame.K_c:
             self.current_group.update(1, 1)
+            self.turn_count += 1
         elif event.key == pygame.K_s:
             self.current_group.update(0, 1)
+            self.turn_count += 1
         elif event.key == pygame.K_x:
             self.current_group.update(0, 0)
+            self.turn_count += 1
 
         # Mini_map
         elif event.key == pygame.K_TAB:
@@ -228,11 +243,13 @@ class Game:
             for obj in objects_at_player:
                 if obj.item:
                     obj.item.pick_up(self.player)
+            self.turn_count += 1
 
         # TODO: instead of dropping last item dropped, drop mouse event in inventory
         elif event.key == pygame.K_g:
             if len(self.player.container.inventory) > 0:
                 self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
+            self.turn_count += 1
 
         elif event.key == pygame.K_ESCAPE:
             self._toggle_wallhack()
@@ -258,50 +275,9 @@ class Game:
         elif event.key == pygame.K_SPACE:
             self.menu_manager.magic_targetting_menu()
 
-    def cast_magic(self):
-        """
-        Casts lightning at mouse location and prints out the line
-        it travels through currently
-
-        Returns:
-
-        """
-        move_x, move_y = self.camera.get_mouse_coord()
-        start = (self.player.x, self.player.y)
-        goal = (move_x, move_y)
-        line = magic.line(start, goal, self.map_info.map_array)
-        magic.cast_fireball(self, self.player, line)
-        # TODO: maybe change this since if player has ai but cast fireball,
-        #       player would move + cast fireball at the same time
-        self.current_group.update(0, 0)
-
-    def _move_to_free_camera(self):
-        """
-        Moves to free camera location
-        """
-        if self.free_camera_on:
-            # If tile is unexplored do nothing
-            if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
-                return
-            start = (self.player.x, self.player.y)
-            goal = (self.free_camera.x, self.free_camera.y)
-            # Generates path
-            visited = self.graph.bfs(start, goal)
-            # If path is generated move player
-            if visited:
-                self._toggle_free_camera()
-                path = self.graph.find_path(start, goal, visited)
-                self.move_char_auto(path)
-
-    def _toggle_wallhack(self):
-        """
-        Toggles wallhack. If wallhack is on, then show whole map in player FOV
-        else turn back to normal fov
-        """
-        self.wall_hack = not self.wall_hack
-        if self.wall_hack:
-            self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
-                        range(self.map_info.tile_height)]
+        # Creates new map
+        elif event.key == pygame.K_1:
+            self.new()
 
     def _handle_mouse_event(self, event):
         """
@@ -334,6 +310,52 @@ class Game:
             self.clock.tick(FPS)
             self.update()
             pygame.display.flip()
+
+    def cast_magic(self):
+        """
+        Casts lightning at mouse location and prints out the line
+        it travels through currently
+
+        Returns:
+
+        """
+        move_x, move_y = self.camera.get_mouse_coord()
+        start = (self.player.x, self.player.y)
+        goal = (move_x, move_y)
+        line = magic.line(start, goal, self.map_info.map_array)
+        magic.cast_fireball(self, self.player, line)
+        # TODO: maybe change this since if player has ai but cast fireball,
+        #       player would move + cast fireball at the same time
+        self.current_group.update(0, 0)
+        self.turn_count += 1
+
+    def _move_to_free_camera(self):
+        """
+        Moves to free camera location
+        """
+        if self.free_camera_on:
+            # If tile is unexplored do nothing
+            if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
+                return
+            start = (self.player.x, self.player.y)
+            goal = (self.free_camera.x, self.free_camera.y)
+            # Generates path
+            visited = self.graph.bfs(start, goal)
+            # If path is generated move player
+            if visited:
+                self._toggle_free_camera()
+                path = self.graph.find_path(start, goal, visited)
+                self.move_char_auto(path)
+
+    def _toggle_wallhack(self):
+        """
+        Toggles wallhack. If wallhack is on, then show whole map in player FOV
+        else turn back to normal fov
+        """
+        self.wall_hack = not self.wall_hack
+        if self.wall_hack:
+            self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
+                        range(self.map_info.tile_height)]
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
@@ -369,7 +391,13 @@ class Game:
         """
         old_coord = (self.player.x, self.player.y)
         if len(path) == 0:
+            if not ignore:
+                # If enemy in FOV stop auto moving
+                # If wall hack on disregard
+                if self._check_if_enemy_in_fov():
+                    return
             self.current_group.update(0, 0)
+            self.turn_count += 1
         else:
             for coord in path:
                 # If key pressed stop auto moving
@@ -381,19 +409,29 @@ class Game:
                 if not ignore:
                     # If enemy in FOV stop auto moving
                     # If wall hack on disregard
-                    for obj in self.enemy_group:
-                        if fov.check_if_in_fov(self, obj) and not self.wall_hack:
-                            return
+                    if self._check_if_enemy_in_fov():
+                        return
 
                 # Move to next coord in path
                 dest_x = coord[0] - old_coord[0]
                 dest_y = coord[1] - old_coord[1]
                 self.current_group.update(dest_x, dest_y)
+                self.turn_count += 1
                 old_coord = coord
 
                 self.update()
                 self.clock.tick(20)
                 pygame.display.flip()
+
+    def _check_if_enemy_in_fov(self):
+        """
+        Returns:
+            true if enemy is in player FOV, else false
+        """
+        for obj in self.enemy_group:
+            if fov.check_if_in_fov(self, obj) and not self.wall_hack:
+                return True
+        return False
 
     def auto_path(self, graph):
         """
