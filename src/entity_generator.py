@@ -29,6 +29,7 @@ def generate_enemies(tree, game):
 def _generate_enemies(room, game, enemy_list):
     """
     Generates a random monster in room at random coords
+    as long as coords is not the same as player coord
 
     Args:
         room (Room): Room to generate monste rin
@@ -38,6 +39,11 @@ def _generate_enemies(room, game, enemy_list):
     x1, y1, x2, y2 = room.coords
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
+    # This makes it so no mosters spawn on same tile as player
+    while (x, y) == (game.player.x, game.player.y):
+        x = random.randint(x1, x2)
+        y = random.randint(y1, y2)
+
     random_num = random.randint(0, 2)
     if random_num == 0:
         new_enemy = _generate_slime(x, y, game)

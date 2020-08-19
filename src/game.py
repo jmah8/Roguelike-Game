@@ -45,46 +45,25 @@ class Game:
 
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
+
         self.drawing = Drawing(self, self.surface)
         self.menu_manager = Menu_Manager(self)
 
-        self.mini_map_on = False
-        self.GAME_MESSAGES = []
-
         self.drawing.add_buttons()
+
+        self.wall_hack = False
+        self.free_camera_on = False
+        self.mini_map_on = False
+
+        self.GAME_MESSAGES = []
 
     def new(self):
         """
-        Makes new map and entity and adds them to the relevant groups
+        Makes new map and entities
         """
         self._generate_new_map()
 
         self._populate_map()
-
-        # # Group with all creatures
-        # self.all_creature = pygame.sprite.OrderedUpdates()
-        # # Player group
-        # self.player_group = []
-        # # Free camera group
-        # self.camera_group = pygame.sprite.GroupSingle()
-        # # Enemy group
-        # self.enemy_group = []
-        #
-        # # Particle group
-        # self.particles = []
-        #
-        # self.item_group = []
-        #
-        # # Switches current group to all creatures
-        # # the current group to move/update
-        # self.current_group = self.all_creature
-
-        self.wall_hack = False
-
-        self.camera = Camera(self.map_info)
-
-        self.free_camera_on = False
-
 
     def _populate_map(self):
         """
@@ -128,6 +107,23 @@ class Game:
 
         self.GAME_OBJECTS += self.enemy_group + self.player_group + self.item_group
 
+    def _generate_new_map(self):
+        """
+        Generates new map with corresponding camera and graph
+        """
+        # List with all walls
+        self.walls = []
+        # List with all floors
+        self.floors = []
+        # Holds map info like width and height
+        self.map_info = gamemap.MapInfo(self)
+
+        self.camera = Camera(self.map_info)
+
+        self.graph = pathfinding.Graph()
+        self.graph.make_graph(self.map_info)
+        self.graph.neighbour()
+
     def run(self):
         """
         Main game loop which takes in process player input updates screen
@@ -137,7 +133,6 @@ class Game:
             self.clock.tick(FPS)
             self.handle_events()
             self.update()
-            # self.drawing.update()
             pygame.display.flip()
 
     def update(self):
@@ -280,21 +275,41 @@ class Game:
         elif event.key == pygame.K_SPACE:
             self.menu_manager.magic_targetting_menu()
 
+        # Creates new map
         elif event.key == pygame.K_1:
             self.new()
 
-    def _generate_new_map(self):
-        # List with all walls
-        self.walls = []
-        # List with all floors
-        self.floors = []
-        # Holds map info like width and height
-        self.map_info = gamemap.MapInfo(self)
+    def _handle_mouse_event(self, event):
+        """
+        Handles mouse clicks
 
-        self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_info)
-        self.graph.neighbour()
+        Args:
+            event (Event): Event to handle
+        """
+        if event.button == 1:
+            # Check if button clicked
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
+            if button:
+                button.menu_open()
+                return
 
+            # Move player to mouse click
+            move_x, move_y = self.camera.get_mouse_coord()
+
+            if not self.map_info.tile_array[move_y][move_x].seen:
+                return
+
+            start = (self.player.x, self.player.y)
+            goal = (move_x, move_y)
+            visited = self.graph.bfs(start, goal)
+            if visited:
+                path = self.graph.find_path(start, goal, visited)
+                self.move_char_auto(path, True)
+
+            self.clock.tick(FPS)
+            self.update()
+            pygame.display.flip()
 
     def cast_magic(self):
         """
@@ -341,38 +356,6 @@ class Game:
         if self.wall_hack:
             self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
                         range(self.map_info.tile_height)]
-
-    def _handle_mouse_event(self, event):
-        """
-        Handles mouse clicks
-
-        Args:
-            event (Event): Event to handle
-        """
-        if event.button == 1:
-            # Check if button clicked
-            mouse_x, mouse_y = pygame.mouse.get_pos()
-            button = self.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
-            if button:
-                button.menu_open()
-                return
-
-            # Move player to mouse click
-            move_x, move_y = self.camera.get_mouse_coord()
-
-            if not self.map_info.tile_array[move_y][move_x].seen:
-                return
-
-            start = (self.player.x, self.player.y)
-            goal = (move_x, move_y)
-            visited = self.graph.bfs(start, goal)
-            if visited:
-                path = self.graph.find_path(start, goal, visited)
-                self.move_char_auto(path, True)
-
-            self.clock.tick(FPS)
-            self.update()
-            pygame.display.flip()
 
     def map_objects_at_coords(self, coord_x, coord_y):
         objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
