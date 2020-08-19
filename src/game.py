@@ -39,6 +39,8 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
+        self.turn_count = 0
+
         self.running = True
 
         self.drawing = Drawing(self, self.surface)
@@ -201,22 +203,31 @@ class Game:
         # Movement
         if event.key == pygame.K_a:
             self.current_group.update(-1, 0)
+            self.turn_count += 1
         elif event.key == pygame.K_d:
             self.current_group.update(1, 0)
+            self.turn_count += 1
         elif event.key == pygame.K_w:
             self.current_group.update(0, -1)
+            self.turn_count += 1
         elif event.key == pygame.K_q:
             self.current_group.update(-1, -1)
+            self.turn_count += 1
         elif event.key == pygame.K_e:
             self.current_group.update(1, -1)
+            self.turn_count += 1
         elif event.key == pygame.K_z:
             self.current_group.update(-1, 1)
+            self.turn_count += 1
         elif event.key == pygame.K_c:
             self.current_group.update(1, 1)
+            self.turn_count += 1
         elif event.key == pygame.K_s:
             self.current_group.update(0, 1)
+            self.turn_count += 1
         elif event.key == pygame.K_x:
             self.current_group.update(0, 0)
+            self.turn_count += 1
 
         # Mini_map
         elif event.key == pygame.K_TAB:
@@ -228,11 +239,13 @@ class Game:
             for obj in objects_at_player:
                 if obj.item:
                     obj.item.pick_up(self.player)
+            self.turn_count += 1
 
         # TODO: instead of dropping last item dropped, drop mouse event in inventory
         elif event.key == pygame.K_g:
             if len(self.player.container.inventory) > 0:
                 self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
+            self.turn_count += 1
 
         elif event.key == pygame.K_ESCAPE:
             self._toggle_wallhack()
@@ -274,6 +287,7 @@ class Game:
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
+        self.turn_count += 1
 
     def _move_to_free_camera(self):
         """
@@ -370,6 +384,7 @@ class Game:
         old_coord = (self.player.x, self.player.y)
         if len(path) == 0:
             self.current_group.update(0, 0)
+            self.turn_count += 1
         else:
             for coord in path:
                 # If key pressed stop auto moving
@@ -389,6 +404,7 @@ class Game:
                 dest_x = coord[0] - old_coord[0]
                 dest_y = coord[1] - old_coord[1]
                 self.current_group.update(dest_x, dest_y)
+                self.turn_count += 1
                 old_coord = coord
 
                 self.update()

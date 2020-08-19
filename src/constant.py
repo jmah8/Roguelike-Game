@@ -53,6 +53,8 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 INVENTORY_BEIGE = (239,228,176)
 
+# Creature stats
+REGEN_TIME = 5
 
 # Enemy Attributes
 # FOV should be 1 bigger than actual FOV since player acts first
