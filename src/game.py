@@ -43,22 +43,53 @@ class Game:
 
         self.running = True
 
+        # Load in all sprites
+        self.game_sprites = sprite.GameSprites()
         self.drawing = Drawing(self, self.surface)
         self.menu_manager = Menu_Manager(self)
 
         self.mini_map_on = False
         self.GAME_MESSAGES = []
-        self.GAME_OBJECTS = []
+
+        self.drawing.add_buttons()
 
     def new(self):
         """
         Makes new map and entity and adds them to the relevant groups
         """
-        # List with all walls
-        self.walls = []
-        # List with all floors
-        self.floors = []
+        self._generate_new_map()
 
+        self._populate_map()
+
+        # # Group with all creatures
+        # self.all_creature = pygame.sprite.OrderedUpdates()
+        # # Player group
+        # self.player_group = []
+        # # Free camera group
+        # self.camera_group = pygame.sprite.GroupSingle()
+        # # Enemy group
+        # self.enemy_group = []
+        #
+        # # Particle group
+        # self.particles = []
+        #
+        # self.item_group = []
+        #
+        # # Switches current group to all creatures
+        # # the current group to move/update
+        # self.current_group = self.all_creature
+
+        self.wall_hack = False
+
+        self.camera = Camera(self.map_info)
+
+        self.free_camera_on = False
+
+
+    def _populate_map(self):
+        """
+        Adds entities to map
+        """
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Player group
@@ -73,34 +104,12 @@ class Game:
 
         self.item_group = []
 
+        self.GAME_OBJECTS = []
+
         # Switches current group to all creatures
         # the current group to move/update
         self.current_group = self.all_creature
 
-        # Load in all sprites
-        self.game_sprites = sprite.GameSprites()
-
-        # Holds map info like width and height
-        self.map_info = gamemap.MapInfo(self)
-
-        self.wall_hack = False
-
-        self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_info.map_array, self.map_info)
-        self.graph.neighbour()
-
-        self.camera = Camera(self.map_info)
-
-        self.free_camera_on = False
-
-        self._add_entities()
-
-        self.drawing.add_buttons()
-
-    def _add_entities(self):
-        """
-        Adds objects to groups
-        """
         self.free_camera = generate_free_camera(self)
 
         self.player = generate_player(self.map_info.map_tree, self)
@@ -271,6 +280,22 @@ class Game:
         elif event.key == pygame.K_SPACE:
             self.menu_manager.magic_targetting_menu()
 
+        elif event.key == pygame.K_1:
+            self.new()
+
+    def _generate_new_map(self):
+        # List with all walls
+        self.walls = []
+        # List with all floors
+        self.floors = []
+        # Holds map info like width and height
+        self.map_info = gamemap.MapInfo(self)
+
+        self.graph = pathfinding.Graph()
+        self.graph.make_graph(self.map_info)
+        self.graph.neighbour()
+
+
     def cast_magic(self):
         """
         Casts lightning at mouse location and prints out the line
@@ -383,6 +408,11 @@ class Game:
         """
         old_coord = (self.player.x, self.player.y)
         if len(path) == 0:
+            if not ignore:
+                # If enemy in FOV stop auto moving
+                # If wall hack on disregard
+                if self._check_if_enemy_in_fov():
+                    return
             self.current_group.update(0, 0)
             self.turn_count += 1
         else:
@@ -396,9 +426,8 @@ class Game:
                 if not ignore:
                     # If enemy in FOV stop auto moving
                     # If wall hack on disregard
-                    for obj in self.enemy_group:
-                        if fov.check_if_in_fov(self, obj) and not self.wall_hack:
-                            return
+                    if self._check_if_enemy_in_fov():
+                        return
 
                 # Move to next coord in path
                 dest_x = coord[0] - old_coord[0]
@@ -410,6 +439,16 @@ class Game:
                 self.update()
                 self.clock.tick(20)
                 pygame.display.flip()
+
+    def _check_if_enemy_in_fov(self):
+        """
+        Returns:
+            true if enemy is in player FOV, else false
+        """
+        for obj in self.enemy_group:
+            if fov.check_if_in_fov(self, obj) and not self.wall_hack:
+                return True
+        return False
 
     def auto_path(self, graph):
         """

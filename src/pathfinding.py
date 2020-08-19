@@ -42,22 +42,21 @@ class Graph:
         self.nodes = {}
         self.walls = {}
 
-    def make_graph(self, map, map_data):
+    def make_graph(self, map_info):
         """
         Makes graph corresponding to map
 
         Makes a node if corresponding point on map isn't wall
 
         Args:
-            map (2D array): 2D array representing map
-            map_data (MapInfo): arg that holds map info
+            map_info (MapInfo): arg that holds map info
         """
-        for y in range(map_data.tile_height):
-            for x in range(map_data.tile_width):
-                if (not map[y][x] == WALL):
+        for y in range(map_info.tile_height):
+            for x in range(map_info.tile_width):
+                if (not map_info.map_array[y][x] == WALL):
                     self.nodes[(x, y)] = (Node(x, y))
                 else:
-                    self.walls[(x, y)] = map[y][x]
+                    self.walls[(x, y)] = map_info.map_array[y][x]
 
     def neighbour(self):
         """
