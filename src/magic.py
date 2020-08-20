@@ -116,7 +116,9 @@ def line(start, end, map):
         x, y = round_point(lerp_point(start, end, t))
         if map[y][x] == WALL:
             break
-        points.append((x, y))
+        # Skip the point the entity is on
+        if i != 0:
+            points.append((x, y))
     return points
 
 
@@ -141,7 +143,10 @@ def cast_fireball(game, caster, line):
     if caster.creature.stat.mp - mp_cost >= 0:
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
-        enemies = caster.creature.enemy_group
+        enemies = []
+        for team, entity in game.creature_data.items():
+            if team != caster.creature.team:
+                enemies += entity
         creature_hit = False
         for (x, y) in line:
             if creature_hit:
@@ -154,12 +159,23 @@ def cast_fireball(game, caster, line):
                     creature_hit = True
                     break
 
-            game.update()
-            for magic in particle_group:
-                game.surface.blit(magic.image, game.camera.apply(magic))
-                magic.update()
-            game.clock.tick(20)
-            pygame.display.update()
+            _update_spell(game, particle_group)
+
+
+def _update_spell(game, particle_group):
+    """
+    Updates the spell casted
+
+    Args:
+        game (Game): Game with all game data
+        particle_group (List): List of particles
+    """
+    game.update()
+    for magic in particle_group:
+        game.drawing.draw_at_camera_offset(magic)
+        magic.update()
+    game.clock.tick(20)
+    pygame.display.update()
 
 
 # TODO: make it so enemies wont target through their allies
@@ -184,19 +200,17 @@ def cast_lightning(game, caster, line):
     if caster.creature.stat.mp - mp_cost >= 0:
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
-        enemies = caster.creature.enemy_group
+        enemies = []
+        for team, entity in game.creature_data.items():
+            if team != caster.creature.team:
+                enemies += entity
         for (x, y) in line:
             for enemy in enemies:
                 if (enemy.x, enemy.y) == (x, y):
                     if enemy.creature.take_damage(damage):
                         caster.creature.gain_exp(enemy)
 
-            game.update()
-            for magic in particle_group:
-                game.surface.blit(magic.image, game.camera.apply(magic))
-                magic.update()
-            game.clock.tick(20)
-            pygame.display.update()
+            _update_spell(game, particle_group)
 
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:

@@ -85,7 +85,6 @@ class Menu_Manager:
             self.game.drawing.draw_mouse()
             m_x, m_y = self.game.camera.get_mouse_coord()
             line = magic.line(self.game.player.position, (m_x, m_y), self.game.map_info.map_array)
-            print(line)
             self.game.drawing.draw_magic_path(line)
             pygame.display.flip()
 

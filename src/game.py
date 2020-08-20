@@ -8,6 +8,7 @@ from constant import *
 from draw import Drawing
 from entity_generator import *
 from menu_manager import Menu_Manager
+from queue import LifoQueue
 
 pygame.font.init()
 
@@ -52,10 +53,19 @@ class Game:
         self.drawing.add_buttons()
 
         self.wall_hack = False
-        self.free_camera_on = False
         self.mini_map_on = False
 
         self.GAME_MESSAGES = []
+
+        self.previous_levels = LifoQueue()
+        self.next_levels = LifoQueue()
+
+        self.creature_data = {
+            "player": [],
+            "enemy": []
+        }
+
+        self.free_camera = generate_free_camera(self)
 
     def new(self):
         """
@@ -63,63 +73,48 @@ class Game:
         """
         self._generate_new_map()
 
+        self.camera = Camera(self.map_info)
+
+        self._initialize_pathfinding()
+
         self._populate_map()
 
     def _populate_map(self):
         """
         Adds entities to map
+
+        Only makes new player on start, then it moves player
+        to random location after
         """
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
-        # Player group
-        self.player_group = []
-        # Free camera group
-        self.camera_group = pygame.sprite.GroupSingle()
-        # Enemy group
-        self.enemy_group = []
 
         # Particle group
         self.particles = []
 
-        self.item_group = []
+        if self.turn_count == 0:
+            self.player = generate_player(self.map_info.map_tree, self)
+        else:
+            self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
+            self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
 
-        self.GAME_OBJECTS = []
+        self.creature_data["enemy"] = generate_enemies(self.map_info.map_tree, self)
 
-        # Switches current group to all creatures
-        # the current group to move/update
-        self.current_group = self.all_creature
+        self.item_group = generate_items(self.map_info.map_tree, self)
 
-        self.free_camera = generate_free_camera(self)
+        self.creature_data["player"] = [self.player]
 
-        self.player = generate_player(self.map_info.map_tree, self)
-
-        # TODO: Fix ai for creatures merging when stepping onto same tile
-        self.enemy_group += generate_enemies(self.map_info.map_tree, self)
-
-        self.item_group += generate_items(self.map_info.map_tree, self)
-
-        self.player_group.append(self.player)
-
-        self.camera_group.add(self.free_camera)
-
-        for c in self.enemy_group + self.player_group:
+        for c in self.creature_data.values():
             self.all_creature.add(c)
-
-        self.GAME_OBJECTS += self.enemy_group + self.player_group + self.item_group
 
     def _generate_new_map(self):
         """
-        Generates new map with corresponding camera and graph
+        Generates new map with MapInfo
         """
-        # List with all walls
-        self.walls = []
-        # List with all floors
-        self.floors = []
         # Holds map info like width and height
         self.map_info = gamemap.MapInfo(self)
 
-        self.camera = Camera(self.map_info)
-
+    def _initialize_pathfinding(self):
         self.graph = pathfinding.Graph()
         self.graph.make_graph(self.map_info)
         self.graph.neighbour()
@@ -137,10 +132,7 @@ class Game:
 
     def update(self):
         # Update what to lock camera on
-        if not self.free_camera_on:
-            self.camera.update(self.player)
-        else:
-            self.camera.update(self.free_camera)
+        self.camera.update(self.player)
 
         if not self.wall_hack:
             self.fov = fov.new_fov(self.map_info)
@@ -149,6 +141,8 @@ class Game:
         fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
 
         self.drawing.draw()
+
+        self.drawing.draw_mouse()
 
     def handle_events(self):
         """
@@ -166,11 +160,11 @@ class Game:
                 self._handle_screen_resize(event)
 
             # Moving to where mouse is clicked
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 self._handle_mouse_event(event)
 
             # Keyboard press
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 self._handle_keyboard_event(event)
 
     def _handle_screen_resize(self, event):
@@ -206,31 +200,31 @@ class Game:
         """
         # Movement
         if event.key == pygame.K_a:
-            self.current_group.update(-1, 0)
+            self.all_creature.update(-1, 0)
             self.turn_count += 1
         elif event.key == pygame.K_d:
-            self.current_group.update(1, 0)
+            self.all_creature.update(1, 0)
             self.turn_count += 1
         elif event.key == pygame.K_w:
-            self.current_group.update(0, -1)
+            self.all_creature.update(0, -1)
             self.turn_count += 1
         elif event.key == pygame.K_q:
-            self.current_group.update(-1, -1)
+            self.all_creature.update(-1, -1)
             self.turn_count += 1
         elif event.key == pygame.K_e:
-            self.current_group.update(1, -1)
+            self.all_creature.update(1, -1)
             self.turn_count += 1
         elif event.key == pygame.K_z:
-            self.current_group.update(-1, 1)
+            self.all_creature.update(-1, 1)
             self.turn_count += 1
         elif event.key == pygame.K_c:
-            self.current_group.update(1, 1)
+            self.all_creature.update(1, 1)
             self.turn_count += 1
         elif event.key == pygame.K_s:
-            self.current_group.update(0, 1)
+            self.all_creature.update(0, 1)
             self.turn_count += 1
         elif event.key == pygame.K_x:
-            self.current_group.update(0, 0)
+            self.all_creature.update(0, 0)
             self.turn_count += 1
 
         # Mini_map
@@ -239,7 +233,7 @@ class Game:
 
         # Pickup/Drop Item
         elif event.key == pygame.K_t:
-            objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
+            objects_at_player = self.map_items_at_coord(self.player.x, self.player.y)
             for obj in objects_at_player:
                 if obj.item:
                     obj.item.pick_up(self.player)
@@ -255,11 +249,7 @@ class Game:
             self._toggle_wallhack()
 
         elif event.key == pygame.K_m:
-            self._toggle_free_camera()
-
-        # If free camera on, enter makes you auto move to free camera location
-        elif event.key == pygame.K_RETURN:
-            self._move_to_free_camera()
+            self._toggle_camera()
 
         # Auto move
         elif event.key == pygame.K_v:
@@ -275,9 +265,66 @@ class Game:
         elif event.key == pygame.K_SPACE:
             self.menu_manager.magic_targetting_menu()
 
-        # Creates new map
+        # Returns to previous level
         elif event.key == pygame.K_1:
+            self.transition_previous_level()
+
+        # Goes to next level
+        elif event.key == pygame.K_2:
+            self.transition_next_level()
+
+    def transition_previous_level(self):
+        """
+        Go to previous level
+        """
+        if not self.previous_levels.empty():
+            level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+            self.next_levels.put(level_data)
+
+            x, y, map_info, enemy_list, item_group = self.previous_levels.get()
+
+            self._load_level_data(enemy_list, item_group, map_info, x, y)
+
+            self.all_creature = pygame.sprite.OrderedUpdates()
+            for c in self.creature_data["enemy"] + self.creature_data["player"]:
+                self.all_creature.add(c)
+
+    def transition_next_level(self):
+        """
+        Goes to next level
+        """
+        level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+        self.previous_levels.put(level_data)
+        if self.next_levels.empty():
             self.new()
+        else:
+            x, y, map_info, enemy_list, item_group = self.next_levels.get()
+
+            self._load_level_data(enemy_list, item_group, map_info, x, y)
+
+            self.all_creature = pygame.sprite.OrderedUpdates()
+            for c in self.creature_data["enemy"] + self.creature_data["player"]:
+                self.all_creature.add(c)
+
+    def _load_level_data(self, enemy_list, item_group, map_info, x, y):
+        """
+        Loads level data to game variables
+
+        Args:
+            enemy_list (List): list of enemies on level
+            item_group (List): list of items on level
+            map_info (MapInfo): map info of level
+            x (int): player's x position on level
+            y (int): player's y position on level
+        """
+        self.player.x = x
+        self.player.y = y
+        self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+        self.creature_data["enemy"] = enemy_list
+        self.item_group = item_group
+        self.map_info = map_info
+        self.camera = Camera(self.map_info)
+        self._initialize_pathfinding()
 
     def _handle_mouse_event(self, event):
         """
@@ -311,6 +358,53 @@ class Game:
             self.update()
             pygame.display.flip()
 
+    def _toggle_camera(self):
+        camera_on = True
+        x, y = self.player.x, self.player.y
+        self.free_camera.x = x
+        self.free_camera.y = y
+        self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera.y * SPRITE_SIZE)
+        while camera_on:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        self.free_camera.update(-1, 0)
+                    elif event.key == pygame.K_d:
+                        self.free_camera.update(1, 0)
+                    elif event.key == pygame.K_w:
+                        self.free_camera.update(0, -1)
+                    elif event.key == pygame.K_q:
+                        self.free_camera.update(-1, -1)
+                    elif event.key == pygame.K_e:
+                        self.free_camera.update(1, -1)
+                    elif event.key == pygame.K_z:
+                        self.free_camera.update(-1, 1)
+                    elif event.key == pygame.K_c:
+                        self.free_camera.update(1, 1)
+                    elif event.key == pygame.K_s:
+                        self.free_camera.update(0, 1)
+                    elif event.key == pygame.K_RETURN:
+                        self._move_to_free_camera()
+                        camera_on = False
+                    elif event.key == pygame.K_m:
+                        camera_on = False
+
+            self.clock.tick(FPS)
+            self.camera.update(self.free_camera)
+            if not self.wall_hack:
+                self.fov = fov.new_fov(self.map_info)
+
+            fov.ray_casting(self.map_info, self.map_info.map_array, self.fov, self.player)
+            fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
+
+            self.drawing.draw()
+            self.drawing.draw_at_camera_offset(self.free_camera)
+            pygame.display.flip()
+
     def cast_magic(self):
         """
         Casts lightning at mouse location and prints out the line
@@ -323,29 +417,27 @@ class Game:
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_info.map_array)
-        magic.cast_fireball(self, self.player, line)
+        magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
-        self.current_group.update(0, 0)
+        self.all_creature.update(0, 0)
         self.turn_count += 1
 
     def _move_to_free_camera(self):
         """
         Moves to free camera location
         """
-        if self.free_camera_on:
-            # If tile is unexplored do nothing
-            if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
-                return
-            start = (self.player.x, self.player.y)
-            goal = (self.free_camera.x, self.free_camera.y)
-            # Generates path
-            visited = self.graph.bfs(start, goal)
-            # If path is generated move player
-            if visited:
-                self._toggle_free_camera()
-                path = self.graph.find_path(start, goal, visited)
-                self.move_char_auto(path)
+        # If tile is unexplored do nothing
+        if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
+            return
+        start = (self.player.x, self.player.y)
+        goal = (self.free_camera.x, self.free_camera.y)
+        # Generates path
+        visited = self.graph.bfs(start, goal)
+        # If path is generated move player
+        if visited:
+            path = self.graph.find_path(start, goal, visited)
+            self.move_char_auto(path)
 
     def _toggle_wallhack(self):
         """
@@ -357,24 +449,9 @@ class Game:
             self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
                         range(self.map_info.tile_height)]
 
-    def map_objects_at_coords(self, coord_x, coord_y):
-        objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
+    def map_items_at_coord(self, coord_x, coord_y):
+        objects = [obj for obj in self.item_group if obj.x == coord_x and obj.y == coord_y]
         return objects
-
-    def _toggle_free_camera(self):
-        """
-        Changes free camera. If free camera is on, make free camera
-        have same position as player and make camera follow camera
-        else make it follow player
-        """
-        self.free_camera_on = not self.free_camera_on
-        if self.free_camera_on:
-            self.current_group = self.camera_group
-            self.free_camera.x = self.player.x
-            self.free_camera.y = self.player.y
-            self.free_camera.rect.topleft = self.player.rect.topleft
-        else:
-            self.current_group = self.all_creature
 
     def move_char_auto(self, path, ignore=False):
         """
@@ -396,7 +473,7 @@ class Game:
                 # If wall hack on disregard
                 if self._check_if_enemy_in_fov():
                     return
-            self.current_group.update(0, 0)
+            self.all_creature.update(0, 0)
             self.turn_count += 1
         else:
             for coord in path:
@@ -415,7 +492,7 @@ class Game:
                 # Move to next coord in path
                 dest_x = coord[0] - old_coord[0]
                 dest_y = coord[1] - old_coord[1]
-                self.current_group.update(dest_x, dest_y)
+                self.all_creature.update(dest_x, dest_y)
                 self.turn_count += 1
                 old_coord = coord
 
@@ -428,7 +505,7 @@ class Game:
         Returns:
             true if enemy is in player FOV, else false
         """
-        for obj in self.enemy_group:
+        for obj in self.creature_data["enemy"]:
             if fov.check_if_in_fov(self, obj) and not self.wall_hack:
                 return True
         return False

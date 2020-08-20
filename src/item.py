@@ -23,7 +23,7 @@ class Item:
                 self.owner.game.drawing.add_game_message_to_print("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
 
-                entity.game.GAME_OBJECTS.remove(self.owner)
+                entity.game.item_group.remove(self.owner)
 
     def drop_item(self, entity, x, y):
         """
@@ -32,7 +32,7 @@ class Item:
         Remove item from inventory
         Add item to game_objects
         """
-        self.owner.game.GAME_OBJECTS.insert(0, self.owner)
+        self.owner.game.item_group.insert(0, self.owner)
         entity.container.inventory.remove(self.owner)
         self.owner.x = x
         self.owner.y = y

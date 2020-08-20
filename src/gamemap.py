@@ -14,17 +14,14 @@ class Tile(pygame.sprite.Sprite):
         x (int, arg): x position of tile
         y (int, arg): y position of tile
         seen (bool): if tile was seen
-        list (arg, list): list to add tile to
     """
 
-    def __init__(self, x, y, list):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.rect.x = x * SPRITE_SIZE
         self.rect.y = y * SPRITE_SIZE
-        self.list = list
-        self.list.append(self)
         self.seen = False
 
 
@@ -38,7 +35,6 @@ class Wall(Tile):
         image_in_fov (surface, arg): image of wall when in fov
         image (surface, arg): current image of wall
         sprite_dict (game, arg): game with object data
-        list (arg, list): list of walls to add self to
 
     Args:
         image_unexplored (arg, Sprite): sprite of unexplored wall if default is not the
@@ -47,7 +43,7 @@ class Wall(Tile):
             sprite needed
     """
 
-    def __init__(self, sprite_dict, x, y, list, image_unexplored=None, image_explored=None):
+    def __init__(self, sprite_dict, x, y, image_unexplored=None, image_explored=None):
         self.image_seen = sprite_dict.seen_wall_image
         self.image_in_fov = sprite_dict.wall_image
         self.image = self.image_in_fov
@@ -56,7 +52,7 @@ class Wall(Tile):
         if image_explored:
             self.image_seen = image_explored
         self.rect = self.image.get_rect()
-        Tile.__init__(self, x, y, list)
+        Tile.__init__(self, x, y)
 
 
 class Floor(Tile):
@@ -68,7 +64,6 @@ class Floor(Tile):
         image_in_fov (surface, arg): image of wall when in fov
         image (surface, arg): current image of floor
         sprite_dict (game, arg): game with object data
-        list (arg, list): list of floor to add self to
 
     Args:
         image_unexplored (arg, Sprite): sprite of unexplored floor if default is not the
@@ -77,7 +72,7 @@ class Floor(Tile):
             sprite needed
     """
 
-    def __init__(self, sprite_dict, x, y, list, image_unexplored=None, image_explored=None):
+    def __init__(self, sprite_dict, x, y, image_unexplored=None, image_explored=None):
         self.image_seen = sprite_dict.seen_floor_image_1
         self.image_in_fov = sprite_dict.floor_image_1
         self.image = self.image_in_fov
@@ -86,7 +81,7 @@ class Floor(Tile):
         if (image_explored):
             self.image_seen = image_explored
         self.rect = self.image.get_rect()
-        Tile.__init__(self, x, y, list)
+        Tile.__init__(self, x, y)
 
 
 def load_map():
@@ -138,7 +133,7 @@ class MapInfo:
             self.map_tree = gen_map(self.map_array)
 
         # Holds actual tiles
-        self.tile_array = draw_map(self.map_array, game.game_sprites, game.walls, game.floors)
+        self.tile_array = draw_map(self.map_array, game.game_sprites)
 
         self.tile_width = len(self.map_array[0])
         self.tile_height = len(self.map_array)
@@ -167,17 +162,16 @@ def gen_map(map_array):
     tree.build_rooms()
     tree.build_path()
     tree.print_map()
+    print("")
     return tree
 
 
-def draw_map(map_array, sprite_dict, wall_list, floor_list):
+def draw_map(map_array, sprite_dict):
     """
     Draws tiles to background using p_map_array and returns 
     array filled with Tiles
 
     Args:
-        floor_list (list): list containing floor tiles
-        wall_list (list): list containing wall tiles
         map_array ([char[char]]): map to draw as background
         sprite_dict: (GameSprites): dict with all sprites
 
@@ -189,13 +183,12 @@ def draw_map(map_array, sprite_dict, wall_list, floor_list):
         tile_array_row = []
         for row, tile in enumerate(tiles):
             if tile == WALL:
-                tile_array_row.append(Wall(sprite_dict, row, col, wall_list))
+                tile_array_row.append(Wall(sprite_dict, row, col))
             elif tile == FLOOR:
-                tile_array_row.append(Floor(sprite_dict, row, col, floor_list))
+                tile_array_row.append(Floor(sprite_dict, row, col))
             elif tile == PATH:
                 tile_array_row.append(
-                    Floor(sprite_dict, row, col, floor_list, sprite_dict.floor_image_2,
-                          sprite_dict.seen_floor_image_2))
+                    Floor(sprite_dict, row, col, sprite_dict.floor_image_2, sprite_dict.seen_floor_image_2))
         tile_array.append(tile_array_row)
     return tile_array
 

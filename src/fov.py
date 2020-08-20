@@ -66,13 +66,6 @@ def change_seen(map_data, tile_array, fov, unseen_tile):
     for y in range(0, map_data.tile_height):
         for x in range(0, map_data.tile_width):
             tile = tile_array[y][x]
-            # If tile is where player is, it is seen
-            # if (x, y) == (game.player.x, game.player.y):
-            #     tile.image = tile.image_in_fov
-            #     # Remove player tile from unseen_tile
-            #     if (x, y) in game.map_data.unseen_tiles:
-            #         game.map_data.unseen_tiles.remove((x, y))
-
             # If tile is seen switch to in fov sprite
             if fov[y][x] == 1:
                 tile.image = tile.image_in_fov
