@@ -33,12 +33,6 @@ class Drawing:
 
         self.draw_game_objects()
 
-        # Draw mouse select cursor depending on if free camera is on
-        if self.game.free_camera_on:
-            self.draw_at_camera_offset(self.game.free_camera)
-        else:
-            self.draw_mouse()
-
         self.draw_particles()
 
         self.button_manager.draw_buttons(self.game_surface)

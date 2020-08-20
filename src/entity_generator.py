@@ -64,7 +64,7 @@ def _generate_slime(x, y, game):
         y (int): y coord to generate monster at
         game (Game): Game with all game data
     """
-    ai_gen = ai.SmartAi()
+    ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("slime", True, "enemy")
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.slime_dict, creature=creature_gen,
                                     ai=ai_gen)
@@ -80,7 +80,7 @@ def _generate_goblin(x, y, game):
         y (int): y coord to generate monster at
         game (Game): Game with all game data
     """
-    ai_gen = ai.SmartAi()
+    ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("goblin", True, "enemy")
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.goblin_dict, creature=creature_gen,
                                     ai=ai_gen)
@@ -96,7 +96,7 @@ def _generate_skeleton(x, y, game):
         y (int): y coord to generate monster at
         game (Game): Game with all game data
     """
-    ai_gen = ai.SmartAi()
+    ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("skeleton", True, "enemy")
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.skeleton_dict, creature=creature_gen,
                                     ai=ai_gen)

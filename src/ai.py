@@ -48,7 +48,7 @@ class Ai_test:
             self.owner.creature.move(move_x, move_y)
 
 
-class SmartAi:
+class ChaseAI:
     """
     Once per turn, execute
 
@@ -79,6 +79,7 @@ class SmartAi:
             if not creature.current_path:
                 self._make_path_to_player(creature, player)
 
+            # TODO: make it so when dest x/y is > 1, recalculate path
             dest = creature.current_path.pop(0)
             dest_x = dest[0] - creature.x
             dest_y = dest[1] - creature.y
