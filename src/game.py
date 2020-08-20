@@ -65,6 +65,8 @@ class Game:
             "enemy": []
         }
 
+        self.free_camera = generate_free_camera(self)
+
     def new(self):
         """
         Makes new map and entities
@@ -86,19 +88,9 @@ class Game:
         """
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
-        # Free camera group
-        self.camera_group = pygame.sprite.GroupSingle()
-
-        # # Player group
-        # self.player_group = []
-        #
-        # # Enemy group
-        # self.enemy_group = []
 
         # Particle group
         self.particles = []
-
-        self.item_group = []
 
         if self.turn_count == 0:
             self.player = generate_player(self.map_info.map_tree, self)
@@ -106,18 +98,11 @@ class Game:
             self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
             self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
 
-        self.free_camera = generate_free_camera(self)
-
-        # TODO: Fix ai for creatures merging when stepping onto same tile
-        # NOTE: Have to do += instead of = because = will make it point to another list,
-        # but += will add elements to the same list
         self.creature_data["enemy"] = generate_enemies(self.map_info.map_tree, self)
 
-        self.item_group += generate_items(self.map_info.map_tree, self)
+        self.item_group = generate_items(self.map_info.map_tree, self)
 
         self.creature_data["player"] = [self.player]
-
-        self.camera_group.add(self.free_camera)
 
         for c in self.creature_data.values():
             self.all_creature.add(c)

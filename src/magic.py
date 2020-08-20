@@ -159,12 +159,23 @@ def cast_fireball(game, caster, line):
                     creature_hit = True
                     break
 
-            game.update()
-            for magic in particle_group:
-                game.surface.blit(magic.image, game.camera.apply(magic))
-                magic.update()
-            game.clock.tick(20)
-            pygame.display.update()
+            _update_spell(game, particle_group)
+
+
+def _update_spell(game, particle_group):
+    """
+    Updates the spell casted
+
+    Args:
+        game (Game): Game with all game data
+        particle_group (List): List of particles
+    """
+    game.update()
+    for magic in particle_group:
+        game.drawing.draw_at_camera_offset(magic)
+        magic.update()
+    game.clock.tick(20)
+    pygame.display.update()
 
 
 # TODO: make it so enemies wont target through their allies
@@ -199,12 +210,7 @@ def cast_lightning(game, caster, line):
                     if enemy.creature.take_damage(damage):
                         caster.creature.gain_exp(enemy)
 
-            game.update()
-            for magic in particle_group:
-                game.surface.blit(magic.image, game.camera.apply(magic))
-                magic.update()
-            game.clock.tick(20)
-            pygame.display.update()
+            _update_spell(game, particle_group)
 
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:
