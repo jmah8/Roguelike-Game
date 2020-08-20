@@ -33,6 +33,8 @@ A work in progress roguelike game made with Pygame where the player has to fight
 | SPACE + Mouse left click | Fire magic spell |
 | m + Movement keys | Move camera around |
 | m + ENTER | Move to camera location |
+| 1 | Transition to previous level |
+| 2 | Transition to next level |
 
 # Features:
 - Animated sprites
@@ -42,15 +44,14 @@ A work in progress roguelike game made with Pygame where the player has to fight
 - FOV
 - Player and enemy stats
 - Randomly generated monsters and items
+- Traversing through floors
 - Castable magic (work in progress!)
 - Inventory system (work in progress!)
 
 # Upcoming features/todos
 - Come up with name
 - Finishing item pick up/dropping
-- Add magic to cast selection menu 
 - Saving and loading
-- Traversing through floors
 - Better ai
 - Different classes
 - Win and lose condition
