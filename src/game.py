@@ -79,17 +79,23 @@ class Game:
         """
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
-        # Player group
-        self.player_group = []
         # Free camera group
         self.camera_group = pygame.sprite.GroupSingle()
         # Enemy group
         self.enemy_group = []
 
+        # Player group
+        self.player_group = []
+
         # Particle group
         self.particles = []
 
         self.item_group = []
+
+        self.player = generate_player(self.map_info.map_tree, self)
+
+        # self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
+        # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
 
         # Switches current group to all creatures
         # the current group to move/update
@@ -97,12 +103,12 @@ class Game:
 
         self.free_camera = generate_free_camera(self)
 
-        self.player = generate_player(self.map_info.map_tree, self)
-
         # TODO: Fix ai for creatures merging when stepping onto same tile
-        self.enemy_group = generate_enemies(self.map_info.map_tree, self)
+        # NOTE: Have to do += instead of = because = will make it point to another list,
+        # but += will add elements to the same list
+        self.enemy_group += generate_enemies(self.map_info.map_tree, self)
 
-        self.item_group = generate_items(self.map_info.map_tree, self)
+        self.item_group += generate_items(self.map_info.map_tree, self)
 
         self.player_group.append(self.player)
 
@@ -165,11 +171,11 @@ class Game:
                 self._handle_screen_resize(event)
 
             # Moving to where mouse is clicked
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 self._handle_mouse_event(event)
 
             # Keyboard press
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 self._handle_keyboard_event(event)
 
     def _handle_screen_resize(self, event):
@@ -288,16 +294,19 @@ class Game:
                 self.item_group = item_group
                 self.map_info = map_info
 
+                self.all_creature = pygame.sprite.OrderedUpdates()
                 for c in self.enemy_group + self.player_group:
-                    self.all_creature = pygame.sprite.OrderedUpdates()
                     self.all_creature.add(c)
 
+                self.current_group = self.all_creature
 
         # Goes to next level
         elif event.key == pygame.K_2:
             level_data = (self.player.x, self.player.y, self.map_info, self.enemy_group, self.item_group)
             self.previous_levels.put(level_data)
             if self.next_levels.empty():
+                # TODO: Change it so new player isnt made in new since the new player now has
+                #       new stats and such and also its enemy_list is pointing to another list
                 self.new()
             else:
                 x, y, map_info, enemy_group, item_group = self.next_levels.get()
@@ -308,9 +317,11 @@ class Game:
                 self.item_group = item_group
                 self.map_info = map_info
 
+                self.all_creature = pygame.sprite.OrderedUpdates()
                 for c in self.enemy_group + self.player_group:
-                    self.all_creature = pygame.sprite.OrderedUpdates()
                     self.all_creature.add(c)
+
+                self.current_group = self.all_creature
 
     def _handle_mouse_event(self, event):
         """
@@ -343,6 +354,41 @@ class Game:
             self.clock.tick(FPS)
             self.update()
             pygame.display.flip()
+
+    # def _toggle_camera(self):
+    #     camera_on = True
+    #     x, y = self.player.x, self.player.y
+    #     self.free_camera.x = x
+    #     self.free_camera.y = y
+    #     self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera * SPRITE_SIZE)
+    #     while camera_on:
+    #         events = pygame.event.get()
+    #         for event in events:
+    #             if event.type == pygame.QUIT:
+    #                 if self.playing:
+    #                     self.playing = False
+    #                 self.running = False
+    #
+    #             elif event.type == pygame.MOUSEBUTTONDOWN:
+    #                 if event.key == pygame.K_a:
+    #                     self.free_camera.update(-1, 0)
+    #                 elif event.key == pygame.K_d:
+    #                     self.free_camera.update(1, 0)
+    #                 elif event.key == pygame.K_w:
+    #                     self.free_camera.update(0, -1)
+    #                 elif event.key == pygame.K_q:
+    #                     self.free_camera.update(-1, -1)
+    #                 elif event.key == pygame.K_e:
+    #                     self.free_camera.update(1, -1)
+    #                 elif event.key == pygame.K_z:
+    #                     self.free_camera.update(-1, 1)
+    #                 elif event.key == pygame.K_c:
+    #                     self.free_camera.update(1, 1)
+    #                 elif event.key == pygame.K_s:
+    #                     self.free_camera.update(0, 1)
+    #
+
+
 
     def cast_magic(self):
         """

@@ -108,8 +108,7 @@ def generate_player(tree, game):
     Generates player in random room
 
     Args:
-        x (int): x coord to generate monster at
-        y (int): y coord to generate monster at
+        tree (BSP tree): Tree representing rooms
         game (Game): Game with all game data
     """
     room = random.choice(tree.root.child_room_list)
@@ -123,6 +122,27 @@ def generate_player(tree, game):
                            creature=player_com,
                            container=player_container)
     return player
+
+
+def generate_player_spawn(tree):
+    """
+    Generates player coords for random room
+
+    This is also required on top of generate_player since
+    when transitioning to new floors, you want the same player
+    but a new spawn point
+
+    Args:
+        tree (BSP tree): Tree representing rooms
+
+    Returns:
+        x, y (int, int): Coords to spawn player at
+    """
+    room = random.choice(tree.root.child_room_list)
+    x1, y1, x2, y2 = room.coords
+    x = random.randint(x1, x2)
+    y = random.randint(y1, y2)
+    return x, y
 
 
 def generate_free_camera(game):
