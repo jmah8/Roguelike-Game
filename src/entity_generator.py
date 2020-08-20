@@ -65,7 +65,7 @@ def _generate_slime(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.SmartAi()
-    creature_gen = creature.Creature("slime", True, game.player_group)
+    creature_gen = creature.Creature("slime", True, "enemy")
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.slime_dict, creature=creature_gen,
                                     ai=ai_gen)
     return generated_enemy
@@ -81,7 +81,7 @@ def _generate_goblin(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.SmartAi()
-    creature_gen = creature.Creature("goblin", True, game.player_group)
+    creature_gen = creature.Creature("goblin", True, "enemy")
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.goblin_dict, creature=creature_gen,
                                     ai=ai_gen)
     return generated_enemy
@@ -97,7 +97,7 @@ def _generate_skeleton(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.SmartAi()
-    creature_gen = creature.Creature("skeleton", True, game.player_group)
+    creature_gen = creature.Creature("skeleton", True, "enemy")
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.skeleton_dict, creature=creature_gen,
                                     ai=ai_gen)
     return generated_enemy
@@ -116,7 +116,7 @@ def generate_player(tree, game):
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
     player_container = container.Container()
-    player_com = creature.Creature("knight", enemy_group=game.enemy_group)
+    player_com = creature.Creature("knight", team="player")
     player = entity.Entity(game, x, y, "player",
                            anim=game.game_sprites.knight_dict,
                            creature=player_com,

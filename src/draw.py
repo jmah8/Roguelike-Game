@@ -89,7 +89,7 @@ class Drawing:
         """
         Draws all creatures in player FOV offset by camera
         """
-        for creature in self.game.enemy_group + self.game.player_group:
+        for creature in self.game.creature_data["enemy"] + self.game.creature_data["player"]:
             if fov.check_if_in_fov(self.game, creature):
                 creature.update_anim()
                 self.draw_at_camera_offset(creature)

@@ -116,7 +116,9 @@ def line(start, end, map):
         x, y = round_point(lerp_point(start, end, t))
         if map[y][x] == WALL:
             break
-        points.append((x, y))
+        # Skip the point the entity is on
+        if i != 0:
+            points.append((x, y))
     return points
 
 
@@ -141,7 +143,10 @@ def cast_fireball(game, caster, line):
     if caster.creature.stat.mp - mp_cost >= 0:
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
-        enemies = caster.creature.enemy_group
+        enemies = []
+        for team, entity in game.creature_data.items():
+            if team != caster.creature.team:
+                enemies += entity
         creature_hit = False
         for (x, y) in line:
             if creature_hit:
@@ -184,7 +189,10 @@ def cast_lightning(game, caster, line):
     if caster.creature.stat.mp - mp_cost >= 0:
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
-        enemies = caster.creature.enemy_group
+        enemies = []
+        for team, entity in game.creature_data.items():
+            if team != caster.creature.team:
+                enemies += entity
         for (x, y) in line:
             for enemy in enemies:
                 if (enemy.x, enemy.y) == (x, y):

@@ -61,10 +61,10 @@ class Game:
         self.previous_levels = LifoQueue()
         self.next_levels = LifoQueue()
 
-        # self.creature_data = {
-        #     "player": [],
-        #     "enemy": []
-        # }
+        self.creature_data = {
+            "player": [],
+            "enemy": []
+        }
 
     def new(self):
         """
@@ -81,24 +81,21 @@ class Game:
     def _populate_map(self):
         """
         Adds entities to map
+
+        Only makes new player on start, then it moves player
+        to random location after
         """
         # Group with all creatures
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Free camera group
         self.camera_group = pygame.sprite.GroupSingle()
 
-        # Player group
-        self.player_group = []
-
-        # Enemy group
-        self.enemy_group = []
-
-
-        # # Empties player list
-        # del self.player_group[:]
+        # # Player group
+        # self.player_group = []
         #
-        # # Empties enemy list
-        # del self.enemy_group[:]
+        # # Enemy group
+        # self.enemy_group = []
+
 
         # Particle group
         self.particles = []
@@ -120,15 +117,15 @@ class Game:
         # TODO: Fix ai for creatures merging when stepping onto same tile
         # NOTE: Have to do += instead of = because = will make it point to another list,
         # but += will add elements to the same list
-        self.enemy_group += generate_enemies(self.map_info.map_tree, self)
+        self.creature_data["enemy"] = generate_enemies(self.map_info.map_tree, self)
 
         self.item_group += generate_items(self.map_info.map_tree, self)
 
-        self.player_group.append(self.player)
+        self.creature_data["player"] = [self.player]
 
         self.camera_group.add(self.free_camera)
 
-        for c in self.enemy_group + self.player_group:
+        for c in self.creature_data.values():
             self.all_creature.add(c)
 
     def _generate_new_map(self):
@@ -296,50 +293,68 @@ class Game:
 
         # Returns to previous level
         elif event.key == pygame.K_1:
-            if not self.previous_levels.empty():
-                level_data = (self.player.x, self.player.y, self.map_info, self.enemy_group, self.item_group)
-                self.next_levels.put(level_data)
-
-                x, y, map_info, enemy_group, item_group = self.previous_levels.get()
-                self.player.x = x
-                self.player.y = y
-                self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
-                self.enemy_group = enemy_group
-                self.item_group = item_group
-                self.map_info = map_info
-
-                self.all_creature = pygame.sprite.OrderedUpdates()
-                for c in self.enemy_group + self.player_group:
-                    self.all_creature.add(c)
-
-                self.current_group = self.all_creature
+            self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            # TODO: since I am trying to empty enemy_list, all enemy_list now points to the same list
-            #       and therefore all enemies will be the same
-            #       Basically the issue is when I do self.enemy_group = [], that creates a reference to a new
-            #       list and therefore the player's enemy_list is now not the same as current enemy_group
-            level_data = (self.player.x, self.player.y, self.map_info, self.enemy_group, self.item_group)
-            self.previous_levels.put(level_data)
-            if self.next_levels.empty():
-                # TODO: Change it so new player isnt made in new since the new player now has
-                #       new stats and such and also its enemy_list is pointing to another list
-                self.new()
-            else:
-                x, y, map_info, enemy_group, item_group = self.next_levels.get()
-                self.player.x = x
-                self.player.y = y
-                self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
-                self.enemy_group = enemy_group
-                self.item_group = item_group
-                self.map_info = map_info
+            self.transition_next_level()
 
-                self.all_creature = pygame.sprite.OrderedUpdates()
-                for c in self.enemy_group + self.player_group:
-                    self.all_creature.add(c)
+    def transition_previous_level(self):
+        """
+        Go to previous level
+        """
+        if not self.previous_levels.empty():
+            level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+            self.next_levels.put(level_data)
 
-                self.current_group = self.all_creature
+            x, y, map_info, enemy_list, item_group = self.previous_levels.get()
+
+            self._load_level_data(enemy_list, item_group, map_info, x, y)
+
+            self.all_creature = pygame.sprite.OrderedUpdates()
+            for c in self.creature_data["enemy"] + self.creature_data["player"]:
+                self.all_creature.add(c)
+
+            # self.current_group = self.all_creature
+
+    def transition_next_level(self):
+        """
+        Goes to next level
+        """
+        level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+        self.previous_levels.put(level_data)
+        if self.next_levels.empty():
+            self.new()
+        else:
+            x, y, map_info, enemy_list, item_group = self.next_levels.get()
+
+            self._load_level_data(enemy_list, item_group, map_info, x, y)
+
+            self.all_creature = pygame.sprite.OrderedUpdates()
+            for c in self.creature_data["enemy"] + self.creature_data["player"]:
+                self.all_creature.add(c)
+
+            # self.current_group = self.all_creature
+
+    def _load_level_data(self, enemy_list, item_group, map_info, x, y):
+        """
+        Loads level data to game variables
+
+        Args:
+            enemy_list (List): list of enemies on level
+            item_group (List): list of items on level
+            map_info (MapInfo): map info of level
+            x (int): player's x position on level
+            y (int): player's y position on level
+        """
+        self.player.x = x
+        self.player.y = y
+        self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+        self.creature_data["enemy"] = enemy_list
+        self.item_group = item_group
+        self.map_info = map_info
+        self.camera = Camera(self.map_info)
+        self._initialize_pathfinding()
 
     def _handle_mouse_event(self, event):
         """
@@ -407,7 +422,7 @@ class Game:
                         camera_on = False
                     elif event.key == pygame.K_m:
                         camera_on = False
-                        
+
             self.clock.tick(FPS)
             self.camera.update(self.free_camera)
             if not self.wall_hack:
@@ -432,7 +447,7 @@ class Game:
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, self.map_info.map_array)
-        magic.cast_fireball(self, self.player, line)
+        magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
@@ -553,7 +568,7 @@ class Game:
         Returns:
             true if enemy is in player FOV, else false
         """
-        for obj in self.enemy_group:
+        for obj in self.creature_data["enemy"]:
             if fov.check_if_in_fov(self, obj) and not self.wall_hack:
                 return True
         return False

@@ -92,16 +92,16 @@ class Creature:
         stat (arg, int) : stat of creature
         owner (object) : Entity that has self as creature component
         killable (arg, boolean) : if creature is killable
-        enemy_group (arg, group): group creature can attack
+        team (arg, group): team of self
         walk_through_tile (arg, boolean): if creature can walk through tiles like walls
         current_path (arg, List): List of path from start to goal
     """
 
-    def __init__(self, name_instance, killable=None, enemy_group=None, walk_through_tile=False, current_path=None):
+    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None):
         self.name_instance = name_instance
         self.owner = None
         self.killable = killable
-        self.enemy_group = enemy_group
+        self.team = team
         self.walk_through_tile = walk_through_tile
         self.current_path = current_path
         self.stat = self._load_stat()
@@ -171,7 +171,7 @@ class Creature:
             self.name_instance + " is dead", BLUE)
         self.owner.game.all_creature.remove(self.owner)
         # TODO: change this so player will be removed in future
-        self.owner.game.enemy_group.remove(self.owner)
+        self.owner.game.creature_data[self.team].remove(self.owner)
 
     def move(self, dx, dy):
         """
@@ -192,12 +192,23 @@ class Creature:
             if self.owner.game.map_info.map_array[self.y + dy][self.x + dx] == WALL:
                 return
 
-        # check to see if entity collided with enemy and if so don't move
-        if self.enemy_group:
-            for enemy in self.enemy_group:
-                if (enemy.x, enemy.y) == (self.x + dx, self.y + dy):
-                    self.attack(enemy, self.stat.calc_phys_damage())
-                    return
+        # check to see if entity collided with enemy or ally and if so don't move
+        for team, entity_list in self.owner.game.creature_data.items():
+            for entity in entity_list:
+                if (entity.x, entity.y) == (self.x + dx, self.y + dy):
+                    if entity.creature.team == self.team:
+                        return
+                    else:
+                        self.attack(entity, self.stat.calc_phys_damage())
+                        return
+
+        # for entity in self.owner.game.creature_data.values():
+        #     if (entity.x, entity.y) == (self.x + dx, self.y + dy):
+        #         if entity.creature.team == self.team:
+        #             return
+        #         else:
+        #             self.attack(entity, self.stat.calc_phys_damage())
+        #             return
 
         self.owner.x += dx
         self.owner.y += dy

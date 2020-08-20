@@ -209,7 +209,7 @@ def _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): How much to scale x by
         scale_factor_y (int): How mucg to scale y by
     """
-    for enemy in game.enemy_group:
+    for enemy in game.creature_data["enemy"]:
         if game.fov[enemy.y][enemy.x]:
             pygame.draw.rect(game.surface, RED,
                              ((enemy.rect.topleft[0] / scale_factor_x),
