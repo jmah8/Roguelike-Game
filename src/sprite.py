@@ -16,7 +16,6 @@ def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE), conv
     """
     pathname = os.path.join(RESOURCE_PATH, name)
     try:
-        print(pathname)
         image = pygame.image.load(pathname)
     except pygame.error as message:
         print('Cannot load image:', name)

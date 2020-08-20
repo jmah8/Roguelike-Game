@@ -170,7 +170,7 @@ class Creature:
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
         self.owner.game.all_creature.remove(self.owner)
-        self.owner.game.GAME_OBJECTS.remove(self.owner)
+        # TODO: change this so player will be removed in future
         self.owner.game.enemy_group.remove(self.owner)
 
     def move(self, dx, dy):
@@ -189,9 +189,8 @@ class Creature:
 
         if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
-            for wall in self.owner.game.walls:
-                if (wall.x, wall.y) == (self.x + dx, self.y + dy):
-                    return
+            if self.owner.game.map_info.map_array[self.y + dy][self.x + dx] == WALL:
+                return
 
         # check to see if entity collided with enemy and if so don't move
         if self.enemy_group:

@@ -64,20 +64,35 @@ class Drawing:
 
     def draw_tiles(self):
         """
-        Draws all tiles shifted by camera
+        Draws all tiles offset by camera
         """
-        for tile in self.game.walls + self.game.floors:
-            self.draw_at_camera_offset(tile)
+        for col in self.game.map_info.tile_array:
+            for tile in col:
+                self.draw_at_camera_offset(tile)
 
     def draw_game_objects(self):
         """
-        Draws all game objects shifted by camera
+        Draws all game objects offset by camera
         """
-        # Draws Entity if it is in player fov
-        for obj in self.game.GAME_OBJECTS:
-            if fov.check_if_in_fov(self.game, obj):
-                obj.update_anim()
-                self.draw_at_camera_offset(obj)
+        self._draw_items()
+        self._draw_creatures()
+
+    def _draw_items(self):
+        """
+        Draws item if the tile item is on is seen offset by camera
+        """
+        for item in self.game.item_group:
+            if self.game.map_info.tile_array[item.y][item.x].seen:
+                self.draw_at_camera_offset(item)
+
+    def _draw_creatures(self):
+        """
+        Draws all creatures in player FOV offset by camera
+        """
+        for creature in self.game.enemy_group + self.game.player_group:
+            if fov.check_if_in_fov(self.game, creature):
+                creature.update_anim()
+                self.draw_at_camera_offset(creature)
 
     def draw_particles(self):
         """

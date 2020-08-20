@@ -8,6 +8,7 @@ from constant import *
 from draw import Drawing
 from entity_generator import *
 from menu_manager import Menu_Manager
+from queue import LifoQueue
 
 pygame.font.init()
 
@@ -57,11 +58,18 @@ class Game:
 
         self.GAME_MESSAGES = []
 
+        self.previous_levels = LifoQueue()
+        self.next_levels = LifoQueue()
+
     def new(self):
         """
         Makes new map and entities
         """
         self._generate_new_map()
+
+        self.camera = Camera(self.map_info)
+
+        self._initialize_pathfinding()
 
         self._populate_map()
 
@@ -83,8 +91,6 @@ class Game:
 
         self.item_group = []
 
-        self.GAME_OBJECTS = []
-
         # Switches current group to all creatures
         # the current group to move/update
         self.current_group = self.all_creature
@@ -94,9 +100,9 @@ class Game:
         self.player = generate_player(self.map_info.map_tree, self)
 
         # TODO: Fix ai for creatures merging when stepping onto same tile
-        self.enemy_group += generate_enemies(self.map_info.map_tree, self)
+        self.enemy_group = generate_enemies(self.map_info.map_tree, self)
 
-        self.item_group += generate_items(self.map_info.map_tree, self)
+        self.item_group = generate_items(self.map_info.map_tree, self)
 
         self.player_group.append(self.player)
 
@@ -105,21 +111,14 @@ class Game:
         for c in self.enemy_group + self.player_group:
             self.all_creature.add(c)
 
-        self.GAME_OBJECTS += self.enemy_group + self.player_group + self.item_group
-
     def _generate_new_map(self):
         """
-        Generates new map with corresponding camera and graph
+        Generates new map with MapInfo
         """
-        # List with all walls
-        self.walls = []
-        # List with all floors
-        self.floors = []
         # Holds map info like width and height
         self.map_info = gamemap.MapInfo(self)
 
-        self.camera = Camera(self.map_info)
-
+    def _initialize_pathfinding(self):
         self.graph = pathfinding.Graph()
         self.graph.make_graph(self.map_info)
         self.graph.neighbour()
@@ -239,7 +238,7 @@ class Game:
 
         # Pickup/Drop Item
         elif event.key == pygame.K_t:
-            objects_at_player = self.map_objects_at_coords(self.player.x, self.player.y)
+            objects_at_player = self.map_items_at_coord(self.player.x, self.player.y)
             for obj in objects_at_player:
                 if obj.item:
                     obj.item.pick_up(self.player)
@@ -275,9 +274,43 @@ class Game:
         elif event.key == pygame.K_SPACE:
             self.menu_manager.magic_targetting_menu()
 
-        # Creates new map
+        # Returns to previous level
         elif event.key == pygame.K_1:
-            self.new()
+            if not self.previous_levels.empty():
+                level_data = (self.player.x, self.player.y, self.map_info, self.enemy_group, self.item_group)
+                self.next_levels.put(level_data)
+
+                x, y, map_info, enemy_group, item_group = self.previous_levels.get()
+                self.player.x = x
+                self.player.y = y
+                self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+                self.enemy_group = enemy_group
+                self.item_group = item_group
+                self.map_info = map_info
+
+                for c in self.enemy_group + self.player_group:
+                    self.all_creature = pygame.sprite.OrderedUpdates()
+                    self.all_creature.add(c)
+
+
+        # Goes to next level
+        elif event.key == pygame.K_2:
+            level_data = (self.player.x, self.player.y, self.map_info, self.enemy_group, self.item_group)
+            self.previous_levels.put(level_data)
+            if self.next_levels.empty():
+                self.new()
+            else:
+                x, y, map_info, enemy_group, item_group = self.next_levels.get()
+                self.player.x = x
+                self.player.y = y
+                self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+                self.enemy_group = enemy_group
+                self.item_group = item_group
+                self.map_info = map_info
+
+                for c in self.enemy_group + self.player_group:
+                    self.all_creature = pygame.sprite.OrderedUpdates()
+                    self.all_creature.add(c)
 
     def _handle_mouse_event(self, event):
         """
@@ -357,8 +390,8 @@ class Game:
             self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
                         range(self.map_info.tile_height)]
 
-    def map_objects_at_coords(self, coord_x, coord_y):
-        objects = [obj for obj in self.GAME_OBJECTS if obj.x == coord_x and obj.y == coord_y]
+    def map_items_at_coord(self, coord_x, coord_y):
+        objects = [obj for obj in self.item_group if obj.x == coord_x and obj.y == coord_y]
         return objects
 
     def _toggle_free_camera(self):
