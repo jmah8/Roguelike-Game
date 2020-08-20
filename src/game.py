@@ -61,6 +61,11 @@ class Game:
         self.previous_levels = LifoQueue()
         self.next_levels = LifoQueue()
 
+        # self.creature_data = {
+        #     "player": [],
+        #     "enemy": []
+        # }
+
     def new(self):
         """
         Makes new map and entities
@@ -81,21 +86,30 @@ class Game:
         self.all_creature = pygame.sprite.OrderedUpdates()
         # Free camera group
         self.camera_group = pygame.sprite.GroupSingle()
-        # Enemy group
-        self.enemy_group = []
 
         # Player group
         self.player_group = []
+
+        # Enemy group
+        self.enemy_group = []
+
+
+        # # Empties player list
+        # del self.player_group[:]
+        #
+        # # Empties enemy list
+        # del self.enemy_group[:]
 
         # Particle group
         self.particles = []
 
         self.item_group = []
 
-        self.player = generate_player(self.map_info.map_tree, self)
-
-        # self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
-        # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+        if (self.turn_count == 0):
+            self.player = generate_player(self.map_info.map_tree, self)
+        else:
+            self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
+            self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
 
         # Switches current group to all creatures
         # the current group to move/update
@@ -260,7 +274,7 @@ class Game:
             self._toggle_wallhack()
 
         elif event.key == pygame.K_m:
-            self._toggle_free_camera()
+            self._toggle_camera()
 
         # If free camera on, enter makes you auto move to free camera location
         elif event.key == pygame.K_RETURN:
@@ -302,6 +316,10 @@ class Game:
 
         # Goes to next level
         elif event.key == pygame.K_2:
+            # TODO: since I am trying to empty enemy_list, all enemy_list now points to the same list
+            #       and therefore all enemies will be the same
+            #       Basically the issue is when I do self.enemy_group = [], that creates a reference to a new
+            #       list and therefore the player's enemy_list is now not the same as current enemy_group
             level_data = (self.player.x, self.player.y, self.map_info, self.enemy_group, self.item_group)
             self.previous_levels.put(level_data)
             if self.next_levels.empty():
@@ -355,40 +373,52 @@ class Game:
             self.update()
             pygame.display.flip()
 
-    # def _toggle_camera(self):
-    #     camera_on = True
-    #     x, y = self.player.x, self.player.y
-    #     self.free_camera.x = x
-    #     self.free_camera.y = y
-    #     self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera * SPRITE_SIZE)
-    #     while camera_on:
-    #         events = pygame.event.get()
-    #         for event in events:
-    #             if event.type == pygame.QUIT:
-    #                 if self.playing:
-    #                     self.playing = False
-    #                 self.running = False
-    #
-    #             elif event.type == pygame.MOUSEBUTTONDOWN:
-    #                 if event.key == pygame.K_a:
-    #                     self.free_camera.update(-1, 0)
-    #                 elif event.key == pygame.K_d:
-    #                     self.free_camera.update(1, 0)
-    #                 elif event.key == pygame.K_w:
-    #                     self.free_camera.update(0, -1)
-    #                 elif event.key == pygame.K_q:
-    #                     self.free_camera.update(-1, -1)
-    #                 elif event.key == pygame.K_e:
-    #                     self.free_camera.update(1, -1)
-    #                 elif event.key == pygame.K_z:
-    #                     self.free_camera.update(-1, 1)
-    #                 elif event.key == pygame.K_c:
-    #                     self.free_camera.update(1, 1)
-    #                 elif event.key == pygame.K_s:
-    #                     self.free_camera.update(0, 1)
-    #
+    def _toggle_camera(self):
+        camera_on = True
+        x, y = self.player.x, self.player.y
+        self.free_camera.x = x
+        self.free_camera.y = y
+        self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera.y * SPRITE_SIZE)
+        while camera_on:
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    pygame.quit()
 
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_a:
+                        self.free_camera.update(-1, 0)
+                    elif event.key == pygame.K_d:
+                        self.free_camera.update(1, 0)
+                    elif event.key == pygame.K_w:
+                        self.free_camera.update(0, -1)
+                    elif event.key == pygame.K_q:
+                        self.free_camera.update(-1, -1)
+                    elif event.key == pygame.K_e:
+                        self.free_camera.update(1, -1)
+                    elif event.key == pygame.K_z:
+                        self.free_camera.update(-1, 1)
+                    elif event.key == pygame.K_c:
+                        self.free_camera.update(1, 1)
+                    elif event.key == pygame.K_s:
+                        self.free_camera.update(0, 1)
+                    elif event.key == pygame.K_RETURN:
+                        self._move_to_free_camera_test()
+                        camera_on = False
+                    elif event.key == pygame.K_m:
+                        camera_on = False
+                        
+            self.clock.tick(FPS)
+            self.camera.update(self.free_camera)
+            if not self.wall_hack:
+                self.fov = fov.new_fov(self.map_info)
 
+            fov.ray_casting(self.map_info, self.map_info.map_array, self.fov, self.player)
+            fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
+
+            self.drawing.draw()
+            self.drawing.draw_at_camera_offset(self.free_camera)
+            pygame.display.flip()
 
     def cast_magic(self):
         """
@@ -407,6 +437,22 @@ class Game:
         #       player would move + cast fireball at the same time
         self.current_group.update(0, 0)
         self.turn_count += 1
+
+    def _move_to_free_camera_test(self):
+        """
+        Moves to free camera location
+        """
+        # If tile is unexplored do nothing
+        if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
+            return
+        start = (self.player.x, self.player.y)
+        goal = (self.free_camera.x, self.free_camera.y)
+        # Generates path
+        visited = self.graph.bfs(start, goal)
+        # If path is generated move player
+        if visited:
+            path = self.graph.find_path(start, goal, visited)
+            self.move_char_auto(path)
 
     def _move_to_free_camera(self):
         """
