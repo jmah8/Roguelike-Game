@@ -317,12 +317,15 @@ class Game:
         """
         level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
         self.previous_levels.put(level_data)
+
         if self.next_levels.empty():
             self.new()
+            # Places upstair at where the player entered the map at
             self.map_info.map_array[self.player.y][self.player.x] = '<'
             self.map_info.tile_array[self.player.y][self.player.x] = \
                 gamemap.Floor(self.game_sprites, self.player.x, self.player.y,
                               self.game_sprites.upstair, self.game_sprites.seen_upstair)
+
         else:
             x, y, map_info, enemy_list, item_group = self.next_levels.get()
 

@@ -138,19 +138,17 @@ class Menu_Manager:
         num_items_col = TILE_HEIGHT // 2
         counter = 0
 
-        for i in range(0, num_items_row):
-            for j in range(0, num_items_col - 1):
+        for y in range (num_items_col - 1):
+            for x in range (num_items_row):
                 inventory_array = self.game.player.container.inventory
+                item_surface.blit(self.game.game_sprites.empty_inventory_slot, (
+                    (0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
                 if len(inventory_array) >= counter + 1:
                     item = inventory_array[counter]
-                    item_surface.blit(self.game.game_sprites.empty_inventory_slot, (
-                        (0 + i * SPRITE_SIZE, 0 + j * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
                     item_surface.blit(item.image,
-                                      ((0 + i * SPRITE_SIZE, 0 + j * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
+                                      ((0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
                     counter = counter + 1
-                else:
-                    item_surface.blit(self.game.game_sprites.empty_inventory_slot, (
-                        (0 + i * SPRITE_SIZE, 0 + j * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
+
         return item_surface
 
     def _load_equipment_screen(self):
