@@ -721,6 +721,28 @@ class Tree:
 
         return False
 
+    def place_upstair(self, x, y):
+        """
+        Places upstairs at point (x, y)
+
+        x,y will be where the player entered the level from
+
+        Args:
+            x (int): x coord of stair
+            y (int): y coord of stair
+        """
+        self.map_array[y][x] = '<'
+
+    def place_downstair(self):
+        """
+        Randomly places downstairs in one of the rooms
+        """
+        room = random.choice(self.root.child_room_list)
+        x1, y1, x2, y2 = room.coords
+        x = random.randint(x1, x2)
+        y = random.randint(y1, y2)
+        self.map_array[y][x] = '>'
+
     def print_tree(self):
         """
         Prints tree information if root is not None, else throws NullRoot exception

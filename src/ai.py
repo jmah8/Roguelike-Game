@@ -59,6 +59,8 @@ class ChaseAI:
     def __init__(self):
         self.owner = None
 
+    # TODO: make it so that enemies dont get block by other enemies
+    #       even though there is space to move around
     def take_turn(self):
         """
         Make creature move towards the player if in creature FOV,
@@ -76,10 +78,8 @@ class ChaseAI:
         # Else move towards player using shortest path
         else:
             # Find path to player if no path creature has no path calculated
-            if not creature.current_path:
-                self._make_path_to_player(creature, player)
+            self._make_path_to_player(creature, player)
 
-            # TODO: make it so when dest x/y is > 1, recalculate path
             dest = creature.current_path.pop(0)
             dest_x = dest[0] - creature.x
             dest_y = dest[1] - creature.y

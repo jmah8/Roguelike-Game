@@ -12,19 +12,6 @@ from queue import LifoQueue
 
 pygame.font.init()
 
-
-# class GameData:
-#     def __init__(self):
-#         self.mini_map_on = False
-#         self.map_tree = None
-#         self.GAME_MESSAGES = []
-#         self.GAME_OBJECTS = []
-#         self.ENEMIES = []
-#         self.CREATURES = []
-#         self.item_group = []
-#         self.camera = None
-
-
 class Game:
     def __init__(self):
         """
@@ -67,6 +54,10 @@ class Game:
 
         self.free_camera = generate_free_camera(self)
 
+        self.particles = []
+
+        self.floor = 1
+
     def new(self):
         """
         Makes new map and entities
@@ -86,9 +77,6 @@ class Game:
         Only makes new player on start, then it moves player
         to random location after
         """
-        # Group with all creatures
-        self.all_creature = pygame.sprite.OrderedUpdates()
-
         # Particle group
         self.particles = []
 
@@ -103,9 +91,6 @@ class Game:
         self.item_group = generate_items(self.map_info.map_tree, self)
 
         self.creature_data["player"] = [self.player]
-
-        for c in self.creature_data.values():
-            self.all_creature.add(c)
 
     def _generate_new_map(self):
         """
@@ -200,32 +185,23 @@ class Game:
         """
         # Movement
         if event.key == pygame.K_a:
-            self.all_creature.update(-1, 0)
-            self.turn_count += 1
+            self._update_creatures(-1, 0)
         elif event.key == pygame.K_d:
-            self.all_creature.update(1, 0)
-            self.turn_count += 1
+            self._update_creatures(1, 0)
         elif event.key == pygame.K_w:
-            self.all_creature.update(0, -1)
-            self.turn_count += 1
+            self._update_creatures(0, -1)
         elif event.key == pygame.K_q:
-            self.all_creature.update(-1, -1)
-            self.turn_count += 1
+            self._update_creatures(-1, -1)
         elif event.key == pygame.K_e:
-            self.all_creature.update(1, -1)
-            self.turn_count += 1
+            self._update_creatures(1, -1)
         elif event.key == pygame.K_z:
-            self.all_creature.update(-1, 1)
-            self.turn_count += 1
+            self._update_creatures(-1, 1)
         elif event.key == pygame.K_c:
-            self.all_creature.update(1, 1)
-            self.turn_count += 1
+            self._update_creatures(1, 1)
         elif event.key == pygame.K_s:
-            self.all_creature.update(0, 1)
-            self.turn_count += 1
+            self._update_creatures(0, 1)
         elif event.key == pygame.K_x:
-            self.all_creature.update(0, 0)
-            self.turn_count += 1
+            self._update_creatures(0, 0)
 
         # Mini_map
         elif event.key == pygame.K_TAB:
@@ -237,13 +213,13 @@ class Game:
             for obj in objects_at_player:
                 if obj.item:
                     obj.item.pick_up(self.player)
-            self.turn_count += 1
+            self._update_creatures(0, 0)
 
         # TODO: instead of dropping last item dropped, drop mouse event in inventory
         elif event.key == pygame.K_g:
             if len(self.player.container.inventory) > 0:
                 self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
-            self.turn_count += 1
+            self._update_creatures(0, 0)
 
         elif event.key == pygame.K_ESCAPE:
             self._toggle_wallhack()
@@ -267,64 +243,15 @@ class Game:
 
         # Returns to previous level
         elif event.key == pygame.K_1:
-            self.transition_previous_level()
+            if self.map_info.map_array[self.player.y][self.player.x] == UPSTAIR:
+                self.floor += 1
+                self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            self.transition_next_level()
-
-    def transition_previous_level(self):
-        """
-        Go to previous level
-        """
-        if not self.previous_levels.empty():
-            level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
-            self.next_levels.put(level_data)
-
-            x, y, map_info, enemy_list, item_group = self.previous_levels.get()
-
-            self._load_level_data(enemy_list, item_group, map_info, x, y)
-
-            self.all_creature = pygame.sprite.OrderedUpdates()
-            for c in self.creature_data["enemy"] + self.creature_data["player"]:
-                self.all_creature.add(c)
-
-    def transition_next_level(self):
-        """
-        Goes to next level
-        """
-        level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
-        self.previous_levels.put(level_data)
-        if self.next_levels.empty():
-            self.new()
-        else:
-            x, y, map_info, enemy_list, item_group = self.next_levels.get()
-
-            self._load_level_data(enemy_list, item_group, map_info, x, y)
-
-            self.all_creature = pygame.sprite.OrderedUpdates()
-            for c in self.creature_data["enemy"] + self.creature_data["player"]:
-                self.all_creature.add(c)
-
-    def _load_level_data(self, enemy_list, item_group, map_info, x, y):
-        """
-        Loads level data to game variables
-
-        Args:
-            enemy_list (List): list of enemies on level
-            item_group (List): list of items on level
-            map_info (MapInfo): map info of level
-            x (int): player's x position on level
-            y (int): player's y position on level
-        """
-        self.player.x = x
-        self.player.y = y
-        self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
-        self.creature_data["enemy"] = enemy_list
-        self.item_group = item_group
-        self.map_info = map_info
-        self.camera = Camera(self.map_info)
-        self._initialize_pathfinding()
+            if self.map_info.map_array[self.player.y][self.player.x] == DOWNSTAIR:
+                self.floor += 1
+                self.transition_next_level()
 
     def _handle_mouse_event(self, event):
         """
@@ -357,6 +284,72 @@ class Game:
             self.clock.tick(FPS)
             self.update()
             pygame.display.flip()
+
+    def _update_creatures(self, dx, dy):
+        """
+        Updates all creatures and increments turn count
+
+        Args:
+            dx (int): x to move player by
+            dy (int): y to move player by
+        """
+        for team in self.creature_data:
+            for entity in self.creature_data[team]:
+                entity.update(dx, dy)
+        self.turn_count += 1
+
+    def transition_previous_level(self):
+        """
+        Go to previous level
+        """
+        if not self.previous_levels.empty():
+            # Saves current level to next level list
+            level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+            self.next_levels.put(level_data)
+
+            x, y, map_info, enemy_list, item_group = self.previous_levels.get()
+
+            self._load_level_data(enemy_list, item_group, map_info, x, y)
+
+    def transition_next_level(self):
+        """
+        Goes to next level
+        """
+        level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+        self.previous_levels.put(level_data)
+
+        if self.next_levels.empty():
+            self.new()
+            # Places upstair at where the player entered the map at
+            self.map_info.map_array[self.player.y][self.player.x] = '<'
+            self.map_info.tile_array[self.player.y][self.player.x] = \
+                gamemap.Floor(self.game_sprites, self.player.x, self.player.y,
+                              self.game_sprites.upstair, self.game_sprites.seen_upstair)
+
+        else:
+            x, y, map_info, enemy_list, item_group = self.next_levels.get()
+
+            self._load_level_data(enemy_list, item_group, map_info, x, y)
+
+    def _load_level_data(self, enemy_list, item_group, map_info, x, y):
+        """
+        Loads level data to game variables
+
+        Args:
+            enemy_list (List): list of enemies on level
+            item_group (List): list of items on level
+            map_info (MapInfo): map info of level
+            x (int): player's x position on level
+            y (int): player's y position on level
+        """
+        self.player.x = x
+        self.player.y = y
+        self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+        self.creature_data["enemy"] = enemy_list
+        self.item_group = item_group
+        self.map_info = map_info
+        self.camera = Camera(self.map_info)
+        self._initialize_pathfinding()
 
     def _toggle_camera(self):
         camera_on = True
@@ -409,9 +402,6 @@ class Game:
         """
         Casts lightning at mouse location and prints out the line
         it travels through currently
-
-        Returns:
-
         """
         move_x, move_y = self.camera.get_mouse_coord()
         start = (self.player.x, self.player.y)
@@ -420,8 +410,7 @@ class Game:
         magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
-        self.all_creature.update(0, 0)
-        self.turn_count += 1
+        self._update_creatures(0, 0)
 
     def _move_to_free_camera(self):
         """
@@ -450,6 +439,16 @@ class Game:
                         range(self.map_info.tile_height)]
 
     def map_items_at_coord(self, coord_x, coord_y):
+        """
+        Returns list of items at (coord_x, coord_y)
+
+        Args:
+            coord_x (int): x coord on map
+            coord_y (int): y coord on map
+
+        Returns:
+            objects (List): list of items at (coord_x, coord_y)
+        """
         objects = [obj for obj in self.item_group if obj.x == coord_x and obj.y == coord_y]
         return objects
 
@@ -473,8 +472,7 @@ class Game:
                 # If wall hack on disregard
                 if self._check_if_enemy_in_fov():
                     return
-            self.all_creature.update(0, 0)
-            self.turn_count += 1
+            self._update_creatures(0, 0)
         else:
             for coord in path:
                 # If key pressed stop auto moving
@@ -492,8 +490,7 @@ class Game:
                 # Move to next coord in path
                 dest_x = coord[0] - old_coord[0]
                 dest_y = coord[1] - old_coord[1]
-                self.all_creature.update(dest_x, dest_y)
-                self.turn_count += 1
+                self._update_creatures(dest_x, dest_y)
                 old_coord = coord
 
                 self.update()

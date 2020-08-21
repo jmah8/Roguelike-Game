@@ -33,17 +33,22 @@ class Drawing:
 
         self.draw_game_objects()
 
+        self.draw_grid()
+
         self.draw_particles()
 
         self.button_manager.draw_buttons(self.game_surface)
 
-        self.draw_grid()
-
-        self.draw_player_stats(self.game.player)
+        self.draw_ui()
 
         if self.game.mini_map_on:
             self.draw_minimap(self.game)
 
+    def draw_ui(self):
+        """
+        Draws ui part of game
+        """
+        self.draw_player_stats(self.game.player)
         self.draw_debug()
         self.draw_messages()
 
