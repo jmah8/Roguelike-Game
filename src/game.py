@@ -244,7 +244,7 @@ class Game:
         # Returns to previous level
         elif event.key == pygame.K_1:
             if self.map_info.map_array[self.player.y][self.player.x] == UPSTAIR:
-                self.floor += 1
+                self.floor -= 1
                 self.transition_previous_level()
 
         # Goes to next level

@@ -200,14 +200,6 @@ class Creature:
                         self.attack(entity, self.stat.calc_phys_damage())
                         return
 
-        # for entity in self.owner.game.creature_data.values():
-        #     if (entity.x, entity.y) == (self.x + dx, self.y + dy):
-        #         if entity.creature.team == self.team:
-        #             return
-        #         else:
-        #             self.attack(entity, self.stat.calc_phys_damage())
-        #             return
-
         self.owner.x += dx
         self.owner.y += dy
         self.owner.rect.topleft = (
@@ -261,4 +253,20 @@ class Creature:
         exp = enemy.creature.stat.calc_exp_gained_from_self(self.stat.level)
         self.stat.exp += exp
         NumberParticle(self.x, self.y, exp, self.owner.game.particles, YELLOW)
+
+    def regen(self, turn_count):
+        """
+        Regenerates hp and mp of self depending on how many turns have passed
+
+        Args:
+            turn_count (int): Turns it has been since start of game
+        """
+        if turn_count % REGEN_TIME == 0:
+            print("regen")
+            if self.stat.hp + 1 <= self.stat.max_hp:
+                self.stat.hp += 1
+            if self.stat.mp + 1 <= self.stat.max_mp:
+                self.stat.mp += 1
+
+
 
