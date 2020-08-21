@@ -118,9 +118,7 @@ class GameSprites:
 
         self.downstair = load_image(STAIR_DOWN)
         self.seen_downstair = seen_sprite(self.downstair)
-
-        self.spike = load_image(SPIKE)
-
+        
         self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.unseen_tile.fill(BLACK)
 
