@@ -73,7 +73,6 @@ class Menu_Manager:
                         button = self.game.drawing.button_manager.check_if_button_pressed(mouse_x, mouse_y)
                         if button:
                             button.menu_open()
-                            magic_cast = False
                             break
 
                         self.game.cast_magic()
