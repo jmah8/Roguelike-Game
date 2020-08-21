@@ -42,6 +42,8 @@ NUM_OF_BUTTONS = 3
 WALL = '1'
 FLOOR = '.'
 PATH = '0'
+DOWNSTAIR = '>'
+UPSTAIR = '<'
 
 # Colours
 GREY = (128, 128, 128)
@@ -88,6 +90,9 @@ FLOOR_5 = '16x16/tiles/floor/floor_side2.png'
 FLOOR_6 = '16x16/tiles/floor/floor_side3.png'
 FLOOR_7 = '16x16/tiles/floor/floor_side4.png'
 FLOOR_8 = '16x16/tiles/floor/floor_side5.png'
+
+STAIR_UP = 'tiles/stair_prevlevel.png'
+STAIR_DOWN = 'tiles/stair_nextlevel.png'
 
 WALL_1 = '16x16/tiles/wall/wall_1.png'
 RED_POTION = 'items/consumables/potion_red.png'

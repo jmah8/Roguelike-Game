@@ -56,6 +56,8 @@ class Game:
 
         self.particles = []
 
+        self.floor = 1
+
     def new(self):
         """
         Makes new map and entities
@@ -241,11 +243,15 @@ class Game:
 
         # Returns to previous level
         elif event.key == pygame.K_1:
-            self.transition_previous_level()
+            if self.map_info.map_array[self.player.y][self.player.x] == UPSTAIR:
+                self.floor += 1
+                self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            self.transition_next_level()
+            if self.map_info.map_array[self.player.y][self.player.x] == DOWNSTAIR:
+                self.floor += 1
+                self.transition_next_level()
 
     def _handle_mouse_event(self, event):
         """
@@ -313,6 +319,10 @@ class Game:
         self.previous_levels.put(level_data)
         if self.next_levels.empty():
             self.new()
+            self.map_info.map_array[self.player.y][self.player.x] = '<'
+            self.map_info.tile_array[self.player.y][self.player.x] = \
+                gamemap.Floor(self.game_sprites, self.player.x, self.player.y,
+                              self.game_sprites.upstair, self.game_sprites.seen_upstair)
         else:
             x, y, map_info, enemy_list, item_group = self.next_levels.get()
 

@@ -113,6 +113,12 @@ class GameSprites:
         self.floor_image_2 = load_image(FLOOR_2)
         self.seen_floor_image_2 = seen_sprite(self.floor_image_2)
 
+        self.upstair = load_image(STAIR_UP)
+        self.seen_upstair = seen_sprite(self.upstair)
+
+        self.downstair = load_image(STAIR_DOWN)
+        self.seen_downstair = seen_sprite(self.downstair)
+
         self.spike = load_image(SPIKE)
 
         self.unseen_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
@@ -121,6 +127,7 @@ class GameSprites:
         self.select_tile = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
         self.select_tile.fill(YELLOW)
         self.select_tile.set_alpha(75)
+
 
         # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)

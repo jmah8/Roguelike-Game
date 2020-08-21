@@ -162,6 +162,7 @@ def gen_map(map_array):
     tree.build_rooms()
     tree.build_path()
     tree.print_map()
+    tree.place_downstair()
     print("")
     return tree
 
@@ -189,6 +190,12 @@ def draw_map(map_array, sprite_dict):
             elif tile == PATH:
                 tile_array_row.append(
                     Floor(sprite_dict, row, col, sprite_dict.floor_image_2, sprite_dict.seen_floor_image_2))
+            elif tile == DOWNSTAIR:
+                tile_array_row.append(
+                    Floor(sprite_dict, row, col, sprite_dict.downstair, sprite_dict.seen_downstair))
+            elif tile == UPSTAIR:
+                tile_array_row.append(
+                    Floor(sprite_dict, row, col, sprite_dict.upstair, sprite_dict.seen_upstair))
         tile_array.append(tile_array_row)
     return tile_array
 
