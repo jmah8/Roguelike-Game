@@ -165,12 +165,10 @@ class Creature:
 
     def die(self):
         """
-        Prints that Entity is dead and removes it from all_creature and enemies group
+        Prints that Entity is dead and removes it from game.creature_data
         """
         self.owner.game.drawing.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
-        self.owner.game.all_creature.remove(self.owner)
-        # TODO: change this so player will be removed in future
         self.owner.game.creature_data[self.team].remove(self.owner)
 
     def move(self, dx, dy):
