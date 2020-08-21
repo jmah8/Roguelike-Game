@@ -33,6 +33,11 @@ class CreatureStat:
         self.dexterity = dexterity
         self.intelligence = intelligence
 
+    def level_up(self):
+        self.max_hp += 5
+        self.max_mp += 1
+        self.strength += 1
+
     def calc_phys_damage(self):
         """
         Return damage dealt from hitting,
@@ -87,6 +92,9 @@ class Creature:
     can damage other objects
     can die
 
+    Args:
+        level (int): level of monster
+
     Attributes:
         name_instance (arg, string) : Name of creature
         stat (arg, int) : stat of creature
@@ -97,18 +105,21 @@ class Creature:
         current_path (arg, List): List of path from start to goal
     """
 
-    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None):
+    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None, level=1):
         self.name_instance = name_instance
         self.owner = None
         self.killable = killable
         self.team = team
         self.walk_through_tile = walk_through_tile
         self.current_path = current_path
-        self.stat = self._load_stat()
+        self.stat = self._load_stat(level)
 
-    def _load_stat(self):
+    def _load_stat(self, level):
         """
         Loads stat specific to creature of name_instance and returns it
+
+        Args:
+            level (int): level of self
 
         Returns:
             stat (Stat): Stat of creature with name_instance
@@ -117,7 +128,8 @@ class Creature:
         if self.name_instance in data.keys():
             str = data[self.name_instance]
             stat = CreatureStat(str["hp"], str["mp"], str["strength"],
-                                str["dexterity"], str["intelligence"])
+                                str["dexterity"], str["intelligence"],
+                                level)
             return stat
 
         return None
@@ -233,6 +245,8 @@ class Creature:
         """
         Attack target creature for damage
 
+        Gives exp if target dies
+
         Args:
             target (object): Entity to attack
             damage (int): damage to do to Entity
@@ -242,6 +256,7 @@ class Creature:
             + " for " + str(damage) + " damage", WHITE)
         if target.creature.take_damage(damage):
             self.gain_exp(target)
+            self.check_for_level_up()
 
     def gain_exp(self, enemy):
         """
@@ -262,11 +277,19 @@ class Creature:
             turn_count (int): Turns it has been since start of game
         """
         if turn_count % REGEN_TIME == 0:
-            print("regen")
             if self.stat.hp + 1 <= self.stat.max_hp:
                 self.stat.hp += 1
             if self.stat.mp + 1 <= self.stat.max_mp:
                 self.stat.mp += 1
 
+    def check_for_level_up(self):
+        """
+        Levels self up
+        """
+        while self.stat.exp >= 100:
+            self.stat.level += 1
+            self.stat.exp -= 100
+            self.owner.game.drawing.add_game_message_to_print(
+                self.name_instance + " leveled up ", YELLOW)
 
 
