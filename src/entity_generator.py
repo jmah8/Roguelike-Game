@@ -21,12 +21,12 @@ def generate_enemies(tree, game):
     # get all rooms in map
     for child_room in tree.root.child_room_list:
         # generate monster in room
-        _generate_enemies(child_room, game, enemy_list)
+        _generate_enemy(child_room, game, enemy_list)
 
     return enemy_list
 
 
-def _generate_enemies(room, game, enemy_list):
+def _generate_enemy(room, game, enemy_list):
     """
     Generates a random monster in room at random coords
     as long as coords is not the same as player coord
@@ -65,7 +65,7 @@ def _generate_slime(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.ChaseAI()
-    creature_gen = creature.Creature("slime", True, "enemy")
+    creature_gen = creature.Creature("slime", True, "enemy", level=game.floor)
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.slime_dict, creature=creature_gen,
                                     ai=ai_gen)
     return generated_enemy
@@ -81,7 +81,7 @@ def _generate_goblin(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.ChaseAI()
-    creature_gen = creature.Creature("goblin", True, "enemy")
+    creature_gen = creature.Creature("goblin", True, "enemy", level=game.floor)
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.goblin_dict, creature=creature_gen,
                                     ai=ai_gen)
     return generated_enemy
@@ -97,7 +97,7 @@ def _generate_skeleton(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.ChaseAI()
-    creature_gen = creature.Creature("skeleton", True, "enemy")
+    creature_gen = creature.Creature("skeleton", True, "enemy", level=game.floor)
     generated_enemy = entity.Entity(game, x, y, "enemy", anim=game.game_sprites.skeleton_dict, creature=creature_gen,
                                     ai=ai_gen)
     return generated_enemy

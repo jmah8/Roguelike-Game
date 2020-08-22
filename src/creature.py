@@ -23,19 +23,19 @@ class CreatureStat:
         Attributes:
             exp (int): experience points creature has (in percent)
         """
-        self.max_hp = hp
-        self.max_mp = mp
-        self.hp = hp
-        self.mp = mp
+        self.max_hp = hp + (5 * (level - 1))
+        self.max_mp = mp + (3 * (level - 1))
+        self.hp = self.max_hp
+        self.mp = self.max_mp
         self.exp = 0
         self.level = level
-        self.strength = strength
-        self.dexterity = dexterity
-        self.intelligence = intelligence
+        self.strength = strength + (1 * (level - 1))
+        self.dexterity = dexterity + (1 * (level - 1))
+        self.intelligence = intelligence + (1 * (level - 1))
 
     def level_up(self):
         self.max_hp += 5
-        self.max_mp += 1
+        self.max_mp += 3
         self.strength += 1
 
     def calc_phys_damage(self):
