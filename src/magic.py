@@ -154,8 +154,7 @@ def cast_fireball(game, caster, line):
             # damage first enemy in list of tile
             for enemy in enemies:
                 if (enemy.x, enemy.y) == (x, y):
-                    if enemy.creature.take_damage(damage):
-                        caster.creature.gain_exp(enemy)
+                    caster.creature.attack(enemy, damage)
                     creature_hit = True
                     break
 
@@ -207,8 +206,7 @@ def cast_lightning(game, caster, line):
         for (x, y) in line:
             for enemy in enemies:
                 if (enemy.x, enemy.y) == (x, y):
-                    if enemy.creature.take_damage(damage):
-                        caster.creature.gain_exp(enemy)
+                    caster.creature.attack(enemy, damage)
 
             _update_spell(game, particle_group)
 
