@@ -10,14 +10,17 @@ def text_height_helper(font):
     return font_rect.height
 
 
-def messages_to_draw(game):
+def messages_to_draw(message_list):
     """
-    Store most recent NUM_MESSAGES in GAME_MESSAGES in to_draw
+    Store most recent NUM_MESSAGES in message_list in to_draw
+
+    Args:
+        message_list (List): List of messages to draw
     """
-    if len(game.GAME_MESSAGES) <= NUM_MESSAGES:
-        to_draw = game.GAME_MESSAGES
+    if len(message_list) <= NUM_MESSAGES:
+        to_draw = message_list
     else:
-        to_draw = game.GAME_MESSAGES[-NUM_MESSAGES:]
+        to_draw = message_list[-NUM_MESSAGES:]
     return to_draw
 
 

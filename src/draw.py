@@ -105,6 +105,8 @@ class Drawing:
         """
         Adds clickable buttons to bottom of screen
         """
+        self.button_manager.add_button(self.game.game_sprites.knight_anim[0], 'stats',
+                                       self.game.menu_manager.stat_menu)
         self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory',
                                        self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
@@ -125,7 +127,7 @@ class Drawing:
                        "FPS: " + str(int(self.game.clock.get_fps())), BLACK)
 
     def draw_messages(self):
-        to_draw = game_text.messages_to_draw(self.game)
+        to_draw = game_text.messages_to_draw(self.game.GAME_MESSAGES)
         text_height = game_text.text_height_helper(FONT_MESSAGE_TEXT)
         y_pos = self.game.camera.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
         messages_drawn_counter = 0

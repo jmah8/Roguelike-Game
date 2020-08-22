@@ -36,7 +36,7 @@ DIST_FROM_SISTER_NODE_MAX = 3
 MINIMAP_SCALE = 2
 
 # Button manager constants
-NUM_OF_BUTTONS = 3
+NUM_OF_BUTTONS = 4
 
 # Console map output
 WALL = '1'
@@ -54,6 +54,9 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 INVENTORY_BEIGE = (239,228,176)
+
+# Game constants
+NUM_OF_FLOOR = 5
 
 # Creature stats
 REGEN_TIME = 5
