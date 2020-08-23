@@ -147,7 +147,7 @@ def cast_fireball(game, caster, line):
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
         enemies = []
-        for team, entity in game.creature_data.items():
+        for team, entity in config.GAME_DATA.creature_data.items():
             if team != caster.creature.team:
                 enemies += entity
         creature_hit = False
@@ -203,7 +203,7 @@ def cast_lightning(game, caster, line):
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
         enemies = []
-        for team, entity in game.creature_data.items():
+        for team, entity in config.GAME_DATA.creature_data.items():
             if team != caster.creature.team:
                 enemies += entity
         for (x, y) in line:

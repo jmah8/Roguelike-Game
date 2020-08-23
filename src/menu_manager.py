@@ -49,7 +49,7 @@ class Menu_Manager:
                             menu_closed = True
                             break
 
-            self.game.drawing.draw_map_menu()
+            draw.draw_map_menu()
             self.game.drawing.button_manager.draw_buttons()
             config.CLOCK.tick(60)
             pygame.display.update()
@@ -82,7 +82,7 @@ class Menu_Manager:
 
             config.CLOCK.tick(FPS)
             self.game.update()
-            self.game.drawing.draw_mouse()
+            draw_mouse()
             m_x, m_y = config.CAMERA.get_mouse_coord()
             line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array)
             draw.draw_magic_path(line)

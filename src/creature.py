@@ -1,4 +1,5 @@
 import os
+import game
 import json
 import config
 from particle import *
@@ -163,9 +164,9 @@ class Creature:
             bool: if creature died return true else return false
         """
         self.stat.hp -= damage
-        self.owner.game.add_game_message_to_print(
+        game.add_game_message_to_print(
             self.name_instance + " took " + str(damage) + " damage", RED)
-        self.owner.game.add_game_message_to_print(
+        game.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
         NumberParticle(self.x, self.y, damage, self.owner.game.particles, RED)
@@ -178,11 +179,11 @@ class Creature:
 
     def die(self):
         """
-        Prints that Entity is dead and removes it from game.creature_data
+        Prints that Entity is dead and removes it from config.GAME_DATA.creature_data
         """
-        self.owner.game.add_game_message_to_print(
+        game.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
-        self.owner.game.creature_data[self.team].remove(self.owner)
+        config.GAME_DATA.creature_data[self.team].remove(self.owner)
 
     def move(self, dx, dy):
         """
@@ -204,7 +205,7 @@ class Creature:
                 return
 
         # check to see if entity collided with enemy or ally and if so don't move
-        for team, entity_list in self.owner.game.creature_data.items():
+        for team, entity_list in config.GAME_DATA.creature_data.items():
             for entity in entity_list:
                 if (entity.x, entity.y) == (self.x + dx, self.y + dy):
                     if entity.creature.team == self.team:
@@ -250,7 +251,7 @@ class Creature:
             target (object): Entity to attack
             damage (int): damage to do to Entity
         """
-        self.owner.game.add_game_message_to_print(
+        game.add_game_message_to_print(
             self.name_instance + " attacks " + target.creature.name_instance
             + " for " + str(damage) + " damage", WHITE)
         if target.creature.take_damage(damage):
@@ -285,7 +286,7 @@ class Creature:
         while self.stat.exp >= 100:
             self.stat.level += 1
             self.stat.exp -= 100
-            self.owner.game.add_game_message_to_print(
+            game.add_game_message_to_print(
                 self.name_instance + " leveled up ", YELLOW)
 
 

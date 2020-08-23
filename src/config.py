@@ -6,6 +6,7 @@ import gamemap
 import camera
 import pathfinding
 import fov
+import game
 
 pygame.init()
 
@@ -21,6 +22,8 @@ PATHFINDING.make_graph(MAP_INFO)
 PATHFINDING.neighbour()
 
 PLAYER = None
+# Initialized in game
+GAME_DATA = None
 
 FOV = fov.new_fov(MAP_INFO)
 

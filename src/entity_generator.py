@@ -66,7 +66,7 @@ def _generate_slime(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.ChaseAI()
-    creature_gen = creature.Creature("slime", True, "enemy", level=game.floor)
+    creature_gen = creature.Creature("slime", True, "enemy", level=config.GAME_DATA.floor)
     generated_enemy = entity.Entity(game, x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="slime_dict")
     return generated_enemy
 
@@ -81,7 +81,7 @@ def _generate_goblin(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.ChaseAI()
-    creature_gen = creature.Creature("goblin", True, "enemy", level=game.floor)
+    creature_gen = creature.Creature("goblin", True, "enemy", level=config.GAME_DATA.floor)
     generated_enemy = entity.Entity(game, x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="goblin_dict")
     return generated_enemy
 
@@ -96,7 +96,7 @@ def _generate_skeleton(x, y, game):
         game (Game): Game with all game data
     """
     ai_gen = ai.ChaseAI()
-    creature_gen = creature.Creature("skeleton", True, "enemy", level=game.floor)
+    creature_gen = creature.Creature("skeleton", True, "enemy", level=config.GAME_DATA.floor)
     generated_enemy = entity.Entity(game, x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="skeleton_dict")
     return generated_enemy
 

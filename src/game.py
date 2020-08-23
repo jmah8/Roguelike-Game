@@ -1,18 +1,28 @@
 from constant import *
+from queue import LifoQueue
 import config
 import fov
 import gamemap
 import magic
 import pathfinding
-import sprite
 from camera import Camera
 import draw
 from entity_generator import *
 from menu_manager import Menu_Manager
-from queue import LifoQueue
 import pickle
 
 pygame.font.init()
+
+
+def add_game_message_to_print(ingame_message, message_color):
+    """
+    Adds game message to print
+
+    Args:
+        ingame_message (String): Message to add
+        message_color (Color): Color of message
+    """
+    config.GAME_DATA.game_messages.append((ingame_message, message_color))
 
 
 class GameData:
@@ -40,30 +50,21 @@ class Game:
         pygame.key.set_repeat(350, 75)
 
         self.running = True
-
-        self.drawing = draw.Drawing(self)
-        self.menu_manager = Menu_Manager(self)
-
-        self.drawing.add_buttons()
-
         self.wall_hack = False
         self.mini_map_on = False
 
-        self.GAME_MESSAGES = []
+        self.menu_manager = Menu_Manager(self)
 
-        self.previous_levels = LifoQueue()
-        self.next_levels = LifoQueue()
+        self.drawing = draw
+        self.drawing.add_buttons()
 
-        self.creature_data = {
-            "player": [],
-            "enemy": []
-        }
 
         self.free_camera = generate_free_camera(self)
 
         self.particles = []
 
-        self.floor = 1
+        config.GAME_DATA = GameData()
+
 
     def new(self):
         """
@@ -98,11 +99,11 @@ class Game:
         else:
             config.PLAYER.x, config.PLAYER.y = generate_player_spawn(config.MAP_INFO.map_tree)
 
-        self.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree, self)
+        config.GAME_DATA.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree, self)
 
         self.item_group = generate_items(config.MAP_INFO.map_tree, self)
 
-        self.creature_data["player"] = [config.PLAYER]
+        config.GAME_DATA.creature_data["player"] = [config.PLAYER]
 
     def _generate_new_map(self):
         """
@@ -256,14 +257,14 @@ class Game:
         # Returns to previous level
         elif event.key == pygame.K_1:
             if config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == UPSTAIR:
-                self.floor -= 1
+                config.GAME_DATA.floor -= 1
                 self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if self.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[config.PLAYER.y][
+            if config.GAME_DATA.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[config.PLAYER.y][
                 config.PLAYER.x].type == DOWNSTAIR:
-                self.floor += 1
+                config.GAME_DATA.floor += 1
                 self.transition_next_level()
 
         elif event.key == pygame.K_9:
@@ -310,8 +311,8 @@ class Game:
             dx (int): x to move player by
             dy (int): y to move player by
         """
-        for team in self.creature_data:
-            for entity in self.creature_data[team]:
+        for team in config.GAME_DATA.creature_data:
+            for entity in config.GAME_DATA.creature_data[team]:
                 entity.update(dx, dy)
         config.TURN_COUNT += 1
 
@@ -319,13 +320,13 @@ class Game:
         """
         Go to previous level
         """
-        if not self.previous_levels.empty():
+        if not config.GAME_DATA.previous_levels.empty():
             # Saves current level to next level list
             level_data = (
-            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
-            self.next_levels.put(level_data)
+            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"], self.item_group)
+            config.GAME_DATA.next_levels.put(level_data)
 
-            x, y, map_info, enemy_list, item_group = self.previous_levels.get()
+            x, y, map_info, enemy_list, item_group = config.GAME_DATA.previous_levels.get()
 
             self._load_level_data(enemy_list, item_group, map_info, x, y)
 
@@ -333,15 +334,15 @@ class Game:
         """
         Goes to next level
         """
-        level_data = (config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
-        self.previous_levels.put(level_data)
+        level_data = (config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"], self.item_group)
+        config.GAME_DATA.previous_levels.put(level_data)
 
-        if self.next_levels.empty():
+        if config.GAME_DATA.next_levels.empty():
             self.new()
             # Places upstair at where the player entered the map at
             config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type = UPSTAIR
         else:
-            x, y, map_info, enemy_list, item_group = self.next_levels.get()
+            x, y, map_info, enemy_list, item_group = config.GAME_DATA.next_levels.get()
 
             self._load_level_data(enemy_list, item_group, map_info, x, y)
 
@@ -358,7 +359,7 @@ class Game:
         """
         config.PLAYER.x = x
         config.PLAYER.y = y
-        self.creature_data["enemy"] = enemy_list
+        config.GAME_DATA.creature_data["enemy"] = enemy_list
         self.item_group = item_group
         config.MAP_INFO = map_info
         self._generate_camera()
@@ -515,7 +516,7 @@ class Game:
         Returns:
             true if enemy is in player FOV, else false
         """
-        for obj in self.creature_data["enemy"]:
+        for obj in config.GAME_DATA.creature_data["enemy"]:
             if fov.check_if_in_fov(self, obj) and not self.wall_hack:
                 return True
         return False
@@ -548,12 +549,3 @@ class Game:
         """
         self.mini_map_on = not self.mini_map_on
 
-    def add_game_message_to_print(self, ingame_message, message_color):
-        """
-        Adds game message to print
-
-        Args:
-            ingame_message (String): Message to add
-            message_color (Color): Color of message
-        """
-        self.GAME_MESSAGES.append((ingame_message, message_color))

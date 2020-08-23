@@ -131,6 +131,38 @@ def draw_player_stats():
     pygame.draw.rect(config.SURFACE_MAIN, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
 
 
+def draw_mouse():
+    """
+    Draws mouse_select image at mouse position
+    """
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    mouse_x = mouse_x // SPRITE_SIZE
+    mouse_y = mouse_y // SPRITE_SIZE
+
+    draw_img_at_coord(config.SPRITE.mouse_select, mouse_x, mouse_y)
+
+
+def draw_messages():
+    to_draw = game_text.messages_to_draw(config.GAME_DATA.game_messages)
+    text_height = game_text.text_height_helper(FONT_MESSAGE_TEXT)
+    y_pos = config.CAMERA.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
+    messages_drawn_counter = 0
+    for message, color in to_draw:
+        game_text.draw_text(config.SURFACE_MAIN, (TEXT_SPACE_BUFFER,
+                                                (y_pos + messages_drawn_counter * text_height)), color, message,
+                            None)
+        messages_drawn_counter += 1
+
+
+def draw_ui():
+    """
+    Draws ui part of game
+    """
+    draw_player_stats()
+    draw_debug()
+    draw_messages()
+
+
 class Drawing:
     def __init__(self, game):
         """
@@ -161,18 +193,10 @@ class Drawing:
 
         self.button_manager.draw_buttons()
 
-        self.draw_ui()
+        draw_ui()
 
         if self.game.mini_map_on:
             draw_minimap(self.game)
-
-    def draw_ui(self):
-        """
-        Draws ui part of game
-        """
-        draw_player_stats()
-        draw_debug()
-        self.draw_messages()
 
     def draw_game_objects(self):
         """
@@ -193,7 +217,7 @@ class Drawing:
         """
         Draws all creatures in player FOV offset by camera
         """
-        for creature in self.game.creature_data["enemy"] + self.game.creature_data["player"]:
+        for creature in config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"]:
             if fov.check_if_in_fov(self.game, creature):
                 creature.update_anim()
                 draw_at_camera_offset_without_image(creature)
@@ -216,27 +240,6 @@ class Drawing:
                                        self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(config.SPRITE.minimap_button, 'minimap', self.game.toggle_minimap)
         self.button_manager.add_button(config.SPRITE.minimap_button, 'map', self.game.menu_manager.map_menu)
-
-    def draw_messages(self):
-        to_draw = game_text.messages_to_draw(self.game.GAME_MESSAGES)
-        text_height = game_text.text_height_helper(FONT_MESSAGE_TEXT)
-        y_pos = config.CAMERA.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
-        messages_drawn_counter = 0
-        for message, color in to_draw:
-            game_text.draw_text(config.SURFACE_MAIN, (TEXT_SPACE_BUFFER,
-                                                    (y_pos + messages_drawn_counter * text_height)), color, message,
-                                None)
-            messages_drawn_counter += 1
-
-    def draw_mouse(self):
-        """
-        Draws mouse_select image at mouse position
-        """
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        mouse_x = mouse_x // SPRITE_SIZE
-        mouse_y = mouse_y // SPRITE_SIZE
-
-        draw_img_at_coord(config.SPRITE.mouse_select, mouse_x, mouse_y)
 
 
 
