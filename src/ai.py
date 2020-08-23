@@ -1,6 +1,7 @@
+from constant import *
+import config
 import random
 
-from constant import *
 
 
 def _calculate_change_in_position(diff):
@@ -96,7 +97,7 @@ class ChaseAI:
         """
         start = (creature.x, creature.y)
         goal = (player.x, player.y)
-        visited = self.owner.game.graph.bfs(start, goal)
+        visited = config.PATHFINDING.bfs(start, goal)
         if visited:
-            path = self.owner.game.graph.find_path(start, goal, visited)
+            path = config.PATHFINDING.find_path(start, goal, visited)
             creature.current_path = path

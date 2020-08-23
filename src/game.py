@@ -96,9 +96,9 @@ class Game:
         config.MAP_INFO = gamemap.MapInfo()
 
     def _initialize_pathfinding(self):
-        self.graph = pathfinding.Graph()
-        self.graph.make_graph(config.MAP_INFO)
-        self.graph.neighbour()
+        config.PATHFINDING = pathfinding.Graph()
+        config.PATHFINDING.make_graph(config.MAP_INFO)
+        config.PATHFINDING.neighbour()
 
     def run(self):
         """
@@ -225,7 +225,7 @@ class Game:
 
         # Auto move
         elif event.key == pygame.K_v:
-            self.auto_path(self.graph)
+            self.auto_path(config.PATHFINDING)
 
         # Menu Buttons
         elif event.key == pygame.K_p:
@@ -276,9 +276,9 @@ class Game:
 
             start = (self.player.x, self.player.y)
             goal = (move_x, move_y)
-            visited = self.graph.bfs(start, goal)
+            visited = config.PATHFINDING.bfs(start, goal)
             if visited:
-                path = self.graph.find_path(start, goal, visited)
+                path = config.PATHFINDING.find_path(start, goal, visited)
                 self.move_char_auto(path, True)
 
             config.CLOCK.tick(FPS)
@@ -417,10 +417,10 @@ class Game:
         start = (self.player.x, self.player.y)
         goal = (self.free_camera.x, self.free_camera.y)
         # Generates path
-        visited = self.graph.bfs(start, goal)
+        visited = config.PATHFINDING.bfs(start, goal)
         # If path is generated move player
         if visited:
-            path = self.graph.find_path(start, goal, visited)
+            path = config.PATHFINDING.find_path(start, goal, visited)
             self.move_char_auto(path)
 
     def _toggle_wallhack(self):
@@ -521,7 +521,7 @@ class Game:
         visited = graph.bfs(start, goal)
 
         if visited:
-            path = self.graph.find_path(start, goal, visited)
+            path = config.PATHFINDING.find_path(start, goal, visited)
             self.move_char_auto(path)
 
     def toggle_minimap(self):

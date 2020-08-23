@@ -209,7 +209,7 @@ def find_closest_unseen_tile_walking_distance(game):
     p_coord = (game.player.x, game.player.y)
     # Find the closest unseen tile
     for tile in config.MAP_INFO.unseen_tiles:
-        visited = game.graph.bfs(p_coord, tile)
+        visited = config.PATHFINDING.bfs(p_coord, tile)
         if visited:
             walking_distance = len(visited)
             if closest_distance > walking_distance:
