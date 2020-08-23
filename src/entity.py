@@ -21,37 +21,26 @@ class Entity(pygame.sprite.Sprite):
         anim_frame (int): current frame of animation
     """
 
-    def __init__(self, game, x, y, object_id, image=None, anim=None, creature=None, ai=None, item=None, container=None,
-                 image_key=None):
+    def __init__(self, game, x, y, object_id, creature=None, ai=None, item=None, container=None, image_key=None):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.x = x
         self.y = y
         self.object_id = object_id
-        # self.anim = anim
-        # self.image = image
         self.image_key = image_key
 
         if isinstance(self.game.game_sprites.sprite_dict[self.image_key], dict):
-            self.in_dict = True
+            self.anim_length = len(self.game.game_sprites.sprite_dict[self.image_key]["idle_right"])
         else:
-            self.in_dict = False
+            self.anim_length = 1
 
-        # if not self.image:
-        #     self.image = anim['idle_right'][0]
-        #     self.in_dict = True
-
-        # self.rect = self.image.get_rect()
-        # self.rect.topleft = (self.x * SPRITE_SIZE, self.y * SPRITE_SIZE)
 
         self.left = False
         self.right = True
         self.moving = False
 
-        if (self.in_dict):
-            self.flicker_speed = ANIMATION_SPEED / \
-                                 len(self.game.game_sprites.sprite_dict[self.image_key]["idle_right"])\
-                                 / 1.0
+        if self.anim_length > 1:
+            self.flicker_speed = ANIMATION_SPEED / self.anim_length / 1.0
             self.flicker_timer = 0.0
             self.anim_frame = 0
 
@@ -106,7 +95,7 @@ class Entity(pygame.sprite.Sprite):
         Updates objects sprite depending on time passed
         and if it is moving and direction it is facing
         """
-        if self.in_dict:
+        if self.anim_length > 1:
             clock = self.game.clock.get_fps()
 
             if clock > 0.0:
@@ -116,19 +105,8 @@ class Entity(pygame.sprite.Sprite):
                 self.flicker_timer = 0.0
 
                 self.anim_frame += 1
-                self.anim_frame %= len(self.game.game_sprites.sprite_dict[self.image_key]["idle_right"])
+                self.anim_frame %= self.anim_length
                 self.moving = False
-
-            # if self.right:
-            #     if self.moving:
-            #         self.image = self.anim["run_right"][self.anim_frame]
-            #     else:
-            #         self.image = self.anim["idle_right"][self.anim_frame]
-            # else:
-            #     if self.moving:
-            #         self.image = self.anim["run_left"][self.anim_frame]
-            #     else:
-            #         self.image = self.anim["idle_left"][self.anim_frame]
 
     def update(self, dx, dy):
         """
@@ -155,7 +133,7 @@ class Entity(pygame.sprite.Sprite):
             image (Sprite): Sprite that self should show
         """
         image = None
-        if not self.in_dict:
+        if self.anim_length == 1:
             image = self.game.game_sprites.sprite_dict[self.image_key]
         else:
             if self.right:

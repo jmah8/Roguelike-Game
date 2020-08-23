@@ -5,6 +5,14 @@ from pathfinding import *
 
 pygame.init()
 
+class TileTest:
+
+    def __init__(self, x, y, sprite_key, type):
+        self.x = x
+        self.y = y
+        self.sprite_key = sprite_key
+        self.type = type
+
 
 class Tile(pygame.sprite.Sprite):
     """
