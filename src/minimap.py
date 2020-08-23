@@ -12,12 +12,12 @@ def _draw_minimap_player_generated_map(game, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to sclae y by
     """
     pygame.draw.rect(game.surface, BLUE,
-                     ((game.player.rect.topleft[0] / scale_factor_x),
-                      (game.player.rect.topleft[1] / scale_factor_y),
+                     ((game.player.rect[0] / scale_factor_x),
+                      (game.player.rect[1] / scale_factor_y),
                       # + 1 is to make player directly touch walls
                       # without making too big of difference in size
-                      (game.player.rect.size[0] / scale_factor_x + 1),
-                      (game.player.rect.size[1] / scale_factor_y + 1)))
+                      (game.player.size[0] / scale_factor_x + 1),
+                      (game.player.size[1] / scale_factor_y + 1)))
 
 
 def _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y):
@@ -137,8 +137,8 @@ def _draw_minimap_player_loaded_map(game, scale_factor_x, scale_factor_y):
     """
     player = game.player
     pygame.draw.rect(game.surface, BLUE,
-                     (player.rect.topleft[0] // scale_factor_x, player.rect.topleft[1] // scale_factor_y,
-                      player.rect.size[0] // scale_factor_x + 1, player.rect.size[1] // scale_factor_y + 1))
+                     (player.rect[0] // scale_factor_x, player.rect[1] // scale_factor_y,
+                      player.size[0] // scale_factor_x + 1, player.size[1] // scale_factor_y + 1))
 
 
 def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_y):
@@ -158,7 +158,7 @@ def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_
             tile = game.map_info.tile_array[y][x]
             if isinstance(tile, gamemap.Wall):
                 pygame.draw.rect(game.surface, BLACK,
-                                 (tile.rect.topleft[0] / scale_factor_x, tile.rect.topleft[1] / scale_factor_y,
+                                 (tile.rect.topleft.topleft[0] / scale_factor_x, tile.rect.topleft[1] / scale_factor_y,
                                   tile.rect.size[0] / scale_factor_x + 1, tile.rect.size[1] / scale_factor_y + 1))
             elif isinstance(tile, gamemap.Floor):
                 if tile.seen:
@@ -190,12 +190,12 @@ def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
     for item in game.item_group:
         if game.map_info.tile_array[item.y][item.x].seen:
             pygame.draw.rect(game.surface, GREEN,
-                             ((item.rect.topleft[0] / scale_factor_x),
-                              (item.rect.topleft[1] / scale_factor_y),
+                             ((item.rect[0] / scale_factor_x),
+                              (item.rect[1] / scale_factor_y),
                               # + 1 is to make items directly touch walls
                               # without making too big of difference in size
-                              (item.rect.size[0] / scale_factor_x + 1),
-                              (item.rect.size[1] / scale_factor_y + 1)))
+                              (item.size[0] / scale_factor_x + 1),
+                              (item.size[1] / scale_factor_y + 1)))
 
 
 def _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y):
@@ -212,9 +212,9 @@ def _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y):
     for enemy in game.creature_data["enemy"]:
         if game.fov[enemy.y][enemy.x]:
             pygame.draw.rect(game.surface, RED,
-                             ((enemy.rect.topleft[0] / scale_factor_x),
-                              (enemy.rect.topleft[1] / scale_factor_y),
+                             ((enemy.rect[0] / scale_factor_x),
+                              (enemy.rect[1] / scale_factor_y),
                               # + 1 is to make items directly touch walls
                               # without making too big of difference in size
-                              (enemy.rect.size[0] / scale_factor_x + 1),
-                              (enemy.rect.size[1] / scale_factor_y + 1)))
+                              (enemy.size[0] / scale_factor_x + 1),
+                              (enemy.size[1] / scale_factor_y + 1)))

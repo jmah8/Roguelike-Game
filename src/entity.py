@@ -81,6 +81,26 @@ class Entity(pygame.sprite.Sprite):
         """
         return self.x, self.y
 
+    @property
+    def rect(self):
+        """
+        Returns entity's rect position, ie where the entity is on the screen,
+        which is different then self.x, self.y which is the position of entity
+        in game
+
+        Returns:
+            Entity's rect position
+        """
+        return self.x * SPRITE_SIZE, self.y * SPRITE_SIZE
+
+    @property
+    def size(self):
+        """
+        Returns:
+            Entity's sprite size, which is usually SPRITE_SIZE
+        """
+        return SPRITE_SIZE, SPRITE_SIZE
+
     def update_anim(self):
         """
         Updates objects sprite depending on time passed
@@ -123,7 +143,8 @@ class Entity(pygame.sprite.Sprite):
             # Regenerates hp and mp of creatures
             self.creature.regen(self.game.turn_count)
 
-    def get_image(self):
+    @property
+    def image(self):
         """
         Returns image that entity should show entity
 

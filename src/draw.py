@@ -59,7 +59,7 @@ class Drawing:
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.get_image(), self.game.camera.test_apply(obj))
+        self.game_surface.blit(obj.image, self.game.camera.test_apply(obj))
 
     def draw_at_camera_offset(self, obj):
         """
