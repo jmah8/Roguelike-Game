@@ -15,7 +15,7 @@ def new_fov(map_data):
     return new_fov
 
 
-def ray_casting(map_data, map_array, fov, player):
+def ray_casting(map_data, tile_array, fov, player):
     """
     Calculates which tiles are seen
 
@@ -25,7 +25,7 @@ def ray_casting(map_data, map_array, fov, player):
     Args:
         player (Object): Player Entity
         map_data (MapInfo): Game with game data
-        map_array (2D array): map_array with representation of map
+        tile_array (2D array): map_array with representation of map
         fov (2D array): fov array telling which tile is seen
     """
     for a in range(0, RAYS + 1, STEP):
@@ -44,13 +44,13 @@ def ray_casting(map_data, map_array, fov, player):
 
             fov[int(round(y))][int(round(x))] = 1
 
-            if map_array[int(round(y))][int(round(x))] == WALL:
+            if tile_array[int(round(y))][int(round(x))].type == WALL:
                 break
 
     fov[player.y][player.x] = 1
 
 
-def change_seen(map_data, tile_array, fov, unseen_tile):
+def change_seen(map_data, tile_array, fov):
     """
     Changes tile's sprite depending on if it's unseen, seen or explored tiles
 
@@ -58,7 +58,6 @@ def change_seen(map_data, tile_array, fov, unseen_tile):
         http://www.roguebasin.com/index.php?title=Raycasting_in_python
 
     Args:
-        unseen_tile (Sprite): Sprite to draw for unseen tiles
         map_data (Game): Game with game data
         tile_array (2D array): tile array of map
         fov (2D array): fov array telling which tile is seen

@@ -122,8 +122,8 @@ class Game:
         if not self.wall_hack:
             self.fov = fov.new_fov(self.map_info)
 
-        fov.ray_casting(self.map_info, self.map_info.map_array, self.fov, self.player)
-        fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
+        fov.ray_casting(self.map_info, self.map_info.tile_array, self.fov, self.player)
+        fov.change_seen(self.map_info, self.map_info.tile_array, self.fov)
 
         self.drawing.draw()
 
@@ -386,8 +386,8 @@ class Game:
             if not self.wall_hack:
                 self.fov = fov.new_fov(self.map_info)
 
-            fov.ray_casting(self.map_info, self.map_info.map_array, self.fov, self.player)
-            fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
+            fov.ray_casting(self.map_info, self.map_info.tile_array, self.fov, self.player)
+            fov.change_seen(self.map_info, self.map_info.tile_array, self.fov)
 
             self.drawing.draw()
             self.drawing.draw_at_camera_offset_without_image(self.free_camera)
@@ -401,7 +401,7 @@ class Game:
         move_x, move_y = self.camera.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
-        line = magic.line(start, goal, self.map_info.map_array)
+        line = magic.line(start, goal, self.map_info.tile_array)
         magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time

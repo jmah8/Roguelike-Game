@@ -199,7 +199,7 @@ class Creature:
 
         if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
-            if self.owner.game.map_info.map_array[self.y + dy][self.x + dx] == WALL:
+            if self.owner.game.map_info.tile_array[self.y + dy][self.x + dx].type == WALL:
                 return
 
         # check to see if entity collided with enemy or ally and if so don't move

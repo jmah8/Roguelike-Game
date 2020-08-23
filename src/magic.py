@@ -114,7 +114,7 @@ def line(start, end, map):
         else:
             t = i / num_of_tiles
         x, y = round_point(lerp_point(start, end, t))
-        if map[y][x] == WALL:
+        if map[y][x].type == WALL:
             break
         # Skip the point the entity is on
         if i != 0:

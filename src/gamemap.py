@@ -80,27 +80,27 @@ class MapInfo:
 
         if READ_FROM_FILE:
             # Holds the map representation (chars)
-            self.map_array = load_map()
+            map_array = load_map()
             self.map_tree = None
 
         # This is for generating random maps
         else:
             # Holds the map representation (chars)
-            self.map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
-            self.map_tree = gen_map(self.map_array)
+            map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
+            self.map_tree = gen_map(map_array)
 
         # Holds actual tiles
-        self.tile_array = make_tile_array(self.map_array, game.game_sprites.tile_dict)
+        self.tile_array = make_tile_array(map_array, game.game_sprites.tile_dict)
 
-        self.tile_width = len(self.map_array[0])
-        self.tile_height = len(self.map_array)
+        self.tile_width = len(self.tile_array[0])
+        self.tile_height = len(self.tile_array)
         self.pixel_width = self.tile_width * SPRITE_SIZE
         self.pixel_height = self.tile_height * SPRITE_SIZE
         self.unseen_tiles = set()
 
         for y in range(self.tile_height):
             for x in range(self.tile_width):
-                if not self.map_array[y][x] == WALL:
+                if not self.tile_array[y][x].type == WALL:
                     self.unseen_tiles.add((x, y))
 
 
