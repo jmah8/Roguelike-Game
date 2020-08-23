@@ -220,27 +220,27 @@ class GameSprites:
         }
 
         self.tile_dict = {
-            "wall": {
+            WALL: {
                 "seeing": self.wall_image,
                 "seen": self.seen_wall_image
             },
 
-            "floor": {
+            FLOOR: {
                 "seeing": self.floor_image_1,
                 "seen": self.seen_floor_image_1
             },
 
-            "floor2": {
+            PATH: {
                 "seeing": self.floor_image_2,
                 "seen": self.seen_floor_image_2
             },
 
-            "upstair": {
+            UPSTAIR: {
                 "seeing": self.upstair,
                 "seen": self.seen_upstair
             },
 
-            "downstair": {
+            DOWNSTAIR: {
                 "seeing": self.downstair,
                 "seen": self.seen_downstair
             },

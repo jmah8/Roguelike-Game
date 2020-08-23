@@ -321,9 +321,7 @@ class Game:
         if self.next_levels.empty():
             self.new()
             # Places upstair at where the player entered the map at
-            self.map_info.tile_array[self.player.y][self.player.x].type = '<'
-            self.map_info.tile_array[self.player.y][self.player.x].sprite_key = 'upstair'
-
+            self.map_info.tile_array[self.player.y][self.player.x].type = UPSTAIR
         else:
             x, y, map_info, enemy_list, item_group = self.next_levels.get()
 
