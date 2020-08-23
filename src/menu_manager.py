@@ -1,4 +1,4 @@
-import game
+import config
 from constant import *
 import magic
 import game_text
@@ -22,7 +22,7 @@ class Menu_Manager:
                     if event.key == pygame.K_p:
                         menu_closed = True
 
-            game_text.draw_text(self.game.surface,
+            game_text.draw_text(config.SURFACE_MAIN,
                                         ((CAMERA_WIDTH - FONT_SIZE) / 2, (CAMERA_HEIGHT - FONT_SIZE) / 2), WHITE,
                                         "PAUSED", BLACK)
             self.game.clock.tick(60)
@@ -49,7 +49,7 @@ class Menu_Manager:
                             break
 
             self.game.drawing.draw_map_menu()
-            self.game.drawing.button_manager.draw_buttons(self.game.surface)
+            self.game.drawing.button_manager.draw_buttons()
             self.game.clock.tick(60)
             pygame.display.update()
 
@@ -140,7 +140,7 @@ class Menu_Manager:
             self.game.clock.tick(FPS)
             # self.game.update()
             draw_stat(self.game.player)
-            self.game.surface.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
+            config.SURFACE_MAIN.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
 
             pygame.display.flip()
 
@@ -159,7 +159,7 @@ class Menu_Manager:
 
             menu_surface.blit(self._load_inventory_screen(), (0, menu_height / 2))
             menu_surface.blit(self._load_equipment_screen(), (0, 0))
-            self.game.surface.blit(menu_surface, (menu_width, 0))
+            config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
 
             for event in events_list:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -199,7 +199,7 @@ class Menu_Manager:
         for y in range (num_items_col - 1):
             for x in range (num_items_row):
                 inventory_array = self.game.player.container.inventory
-                item_surface.blit(self.game.game_sprites.empty_inventory_slot, (
+                item_surface.blit(config.SPRITE.empty_inventory_slot, (
                     (0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
                 if len(inventory_array) >= counter + 1:
                     item = inventory_array[counter]
@@ -253,7 +253,7 @@ class Menu_Manager:
         for rect in self.equipment_rects:
             pygame.draw.rect(equipment_surface, INVENTORY_BEIGE, rect)
 
-        equipment_surface.blit(self.game.game_sprites.equip_screen, (0, 0))
+        equipment_surface.blit(config.SPRITE.equip_screen, (0, 0))
 
         return equipment_surface
 

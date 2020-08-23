@@ -1,6 +1,6 @@
 from constant import *
 
-class Entity(pygame.sprite.Sprite):
+class Entity:
     """
     Class for Entity which represents entity, which is anything that appears
     and acts in the game
@@ -28,7 +28,6 @@ class Entity(pygame.sprite.Sprite):
     """
 
     def __init__(self, game, x, y, object_id, creature=None, ai=None, item=None, container=None, image_key=None):
-        pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.x = x
         self.y = y

@@ -1,4 +1,5 @@
 import sys
+import config
 from sprite import *
 from map_generator import Tree
 from pathfinding import *
@@ -7,7 +8,7 @@ pygame.init()
 
 class Tile:
 
-    def __init__(self, x, y, type, tile_dict):
+    def __init__(self, x, y, type):
         """
         Class that holds information about tile
 
@@ -15,14 +16,12 @@ class Tile:
             x (int): x coord of tile
             y (int): y coord of tile
             type (string): the type of tile it is as a char
-            tile_dict (dict): dictionary of possible sprites
         """
         self.x = x
         self.y = y
         self.type = type
         self.seeing = False
         self.seen = False
-        self.tile_dict = tile_dict
 
     @property
     def image(self):
@@ -30,13 +29,12 @@ class Tile:
         Returns:
             Returns image tile should have
         """
-
         if self.seen and self.seeing:
-            return self.tile_dict[self.type]["seeing"]
+            return config.SPRITE.tile_dict[self.type]["seeing"]
         elif self.seen:
-            return self.tile_dict[self.type]["seen"]
+            return config.SPRITE.tile_dict[self.type]["seen"]
         else:
-            return self.tile_dict["unseen"]
+            return config.SPRITE.tile_dict["unseen"]
 
     @property
     def rect(self):
@@ -90,7 +88,7 @@ class MapInfo:
             self.map_tree = gen_map(map_array)
 
         # Holds actual tiles
-        self.tile_array = make_tile_array(map_array, game.game_sprites.tile_dict)
+        self.tile_array = make_tile_array(map_array)
 
         self.tile_width = len(self.tile_array[0])
         self.tile_height = len(self.tile_array)
@@ -104,7 +102,7 @@ class MapInfo:
                     self.unseen_tiles.add((x, y))
 
 
-def make_tile_array(map_array, tile_dict):
+def make_tile_array(map_array):
     """
     Draws tiles to background using p_map_array and returns
     array filled with Tiles
@@ -120,7 +118,7 @@ def make_tile_array(map_array, tile_dict):
     for col, tiles in enumerate(map_array):
         tile_array_row = []
         for row, tile in enumerate(tiles):
-            tile_array_row.append(Tile(row, col, tile, tile_dict))
+            tile_array_row.append(Tile(row, col, tile))
         tile_array.append(tile_array_row)
     return tile_array
 

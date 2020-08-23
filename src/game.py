@@ -1,3 +1,4 @@
+import config
 import fov
 import gamemap
 import magic
@@ -9,6 +10,7 @@ from draw import Drawing
 from entity_generator import *
 from menu_manager import Menu_Manager
 from queue import LifoQueue
+import pickle
 
 pygame.font.init()
 
@@ -20,7 +22,6 @@ class Game:
         # Pygame screen
         pygame.init()
         pygame.display.set_caption("Knight's Adventure")
-        self.surface = pygame.display.set_mode(RESOLUTION, pygame.RESIZABLE)
 
         # Repeat keys when held down
         pygame.key.set_repeat(350, 75)
@@ -34,7 +35,7 @@ class Game:
         # Load in all sprites
         self.game_sprites = sprite.GameSprites()
 
-        self.drawing = Drawing(self, self.surface)
+        self.drawing = Drawing(self, config.SURFACE_MAIN)
         self.menu_manager = Menu_Manager(self)
 
         self.drawing.add_buttons()
@@ -173,7 +174,7 @@ class Game:
         else:
             self.camera.camera_height = event.h
         # This line is only used in pygame 1
-        self.surface = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
+        config.SURFACE_MAIN = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
                                                pygame.RESIZABLE)
 
     def _handle_keyboard_event(self, event):
@@ -252,6 +253,10 @@ class Game:
             if self.floor < NUM_OF_FLOOR and self.map_info.tile_array[self.player.y][self.player.x].type == DOWNSTAIR:
                 self.floor += 1
                 self.transition_next_level()
+
+        elif event.key == pygame.K_9:
+            s = pickle.dumps(self.map_info.tile_array[0][0].tile_dict)
+            print(s)
 
     def _handle_mouse_event(self, event):
         """

@@ -1,5 +1,6 @@
 from constant import *
 import pygame
+import config
 from exceptions import *
 
 
@@ -65,22 +66,19 @@ class Button_Manager:
             else:
                 raise ButtonExistException("Button exist")
 
-    def draw_buttons(self, game_surface):
+    def draw_buttons(self):
         """
         Draws buttons onto param game_surface
 
         First draws buttons onto button_surface and then draws
         button_surface onto game_surface at self.x, self.y
 
-        Args:
-            game_surface (surface): surface to draw buttons on
-
         Returns:
 
         """
         for button in self.button_dict.values():
             self.button_surface.blit(button.image, button.rect)
-        game_surface.blit(self.button_surface,
+        config.SURFACE_MAIN.blit(self.button_surface,
                           (self.x, self.y))
 
     def check_if_button_pressed(self, mouse_x, mouse_y):

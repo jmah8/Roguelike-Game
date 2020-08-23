@@ -1,4 +1,5 @@
 from constant import *
+import config
 import gamemap
 
 
@@ -11,7 +12,7 @@ def _draw_minimap_player_generated_map(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    pygame.draw.rect(game.surface, BLUE,
+    pygame.draw.rect(config.SURFACE_MAIN, BLUE,
                      ((game.player.rect[0] / scale_factor_x),
                       (game.player.rect[1] / scale_factor_y),
                       # + 1 is to make player directly touch walls
@@ -31,7 +32,7 @@ def _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y):
     """
     for tile in game.map_info.unseen_tiles:
         tile_x, tile_y = tile
-        pygame.draw.rect(game.surface, BLACK,
+        pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                          ((tile_x * SPRITE_SIZE / scale_factor_x),
                           (tile_y * SPRITE_SIZE / scale_factor_y),
                           # + 2 is to make black cover everything since
@@ -52,7 +53,7 @@ def _draw_minimap_rooms_generated_map(game, scale_factor_x, scale_factor_y):
     """
     list_of_rooms = game.map_info.map_tree.root.child_room_list + game.map_info.map_tree.root.path_list
     for room in list_of_rooms:
-        pygame.draw.rect(game.surface, WHITE,
+        pygame.draw.rect(config.SURFACE_MAIN, WHITE,
                          ((room.up_left_x * SPRITE_SIZE / scale_factor_x),
                           (room.up_left_y * SPRITE_SIZE / scale_factor_y),
                           # + 1 is to make paths directly touch room
@@ -70,7 +71,7 @@ def _draw_minimap_walls_generated_map(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    pygame.draw.rect(game.surface, BLACK,
+    pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                      (0, 0,
                       game.map_info.pixel_width / scale_factor_x,
                       game.map_info.pixel_height / scale_factor_y))
@@ -136,7 +137,7 @@ def _draw_minimap_player_loaded_map(game, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to sclae y by
     """
     player = game.player
-    pygame.draw.rect(game.surface, BLUE,
+    pygame.draw.rect(config.SURFACE_MAIN, BLUE,
                      (player.rect[0] // scale_factor_x, player.rect[1] // scale_factor_y,
                       player.size[0] // scale_factor_x + 1, player.size[1] // scale_factor_y + 1))
 
@@ -155,20 +156,20 @@ def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_
     map_data = game.map_info
     for y in range(map_data.tile_height):
         for x in range(map_data.tile_width):
-            tile = game.map_info.tile_array[y][x]
-            if isinstance(tile, gamemap.Wall):
-                pygame.draw.rect(game.surface, BLACK,
+            tile = game.map_info.tile_array[y][x].type
+            if tile == WALL:
+                pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                                  (tile.rect[0] / scale_factor_x, tile.rect[1] / scale_factor_y,
                                   tile.size[0] / scale_factor_x + 1, tile.size[1] / scale_factor_y + 1))
-            elif isinstance(tile, gamemap.Floor):
+            elif tile == FLOOR:
                 if tile.seen:
-                    pygame.draw.rect(game.surface, WHITE,
+                    pygame.draw.rect(config.SURFACE_MAIN, WHITE,
                                      (tile.rect[0] / scale_factor_x,
                                       tile.rect[1] / scale_factor_y,
                                       tile.size[0] / scale_factor_x + 1,
                                       tile.size[1] / scale_factor_y + 1))
                 else:
-                    pygame.draw.rect(game.surface, BLACK,
+                    pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                                      (tile.rect[0] / scale_factor_x,
                                       tile.rect[1] / scale_factor_y,
                                       tile.size[0] / scale_factor_x + 1,
@@ -189,7 +190,7 @@ def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
     """
     for item in game.item_group:
         if game.map_info.tile_array[item.y][item.x].seen:
-            pygame.draw.rect(game.surface, GREEN,
+            pygame.draw.rect(config.SURFACE_MAIN, GREEN,
                              ((item.rect[0] / scale_factor_x),
                               (item.rect[1] / scale_factor_y),
                               # + 1 is to make items directly touch walls
@@ -211,7 +212,7 @@ def _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y):
     """
     for enemy in game.creature_data["enemy"]:
         if game.fov[enemy.y][enemy.x]:
-            pygame.draw.rect(game.surface, RED,
+            pygame.draw.rect(config.SURFACE_MAIN, RED,
                              ((enemy.rect[0] / scale_factor_x),
                               (enemy.rect[1] / scale_factor_y),
                               # + 1 is to make items directly touch walls

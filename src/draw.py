@@ -37,7 +37,7 @@ class Drawing:
 
         self.draw_particles()
 
-        self.button_manager.draw_buttons(self.game_surface)
+        self.button_manager.draw_buttons()
 
         self.draw_ui()
 
