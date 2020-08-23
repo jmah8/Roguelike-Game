@@ -115,12 +115,12 @@ class Drawing:
         """
         Adds clickable buttons to bottom of screen
         """
-        self.button_manager.add_button(self.game.game_sprites.knight_anim[0], 'stats',
+        self.button_manager.add_button(config.SPRITE.knight_anim[0], 'stats',
                                        self.game.menu_manager.stat_menu)
-        self.button_manager.add_button(self.game.game_sprites.inventory_button, 'inventory',
+        self.button_manager.add_button(config.SPRITE.inventory_button, 'inventory',
                                        self.game.menu_manager.inventory_menu)
-        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'minimap', self.game.toggle_minimap)
-        self.button_manager.add_button(self.game.game_sprites.minimap_button, 'map', self.game.menu_manager.map_menu)
+        self.button_manager.add_button(config.SPRITE.minimap_button, 'minimap', self.game.toggle_minimap)
+        self.button_manager.add_button(config.SPRITE.minimap_button, 'map', self.game.menu_manager.map_menu)
 
     def draw_grid(self):
         for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
@@ -192,7 +192,7 @@ class Drawing:
         mouse_x = mouse_x // SPRITE_SIZE
         mouse_y = mouse_y // SPRITE_SIZE
 
-        self.draw_img_at_coord(self.game.game_sprites.mouse_select, mouse_x, mouse_y)
+        self.draw_img_at_coord(config.SPRITE.mouse_select, mouse_x, mouse_y)
 
     def draw_img_at_coord(self, img, x_coord, y_coord):
         """
@@ -216,7 +216,7 @@ class Drawing:
         """
         for (x, y) in line:
             relative_x, relative_y = self.game.camera.get_relative_screen_coord(x, y)
-            self.draw_img_at_coord(self.game.game_sprites.select_tile, relative_x, relative_y)
+            self.draw_img_at_coord(config.SPRITE.select_tile, relative_x, relative_y)
 
     def draw_minimap(self, game):
         """

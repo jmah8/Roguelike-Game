@@ -30,9 +30,6 @@ class Game:
 
         self.running = True
 
-        # Load in all sprites
-        self.game_sprites = sprite.GameSprites()
-
         self.drawing = Drawing(self, config.SURFACE_MAIN)
         self.menu_manager = Menu_Manager(self)
 
@@ -253,7 +250,7 @@ class Game:
                 self.transition_next_level()
 
         elif event.key == pygame.K_9:
-            s = pickle.dumps(self.map_info.tile_array[0][0].tile_dict)
+            s = pickle.dumps(self.map_info.tile_array)
             print(s)
 
     def _handle_mouse_event(self, event):

@@ -35,8 +35,8 @@ class Entity:
         self.object_id = object_id
         self.image_key = image_key
 
-        if isinstance(self.game.game_sprites.sprite_dict[self.image_key], dict):
-            self.anim_length = len(self.game.game_sprites.sprite_dict[self.image_key]["idle_right"])
+        if isinstance(config.SPRITE.sprite_dict[self.image_key], dict):
+            self.anim_length = len(config.SPRITE.sprite_dict[self.image_key]["idle_right"])
         else:
             self.anim_length = 1
 
@@ -105,18 +105,18 @@ class Entity:
         """
         image = None
         if self.anim_length == 1:
-            image = self.game.game_sprites.sprite_dict[self.image_key]
+            image = config.SPRITE.sprite_dict[self.image_key]
         else:
             if self.right:
                 if self.moving:
-                    image = self.game.game_sprites.sprite_dict[self.image_key]["run_right"][self.anim_frame]
+                    image = config.SPRITE.sprite_dict[self.image_key]["run_right"][self.anim_frame]
                 else:
-                    image = self.game.game_sprites.sprite_dict[self.image_key]["idle_right"][self.anim_frame]
+                    image = config.SPRITE.sprite_dict[self.image_key]["idle_right"][self.anim_frame]
             else:
                 if self.moving:
-                    image = self.game.game_sprites.sprite_dict[self.image_key]["run_left"][self.anim_frame]
+                    image = config.SPRITE.sprite_dict[self.image_key]["run_left"][self.anim_frame]
                 else:
-                    image = self.game.game_sprites.sprite_dict[self.image_key]["idle_left"][self.anim_frame]
+                    image = config.SPRITE.sprite_dict[self.image_key]["idle_left"][self.anim_frame]
         return image
 
     def update_anim(self):

@@ -1,6 +1,7 @@
 import json
 import os
 from constant import *
+import config
 import game as g
 import pygame
 import particle
@@ -135,7 +136,7 @@ def cast_fireball(game, caster, line):
     mp_cost = data["fireball"]["cost"]
 
     particle_group = []
-    particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
+    particle.MagicParticle(particle_group, config.SPRITE.magic['fireball'], line)
 
     damage = caster.creature.stat.calc_magic_damage(base_damage)
 
@@ -173,7 +174,7 @@ def _update_spell(game, particle_group):
     for magic in particle_group:
         game.drawing.draw_at_camera_offset_with_image(magic)
         magic.update()
-    game.clock.tick(20)
+    config.CLOCK.tick(20)
     pygame.display.update()
 
 
@@ -191,7 +192,7 @@ def cast_lightning(game, caster, line):
     mp_cost = data["lightning"]["cost"]
 
     particle_group = []
-    particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
+    particle.MagicParticle(particle_group, config.SPRITE.magic['lightning'], line)
 
     damage = caster.creature.stat.calc_magic_damage(base_damage)
 
