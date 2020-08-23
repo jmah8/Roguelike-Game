@@ -5,13 +5,24 @@ from pathfinding import *
 
 pygame.init()
 
-class TileTest:
+class Tile:
 
     def __init__(self, x, y, sprite_key, type, tile_dict):
+        """
+        Class that holds information about tile
+
+        Args:
+            x (int): x coord of tile
+            y (int): y coord of tile
+            sprite_key (string): key of tile sprite
+            type (string): the type of tile it is as a char
+            tile_dict (dict): dictionary of possible sprites
+        """
         self.x = x
         self.y = y
         self.sprite_key = sprite_key
         self.type = type
+        self.seeing = False
         self.seen = False
         self.tile_dict = tile_dict
 
@@ -21,10 +32,34 @@ class TileTest:
         Returns:
             Returns image tile should have
         """
-        return self.tile_dict[self.sprite_key]
+        if self.seen and self.seeing:
+            return self.tile_dict[self.sprite_key]["seeing"]
+        elif self.seen:
+            return self.tile_dict[self.sprite_key]["seen"]
+        else:
+            return self.tile_dict["unseen"]
 
+    @property
+    def rect(self):
+        """
+        Returns tile's rect position, ie where the tile is on the screen,
+        which is different then self.x, self.y which is the position of tile
+        in game
 
-class MapInfoTest:
+        Returns:
+            Tile's rect position
+        """
+        return self.x * SPRITE_SIZE, self.y * SPRITE_SIZE
+
+    @property
+    def size(self):
+        """
+        Returns:
+            Tile's sprite size, which is usually SPRITE_SIZE
+        """
+        return SPRITE_SIZE, SPRITE_SIZE
+
+class MapInfo:
     """
     Load map data from map_array or generates map. Holds map arrays
 
@@ -87,95 +122,95 @@ def make_tile_array(map_array, tile_dict):
         tile_array_row = []
         for row, tile in enumerate(tiles):
             if tile == WALL:
-                tile_array_row.append(TileTest(row, col, "wall", tile, tile_dict))
+                tile_array_row.append(Tile(row, col, "wall", tile, tile_dict))
             elif tile == FLOOR:
-                tile_array_row.append(TileTest(row, col, "floor", tile, tile_dict))
+                tile_array_row.append(Tile(row, col, "floor", tile, tile_dict))
             elif tile == PATH:
-                tile_array_row.append(TileTest(row, col, "floor2", tile, tile_dict))
+                tile_array_row.append(Tile(row, col, "floor2", tile, tile_dict))
             elif tile == DOWNSTAIR:
-                tile_array_row.append(TileTest(row, col, "downstair", tile, tile_dict))
+                tile_array_row.append(Tile(row, col, "downstair", tile, tile_dict))
             elif tile == UPSTAIR:
-                tile_array_row.append(TileTest(row, col, "upstair", tile, tile_dict))
+                tile_array_row.append(Tile(row, col, "upstair", tile, tile_dict))
         tile_array.append(tile_array_row)
     return tile_array
 
 
-class Tile(pygame.sprite.Sprite):
-    """
-    Class for the tiles of map
-
-    Attributes: 
-        x (int, arg): x position of tile
-        y (int, arg): y position of tile
-        seen (bool): if tile was seen
-    """
-
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.x = x
-        self.y = y
-        self.rect.x = x * SPRITE_SIZE
-        self.rect.y = y * SPRITE_SIZE
-        self.seen = False
-
-
-
-class Wall(Tile):
-    """
-    Class for Wall
-
-    Attributes:
-        image_seen (surface, arg): image of explored and seen wall
-        image_in_fov (surface, arg): image of wall when in fov
-        image (surface, arg): current image of wall
-        sprite_dict (game, arg): game with object data
-
-    Args:
-        image_unexplored (arg, Sprite): sprite of unexplored wall if default is not the
-            sprite needed
-        image_explored (arg, Sprite): sprite of explored wall if default is not the
-            sprite needed
-    """
-
-    def __init__(self, sprite_dict, x, y, image_unexplored=None, image_explored=None):
-        self.image_seen = sprite_dict.seen_wall_image
-        self.image_in_fov = sprite_dict.wall_image
-        self.image = self.image_in_fov
-        if image_unexplored:
-            self.image_in_fov = image_unexplored
-        if image_explored:
-            self.image_seen = image_explored
-        self.rect = self.image.get_rect()
-        Tile.__init__(self, x, y)
-
-
-class Floor(Tile):
-    """
-    Class for Floor
-
-    Attributes:
-        image_seen (surface, arg): image of explored and seen wall
-        image_in_fov (surface, arg): image of wall when in fov
-        image (surface, arg): current image of floor
-        sprite_dict (game, arg): game with object data
-
-    Args:
-        image_unexplored (arg, Sprite): sprite of unexplored floor if default is not the
-            sprite needed
-        image_explored (arg, Sprite): sprite of explored floor if default is not the
-            sprite needed
-    """
-
-    def __init__(self, sprite_dict, x, y, image_unexplored=None, image_explored=None):
-        self.image_seen = sprite_dict.seen_floor_image_1
-        self.image_in_fov = sprite_dict.floor_image_1
-        self.image = self.image_in_fov
-        if (image_unexplored):
-            self.image_in_fov = image_unexplored
-        if (image_explored):
-            self.image_seen = image_explored
-        self.rect = self.image.get_rect()
-        Tile.__init__(self, x, y)
+# class Tile(pygame.sprite.Sprite):
+#     """
+#     Class for the tiles of map
+#
+#     Attributes:
+#         x (int, arg): x position of tile
+#         y (int, arg): y position of tile
+#         seen (bool): if tile was seen
+#     """
+#
+#     def __init__(self, x, y):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.x = x
+#         self.y = y
+#         self.rect.x = x * SPRITE_SIZE
+#         self.rect.y = y * SPRITE_SIZE
+#         self.seen = False
+#
+#
+#
+# class Wall(Tile):
+#     """
+#     Class for Wall
+#
+#     Attributes:
+#         image_seen (surface, arg): image of explored and seen wall
+#         image_in_fov (surface, arg): image of wall when in fov
+#         image (surface, arg): current image of wall
+#         sprite_dict (game, arg): game with object data
+#
+#     Args:
+#         image_unexplored (arg, Sprite): sprite of unexplored wall if default is not the
+#             sprite needed
+#         image_explored (arg, Sprite): sprite of explored wall if default is not the
+#             sprite needed
+#     """
+#
+#     def __init__(self, sprite_dict, x, y, image_unexplored=None, image_explored=None):
+#         self.image_seen = sprite_dict.seen_wall_image
+#         self.image_in_fov = sprite_dict.wall_image
+#         self.image = self.image_in_fov
+#         if image_unexplored:
+#             self.image_in_fov = image_unexplored
+#         if image_explored:
+#             self.image_seen = image_explored
+#         self.rect = self.image.get_rect()
+#         Tile.__init__(self, x, y)
+#
+#
+# class Floor(Tile):
+#     """
+#     Class for Floor
+#
+#     Attributes:
+#         image_seen (surface, arg): image of explored and seen wall
+#         image_in_fov (surface, arg): image of wall when in fov
+#         image (surface, arg): current image of floor
+#         sprite_dict (game, arg): game with object data
+#
+#     Args:
+#         image_unexplored (arg, Sprite): sprite of unexplored floor if default is not the
+#             sprite needed
+#         image_explored (arg, Sprite): sprite of explored floor if default is not the
+#             sprite needed
+#     """
+#
+#     def __init__(self, sprite_dict, x, y, image_unexplored=None, image_explored=None):
+#         self.image_seen = sprite_dict.seen_floor_image_1
+#         self.image_in_fov = sprite_dict.floor_image_1
+#         self.image = self.image_in_fov
+#         if (image_unexplored):
+#             self.image_in_fov = image_unexplored
+#         if (image_explored):
+#             self.image_seen = image_explored
+#         self.rect = self.image.get_rect()
+#         Tile.__init__(self, x, y)
 
 
 def load_map():
@@ -195,50 +230,50 @@ def load_map():
     return map_array
 
 
-class MapInfo:
-    """
-    Load map data from map_array or generates map. Holds map arrays
-
-    Args:
-        game (Game): game with all game data
-
-    Attribute:
-        map_array (2D array): array with map representation
-        self.map_tree (Tree): BSP tree of map
-        tile_array (2D array): array with tiles
-        tile_width (int): # of tiles wide
-        tile_height (int): # of tiles tall
-        pixel_width (int): pixel_width of map in pixels
-        pixel_height (int): pixel_height of map in pixels
-        unseen_tiles (set): set of unseen tiles coord tuple
-    """
-
-    def __init__(self, game):
-
-        if READ_FROM_FILE:
-            # Holds the map representation (chars)
-            self.map_array = load_map()
-            self.map_tree = None
-
-        # This is for generating random maps
-        else:
-            # Holds the map representation (chars)
-            self.map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
-            self.map_tree = gen_map(self.map_array)
-
-        # Holds actual tiles
-        self.tile_array = draw_map(self.map_array, game.game_sprites)
-
-        self.tile_width = len(self.map_array[0])
-        self.tile_height = len(self.map_array)
-        self.pixel_width = self.tile_width * SPRITE_SIZE
-        self.pixel_height = self.tile_height * SPRITE_SIZE
-        self.unseen_tiles = set()
-
-        for y in range(self.tile_height):
-            for x in range(self.tile_width):
-                if not self.map_array[y][x] == WALL:
-                    self.unseen_tiles.add((x, y))
+# class MapInfo:
+#     """
+#     Load map data from map_array or generates map. Holds map arrays
+#
+#     Args:
+#         game (Game): game with all game data
+#
+#     Attribute:
+#         map_array (2D array): array with map representation
+#         self.map_tree (Tree): BSP tree of map
+#         tile_array (2D array): array with tiles
+#         tile_width (int): # of tiles wide
+#         tile_height (int): # of tiles tall
+#         pixel_width (int): pixel_width of map in pixels
+#         pixel_height (int): pixel_height of map in pixels
+#         unseen_tiles (set): set of unseen tiles coord tuple
+#     """
+#
+#     def __init__(self, game):
+#
+#         if READ_FROM_FILE:
+#             # Holds the map representation (chars)
+#             self.map_array = load_map()
+#             self.map_tree = None
+#
+#         # This is for generating random maps
+#         else:
+#             # Holds the map representation (chars)
+#             self.map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
+#             self.map_tree = gen_map(self.map_array)
+#
+#         # Holds actual tiles
+#         self.tile_array = draw_map(self.map_array, game.game_sprites)
+#
+#         self.tile_width = len(self.map_array[0])
+#         self.tile_height = len(self.map_array)
+#         self.pixel_width = self.tile_width * SPRITE_SIZE
+#         self.pixel_height = self.tile_height * SPRITE_SIZE
+#         self.unseen_tiles = set()
+#
+#         for y in range(self.tile_height):
+#             for x in range(self.tile_width):
+#                 if not self.map_array[y][x] == WALL:
+#                     self.unseen_tiles.add((x, y))
 
 
 def gen_map(map_array):

@@ -158,21 +158,21 @@ def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_
             tile = game.map_info.tile_array[y][x]
             if isinstance(tile, gamemap.Wall):
                 pygame.draw.rect(game.surface, BLACK,
-                                 (tile.rect.topleft.topleft[0] / scale_factor_x, tile.rect.topleft[1] / scale_factor_y,
-                                  tile.rect.size[0] / scale_factor_x + 1, tile.rect.size[1] / scale_factor_y + 1))
+                                 (tile.rect[0] / scale_factor_x, tile.rect[1] / scale_factor_y,
+                                  tile.size[0] / scale_factor_x + 1, tile.size[1] / scale_factor_y + 1))
             elif isinstance(tile, gamemap.Floor):
                 if tile.seen:
                     pygame.draw.rect(game.surface, WHITE,
-                                     (tile.rect.topleft[0] / scale_factor_x,
-                                      tile.rect.topleft[1] / scale_factor_y,
-                                      tile.rect.size[0] / scale_factor_x + 1,
-                                      tile.rect.size[1] / scale_factor_y + 1))
+                                     (tile.rect[0] / scale_factor_x,
+                                      tile.rect[1] / scale_factor_y,
+                                      tile.size[0] / scale_factor_x + 1,
+                                      tile.size[1] / scale_factor_y + 1))
                 else:
                     pygame.draw.rect(game.surface, BLACK,
-                                     (tile.rect.topleft[0] / scale_factor_x,
-                                      tile.rect.topleft[1] / scale_factor_y,
-                                      tile.rect.size[0] / scale_factor_x + 1,
-                                      tile.rect.size[1] / scale_factor_y + 1))
+                                     (tile.rect[0] / scale_factor_x,
+                                      tile.rect[1] / scale_factor_y,
+                                      tile.size[0] / scale_factor_x + 1,
+                                      tile.size[1] / scale_factor_y + 1))
 
 
 def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):

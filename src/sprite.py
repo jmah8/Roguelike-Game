@@ -89,11 +89,11 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to scale y by
     """
     obj_img = pygame.transform.scale(obj.image,
-                                     (int(obj.rect.size[0] / scale_factor_x),
-                                      int(obj.rect.size[1] / scale_factor_y)))
+                                     (int(obj.size[0] / scale_factor_x),
+                                      int(obj.size[1] / scale_factor_y)))
     obj_img_rect = obj_img.get_rect()
-    obj_img_rect.topleft = (int(obj.rect.topleft[0] / scale_factor_x),
-                            int(obj.rect.topleft[1] // scale_factor_y))
+    obj_img_rect.topleft = (int(obj.rect[0] / scale_factor_x),
+                            int(obj.rect[1] // scale_factor_y))
     return obj_img, obj_img_rect
 
 
@@ -221,27 +221,27 @@ class GameSprites:
 
         self.tile_dict = {
             "wall": {
-                "unseen": self.wall_image,
+                "seeing": self.wall_image,
                 "seen": self.seen_wall_image
             },
 
             "floor": {
-                "unseen": self.floor_image_1,
+                "seeing": self.floor_image_1,
                 "seen": self.seen_floor_image_1
             },
 
             "floor2": {
-                "unseen": self.floor_image_2,
+                "seeing": self.floor_image_2,
                 "seen": self.seen_floor_image_2
             },
 
             "upstair": {
-                "unseen": self.upstair,
+                "seeing": self.upstair,
                 "seen": self.seen_upstair
             },
 
             "downstair": {
-                "unseen": self.downstair,
+                "seeing": self.downstair,
                 "seen": self.seen_downstair
             },
 

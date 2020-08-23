@@ -68,7 +68,7 @@ def change_seen(map_data, tile_array, fov, unseen_tile):
             tile = tile_array[y][x]
             # If tile is seen switch to in fov sprite
             if fov[y][x] == 1:
-                tile.image = tile.image_in_fov
+                tile.seeing = True
                 tile.seen = True
                 # Remove seen tile from unseen_tile
                 if (x, y) in map_data.unseen_tiles:
@@ -76,12 +76,9 @@ def change_seen(map_data, tile_array, fov, unseen_tile):
             # Tile is not seen
             else:
                 tile = tile_array[y][x]
-                # If never seen before make black
-                if not tile.seen:
-                    tile.image = unseen_tile
-                # Else shade tile black
-                else:
-                    tile.image = tile.image_seen
+                # If seen set seeing flag to false
+                if tile.seen:
+                    tile.seeing = False
 
 
 def check_if_in_fov(game, obj):
