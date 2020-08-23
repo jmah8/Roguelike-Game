@@ -52,6 +52,15 @@ class Drawing:
         self.draw_debug()
         self.draw_messages()
 
+    def draw_at_camera_offset_entity(self, obj):
+        """
+        Draws obj on surface taking into account camera offset
+
+        Args:
+            obj (Object): Entity to draw
+        """
+        self.game_surface.blit(obj.get_image(), self.game.camera.test_apply(obj))
+
     def draw_at_camera_offset(self, obj):
         """
         Draws obj on surface taking into account camera offset
@@ -82,7 +91,7 @@ class Drawing:
         """
         for item in self.game.item_group:
             if self.game.map_info.tile_array[item.y][item.x].seen:
-                self.draw_at_camera_offset(item)
+                self.draw_at_camera_offset_entity(item)
 
     def _draw_creatures(self):
         """
@@ -91,7 +100,7 @@ class Drawing:
         for creature in self.game.creature_data["enemy"] + self.game.creature_data["player"]:
             if fov.check_if_in_fov(self.game, creature):
                 creature.update_anim()
-                self.draw_at_camera_offset(creature)
+                self.draw_at_camera_offset_entity(creature)
 
     def draw_particles(self):
         """

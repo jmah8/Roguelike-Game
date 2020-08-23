@@ -183,3 +183,38 @@ class GameSprites:
             "fireball": load_image(FIREBALL),
             "lightning": load_image(LIGHTNING)
         }
+
+        self.sprite_dict = {
+            # Creatures
+            "slime_dict": {
+                "idle_right": self.slime_anim,
+                "idle_left": flip_anim(self.slime_anim),
+                "run_right": self.slime_run_anim,
+                "run_left": flip_anim(self.slime_run_anim)
+            },
+            "goblin_dict": {
+                "idle_right": self.goblin_anim,
+                "idle_left": flip_anim(self.goblin_anim),
+                "run_right": self.goblin_run_anim,
+                "run_left": flip_anim(self.goblin_run_anim)
+            },
+            "skeleton_dict": {
+                "idle_right": self.skeleton_anim,
+                "idle_left": flip_anim(self.skeleton_anim),
+                "run_right": self.skeleton_run_anim,
+                "run_left": flip_anim(self.skeleton_run_anim)
+            },
+            # Knight
+            "knight_dict": {
+                "idle_right": self.knight_anim,
+                "idle_left": flip_anim(self.knight_anim),
+                "run_right": self.knight_run_anim,
+                "run_left": flip_anim(self.knight_run_anim)
+            },
+            ""
+            # Items
+            "sword": self.sword,
+            # Consumables
+            "red_potion": self.red_potion,
+            "mouse_select": self.mouse_select
+        }

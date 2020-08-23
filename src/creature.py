@@ -214,8 +214,8 @@ class Creature:
 
         self.owner.x += dx
         self.owner.y += dy
-        self.owner.rect.topleft = (
-            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
+        # self.owner.rect.topleft = (
+        #     self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
     def _update_anim_status(self, dx, dy):
         """

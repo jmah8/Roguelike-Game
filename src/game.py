@@ -84,7 +84,7 @@ class Game:
             self.player = generate_player(self.map_info.map_tree, self)
         else:
             self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
-            self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+            # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
 
         self.creature_data["enemy"] = generate_enemies(self.map_info.map_tree, self)
 
@@ -344,7 +344,7 @@ class Game:
         """
         self.player.x = x
         self.player.y = y
-        self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+        # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
         self.creature_data["enemy"] = enemy_list
         self.item_group = item_group
         self.map_info = map_info
@@ -356,7 +356,7 @@ class Game:
         x, y = self.player.x, self.player.y
         self.free_camera.x = x
         self.free_camera.y = y
-        self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera.y * SPRITE_SIZE)
+        # self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera.y * SPRITE_SIZE)
         while camera_on:
             events = pygame.event.get()
             for event in events:
@@ -395,7 +395,7 @@ class Game:
             fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
 
             self.drawing.draw()
-            self.drawing.draw_at_camera_offset(self.free_camera)
+            self.drawing.draw_at_camera_offset_entity(self.free_camera)
             pygame.display.flip()
 
     def cast_magic(self):

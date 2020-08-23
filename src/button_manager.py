@@ -35,7 +35,7 @@ class Button_Manager:
         num_button (int): max number of buttons
     """
 
-    def __init__(self, game_surface, x, y, width, height, num_button=NUM_OF_BUTTONS):
+    def __init__(self, game_surface, x=0, y=0, width=0, height=0, num_button=NUM_OF_BUTTONS):
         self.num_button = num_button
         self.x = game_surface.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (self.num_button // 2)))
         self.y = game_surface.get_height() - SPRITE_SIZE
