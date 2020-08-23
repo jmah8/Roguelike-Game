@@ -108,14 +108,19 @@ class Menu_Manager:
             exp = player.creature.stat.exp
             level = player.creature.stat.level
 
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*0), WHITE, "hp: " + str(hp) + "/" + str(max_hp))
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*1), WHITE, "mp: " + str(mp) + "/" + str(max_mp))
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*2), WHITE, "strength: " + str(strength))
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*3), WHITE, "dexterity: " + str(dexterity))
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*4), WHITE, "intelligence: " + str(intelligence))
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*5), WHITE, "exp: " + str(exp) + "/ 100")
-            game_text.draw_text(stat_surface, (0, SPRITE_SIZE * 2 + 28*6), WHITE, "level: " + str(level))
+            stat_list = ["hp: " + str(hp) + "/" + str(max_hp),
+                         "mp: " + str(mp) + "/" + str(max_mp),
+                         "strength: " + str(strength),
+                         "dexterity: " + str(dexterity),
+                         "intelligence: " + str(intelligence),
+                         "exp: " + str(exp) + "/ 100",
+                         "level: " + str(level)]
 
+            for i, stat in enumerate(stat_list):
+                game_text.draw_text(stat_surface, (0, character_icon.get_height() + FONT_SIZE * i),
+                                    WHITE, stat)
+
+            stat_surface.blit(character_icon, (0, 0))
 
         menu_width, menu_height = self.game.camera.camera_width / 4, self.game.camera.camera_height - (SPRITE_SIZE * 2)
         stat_surface = pygame.Surface((menu_width, menu_height))
@@ -135,7 +140,6 @@ class Menu_Manager:
             self.game.clock.tick(FPS)
             # self.game.update()
             draw_stat(self.game.player)
-            stat_surface.blit(character_icon, (0, 0))
             self.game.surface.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
 
             pygame.display.flip()

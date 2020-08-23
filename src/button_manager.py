@@ -32,12 +32,14 @@ class Button_Manager:
         button_count (int): number of buttons currently in button manager
         button_surface (arg, surface): surface that will hold all the buttons.
             Used for finding width and height of surface
+        num_button (int): max number of buttons
     """
 
-    def __init__(self, game_surface):
-        self.x = game_surface.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (NUM_OF_BUTTONS // 2)))
+    def __init__(self, game_surface, x, y, width, height, num_button=NUM_OF_BUTTONS):
+        self.num_button = num_button
+        self.x = game_surface.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (self.num_button // 2)))
         self.y = game_surface.get_height() - SPRITE_SIZE
-        self.button_surface = pygame.Surface(((SPRITE_SIZE * NUM_OF_BUTTONS), SPRITE_SIZE))
+        self.button_surface = pygame.Surface(((SPRITE_SIZE * self.num_button), SPRITE_SIZE))
         self.button_surface.set_colorkey(BLACK)
         self.button_dict = {}
         self.button_count = 0
@@ -55,7 +57,7 @@ class Button_Manager:
                 unique
             menu_option (function): function to call when button pressed
         """
-        if not self.button_count >= NUM_OF_BUTTONS:
+        if not self.button_count >= self.num_button:
             button = Button(self.button_count, img, menu_option)
             if button_id not in self.button_dict:
                 self.button_dict[button_id] = button

@@ -249,7 +249,7 @@ class Game:
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if self.map_info.map_array[self.player.y][self.player.x] == DOWNSTAIR:
+            if self.floor < NUM_OF_FLOOR and self.map_info.map_array[self.player.y][self.player.x] == DOWNSTAIR:
                 self.floor += 1
                 self.transition_next_level()
 

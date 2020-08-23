@@ -56,7 +56,7 @@ YELLOW = (255, 255, 0)
 INVENTORY_BEIGE = (239,228,176)
 
 # Game constants
-NUM_OF_FLOOR = 5
+NUM_OF_FLOOR = 3
 
 # Creature stats
 REGEN_TIME = 5
