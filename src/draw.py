@@ -8,6 +8,129 @@ from button_manager import Button_Manager
 import game
 
 
+def draw_at_camera_offset_without_image(obj):
+    """
+    Draws obj on surface taking into account camera offset
+
+    Args:
+        obj (Object): Entity to draw
+    """
+    config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_without_image(obj))
+
+
+def draw_at_camera_offset_with_image(obj):
+    """
+    Draws obj on surface taking into account camera offset
+
+    Args:
+        obj (Object): Entity to draw
+    """
+    config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_with_image(obj))
+
+
+def draw_tiles():
+    """
+    Draws all tiles offset by camera
+    """
+    for col in config.MAP_INFO.tile_array:
+        for tile in col:
+            draw_at_camera_offset_without_image(tile)
+
+
+def draw_grid():
+    for x in range(0, config.CAMERA.camera_width, SPRITE_SIZE):
+        pygame.draw.line(config.SURFACE_MAIN, GREY, (x, 0), (x, config.CAMERA.camera_height))
+
+    for y in range(0, config.CAMERA.camera_height, SPRITE_SIZE):
+        pygame.draw.line(config.SURFACE_MAIN, GREY, (0, y), (config.CAMERA.camera_width, y))
+
+
+def draw_debug():
+    """
+    Draws FPS counter on top right of screen
+    """
+    game_text.draw_text(config.SURFACE_MAIN, (config.CAMERA.camera_width - 125, 15), WHITE,
+                   "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
+
+
+def draw_map_menu():
+    """
+    Draws map. This map
+    is a replica of the actual map
+    """
+    map_data = config.MAP_INFO
+    tile_array = map_data.tile_array
+
+    scale_tile_width = RESOLUTION[0] / map_data.tile_width
+    scale_tile_height = RESOLUTION[1] / map_data.tile_height
+    scale_factor_x = SPRITE_SIZE / scale_tile_width
+    scale_factor_y = SPRITE_SIZE / scale_tile_height
+
+    minimap = pygame.Surface((RESOLUTION[0], RESOLUTION[1]))
+
+    for y in range(map_data.tile_height):
+        for x in range(map_data.tile_width):
+            tile = tile_array[y][x]
+            tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
+            minimap.blit(tile_img, tile_img_rect)
+
+    player_img, player_img_rect = sprite.scale_for_minimap(config.PLAYER, scale_factor_x, scale_factor_y)
+
+    minimap.blit(player_img, player_img_rect)
+
+    config.SURFACE_MAIN.blit(minimap, (0, 0))
+
+
+def draw_img_at_coord(img, x_coord, y_coord):
+    """
+    Draws img at (x_coord, y_coord) relative to screen
+
+    x and y coord are coords on the map
+
+    Args:
+        img (sprite): image to update at (x, y)
+        x_coord (int): x coord to draw tile onto
+        y_coord (int): y coord to draw tile onto
+    """
+    config.SURFACE_MAIN.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
+
+
+def draw_magic_path(line):
+    """
+    Highlights the path the spell will take
+
+    Args:
+        line (List): List of coords the spell will pass through
+    """
+    for (x, y) in line:
+        relative_x, relative_y = config.CAMERA.get_relative_screen_coord(x, y)
+        draw_img_at_coord(config.SPRITE.select_tile, relative_x, relative_y)
+
+
+def draw_minimap(game):
+    """
+    Draws minimap on topleft of screen. This is a
+    representation of the actual map.
+
+    Args:
+        game (Game): Game to load minimap to
+    """
+    if READ_FROM_FILE:
+        minimap.draw_minimap_loaded_map(game)
+    else:
+        minimap.draw_minimap_generated_map(game)
+
+
+def draw_player_stats():
+    player = config.PLAYER
+    hp = player.creature.stat.hp / player.creature.stat.max_hp
+    mp = player.creature.stat.mp / player.creature.stat.max_mp
+    exp = player.creature.stat.exp / 100
+    pygame.draw.rect(config.SURFACE_MAIN, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
+    pygame.draw.rect(config.SURFACE_MAIN, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
+    pygame.draw.rect(config.SURFACE_MAIN, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
+
+
 class Drawing:
     def __init__(self, game):
         """
@@ -29,11 +152,11 @@ class Drawing:
         after calling this method to update display
         """
         # Draws all tiles
-        self.draw_tiles()
+        draw_tiles()
 
         self.draw_game_objects()
 
-        self.draw_grid()
+        draw_grid()
 
         self.draw_particles()
 
@@ -42,41 +165,15 @@ class Drawing:
         self.draw_ui()
 
         if self.game.mini_map_on:
-            self.draw_minimap(self.game)
+            draw_minimap(self.game)
 
     def draw_ui(self):
         """
         Draws ui part of game
         """
-        self.draw_player_stats()
-        self.draw_debug()
+        draw_player_stats()
+        draw_debug()
         self.draw_messages()
-
-    def draw_at_camera_offset_without_image(self, obj):
-        """
-        Draws obj on surface taking into account camera offset
-
-        Args:
-            obj (Object): Entity to draw
-        """
-        config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_without_image(obj))
-
-    def draw_at_camera_offset_with_image(self, obj):
-        """
-        Draws obj on surface taking into account camera offset
-
-        Args:
-            obj (Object): Entity to draw
-        """
-        config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_with_image(obj))
-
-    def draw_tiles(self):
-        """
-        Draws all tiles offset by camera
-        """
-        for col in config.MAP_INFO.tile_array:
-            for tile in col:
-                self.draw_at_camera_offset_without_image(tile)
 
     def draw_game_objects(self):
         """
@@ -91,7 +188,7 @@ class Drawing:
         """
         for item in self.game.item_group:
             if config.MAP_INFO.tile_array[item.y][item.x].seen:
-                self.draw_at_camera_offset_without_image(item)
+                draw_at_camera_offset_without_image(item)
 
     def _draw_creatures(self):
         """
@@ -100,14 +197,14 @@ class Drawing:
         for creature in self.game.creature_data["enemy"] + self.game.creature_data["player"]:
             if fov.check_if_in_fov(self.game, creature):
                 creature.update_anim()
-                self.draw_at_camera_offset_without_image(creature)
+                draw_at_camera_offset_without_image(creature)
 
     def draw_particles(self):
         """
         Draws all particles shifted by camera and updates them after
         """
         for particle in self.game.particles:
-            self.draw_at_camera_offset_with_image(particle)
+            draw_at_camera_offset_with_image(particle)
             particle.update()
 
     def add_buttons(self):
@@ -120,20 +217,6 @@ class Drawing:
                                        self.game.menu_manager.inventory_menu)
         self.button_manager.add_button(config.SPRITE.minimap_button, 'minimap', self.game.toggle_minimap)
         self.button_manager.add_button(config.SPRITE.minimap_button, 'map', self.game.menu_manager.map_menu)
-
-    def draw_grid(self):
-        for x in range(0, config.CAMERA.camera_width, SPRITE_SIZE):
-            pygame.draw.line(config.SURFACE_MAIN, GREY, (x, 0), (x, config.CAMERA.camera_height))
-
-        for y in range(0, config.CAMERA.camera_height, SPRITE_SIZE):
-            pygame.draw.line(config.SURFACE_MAIN, GREY, (0, y), (config.CAMERA.camera_width, y))
-
-    def draw_debug(self):
-        """
-        Draws FPS counter on top right of screen
-        """
-        game_text.draw_text(config.SURFACE_MAIN, (config.CAMERA.camera_width - 125, 15), WHITE,
-                       "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
     def draw_messages(self):
         to_draw = game_text.messages_to_draw(self.game.GAME_MESSAGES)
@@ -156,33 +239,6 @@ class Drawing:
         """
         self.game.GAME_MESSAGES.append((ingame_message, message_color))
 
-    def draw_map_menu(self):
-        """
-        Draws map. This map
-        is a replica of the actual map
-        """
-        map_data = config.MAP_INFO
-        tile_array = map_data.tile_array
-
-        scale_tile_width = RESOLUTION[0] / map_data.tile_width
-        scale_tile_height = RESOLUTION[1] / map_data.tile_height
-        scale_factor_x = SPRITE_SIZE / scale_tile_width
-        scale_factor_y = SPRITE_SIZE / scale_tile_height
-
-        minimap = pygame.Surface((RESOLUTION[0], RESOLUTION[1]))
-
-        for y in range(map_data.tile_height):
-            for x in range(map_data.tile_width):
-                tile = tile_array[y][x]
-                tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
-                minimap.blit(tile_img, tile_img_rect)
-
-        player_img, player_img_rect = sprite.scale_for_minimap(config.PLAYER, scale_factor_x, scale_factor_y)
-
-        minimap.blit(player_img, player_img_rect)
-
-        config.SURFACE_MAIN.blit(minimap, (0, 0))
-
     def draw_mouse(self):
         """
         Draws mouse_select image at mouse position
@@ -191,53 +247,7 @@ class Drawing:
         mouse_x = mouse_x // SPRITE_SIZE
         mouse_y = mouse_y // SPRITE_SIZE
 
-        self.draw_img_at_coord(config.SPRITE.mouse_select, mouse_x, mouse_y)
-
-    def draw_img_at_coord(self, img, x_coord, y_coord):
-        """
-        Draws img at (x_coord, y_coord) relative to screen
-
-        x and y coord are coords on the map
-
-        Args:
-            img (sprite): image to update at (x, y)
-            x_coord (int): x coord to draw tile onto
-            y_coord (int): y coord to draw tile onto
-        """
-        config.SURFACE_MAIN.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
-
-    def draw_magic_path(self, line):
-        """
-        Highlights the path the spell will take
-
-        Args:
-            line (List): List of coords the spell will pass through
-        """
-        for (x, y) in line:
-            relative_x, relative_y = config.CAMERA.get_relative_screen_coord(x, y)
-            self.draw_img_at_coord(config.SPRITE.select_tile, relative_x, relative_y)
-
-    def draw_minimap(self, game):
-        """
-        Draws minimap on topleft of screen. This is a
-        representation of the actual map.
-
-        Args:
-            game (Game): Game to load minimap to
-        """
-        if READ_FROM_FILE:
-            minimap.draw_minimap_loaded_map(game)
-        else:
-            minimap.draw_minimap_generated_map(game)
-
-    def draw_player_stats(self):
-        player = config.PLAYER
-        hp = player.creature.stat.hp / player.creature.stat.max_hp
-        mp = player.creature.stat.mp / player.creature.stat.max_mp
-        exp = player.creature.stat.exp / 100
-        pygame.draw.rect(config.SURFACE_MAIN, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
-        pygame.draw.rect(config.SURFACE_MAIN, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
-        pygame.draw.rect(config.SURFACE_MAIN, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
+        draw_img_at_coord(config.SPRITE.mouse_select, mouse_x, mouse_y)
 
 
 
