@@ -6,7 +6,7 @@ import magic
 import pathfinding
 import sprite
 from camera import Camera
-from draw import Drawing
+import draw
 from entity_generator import *
 from menu_manager import Menu_Manager
 from queue import LifoQueue
@@ -28,7 +28,7 @@ class Game:
 
         self.running = True
 
-        self.drawing = Drawing(self)
+        self.drawing = draw.Drawing(self)
         self.menu_manager = Menu_Manager(self)
 
         self.drawing.add_buttons()
@@ -51,6 +51,18 @@ class Game:
         self.particles = []
 
         self.floor = 1
+
+        """
+        Game data:
+        self.creature_data
+        self.GAME_MESSAGES
+        self.previous_levels
+        self.next_levels
+        
+        self.wall_hack
+        self.mini_map_on
+        self.floor = 1
+        """
 
     def new(self):
         """
@@ -119,10 +131,10 @@ class Game:
         config.CAMERA.update(config.PLAYER)
 
         if not self.wall_hack:
-            self.fov = fov.new_fov(config.MAP_INFO)
+            config.FOV = fov.new_fov(config.MAP_INFO)
 
-        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, config.PLAYER)
-        fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov)
+        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
+        fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
 
         self.drawing.draw()
 
@@ -387,13 +399,13 @@ class Game:
             config.CLOCK.tick(FPS)
             config.CAMERA.update(self.free_camera)
             if not self.wall_hack:
-                self.fov = fov.new_fov(config.MAP_INFO)
+                config.FOV = fov.new_fov(config.MAP_INFO)
 
-            fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, config.PLAYER)
-            fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov)
+            fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
+            fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
 
             self.drawing.draw()
-            draw_at_camera_offset_without_image(self.free_camera)
+            draw.draw_at_camera_offset_without_image(self.free_camera)
             pygame.display.flip()
 
     def cast_magic(self):
@@ -433,7 +445,7 @@ class Game:
         """
         self.wall_hack = not self.wall_hack
         if self.wall_hack:
-            self.fov = [[1 for x in range(0, config.MAP_INFO.tile_width)] for y in
+            config.FOV = [[1 for x in range(0, config.MAP_INFO.tile_width)] for y in
                         range(config.MAP_INFO.tile_height)]
 
     def map_items_at_coord(self, coord_x, coord_y):

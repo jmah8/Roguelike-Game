@@ -90,7 +90,7 @@ def check_if_in_fov(game, obj):
     """
     x = obj.x
     y = obj.y
-    return game.fov[y][x] == 1
+    return config.FOV[y][x] == 1
 
 
 sintable = [

@@ -5,6 +5,7 @@ import entity_generator
 import gamemap
 import camera
 import pathfinding
+import fov
 
 pygame.init()
 
@@ -20,5 +21,7 @@ PATHFINDING.make_graph(MAP_INFO)
 PATHFINDING.neighbour()
 
 PLAYER = None
+
+FOV = fov.new_fov(MAP_INFO)
 
 TURN_COUNT = 0

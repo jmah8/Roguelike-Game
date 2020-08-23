@@ -138,7 +138,6 @@ class Drawing:
 
         Attributes:
             game (arg, Game): Game with game data
-            game_surface (arg, Surface): Surface to draw on
             button_manager (ButtonManager): Class that holds the bottom buttons
         """
         self.game = game
