@@ -49,7 +49,7 @@ class Drawing:
         """
         Draws ui part of game
         """
-        self.draw_player_stats(self.game.player)
+        self.draw_player_stats()
         self.draw_debug()
         self.draw_messages()
 
@@ -178,7 +178,7 @@ class Drawing:
                 tile_img, tile_img_rect = sprite.scale_for_minimap(tile, scale_factor_x, scale_factor_y)
                 minimap.blit(tile_img, tile_img_rect)
 
-        player_img, player_img_rect = sprite.scale_for_minimap(self.game.player, scale_factor_x, scale_factor_y)
+        player_img, player_img_rect = sprite.scale_for_minimap(config.PLAYER, scale_factor_x, scale_factor_y)
 
         minimap.blit(player_img, player_img_rect)
 
@@ -231,7 +231,8 @@ class Drawing:
         else:
             minimap.draw_minimap_generated_map(game)
 
-    def draw_player_stats(self, player):
+    def draw_player_stats(self):
+        player = config.PLAYER
         hp = player.creature.stat.hp / player.creature.stat.max_hp
         mp = player.creature.stat.mp / player.creature.stat.max_mp
         exp = player.creature.stat.exp / 100

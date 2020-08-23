@@ -1,3 +1,4 @@
+import config
 import random
 import creature
 import entity
@@ -40,7 +41,7 @@ def _generate_enemy(room, game, enemy_list):
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
     # This makes it so no mosters spawn on same tile as player
-    while (x, y) == (game.player.x, game.player.y):
+    while (x, y) == (config.PLAYER.x, config.PLAYER.y):
         x = random.randint(x1, x2)
         y = random.randint(y1, y2)
 

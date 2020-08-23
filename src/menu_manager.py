@@ -1,5 +1,5 @@
-import config
 from constant import *
+import config
 import magic
 import game_text
 
@@ -83,7 +83,7 @@ class Menu_Manager:
             self.game.update()
             self.game.drawing.draw_mouse()
             m_x, m_y = config.CAMERA.get_mouse_coord()
-            line = magic.line(self.game.player.position, (m_x, m_y), config.MAP_INFO.tile_array)
+            line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array)
             self.game.drawing.draw_magic_path(line)
             pygame.display.flip()
 
@@ -124,7 +124,7 @@ class Menu_Manager:
 
         menu_width, menu_height = config.CAMERA.camera_width / 4, config.CAMERA.camera_height - (SPRITE_SIZE * 2)
         stat_surface = pygame.Surface((menu_width, menu_height))
-        character_icon = pygame.transform.scale(self.game.player.image, (SPRITE_SIZE * 2, SPRITE_SIZE * 2))
+        character_icon = pygame.transform.scale(config.PLAYER.image, (SPRITE_SIZE * 2, SPRITE_SIZE * 2))
 
         stat_open = True
         while stat_open:
@@ -139,7 +139,7 @@ class Menu_Manager:
 
             config.CLOCK.tick(FPS)
             self.game.update()
-            draw_stat(self.game.player)
+            draw_stat(config.PLAYER)
             config.SURFACE_MAIN.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
 
             pygame.display.flip()
@@ -198,7 +198,7 @@ class Menu_Manager:
 
         for y in range (num_items_col - 1):
             for x in range (num_items_row):
-                inventory_array = self.game.player.container.inventory
+                inventory_array = config.PLAYER.container.inventory
                 item_surface.blit(config.SPRITE.empty_inventory_slot, (
                     (0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
                 if len(inventory_array) >= counter + 1:

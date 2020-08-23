@@ -175,7 +175,7 @@ def find_closest_unseen_tile(game):
     """
     closest_unseen_tile = None
     closest_distance = sys.maxsize
-    p_coord = (game.player.x, game.player.y)
+    p_coord = (config.PLAYER.x, config.PLAYER.y)
     # Find the closest (by literal distance, not
     # how many steps it would take) unseen tile
     for tile in config.MAP_INFO.unseen_tiles:
@@ -206,7 +206,7 @@ def find_closest_unseen_tile_walking_distance(game):
     """
     closest_unseen_tile = None
     closest_distance = sys.maxsize
-    p_coord = (game.player.x, game.player.y)
+    p_coord = (config.PLAYER.x, config.PLAYER.y)
     # Find the closest unseen tile
     for tile in config.MAP_INFO.unseen_tiles:
         visited = config.PATHFINDING.bfs(p_coord, tile)

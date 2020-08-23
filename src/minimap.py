@@ -13,20 +13,19 @@ def _draw_minimap_player_generated_map(game, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to sclae y by
     """
     pygame.draw.rect(config.SURFACE_MAIN, BLUE,
-                     ((game.player.rect[0] / scale_factor_x),
-                      (game.player.rect[1] / scale_factor_y),
+                     ((config.PLAYER.rect[0] / scale_factor_x),
+                      (config.PLAYER.rect[1] / scale_factor_y),
                       # + 1 is to make player directly touch walls
                       # without making too big of difference in size
-                      (game.player.size[0] / scale_factor_x + 1),
-                      (game.player.size[1] / scale_factor_y + 1)))
+                      (config.PLAYER.size[0] / scale_factor_x + 1),
+                      (config.PLAYER.size[1] / scale_factor_y + 1)))
 
 
-def _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y):
+def _draw_unseen_tile_generated_map(scale_factor_x, scale_factor_y):
     """
     Draws unseen tiles as black
 
     Args:
-        game (Game): Game to draw unseen tile on
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to scale y by
     """
@@ -41,13 +40,12 @@ def _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y):
                           (SPRITE_SIZE / scale_factor_y + 2)))
 
 
-def _draw_minimap_rooms_generated_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_rooms_generated_map(scale_factor_x, scale_factor_y):
     """
     Draws rooms (and paths since paths are considered rooms)
     onto minimap as white
 
     Args:
-        game (Game): Game to draw rooms on
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
@@ -62,12 +60,11 @@ def _draw_minimap_rooms_generated_map(game, scale_factor_x, scale_factor_y):
                           (room.height * SPRITE_SIZE / scale_factor_y + 1)))
 
 
-def _draw_minimap_walls_generated_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_walls_generated_map(scale_factor_x, scale_factor_y):
     """
     Draws wall onto minimap as black
 
     Args:
-        game (Game): Game to draw wall on
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
@@ -95,9 +92,9 @@ def draw_minimap_generated_map(game):
     scale_factor_x = SPRITE_SIZE / scale_factor_width
     scale_factor_y = SPRITE_SIZE / scale_factor_height
 
-    _draw_minimap_walls_generated_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_rooms_generated_map(game, scale_factor_x, scale_factor_y)
-    _draw_unseen_tile_generated_map(game, scale_factor_x, scale_factor_y)
+    _draw_minimap_walls_generated_map(scale_factor_x, scale_factor_y)
+    _draw_minimap_rooms_generated_map(scale_factor_x, scale_factor_y)
+    _draw_unseen_tile_generated_map(scale_factor_x, scale_factor_y)
     _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y)
     _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y)
     _draw_minimap_player_generated_map(game, scale_factor_x, scale_factor_y)
@@ -136,7 +133,7 @@ def _draw_minimap_player_loaded_map(game, scale_factor_x, scale_factor_y):
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    player = game.player
+    player = config.PLAYER
     pygame.draw.rect(config.SURFACE_MAIN, BLUE,
                      (player.rect[0] // scale_factor_x, player.rect[1] // scale_factor_y,
                       player.size[0] // scale_factor_x + 1, player.size[1] // scale_factor_y + 1))

@@ -1,3 +1,4 @@
+from constant import *
 import config
 import fov
 import gamemap
@@ -5,7 +6,6 @@ import magic
 import pathfinding
 import sprite
 from camera import Camera
-from constant import *
 from draw import Drawing
 from entity_generator import *
 from menu_manager import Menu_Manager
@@ -81,16 +81,15 @@ class Game:
         self.particles = []
 
         if config.TURN_COUNT == 0:
-            self.player = generate_player(config.MAP_INFO.map_tree, self)
+            config.PLAYER = generate_player(config.MAP_INFO.map_tree, self)
         else:
-            self.player.x, self.player.y = generate_player_spawn(config.MAP_INFO.map_tree)
-            # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
+            config.PLAYER.x, config.PLAYER.y = generate_player_spawn(config.MAP_INFO.map_tree)
 
         self.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree, self)
 
         self.item_group = generate_items(config.MAP_INFO.map_tree, self)
 
-        self.creature_data["player"] = [self.player]
+        self.creature_data["player"] = [config.PLAYER]
 
     def _generate_new_map(self):
         """
@@ -117,12 +116,12 @@ class Game:
 
     def update(self):
         # Update what to lock camera on
-        config.CAMERA.update(self.player)
+        config.CAMERA.update(config.PLAYER)
 
         if not self.wall_hack:
             self.fov = fov.new_fov(config.MAP_INFO)
 
-        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, self.player)
+        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, config.PLAYER)
         fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov)
 
         self.drawing.draw()
@@ -209,16 +208,16 @@ class Game:
 
         # Pickup/Drop Item
         elif event.key == pygame.K_t:
-            objects_at_player = self.map_items_at_coord(self.player.x, self.player.y)
+            objects_at_player = self.map_items_at_coord(config.PLAYER.x, config.PLAYER.y)
             for obj in objects_at_player:
                 if obj.item:
-                    obj.item.pick_up(self.player)
+                    obj.item.pick_up(config.PLAYER)
             self._update_creatures(0, 0)
 
         # TODO: instead of dropping last item dropped, drop mouse event in inventory
         elif event.key == pygame.K_g:
-            if len(self.player.container.inventory) > 0:
-                self.player.container.inventory[-1].item.drop_item(self.player, self.player.x, self.player.y)
+            if len(config.PLAYER.container.inventory) > 0:
+                config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y)
             self._update_creatures(0, 0)
 
         elif event.key == pygame.K_ESCAPE:
@@ -243,13 +242,13 @@ class Game:
 
         # Returns to previous level
         elif event.key == pygame.K_1:
-            if config.MAP_INFO.tile_array[self.player.y][self.player.x].type == UPSTAIR:
+            if config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == UPSTAIR:
                 self.floor -= 1
                 self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if self.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[self.player.y][self.player.x].type == DOWNSTAIR:
+            if self.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
                 self.floor += 1
                 self.transition_next_level()
 
@@ -278,7 +277,7 @@ class Game:
             if not config.MAP_INFO.tile_array[move_y][move_x].seen:
                 return
 
-            start = (self.player.x, self.player.y)
+            start = (config.PLAYER.x, config.PLAYER.y)
             goal = (move_x, move_y)
             visited = config.PATHFINDING.bfs(start, goal)
             if visited:
@@ -308,7 +307,7 @@ class Game:
         """
         if not self.previous_levels.empty():
             # Saves current level to next level list
-            level_data = (self.player.x, self.player.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
+            level_data = (config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
             self.next_levels.put(level_data)
 
             x, y, map_info, enemy_list, item_group = self.previous_levels.get()
@@ -319,13 +318,13 @@ class Game:
         """
         Goes to next level
         """
-        level_data = (self.player.x, self.player.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
+        level_data = (config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
         self.previous_levels.put(level_data)
 
         if self.next_levels.empty():
             self.new()
             # Places upstair at where the player entered the map at
-            config.MAP_INFO.tile_array[self.player.y][self.player.x].type = UPSTAIR
+            config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type = UPSTAIR
         else:
             x, y, map_info, enemy_list, item_group = self.next_levels.get()
 
@@ -342,8 +341,8 @@ class Game:
             x (int): player's x position on level
             y (int): player's y position on level
         """
-        self.player.x = x
-        self.player.y = y
+        config.PLAYER.x = x
+        config.PLAYER.y = y
         self.creature_data["enemy"] = enemy_list
         self.item_group = item_group
         config.MAP_INFO = map_info
@@ -352,7 +351,7 @@ class Game:
 
     def _toggle_camera(self):
         camera_on = True
-        x, y = self.player.x, self.player.y
+        x, y = config.PLAYER.x, config.PLAYER.y
         self.free_camera.x = x
         self.free_camera.y = y
         # self.free_camera.rect.topleft = (self.free_camera.x * SPRITE_SIZE, self.free_camera.y * SPRITE_SIZE)
@@ -390,7 +389,7 @@ class Game:
             if not self.wall_hack:
                 self.fov = fov.new_fov(config.MAP_INFO)
 
-            fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, self.player)
+            fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, config.PLAYER)
             fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov)
 
             self.drawing.draw()
@@ -403,10 +402,10 @@ class Game:
         it travels through currently
         """
         move_x, move_y = config.CAMERA.get_mouse_coord()
-        start = (self.player.x, self.player.y)
+        start = (config.PLAYER.x, config.PLAYER.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, config.MAP_INFO.tile_array)
-        magic.cast_lightning(self, self.player, line)
+        magic.cast_lightning(self, config.PLAYER, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
         self._update_creatures(0, 0)
@@ -418,7 +417,7 @@ class Game:
         # If tile is unexplored do nothing
         if not config.MAP_INFO.tile_array[self.free_camera.y][self.free_camera.x].seen:
             return
-        start = (self.player.x, self.player.y)
+        start = (config.PLAYER.x, config.PLAYER.y)
         goal = (self.free_camera.x, self.free_camera.y)
         # Generates path
         visited = config.PATHFINDING.bfs(start, goal)
@@ -464,7 +463,7 @@ class Game:
             ignore (boolean): if true, ignore monsters showing up in FOV and
                 continue moving, else stop and prevent movement
         """
-        old_coord = (self.player.x, self.player.y)
+        old_coord = (config.PLAYER.x, config.PLAYER.y)
         if len(path) == 0:
             if not ignore:
                 # If enemy in FOV stop auto moving
