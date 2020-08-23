@@ -26,8 +26,6 @@ class Game:
         # Repeat keys when held down
         pygame.key.set_repeat(350, 75)
 
-        self.clock = pygame.time.Clock()
-
         self.turn_count = 0
 
         self.running = True
@@ -111,7 +109,7 @@ class Game:
         """
         self.playing = True
         while self.playing:
-            self.clock.tick(FPS)
+            config.CLOCK.tick(FPS)
             self.handle_events()
             self.update()
             pygame.display.flip()
@@ -286,7 +284,7 @@ class Game:
                 path = self.graph.find_path(start, goal, visited)
                 self.move_char_auto(path, True)
 
-            self.clock.tick(FPS)
+            config.CLOCK.tick(FPS)
             self.update()
             pygame.display.flip()
 
@@ -386,7 +384,7 @@ class Game:
                     elif event.key == pygame.K_m:
                         camera_on = False
 
-            self.clock.tick(FPS)
+            config.CLOCK.tick(FPS)
             self.camera.update(self.free_camera)
             if not self.wall_hack:
                 self.fov = fov.new_fov(self.map_info)
@@ -494,7 +492,7 @@ class Game:
                 old_coord = coord
 
                 self.update()
-                self.clock.tick(20)
+                config.CLOCK.tick(20)
                 pygame.display.flip()
 
     def _check_if_enemy_in_fov(self):

@@ -1,6 +1,7 @@
+from constant import *
+import config
 import game_text
 import minimap
-from constant import *
 import fov
 import sprite
 from button_manager import Button_Manager
@@ -133,7 +134,7 @@ class Drawing:
         Draws FPS counter on top right of screen
         """
         game_text.draw_text(self.game_surface, (self.game.camera.camera_width - 125, 15), WHITE,
-                       "FPS: " + str(int(self.game.clock.get_fps())), BLACK)
+                       "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
     def draw_messages(self):
         to_draw = game_text.messages_to_draw(self.game.GAME_MESSAGES)

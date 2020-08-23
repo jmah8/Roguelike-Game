@@ -1,4 +1,5 @@
 from constant import *
+import config
 
 class Entity:
     """
@@ -124,7 +125,7 @@ class Entity:
         and if it is moving and direction it is facing
         """
         if self.anim_length > 1:
-            clock = self.game.clock.get_fps()
+            clock = config.CLOCK.get_fps()
 
             if clock > 0.0:
                 self.flicker_timer += 1 / clock

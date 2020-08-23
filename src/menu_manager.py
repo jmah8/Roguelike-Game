@@ -25,7 +25,7 @@ class Menu_Manager:
             game_text.draw_text(config.SURFACE_MAIN,
                                         ((CAMERA_WIDTH - FONT_SIZE) / 2, (CAMERA_HEIGHT - FONT_SIZE) / 2), WHITE,
                                         "PAUSED", BLACK)
-            self.game.clock.tick(60)
+            config.CLOCK.tick(60)
             pygame.display.update()
 
     def map_menu(self):
@@ -50,7 +50,7 @@ class Menu_Manager:
 
             self.game.drawing.draw_map_menu()
             self.game.drawing.button_manager.draw_buttons()
-            self.game.clock.tick(60)
+            config.CLOCK.tick(60)
             pygame.display.update()
 
         # TODO: could move this to menu_manager
@@ -79,7 +79,7 @@ class Menu_Manager:
                         magic_cast = False
                         break
 
-            self.game.clock.tick(FPS)
+            config.CLOCK.tick(FPS)
             self.game.update()
             self.game.drawing.draw_mouse()
             m_x, m_y = self.game.camera.get_mouse_coord()
@@ -137,7 +137,7 @@ class Menu_Manager:
                     stat_open = False
                     break
 
-            self.game.clock.tick(FPS)
+            config.CLOCK.tick(FPS)
             # self.game.update()
             draw_stat(self.game.player)
             config.SURFACE_MAIN.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
@@ -182,7 +182,7 @@ class Menu_Manager:
                         self.game.toggle_minimap()
                     if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
                         menu_closed = True
-            self.game.clock.tick(60)
+            config.CLOCK.tick(60)
             pygame.display.update()
 
     def _load_inventory_screen(self):
