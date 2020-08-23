@@ -74,7 +74,7 @@ class MapInfo:
         unseen_tiles (set): set of unseen tiles coord tuple
     """
 
-    def __init__(self, game):
+    def __init__(self):
 
         if READ_FROM_FILE:
             # Holds the map representation (chars)
@@ -178,7 +178,7 @@ def find_closest_unseen_tile(game):
     p_coord = (game.player.x, game.player.y)
     # Find the closest (by literal distance, not
     # how many steps it would take) unseen tile
-    for tile in game.map_info.unseen_tiles:
+    for tile in config.MAP_INFO.unseen_tiles:
         dist = distance(p_coord, tile)
         if closest_distance > dist:
             closest_distance = dist
@@ -208,7 +208,7 @@ def find_closest_unseen_tile_walking_distance(game):
     closest_distance = sys.maxsize
     p_coord = (game.player.x, game.player.y)
     # Find the closest unseen tile
-    for tile in game.map_info.unseen_tiles:
+    for tile in config.MAP_INFO.unseen_tiles:
         visited = game.graph.bfs(p_coord, tile)
         if visited:
             walking_distance = len(visited)

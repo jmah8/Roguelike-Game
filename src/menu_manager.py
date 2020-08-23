@@ -83,7 +83,7 @@ class Menu_Manager:
             self.game.update()
             self.game.drawing.draw_mouse()
             m_x, m_y = self.game.camera.get_mouse_coord()
-            line = magic.line(self.game.player.position, (m_x, m_y), self.game.map_info.tile_array)
+            line = magic.line(self.game.player.position, (m_x, m_y), config.MAP_INFO.tile_array)
             self.game.drawing.draw_magic_path(line)
             pygame.display.flip()
 
@@ -138,7 +138,7 @@ class Menu_Manager:
                     break
 
             config.CLOCK.tick(FPS)
-            # self.game.update()
+            self.game.update()
             draw_stat(self.game.player)
             config.SURFACE_MAIN.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
 
@@ -155,7 +155,7 @@ class Menu_Manager:
         while not menu_closed:
             events_list = pygame.event.get()
             menu_surface.fill(INVENTORY_BEIGE)
-            # self.game.update()
+            self.game.update()
 
             menu_surface.blit(self._load_inventory_screen(), (0, menu_height / 2))
             menu_surface.blit(self._load_equipment_screen(), (0, 0))

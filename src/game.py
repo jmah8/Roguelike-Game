@@ -60,7 +60,7 @@ class Game:
         """
         self._generate_new_map()
 
-        self.camera = Camera(self.map_info)
+        self.camera = Camera(config.MAP_INFO)
 
         self._initialize_pathfinding()
 
@@ -77,14 +77,14 @@ class Game:
         self.particles = []
 
         if self.turn_count == 0:
-            self.player = generate_player(self.map_info.map_tree, self)
+            self.player = generate_player(config.MAP_INFO.map_tree, self)
         else:
-            self.player.x, self.player.y = generate_player_spawn(self.map_info.map_tree)
+            self.player.x, self.player.y = generate_player_spawn(config.MAP_INFO.map_tree)
             # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
 
-        self.creature_data["enemy"] = generate_enemies(self.map_info.map_tree, self)
+        self.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree, self)
 
-        self.item_group = generate_items(self.map_info.map_tree, self)
+        self.item_group = generate_items(config.MAP_INFO.map_tree, self)
 
         self.creature_data["player"] = [self.player]
 
@@ -93,11 +93,11 @@ class Game:
         Generates new map with MapInfo
         """
         # Holds map info like width and height
-        self.map_info = gamemap.MapInfo(self)
+        config.MAP_INFO = gamemap.MapInfo()
 
     def _initialize_pathfinding(self):
         self.graph = pathfinding.Graph()
-        self.graph.make_graph(self.map_info)
+        self.graph.make_graph(config.MAP_INFO)
         self.graph.neighbour()
 
     def run(self):
@@ -116,10 +116,10 @@ class Game:
         self.camera.update(self.player)
 
         if not self.wall_hack:
-            self.fov = fov.new_fov(self.map_info)
+            self.fov = fov.new_fov(config.MAP_INFO)
 
-        fov.ray_casting(self.map_info, self.map_info.tile_array, self.fov, self.player)
-        fov.change_seen(self.map_info, self.map_info.tile_array, self.fov)
+        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, self.player)
+        fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov)
 
         self.drawing.draw()
 
@@ -159,13 +159,13 @@ class Game:
         new_height = event.h
         # Remove if statements if left and top should be empty
         # else right and bottom is empty
-        if new_width > self.map_info.pixel_width:
-            self.camera.camera_width = self.map_info.pixel_width
+        if new_width > config.MAP_INFO.pixel_width:
+            self.camera.camera_width = config.MAP_INFO.pixel_width
         else:
             self.camera.camera_width = event.w
 
-        if new_height > self.map_info.pixel_height:
-            self.camera.camera_height = self.map_info.pixel_height
+        if new_height > config.MAP_INFO.pixel_height:
+            self.camera.camera_height = config.MAP_INFO.pixel_height
         else:
             self.camera.camera_height = event.h
         # This line is only used in pygame 1
@@ -239,18 +239,18 @@ class Game:
 
         # Returns to previous level
         elif event.key == pygame.K_1:
-            if self.map_info.tile_array[self.player.y][self.player.x].type == UPSTAIR:
+            if config.MAP_INFO.tile_array[self.player.y][self.player.x].type == UPSTAIR:
                 self.floor -= 1
                 self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if self.floor < NUM_OF_FLOOR and self.map_info.tile_array[self.player.y][self.player.x].type == DOWNSTAIR:
+            if self.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[self.player.y][self.player.x].type == DOWNSTAIR:
                 self.floor += 1
                 self.transition_next_level()
 
         elif event.key == pygame.K_9:
-            s = pickle.dumps(self.map_info.tile_array)
+            s = pickle.dumps(config.MAP_INFO.tile_array)
             print(s)
 
     def _handle_mouse_event(self, event):
@@ -271,7 +271,7 @@ class Game:
             # Move player to mouse click
             move_x, move_y = self.camera.get_mouse_coord()
 
-            if not self.map_info.tile_array[move_y][move_x].seen:
+            if not config.MAP_INFO.tile_array[move_y][move_x].seen:
                 return
 
             start = (self.player.x, self.player.y)
@@ -304,7 +304,7 @@ class Game:
         """
         if not self.previous_levels.empty():
             # Saves current level to next level list
-            level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+            level_data = (self.player.x, self.player.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
             self.next_levels.put(level_data)
 
             x, y, map_info, enemy_list, item_group = self.previous_levels.get()
@@ -315,13 +315,13 @@ class Game:
         """
         Goes to next level
         """
-        level_data = (self.player.x, self.player.y, self.map_info, self.creature_data["enemy"], self.item_group)
+        level_data = (self.player.x, self.player.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
         self.previous_levels.put(level_data)
 
         if self.next_levels.empty():
             self.new()
             # Places upstair at where the player entered the map at
-            self.map_info.tile_array[self.player.y][self.player.x].type = UPSTAIR
+            config.MAP_INFO.tile_array[self.player.y][self.player.x].type = UPSTAIR
         else:
             x, y, map_info, enemy_list, item_group = self.next_levels.get()
 
@@ -342,8 +342,8 @@ class Game:
         self.player.y = y
         self.creature_data["enemy"] = enemy_list
         self.item_group = item_group
-        self.map_info = map_info
-        self.camera = Camera(self.map_info)
+        config.MAP_INFO = map_info
+        self.camera = Camera(config.MAP_INFO)
         self._initialize_pathfinding()
 
     def _toggle_camera(self):
@@ -384,10 +384,10 @@ class Game:
             config.CLOCK.tick(FPS)
             self.camera.update(self.free_camera)
             if not self.wall_hack:
-                self.fov = fov.new_fov(self.map_info)
+                self.fov = fov.new_fov(config.MAP_INFO)
 
-            fov.ray_casting(self.map_info, self.map_info.tile_array, self.fov, self.player)
-            fov.change_seen(self.map_info, self.map_info.tile_array, self.fov)
+            fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov, self.player)
+            fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, self.fov)
 
             self.drawing.draw()
             self.drawing.draw_at_camera_offset_without_image(self.free_camera)
@@ -401,7 +401,7 @@ class Game:
         move_x, move_y = self.camera.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
-        line = magic.line(start, goal, self.map_info.tile_array)
+        line = magic.line(start, goal, config.MAP_INFO.tile_array)
         magic.cast_lightning(self, self.player, line)
         # TODO: maybe change this since if player has ai but cast fireball,
         #       player would move + cast fireball at the same time
@@ -412,7 +412,7 @@ class Game:
         Moves to free camera location
         """
         # If tile is unexplored do nothing
-        if not self.map_info.tile_array[self.free_camera.y][self.free_camera.x].seen:
+        if not config.MAP_INFO.tile_array[self.free_camera.y][self.free_camera.x].seen:
             return
         start = (self.player.x, self.player.y)
         goal = (self.free_camera.x, self.free_camera.y)
@@ -430,8 +430,8 @@ class Game:
         """
         self.wall_hack = not self.wall_hack
         if self.wall_hack:
-            self.fov = [[1 for x in range(0, self.map_info.tile_width)] for y in
-                        range(self.map_info.tile_height)]
+            self.fov = [[1 for x in range(0, config.MAP_INFO.tile_width)] for y in
+                        range(config.MAP_INFO.tile_height)]
 
     def map_items_at_coord(self, coord_x, coord_y):
         """
@@ -513,7 +513,7 @@ class Game:
         Args:
             graph (Graph): Graph with nodes representing the walkable tiles
         """
-        if len(self.map_info.unseen_tiles) < 75:
+        if len(config.MAP_INFO.unseen_tiles) < 75:
             start, goal = gamemap.find_closest_unseen_tile_walking_distance(self)
         else:
             start, goal = gamemap.find_closest_unseen_tile(self)

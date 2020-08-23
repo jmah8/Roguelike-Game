@@ -1,6 +1,7 @@
-from particle import *
-import json
 import os
+import json
+import config
+from particle import *
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creature.json')) as f:
     data = json.load(f)
@@ -199,7 +200,7 @@ class Creature:
 
         if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
-            if self.owner.game.map_info.tile_array[self.y + dy][self.x + dx].type == WALL:
+            if config.MAP_INFO.tile_array[self.y + dy][self.x + dx].type == WALL:
                 return
 
         # check to see if entity collided with enemy or ally and if so don't move

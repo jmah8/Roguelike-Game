@@ -75,7 +75,7 @@ class Drawing:
         """
         Draws all tiles offset by camera
         """
-        for col in self.game.map_info.tile_array:
+        for col in config.MAP_INFO.tile_array:
             for tile in col:
                 self.draw_at_camera_offset_without_image(tile)
 
@@ -91,7 +91,7 @@ class Drawing:
         Draws item if the tile item is on is seen offset by camera
         """
         for item in self.game.item_group:
-            if self.game.map_info.tile_array[item.y][item.x].seen:
+            if config.MAP_INFO.tile_array[item.y][item.x].seen:
                 self.draw_at_camera_offset_without_image(item)
 
     def _draw_creatures(self):
@@ -162,8 +162,8 @@ class Drawing:
         Draws map. This map
         is a replica of the actual map
         """
-        map_data = self.game.map_info
-        tile_array = self.game.map_info.tile_array
+        map_data = config.MAP_INFO
+        tile_array = map_data.tile_array
 
         scale_tile_width = RESOLUTION[0] / map_data.tile_width
         scale_tile_height = RESOLUTION[1] / map_data.tile_height
