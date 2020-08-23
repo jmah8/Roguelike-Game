@@ -86,7 +86,7 @@ def draw_minimap_generated_map(game):
     Arg:
         game (Game): game to load minimap to
     """
-    minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
+    minimap_width, minimap_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
 
     map_data = config.MAP_INFO
 
@@ -112,7 +112,7 @@ def draw_minimap_loaded_map(game):
     Arg:
         game (Game): game to load minimap to
     """
-    minimap_width, minimap_height = game.camera.camera_width / 2, game.camera.camera_height / 2
+    minimap_width, minimap_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
     map_data = config.MAP_INFO
     scale_factor_width = minimap_width / map_data.tile_width
     scale_factor_height = minimap_height / map_data.tile_height

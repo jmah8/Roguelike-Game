@@ -60,7 +60,7 @@ class Drawing:
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.image, self.game.camera.apply_without_image(obj))
+        self.game_surface.blit(obj.image, config.CAMERA.apply_without_image(obj))
 
     def draw_at_camera_offset_with_image(self, obj):
         """
@@ -69,7 +69,7 @@ class Drawing:
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.image, self.game.camera.apply_with_image(obj))
+        self.game_surface.blit(obj.image, config.CAMERA.apply_with_image(obj))
 
     def draw_tiles(self):
         """
@@ -123,23 +123,23 @@ class Drawing:
         self.button_manager.add_button(config.SPRITE.minimap_button, 'map', self.game.menu_manager.map_menu)
 
     def draw_grid(self):
-        for x in range(0, self.game.camera.camera_width, SPRITE_SIZE):
-            pygame.draw.line(self.game_surface, GREY, (x, 0), (x, self.game.camera.camera_height))
+        for x in range(0, config.CAMERA.camera_width, SPRITE_SIZE):
+            pygame.draw.line(self.game_surface, GREY, (x, 0), (x, config.CAMERA.camera_height))
 
-        for y in range(0, self.game.camera.camera_height, SPRITE_SIZE):
-            pygame.draw.line(self.game_surface, GREY, (0, y), (self.game.camera.camera_width, y))
+        for y in range(0, config.CAMERA.camera_height, SPRITE_SIZE):
+            pygame.draw.line(self.game_surface, GREY, (0, y), (config.CAMERA.camera_width, y))
 
     def draw_debug(self):
         """
         Draws FPS counter on top right of screen
         """
-        game_text.draw_text(self.game_surface, (self.game.camera.camera_width - 125, 15), WHITE,
+        game_text.draw_text(self.game_surface, (config.CAMERA.camera_width - 125, 15), WHITE,
                        "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
     def draw_messages(self):
         to_draw = game_text.messages_to_draw(self.game.GAME_MESSAGES)
         text_height = game_text.text_height_helper(FONT_MESSAGE_TEXT)
-        y_pos = self.game.camera.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
+        y_pos = config.CAMERA.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
         messages_drawn_counter = 0
         for message, color in to_draw:
             game_text.draw_text(self.game_surface, (TEXT_SPACE_BUFFER,
@@ -215,7 +215,7 @@ class Drawing:
             line (List): List of coords the spell will pass through
         """
         for (x, y) in line:
-            relative_x, relative_y = self.game.camera.get_relative_screen_coord(x, y)
+            relative_x, relative_y = config.CAMERA.get_relative_screen_coord(x, y)
             self.draw_img_at_coord(config.SPRITE.select_tile, relative_x, relative_y)
 
     def draw_minimap(self, game):

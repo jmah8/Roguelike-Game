@@ -60,7 +60,7 @@ class Game:
         """
         self._generate_new_map()
 
-        self.camera = Camera(config.MAP_INFO)
+        config.CAMERA = Camera(config.MAP_INFO)
 
         self._initialize_pathfinding()
 
@@ -113,7 +113,7 @@ class Game:
 
     def update(self):
         # Update what to lock camera on
-        self.camera.update(self.player)
+        config.CAMERA.update(self.player)
 
         if not self.wall_hack:
             self.fov = fov.new_fov(config.MAP_INFO)
@@ -160,16 +160,16 @@ class Game:
         # Remove if statements if left and top should be empty
         # else right and bottom is empty
         if new_width > config.MAP_INFO.pixel_width:
-            self.camera.camera_width = config.MAP_INFO.pixel_width
+            config.CAMERA.camera_width = config.MAP_INFO.pixel_width
         else:
-            self.camera.camera_width = event.w
+            config.CAMERA.camera_width = event.w
 
         if new_height > config.MAP_INFO.pixel_height:
-            self.camera.camera_height = config.MAP_INFO.pixel_height
+            config.CAMERA.camera_height = config.MAP_INFO.pixel_height
         else:
-            self.camera.camera_height = event.h
+            config.CAMERA.camera_height = event.h
         # This line is only used in pygame 1
-        config.SURFACE_MAIN = pygame.display.set_mode((self.camera.camera_width, self.camera.camera_height),
+        config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
                                                pygame.RESIZABLE)
 
     def _handle_keyboard_event(self, event):
@@ -269,7 +269,7 @@ class Game:
                 return
 
             # Move player to mouse click
-            move_x, move_y = self.camera.get_mouse_coord()
+            move_x, move_y = config.CAMERA.get_mouse_coord()
 
             if not config.MAP_INFO.tile_array[move_y][move_x].seen:
                 return
@@ -343,7 +343,7 @@ class Game:
         self.creature_data["enemy"] = enemy_list
         self.item_group = item_group
         config.MAP_INFO = map_info
-        self.camera = Camera(config.MAP_INFO)
+        config.CAMERA = Camera(config.MAP_INFO)
         self._initialize_pathfinding()
 
     def _toggle_camera(self):
@@ -382,7 +382,7 @@ class Game:
                         camera_on = False
 
             config.CLOCK.tick(FPS)
-            self.camera.update(self.free_camera)
+            config.CAMERA.update(self.free_camera)
             if not self.wall_hack:
                 self.fov = fov.new_fov(config.MAP_INFO)
 
@@ -398,7 +398,7 @@ class Game:
         Casts lightning at mouse location and prints out the line
         it travels through currently
         """
-        move_x, move_y = self.camera.get_mouse_coord()
+        move_x, move_y = config.CAMERA.get_mouse_coord()
         start = (self.player.x, self.player.y)
         goal = (move_x, move_y)
         line = magic.line(start, goal, config.MAP_INFO.tile_array)

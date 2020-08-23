@@ -82,7 +82,7 @@ class Menu_Manager:
             config.CLOCK.tick(FPS)
             self.game.update()
             self.game.drawing.draw_mouse()
-            m_x, m_y = self.game.camera.get_mouse_coord()
+            m_x, m_y = config.CAMERA.get_mouse_coord()
             line = magic.line(self.game.player.position, (m_x, m_y), config.MAP_INFO.tile_array)
             self.game.drawing.draw_magic_path(line)
             pygame.display.flip()
@@ -122,7 +122,7 @@ class Menu_Manager:
 
             stat_surface.blit(character_icon, (0, 0))
 
-        menu_width, menu_height = self.game.camera.camera_width / 4, self.game.camera.camera_height - (SPRITE_SIZE * 2)
+        menu_width, menu_height = config.CAMERA.camera_width / 4, config.CAMERA.camera_height - (SPRITE_SIZE * 2)
         stat_surface = pygame.Surface((menu_width, menu_height))
         character_icon = pygame.transform.scale(self.game.player.image, (SPRITE_SIZE * 2, SPRITE_SIZE * 2))
 
@@ -150,7 +150,7 @@ class Menu_Manager:
         create screens for inventory + equipment menus
         """
         menu_closed = False
-        menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height
+        menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height
         menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
         while not menu_closed:
             events_list = pygame.event.get()
@@ -190,7 +190,7 @@ class Menu_Manager:
         Helper to create inventory with items
         :return:  inventory_surface
         """
-        menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height / 2
+        menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
         item_surface = pygame.Surface((menu_width, menu_height))
         num_items_row = TILE_WIDTH // 2
         num_items_col = TILE_HEIGHT // 2
@@ -214,7 +214,7 @@ class Menu_Manager:
         Helper to create equipment_screen with items
         :return:  equipment_surface
         """
-        menu_width, menu_height = self.game.camera.camera_width / 2, self.game.camera.camera_height / 2
+        menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
         equipment_surface = pygame.Surface((menu_width, menu_height))
 
         helmet_tl, helmet_br = (243, 24), (294, 67)
