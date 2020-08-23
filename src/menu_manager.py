@@ -1,3 +1,4 @@
+import draw
 from constant import *
 import config
 import magic
@@ -84,7 +85,7 @@ class Menu_Manager:
             self.game.drawing.draw_mouse()
             m_x, m_y = config.CAMERA.get_mouse_coord()
             line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array)
-            self.game.drawing.draw_magic_path(line)
+            draw.draw_magic_path(line)
             pygame.display.flip()
 
     def stat_menu(self):

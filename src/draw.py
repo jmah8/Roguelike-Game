@@ -228,16 +228,6 @@ class Drawing:
                                 None)
             messages_drawn_counter += 1
 
-    def add_game_message_to_print(self, ingame_message, message_color):
-        """
-        Adds game message to print
-
-        Args:
-            ingame_message (String): Message to add
-            message_color (Color): Color of message
-        """
-        self.game.GAME_MESSAGES.append((ingame_message, message_color))
-
     def draw_mouse(self):
         """
         Draws mouse_select image at mouse position

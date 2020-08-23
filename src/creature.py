@@ -163,9 +163,9 @@ class Creature:
             bool: if creature died return true else return false
         """
         self.stat.hp -= damage
-        self.owner.game.drawing.add_game_message_to_print(
+        self.owner.game.add_game_message_to_print(
             self.name_instance + " took " + str(damage) + " damage", RED)
-        self.owner.game.drawing.add_game_message_to_print(
+        self.owner.game.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
         NumberParticle(self.x, self.y, damage, self.owner.game.particles, RED)
@@ -180,7 +180,7 @@ class Creature:
         """
         Prints that Entity is dead and removes it from game.creature_data
         """
-        self.owner.game.drawing.add_game_message_to_print(
+        self.owner.game.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
         self.owner.game.creature_data[self.team].remove(self.owner)
 
@@ -250,7 +250,7 @@ class Creature:
             target (object): Entity to attack
             damage (int): damage to do to Entity
         """
-        self.owner.game.drawing.add_game_message_to_print(
+        self.owner.game.add_game_message_to_print(
             self.name_instance + " attacks " + target.creature.name_instance
             + " for " + str(damage) + " damage", WHITE)
         if target.creature.take_damage(damage):
@@ -285,7 +285,7 @@ class Creature:
         while self.stat.exp >= 100:
             self.stat.level += 1
             self.stat.exp -= 100
-            self.owner.game.drawing.add_game_message_to_print(
+            self.owner.game.add_game_message_to_print(
                 self.name_instance + " leveled up ", YELLOW)
 
 

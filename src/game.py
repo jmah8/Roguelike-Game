@@ -14,6 +14,19 @@ import pickle
 
 pygame.font.init()
 
+
+class GameData:
+    def __init__(self):
+        self.creature_data = {
+            "player": [],
+            "enemy": []
+        }
+        self.game_messages = []
+        self.previous_levels = LifoQueue()
+        self.next_levels = LifoQueue()
+        self.floor = 1
+
+
 class Game:
     def __init__(self):
         """
@@ -51,18 +64,6 @@ class Game:
         self.particles = []
 
         self.floor = 1
-
-        """
-        Game data:
-        self.creature_data
-        self.GAME_MESSAGES
-        self.previous_levels
-        self.next_levels
-        
-        self.wall_hack
-        self.mini_map_on
-        self.floor = 1
-        """
 
     def new(self):
         """
@@ -185,7 +186,7 @@ class Game:
             config.CAMERA.camera_height = event.h
         # This line is only used in pygame 1
         config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
-                                               pygame.RESIZABLE)
+                                                      pygame.RESIZABLE)
 
     def _handle_keyboard_event(self, event):
         """
@@ -260,7 +261,8 @@ class Game:
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if self.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
+            if self.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[config.PLAYER.y][
+                config.PLAYER.x].type == DOWNSTAIR:
                 self.floor += 1
                 self.transition_next_level()
 
@@ -319,7 +321,8 @@ class Game:
         """
         if not self.previous_levels.empty():
             # Saves current level to next level list
-            level_data = (config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
+            level_data = (
+            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"], self.item_group)
             self.next_levels.put(level_data)
 
             x, y, map_info, enemy_list, item_group = self.previous_levels.get()
@@ -446,7 +449,7 @@ class Game:
         self.wall_hack = not self.wall_hack
         if self.wall_hack:
             config.FOV = [[1 for x in range(0, config.MAP_INFO.tile_width)] for y in
-                        range(config.MAP_INFO.tile_height)]
+                          range(config.MAP_INFO.tile_height)]
 
     def map_items_at_coord(self, coord_x, coord_y):
         """
@@ -544,3 +547,13 @@ class Game:
         Toggles minimap
         """
         self.mini_map_on = not self.mini_map_on
+
+    def add_game_message_to_print(self, ingame_message, message_color):
+        """
+        Adds game message to print
+
+        Args:
+            ingame_message (String): Message to add
+            message_color (Color): Color of message
+        """
+        self.GAME_MESSAGES.append((ingame_message, message_color))

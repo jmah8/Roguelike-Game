@@ -18,9 +18,9 @@ class Item:
     def pick_up(self, entity):
         if entity.container:
             if entity.container.volume + self.volume > entity.container.volume:
-                self.owner.game.drawing.add_game_message_to_print("Inventory Full", WHITE)
+                self.owner.game.add_game_message_to_print("Inventory Full", WHITE)
             else:
-                self.owner.game.drawing.add_game_message_to_print("Picked Up " + self.name, WHITE)
+                self.owner.game.add_game_message_to_print("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
 
                 entity.game.item_group.remove(self.owner)
@@ -37,6 +37,6 @@ class Item:
         self.owner.x = x
         self.owner.y = y
         self.owner.rect.topleft = (x * SPRITE_SIZE, y * SPRITE_SIZE)
-        self.owner.game.drawing.add_game_message_to_print(self.name + " Item Dropped", WHITE)
+        self.owner.game.add_game_message_to_print(self.name + " Item Dropped", WHITE)
 
     ## TODO use_item()

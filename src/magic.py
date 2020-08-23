@@ -1,5 +1,7 @@
 import json
 import os
+
+import draw
 from constant import *
 import config
 import game as g
@@ -172,7 +174,7 @@ def _update_spell(game, particle_group):
     """
     game.update()
     for magic in particle_group:
-        game.drawing.draw_at_camera_offset_with_image(magic)
+        draw.draw_at_camera_offset_with_image(magic)
         magic.update()
     config.CLOCK.tick(20)
     pygame.display.update()
