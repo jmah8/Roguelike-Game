@@ -395,7 +395,7 @@ class Game:
             fov.change_seen(self.map_info, self.map_info.tile_array, self.fov, self.game_sprites.unseen_tile)
 
             self.drawing.draw()
-            self.drawing.draw_at_camera_offset_entity(self.free_camera)
+            self.drawing.draw_at_camera_offset_without_image(self.free_camera)
             pygame.display.flip()
 
     def cast_magic(self):

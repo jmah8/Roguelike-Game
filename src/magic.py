@@ -171,7 +171,7 @@ def _update_spell(game, particle_group):
     """
     game.update()
     for magic in particle_group:
-        game.drawing.draw_at_camera_offset(magic)
+        game.drawing.draw_at_camera_offset_with_image(magic)
         magic.update()
     game.clock.tick(20)
     pygame.display.update()

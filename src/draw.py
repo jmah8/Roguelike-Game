@@ -52,23 +52,23 @@ class Drawing:
         self.draw_debug()
         self.draw_messages()
 
-    def draw_at_camera_offset_entity(self, obj):
+    def draw_at_camera_offset_without_image(self, obj):
         """
         Draws obj on surface taking into account camera offset
 
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.image, self.game.camera.test_apply(obj))
+        self.game_surface.blit(obj.image, self.game.camera.apply_without_image(obj))
 
-    def draw_at_camera_offset(self, obj):
+    def draw_at_camera_offset_with_image(self, obj):
         """
         Draws obj on surface taking into account camera offset
 
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.image, self.game.camera.apply(obj))
+        self.game_surface.blit(obj.image, self.game.camera.apply_with_image(obj))
 
     def draw_tiles(self):
         """
@@ -76,7 +76,7 @@ class Drawing:
         """
         for col in self.game.map_info.tile_array:
             for tile in col:
-                self.draw_at_camera_offset(tile)
+                self.draw_at_camera_offset_without_image(tile)
 
     def draw_game_objects(self):
         """
@@ -91,7 +91,7 @@ class Drawing:
         """
         for item in self.game.item_group:
             if self.game.map_info.tile_array[item.y][item.x].seen:
-                self.draw_at_camera_offset_entity(item)
+                self.draw_at_camera_offset_without_image(item)
 
     def _draw_creatures(self):
         """
@@ -100,14 +100,14 @@ class Drawing:
         for creature in self.game.creature_data["enemy"] + self.game.creature_data["player"]:
             if fov.check_if_in_fov(self.game, creature):
                 creature.update_anim()
-                self.draw_at_camera_offset_entity(creature)
+                self.draw_at_camera_offset_without_image(creature)
 
     def draw_particles(self):
         """
         Draws all particles shifted by camera and updates them after
         """
         for particle in self.game.particles:
-            self.draw_at_camera_offset(particle)
+            self.draw_at_camera_offset_with_image(particle)
             particle.update()
 
     def add_buttons(self):

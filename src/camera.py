@@ -21,7 +21,7 @@ class Camera:
         self.camera_width = camera_width
         self.camera_height = camera_height
 
-    def apply(self, entity):
+    def apply_with_image(self, entity):
         """
         Apply camera offset to entity 
 
@@ -30,7 +30,7 @@ class Camera:
         """
         return entity.rect.move(self.camera.topleft)
 
-    def test_apply(self, entity):
+    def apply_without_image(self, entity):
         """
         Apply camera offset to entity
 
@@ -75,7 +75,7 @@ class Camera:
 
         Used for drawing images where calling apply is not possible
         since drawing at x = 15, y = 15 will draw it off the screen
-        depending on screen size since apply is called to everything
+        depending on screen size since apply_with_image is called to everything
 
         Args:
             x (int): x coord to translate

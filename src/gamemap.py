@@ -7,11 +7,97 @@ pygame.init()
 
 class TileTest:
 
-    def __init__(self, x, y, sprite_key, type):
+    def __init__(self, x, y, sprite_key, type, tile_dict):
         self.x = x
         self.y = y
         self.sprite_key = sprite_key
         self.type = type
+        self.seen = False
+        self.tile_dict = tile_dict
+
+    @property
+    def image(self):
+        """
+        Returns:
+            Returns image tile should have
+        """
+        return self.tile_dict[self.sprite_key]
+
+
+class MapInfoTest:
+    """
+    Load map data from map_array or generates map. Holds map arrays
+
+    Args:
+        game (Game): game with all game data
+
+    Attribute:
+        map_array (2D array): array with map representation
+        self.map_tree (Tree): BSP tree of map
+        tile_array (2D array): array with tiles
+        tile_width (int): # of tiles wide
+        tile_height (int): # of tiles tall
+        pixel_width (int): pixel_width of map in pixels
+        pixel_height (int): pixel_height of map in pixels
+        unseen_tiles (set): set of unseen tiles coord tuple
+    """
+
+    def __init__(self, game):
+
+        if READ_FROM_FILE:
+            # Holds the map representation (chars)
+            self.map_array = load_map()
+            self.map_tree = None
+
+        # This is for generating random maps
+        else:
+            # Holds the map representation (chars)
+            self.map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
+            self.map_tree = gen_map(self.map_array)
+
+        # Holds actual tiles
+        self.tile_array = make_tile_array(self.map_array, game.game_sprites.tile_dict)
+
+        self.tile_width = len(self.map_array[0])
+        self.tile_height = len(self.map_array)
+        self.pixel_width = self.tile_width * SPRITE_SIZE
+        self.pixel_height = self.tile_height * SPRITE_SIZE
+        self.unseen_tiles = set()
+
+        for y in range(self.tile_height):
+            for x in range(self.tile_width):
+                if not self.map_array[y][x] == WALL:
+                    self.unseen_tiles.add((x, y))
+
+
+def make_tile_array(map_array, tile_dict):
+    """
+    Draws tiles to background using p_map_array and returns
+    array filled with Tiles
+
+    Args:
+        map_array ([char[char]]): map to draw as background
+        tile_dict (dictionary): dictionary containing all tile sprites
+
+    Returns:
+        tile_array (2D array): array with tiles
+    """
+    tile_array = []
+    for col, tiles in enumerate(map_array):
+        tile_array_row = []
+        for row, tile in enumerate(tiles):
+            if tile == WALL:
+                tile_array_row.append(TileTest(row, col, "wall", tile, tile_dict))
+            elif tile == FLOOR:
+                tile_array_row.append(TileTest(row, col, "floor", tile, tile_dict))
+            elif tile == PATH:
+                tile_array_row.append(TileTest(row, col, "floor2", tile, tile_dict))
+            elif tile == DOWNSTAIR:
+                tile_array_row.append(TileTest(row, col, "downstair", tile, tile_dict))
+            elif tile == UPSTAIR:
+                tile_array_row.append(TileTest(row, col, "upstair", tile, tile_dict))
+        tile_array.append(tile_array_row)
+    return tile_array
 
 
 class Tile(pygame.sprite.Sprite):

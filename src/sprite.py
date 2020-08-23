@@ -218,3 +218,34 @@ class GameSprites:
             "red_potion": self.red_potion,
             "mouse_select": self.mouse_select
         }
+
+        self.tile_dict = {
+            "wall": {
+                "unseen": self.wall_image,
+                "seen": self.seen_wall_image
+            },
+
+            "floor": {
+                "unseen": self.floor_image_1,
+                "seen": self.seen_floor_image_1
+            },
+
+            "floor2": {
+                "unseen": self.floor_image_2,
+                "seen": self.seen_floor_image_2
+            },
+
+            "upstair": {
+                "unseen": self.upstair,
+                "seen": self.seen_upstair
+            },
+
+            "downstair": {
+                "unseen": self.downstair,
+                "seen": self.seen_downstair
+            },
+
+            "unseen": self.unseen_tile,
+
+            "select": self.select_tile,
+        }
