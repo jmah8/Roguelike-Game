@@ -3,12 +3,11 @@ import config
 import gamemap
 
 
-def _draw_minimap_player_generated_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_player_generated_map(scale_factor_x, scale_factor_y):
     """
     Draws player onto minimap as blue
 
     Args:
-        game (Game): Game to draw player on
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
@@ -97,7 +96,7 @@ def draw_minimap_generated_map(game):
     _draw_unseen_tile_generated_map(scale_factor_x, scale_factor_y)
     _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y)
     _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_player_generated_map(game, scale_factor_x, scale_factor_y)
+    _draw_minimap_player_generated_map(scale_factor_x, scale_factor_y)
 
 
 def draw_minimap_loaded_map(game):
@@ -116,20 +115,19 @@ def draw_minimap_loaded_map(game):
     scale_factor_x = SPRITE_SIZE / scale_factor_width
     scale_factor_y = SPRITE_SIZE / scale_factor_height
 
-    _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_y)
+    _draw_minimap_floor_and_walls_loaded_map(scale_factor_x, scale_factor_y)
     _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y)
     _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_player_loaded_map(game, scale_factor_x, scale_factor_y)
+    _draw_minimap_player_loaded_map(scale_factor_x, scale_factor_y)
 
 
-def _draw_minimap_player_loaded_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_player_loaded_map(scale_factor_x, scale_factor_y):
     """
     Draws player onto minimap as red
 
     This is for map loaded from .txt files
 
     Args:
-        game (Game): Game to draw player on
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
@@ -139,14 +137,13 @@ def _draw_minimap_player_loaded_map(game, scale_factor_x, scale_factor_y):
                       player.size[0] // scale_factor_x + 1, player.size[1] // scale_factor_y + 1))
 
 
-def _draw_minimap_floor_and_walls_loaded_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_floor_and_walls_loaded_map(scale_factor_x, scale_factor_y):
     """
     Draws floor and walls as black
 
     This is for map loaded from .txt files
 
     Args:
-        game (Game): Game to load minimap to
         scale_factor_x (int): How much to scale x by
         scale_factor_y (int): How mucg to scale y by
     """

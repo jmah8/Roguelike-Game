@@ -28,7 +28,7 @@ class Game:
 
         self.running = True
 
-        self.drawing = Drawing(self, config.SURFACE_MAIN)
+        self.drawing = Drawing(self)
         self.menu_manager = Menu_Manager(self)
 
         self.drawing.add_buttons()

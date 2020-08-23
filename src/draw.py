@@ -9,7 +9,7 @@ import game
 
 
 class Drawing:
-    def __init__(self, game, game_surface):
+    def __init__(self, game):
         """
         Class that draws the game
 
@@ -19,8 +19,7 @@ class Drawing:
             button_manager (ButtonManager): Class that holds the bottom buttons
         """
         self.game = game
-        self.game_surface = game_surface
-        self.button_manager = Button_Manager(self.game_surface)
+        self.button_manager = Button_Manager(config.SURFACE_MAIN)
 
     def draw(self):
         """
@@ -60,7 +59,7 @@ class Drawing:
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.image, config.CAMERA.apply_without_image(obj))
+        config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_without_image(obj))
 
     def draw_at_camera_offset_with_image(self, obj):
         """
@@ -69,7 +68,7 @@ class Drawing:
         Args:
             obj (Object): Entity to draw
         """
-        self.game_surface.blit(obj.image, config.CAMERA.apply_with_image(obj))
+        config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_with_image(obj))
 
     def draw_tiles(self):
         """
@@ -124,16 +123,16 @@ class Drawing:
 
     def draw_grid(self):
         for x in range(0, config.CAMERA.camera_width, SPRITE_SIZE):
-            pygame.draw.line(self.game_surface, GREY, (x, 0), (x, config.CAMERA.camera_height))
+            pygame.draw.line(config.SURFACE_MAIN, GREY, (x, 0), (x, config.CAMERA.camera_height))
 
         for y in range(0, config.CAMERA.camera_height, SPRITE_SIZE):
-            pygame.draw.line(self.game_surface, GREY, (0, y), (config.CAMERA.camera_width, y))
+            pygame.draw.line(config.SURFACE_MAIN, GREY, (0, y), (config.CAMERA.camera_width, y))
 
     def draw_debug(self):
         """
         Draws FPS counter on top right of screen
         """
-        game_text.draw_text(self.game_surface, (config.CAMERA.camera_width - 125, 15), WHITE,
+        game_text.draw_text(config.SURFACE_MAIN, (config.CAMERA.camera_width - 125, 15), WHITE,
                        "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
     def draw_messages(self):
@@ -142,7 +141,7 @@ class Drawing:
         y_pos = config.CAMERA.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
         messages_drawn_counter = 0
         for message, color in to_draw:
-            game_text.draw_text(self.game_surface, (TEXT_SPACE_BUFFER,
+            game_text.draw_text(config.SURFACE_MAIN, (TEXT_SPACE_BUFFER,
                                                     (y_pos + messages_drawn_counter * text_height)), color, message,
                                 None)
             messages_drawn_counter += 1
@@ -182,7 +181,7 @@ class Drawing:
 
         minimap.blit(player_img, player_img_rect)
 
-        self.game_surface.blit(minimap, (0, 0))
+        config.SURFACE_MAIN.blit(minimap, (0, 0))
 
     def draw_mouse(self):
         """
@@ -205,7 +204,7 @@ class Drawing:
             x_coord (int): x coord to draw tile onto
             y_coord (int): y coord to draw tile onto
         """
-        self.game_surface.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
+        config.SURFACE_MAIN.blit(img, (x_coord * SPRITE_SIZE, y_coord * SPRITE_SIZE))
 
     def draw_magic_path(self, line):
         """
@@ -236,9 +235,9 @@ class Drawing:
         hp = player.creature.stat.hp / player.creature.stat.max_hp
         mp = player.creature.stat.mp / player.creature.stat.max_mp
         exp = player.creature.stat.exp / 100
-        pygame.draw.rect(self.game_surface, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
-        pygame.draw.rect(self.game_surface, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
-        pygame.draw.rect(self.game_surface, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
+        pygame.draw.rect(config.SURFACE_MAIN, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
+        pygame.draw.rect(config.SURFACE_MAIN, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
+        pygame.draw.rect(config.SURFACE_MAIN, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
 
 
 
