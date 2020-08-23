@@ -17,3 +17,5 @@ CAMERA = None
 PATHFINDING = None
 
 PLAYER = None
+
+TURN_COUNT = 0

@@ -268,14 +268,11 @@ class Creature:
         self.stat.exp += exp
         NumberParticle(self.x, self.y, exp, self.owner.game.particles, YELLOW)
 
-    def regen(self, turn_count):
+    def regen(self):
         """
         Regenerates hp and mp of self depending on how many turns have passed
-
-        Args:
-            turn_count (int): Turns it has been since start of game
         """
-        if turn_count % REGEN_TIME == 0:
+        if config.TURN_COUNT % REGEN_TIME == 0:
             if self.stat.hp + 1 <= self.stat.max_hp:
                 self.stat.hp += 1
             if self.stat.mp + 1 <= self.stat.max_mp:

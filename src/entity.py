@@ -148,6 +148,6 @@ class Entity:
 
         if self.creature.stat:
             # Regenerates hp and mp of creatures
-            self.creature.regen(self.game.turn_count)
+            self.creature.regen()
 
 

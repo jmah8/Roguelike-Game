@@ -26,8 +26,6 @@ class Game:
         # Repeat keys when held down
         pygame.key.set_repeat(350, 75)
 
-        self.turn_count = 0
-
         self.running = True
 
         self.drawing = Drawing(self, config.SURFACE_MAIN)
@@ -60,11 +58,17 @@ class Game:
         """
         self._generate_new_map()
 
-        config.CAMERA = Camera(config.MAP_INFO)
+        self._generate_camera()
 
         self._initialize_pathfinding()
 
         self._populate_map()
+
+    def _generate_camera(self):
+        """
+        Generates camera
+        """
+        config.CAMERA = Camera(config.MAP_INFO)
 
     def _populate_map(self):
         """
@@ -76,7 +80,7 @@ class Game:
         # Particle group
         self.particles = []
 
-        if self.turn_count == 0:
+        if config.TURN_COUNT == 0:
             self.player = generate_player(config.MAP_INFO.map_tree, self)
         else:
             self.player.x, self.player.y = generate_player_spawn(config.MAP_INFO.map_tree)
@@ -296,7 +300,7 @@ class Game:
         for team in self.creature_data:
             for entity in self.creature_data[team]:
                 entity.update(dx, dy)
-        self.turn_count += 1
+        config.TURN_COUNT += 1
 
     def transition_previous_level(self):
         """
@@ -343,7 +347,7 @@ class Game:
         self.creature_data["enemy"] = enemy_list
         self.item_group = item_group
         config.MAP_INFO = map_info
-        config.CAMERA = Camera(config.MAP_INFO)
+        self._generate_camera()
         self._initialize_pathfinding()
 
     def _toggle_camera(self):
