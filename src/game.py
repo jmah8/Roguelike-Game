@@ -243,13 +243,13 @@ class Game:
 
         # Returns to previous level
         elif event.key == pygame.K_1:
-            if self.map_info.map_array[self.player.y][self.player.x] == UPSTAIR:
+            if self.map_info.tile_array[self.player.y][self.player.x].type == UPSTAIR:
                 self.floor -= 1
                 self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if self.floor < NUM_OF_FLOOR and self.map_info.map_array[self.player.y][self.player.x] == DOWNSTAIR:
+            if self.floor < NUM_OF_FLOOR and self.map_info.tile_array[self.player.y][self.player.x].type == DOWNSTAIR:
                 self.floor += 1
                 self.transition_next_level()
 
@@ -321,10 +321,8 @@ class Game:
         if self.next_levels.empty():
             self.new()
             # Places upstair at where the player entered the map at
-            self.map_info.map_array[self.player.y][self.player.x] = '<'
-            self.map_info.tile_array[self.player.y][self.player.x] = \
-                gamemap.Floor(self.game_sprites, self.player.x, self.player.y,
-                              self.game_sprites.upstair, self.game_sprites.seen_upstair)
+            self.map_info.tile_array[self.player.y][self.player.x].type = '<'
+            self.map_info.tile_array[self.player.y][self.player.x].sprite_key = 'upstair'
 
         else:
             x, y, map_info, enemy_list, item_group = self.next_levels.get()
@@ -344,7 +342,6 @@ class Game:
         """
         self.player.x = x
         self.player.y = y
-        # self.player.rect.topleft = (self.player.x * SPRITE_SIZE, self.player.y * SPRITE_SIZE)
         self.creature_data["enemy"] = enemy_list
         self.item_group = item_group
         self.map_info = map_info
