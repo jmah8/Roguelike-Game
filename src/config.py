@@ -7,6 +7,8 @@ import gamemap
 import camera
 import pathfinding
 import fov
+import button_manager
+import game_data
 
 pygame.init()
 
@@ -31,10 +33,9 @@ PATHFINDING.neighbour()
 
 # Save this
 PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
-# Initialized in game
 
 # Save this
-GAME_DATA = None
+GAME_DATA = game_data.GameData()
 
 FOV = fov.new_fov(MAP_INFO)
 
@@ -44,3 +45,4 @@ WALL_HACK = False
 
 MINIMAP = False
 
+BUTTON_PANEL = button_manager.Button_Manager(SURFACE_MAIN)

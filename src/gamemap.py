@@ -5,6 +5,7 @@ from pathfinding import *
 
 pygame.init()
 
+
 class Tile:
 
     def __init__(self, x, y, type):
@@ -54,6 +55,7 @@ class Tile:
             Tile's sprite size, which is usually SPRITE_SIZE
         """
         return SPRITE_SIZE, SPRITE_SIZE
+
 
 class MapInfo:
     """
@@ -159,15 +161,13 @@ def gen_map(map_array):
     print("")
     return tree
 
-def find_closest_unseen_tile(game):
+
+def find_closest_unseen_tile():
     """
     Find closest unseen_tile from player
 
     Closest tile is by distance, not amount of
     tiles walked to get to it
-
-    Args:
-        game (Game): Game with all game data
 
     Returns:
         p_coord ((int, int)): player's coordinate (start)
@@ -189,16 +189,13 @@ def find_closest_unseen_tile(game):
 # TODO: could optimize this since it is already finding visited and so can
 #       return it instead of recalculating it. Results in major performance
 #       hit when map is big
-def find_closest_unseen_tile_walking_distance(game):
+def find_closest_unseen_tile_walking_distance():
     """
     Find closest unseen_tile from player
 
     Closest tile is by walking distance, ie how many tile
     would you have to walk. Therefore this takes into account
     walls
-
-    Args:
-        game (Game): Game with all game data
 
     Returns:
         p_coord ((int, int)): player's coordinate (start)

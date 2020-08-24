@@ -4,7 +4,31 @@ import game_text
 import minimap
 import fov
 import sprite
-from button_manager import Button_Manager
+import game
+
+
+def draw():
+    """
+    Draws map and entities
+
+    Note: Always call game.clock.tick(FPS) before and pygame.display.flip()
+    after calling this method to update display
+    """
+    # Draws all tiles
+    draw_tiles(config.MAP_INFO.tile_array)
+
+    draw_game_objects()
+
+    draw_grid()
+
+    draw_particles()
+
+    config.BUTTON_PANEL.draw_buttons()
+
+    draw_ui()
+
+    if config.MINIMAP:
+        draw_minimap()
 
 
 def draw_at_camera_offset_without_image(obj):
@@ -112,18 +136,16 @@ def draw_magic_path(line):
         draw_img_at_coord(config.SPRITE.select_tile, relative_x, relative_y)
 
 
-def draw_minimap(game):
+def draw_minimap():
     """
     Draws minimap on topleft of screen. This is a
     representation of the actual map.
 
-    Args:
-        game (Game): Game to load minimap to
     """
     if READ_FROM_FILE:
-        minimap.draw_minimap_loaded_map(game)
+        minimap.draw_minimap_loaded_map()
     else:
-        minimap.draw_minimap_generated_map(game)
+        minimap.draw_minimap_generated_map()
 
 
 def draw_stats(creature):
@@ -220,52 +242,6 @@ def draw_particles():
         draw_at_camera_offset_with_image(particle)
         particle.update()
 
-
-class Drawing:
-    def __init__(self, game):
-        """
-        Class that draws the game
-
-        Attributes:
-            game (arg, Game): Game with game data
-            button_manager (ButtonManager): Class that holds the bottom buttons
-        """
-        self.game = game
-        self.button_manager = Button_Manager(config.SURFACE_MAIN)
-
-    def draw(self):
-        """
-        Draws map and entities
-
-        Note: Always call game.clock.tick(FPS) before and pygame.display.flip()
-        after calling this method to update display
-        """
-        # Draws all tiles
-        draw_tiles(config.MAP_INFO.tile_array)
-
-        draw_game_objects()
-
-        draw_grid()
-
-        draw_particles()
-
-        self.button_manager.draw_buttons()
-
-        draw_ui()
-
-        if config.MINIMAP:
-            draw_minimap(self.game)
-
-    def add_buttons(self):
-        """
-        Adds clickable buttons to bottom of screen
-        """
-        self.button_manager.add_button(config.SPRITE.knight_anim[0], 'stats',
-                                       self.game.menu_manager.stat_menu)
-        self.button_manager.add_button(config.SPRITE.inventory_button, 'inventory',
-                                       self.game.menu_manager.inventory_menu)
-        self.button_manager.add_button(config.SPRITE.minimap_button, 'minimap', self.game.toggle_minimap)
-        self.button_manager.add_button(config.SPRITE.minimap_button, 'map', self.game.menu_manager.map_menu)
 
 
 

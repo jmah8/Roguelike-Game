@@ -1,10 +1,9 @@
 import json
 import os
-
+import game
 import draw
 from constant import *
 import config
-import game as g
 import pygame
 import particle
 
@@ -125,12 +124,11 @@ def line(start, end, map):
     return points
 
 
-def cast_fireball(game, caster, line):
+def cast_fireball(caster, line):
     """
     Throws fireball following line stopping at first enemy hit.
     
     Args:
-        game (Game): Game with game data
         caster (Object): Creature that casted fireball
         line (List): List of coordinates for fireball to follow
     """
@@ -161,15 +159,14 @@ def cast_fireball(game, caster, line):
                     creature_hit = True
                     break
 
-            _update_spell(game, particle_group)
+            _update_spell(particle_group)
 
 
-def _update_spell(game, particle_group):
+def _update_spell(particle_group):
     """
     Updates the spell casted
 
     Args:
-        game (Game): Game with all game data
         particle_group (List): List of particles
     """
     game.update()
@@ -181,12 +178,11 @@ def _update_spell(game, particle_group):
 
 
 # TODO: make it so enemies wont target through their allies
-def cast_lightning(game, caster, line):
+def cast_lightning(caster, line):
     """
     Throws lightning following line, hitting all enemies in path.
 
     Args:
-        game (Game): Game with game data
         caster (Object): Creature that casted lightning
         line (List): List of coordinates for lightning to follow
     """
@@ -211,7 +207,7 @@ def cast_lightning(game, caster, line):
                 if (enemy.x, enemy.y) == (x, y):
                     caster.creature.attack(enemy, damage)
 
-            _update_spell(game, particle_group)
+            _update_spell(particle_group)
 
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:

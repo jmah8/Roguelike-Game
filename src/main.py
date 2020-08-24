@@ -26,7 +26,7 @@ def profile(fnc):
 def start():
     game = Game()
     while game.running:
-        game.new()
+        new()
         game.run()
     pygame.quit()
 

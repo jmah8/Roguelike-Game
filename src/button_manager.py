@@ -1,7 +1,9 @@
-from constant import *
 import pygame
-import config
 from exceptions import *
+from constant import *
+import config
+import menu_manager
+import game
 
 
 class Button:
@@ -127,3 +129,15 @@ class Button_Manager:
         if button.rect.collidepoint(final_x, final_y):
             return button
         return None
+
+
+def add_buttons():
+    """
+    Adds clickable buttons to bottom of screen
+    """
+    config.BUTTON_PANEL.add_button(config.SPRITE.knight_anim[0], 'stats',
+                                   menu_manager.stat_menu)
+    config.BUTTON_PANEL.add_button(config.SPRITE.inventory_button, 'inventory',
+                                   menu_manager.inventory_menu)
+    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
+    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'map', menu_manager.map_menu)
