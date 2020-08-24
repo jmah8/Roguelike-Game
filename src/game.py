@@ -31,6 +31,7 @@ class GameData:
             "player": [],
             "enemy": []
         }
+        self.item_data = []
         self.game_messages = []
         self.previous_levels = LifoQueue()
         self.next_levels = LifoQueue()
@@ -55,16 +56,14 @@ class Game:
 
         self.menu_manager = Menu_Manager(self)
 
-        self.drawing = draw
+        self.drawing = draw.Drawing(self)
         self.drawing.add_buttons()
-
 
         self.free_camera = generate_free_camera(self)
 
         self.particles = []
 
         config.GAME_DATA = GameData()
-
 
     def new(self):
         """
@@ -101,7 +100,7 @@ class Game:
 
         config.GAME_DATA.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree, self)
 
-        self.item_group = generate_items(config.MAP_INFO.map_tree, self)
+        config.GAME_DATA.item_data = generate_items(config.MAP_INFO.map_tree, self)
 
         config.GAME_DATA.creature_data["player"] = [config.PLAYER]
 
@@ -140,7 +139,7 @@ class Game:
 
         self.drawing.draw()
 
-        self.drawing.draw_mouse()
+        draw.draw_mouse()
 
     def handle_events(self):
         """
@@ -323,7 +322,8 @@ class Game:
         if not config.GAME_DATA.previous_levels.empty():
             # Saves current level to next level list
             level_data = (
-            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"], self.item_group)
+                config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"],
+                config.GAME_DATA.item_data)
             config.GAME_DATA.next_levels.put(level_data)
 
             x, y, map_info, enemy_list, item_group = config.GAME_DATA.previous_levels.get()
@@ -334,7 +334,8 @@ class Game:
         """
         Goes to next level
         """
-        level_data = (config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"], self.item_group)
+        level_data = (
+        config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"], config.GAME_DATA.item_data)
         config.GAME_DATA.previous_levels.put(level_data)
 
         if config.GAME_DATA.next_levels.empty():
@@ -360,7 +361,7 @@ class Game:
         config.PLAYER.x = x
         config.PLAYER.y = y
         config.GAME_DATA.creature_data["enemy"] = enemy_list
-        self.item_group = item_group
+        config.GAME_DATA.item_data = item_group
         config.MAP_INFO = map_info
         self._generate_camera()
         self._initialize_pathfinding()
@@ -463,7 +464,7 @@ class Game:
         Returns:
             objects (List): list of items at (coord_x, coord_y)
         """
-        objects = [obj for obj in self.item_group if obj.x == coord_x and obj.y == coord_y]
+        objects = [obj for obj in config.GAME_DATA.item_data if obj.x == coord_x and obj.y == coord_y]
         return objects
 
     def move_char_auto(self, path, ignore=False):
@@ -517,7 +518,7 @@ class Game:
             true if enemy is in player FOV, else false
         """
         for obj in config.GAME_DATA.creature_data["enemy"]:
-            if fov.check_if_in_fov(self, obj) and not self.wall_hack:
+            if fov.check_if_in_fov(obj, config.FOV) and not self.wall_hack:
                 return True
         return False
 
@@ -548,4 +549,3 @@ class Game:
         Toggles minimap
         """
         self.mini_map_on = not self.mini_map_on
-

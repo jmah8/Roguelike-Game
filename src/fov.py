@@ -80,17 +80,17 @@ def change_seen(map_data, tile_array, fov):
                     tile.seeing = False
 
 
-def check_if_in_fov(game, obj):
+def check_if_in_fov(obj, fov):
     """
     Checks to see if sprite is in player FOV
 
     Args:
-        game (Game): Game object with all game data
+        fov ():
         obj (Object): Object to check if in player FOV
     """
     x = obj.x
     y = obj.y
-    return config.FOV[y][x] == 1
+    return fov[y][x] == 1
 
 
 sintable = [

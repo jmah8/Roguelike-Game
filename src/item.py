@@ -1,4 +1,6 @@
 from constant import WHITE, SPRITE_SIZE
+import config
+import game
 
 
 class Item:
@@ -23,7 +25,7 @@ class Item:
                 game.add_game_message_to_print("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
 
-                entity.game.item_group.remove(self.owner)
+                config.GAME_DATA.item_data.remove(self.owner)
 
     def drop_item(self, entity, x, y):
         """
@@ -32,11 +34,11 @@ class Item:
         Remove item from inventory
         Add item to game_objects
         """
-        self.owner.game.item_group.insert(0, self.owner)
+        config.GAME_DATA.item_data.insert(0, self.owner)
         entity.container.inventory.remove(self.owner)
         self.owner.x = x
         self.owner.y = y
-        self.owner.rect.topleft = (x * SPRITE_SIZE, y * SPRITE_SIZE)
+        # self.owner.rect.topleft = (x * SPRITE_SIZE, y * SPRITE_SIZE)
         game.add_game_message_to_print(self.name + " Item Dropped", WHITE)
 
     ## TODO use_item()

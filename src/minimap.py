@@ -3,32 +3,16 @@ import config
 import gamemap
 
 
-def _draw_minimap_player_generated_map(scale_factor_x, scale_factor_y):
-    """
-    Draws player onto minimap as blue
-
-    Args:
-        scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
-    """
-    pygame.draw.rect(config.SURFACE_MAIN, BLUE,
-                     ((config.PLAYER.rect[0] / scale_factor_x),
-                      (config.PLAYER.rect[1] / scale_factor_y),
-                      # + 1 is to make player directly touch walls
-                      # without making too big of difference in size
-                      (config.PLAYER.size[0] / scale_factor_x + 1),
-                      (config.PLAYER.size[1] / scale_factor_y + 1)))
-
-
-def _draw_unseen_tile_generated_map(scale_factor_x, scale_factor_y):
+def _draw_unseen_tile_generated_map(unseen_tile_list, scale_factor_x, scale_factor_y):
     """
     Draws unseen tiles as black
 
     Args:
+        unseen_tile_list (list): unseen tile list to draw on minimap
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to scale y by
     """
-    for tile in config.MAP_INFO.unseen_tiles:
+    for tile in unseen_tile_list:
         tile_x, tile_y = tile
         pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                          ((tile_x * SPRITE_SIZE / scale_factor_x),
@@ -39,17 +23,17 @@ def _draw_unseen_tile_generated_map(scale_factor_x, scale_factor_y):
                           (SPRITE_SIZE / scale_factor_y + 2)))
 
 
-def _draw_minimap_rooms_generated_map(scale_factor_x, scale_factor_y):
+def _draw_minimap_rooms_generated_map(room_list, scale_factor_x, scale_factor_y):
     """
     Draws rooms (and paths since paths are considered rooms)
     onto minimap as white
 
     Args:
+        room_list (list): Room of list to draw on minimap
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    list_of_rooms = config.MAP_INFO.map_tree.root.child_room_list + config.MAP_INFO.map_tree.root.path_list
-    for room in list_of_rooms:
+    for room in room_list:
         pygame.draw.rect(config.SURFACE_MAIN, WHITE,
                          ((room.up_left_x * SPRITE_SIZE / scale_factor_x),
                           (room.up_left_y * SPRITE_SIZE / scale_factor_y),
@@ -59,18 +43,19 @@ def _draw_minimap_rooms_generated_map(scale_factor_x, scale_factor_y):
                           (room.height * SPRITE_SIZE / scale_factor_y + 1)))
 
 
-def _draw_minimap_walls_generated_map(scale_factor_x, scale_factor_y):
+def _draw_minimap_walls_generated_map(map_info, scale_factor_x, scale_factor_y):
     """
     Draws wall onto minimap as black
 
     Args:
+        map_info ():
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
     pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                      (0, 0,
-                      config.MAP_INFO.pixel_width / scale_factor_x,
-                      config.MAP_INFO.pixel_height / scale_factor_y))
+                      map_info.pixel_width / scale_factor_x,
+                      map_info.pixel_height / scale_factor_y))
 
 
 def draw_minimap_generated_map(game):
@@ -91,12 +76,16 @@ def draw_minimap_generated_map(game):
     scale_factor_x = SPRITE_SIZE / scale_factor_width
     scale_factor_y = SPRITE_SIZE / scale_factor_height
 
-    _draw_minimap_walls_generated_map(scale_factor_x, scale_factor_y)
-    _draw_minimap_rooms_generated_map(scale_factor_x, scale_factor_y)
-    _draw_unseen_tile_generated_map(scale_factor_x, scale_factor_y)
-    _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_player_generated_map(scale_factor_x, scale_factor_y)
+    _draw_minimap_walls_generated_map(map_data, scale_factor_x, scale_factor_y)
+    _draw_minimap_rooms_generated_map(
+        config.MAP_INFO.map_tree.root.child_room_list
+        + config.MAP_INFO.map_tree.root.path_list,
+        scale_factor_x,
+        scale_factor_y)
+    _draw_unseen_tile_generated_map(config.MAP_INFO.unseen_tiles, scale_factor_x, scale_factor_y)
+    _draw_minimap_items_both_map(config.GAME_DATA.item_data, scale_factor_x, scale_factor_y)
+    _draw_minimap_enemies_in_fov_both_map(config.GAME_DATA.creature_data["enemy"], scale_factor_x, scale_factor_y)
+    _draw_minimap_player_both_map(config.PLAYER, scale_factor_x, scale_factor_y)
 
 
 def draw_minimap_loaded_map(game):
@@ -116,25 +105,29 @@ def draw_minimap_loaded_map(game):
     scale_factor_y = SPRITE_SIZE / scale_factor_height
 
     _draw_minimap_floor_and_walls_loaded_map(scale_factor_x, scale_factor_y)
-    _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y)
-    _draw_minimap_player_loaded_map(scale_factor_x, scale_factor_y)
+    _draw_minimap_items_both_map(config.GAME_DATA.item_data, scale_factor_x, scale_factor_y)
+    _draw_minimap_enemies_in_fov_both_map(config.GAME_DATA.creature_data["enemy"], scale_factor_x, scale_factor_y)
+    _draw_minimap_player_both_map(config.PLAYER, scale_factor_x, scale_factor_y)
 
 
-def _draw_minimap_player_loaded_map(scale_factor_x, scale_factor_y):
+def _draw_minimap_player_both_map(player, scale_factor_x, scale_factor_y):
     """
     Draws player onto minimap as red
 
     This is for map loaded from .txt files
 
     Args:
+        player (Entity): player to draw on minimap
         scale_factor_x (int): what to scale x by
         scale_factor_y (int): what to sclae y by
     """
-    player = config.PLAYER
     pygame.draw.rect(config.SURFACE_MAIN, BLUE,
-                     (player.rect[0] // scale_factor_x, player.rect[1] // scale_factor_y,
-                      player.size[0] // scale_factor_x + 1, player.size[1] // scale_factor_y + 1))
+                     (player.rect[0] // scale_factor_x,
+                      player.rect[1] // scale_factor_y,
+                      # + 1 is to make player directly touch walls
+                      # without making too big of difference in size
+                      player.size[0] // scale_factor_x + 1,
+                      player.size[1] // scale_factor_y + 1))
 
 
 def _draw_minimap_floor_and_walls_loaded_map(scale_factor_x, scale_factor_y):
@@ -170,7 +163,7 @@ def _draw_minimap_floor_and_walls_loaded_map(scale_factor_x, scale_factor_y):
                                       tile.size[1] / scale_factor_y + 1))
 
 
-def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_items_both_map(item_list, scale_factor_x, scale_factor_y):
     """
     Draws seen items on minimap as green
 
@@ -178,11 +171,11 @@ def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
     This is used for both minimaps
 
     Args:
-        game (Game): Game to draw item to
+        item_list (list): List of items to draw on minimap
         scale_factor_x (int): How much to scale x by
         scale_factor_y (int): How mucg to scale y by
     """
-    for item in game.item_group:
+    for item in item_list:
         if config.MAP_INFO.tile_array[item.y][item.x].seen:
             pygame.draw.rect(config.SURFACE_MAIN, GREEN,
                              ((item.rect[0] / scale_factor_x),
@@ -193,18 +186,18 @@ def _draw_minimap_items_both_map(game, scale_factor_x, scale_factor_y):
                               (item.size[1] / scale_factor_y + 1)))
 
 
-def _draw_minimap_enemies_in_fov_both_map(game, scale_factor_x, scale_factor_y):
+def _draw_minimap_enemies_in_fov_both_map(enemy_list, scale_factor_x, scale_factor_y):
     """
     Draws enemies in fov on minimap as red
 
     This is used for both minimaps
 
     Args:
-        game (Game): Game to draw item to
+        enemy_list (list): List of enemies to draw on minimap
         scale_factor_x (int): How much to scale x by
         scale_factor_y (int): How mucg to scale y by
     """
-    for enemy in config.GAME_DATA.creature_data["enemy"]:
+    for enemy in enemy_list:
         if config.FOV[enemy.y][enemy.x]:
             pygame.draw.rect(config.SURFACE_MAIN, RED,
                              ((enemy.rect[0] / scale_factor_x),

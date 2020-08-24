@@ -5,7 +5,6 @@ import minimap
 import fov
 import sprite
 from button_manager import Button_Manager
-import game
 
 
 def draw_at_camera_offset_without_image(obj):
@@ -28,11 +27,14 @@ def draw_at_camera_offset_with_image(obj):
     config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_with_image(obj))
 
 
-def draw_tiles():
+def draw_tiles(tile_list):
     """
     Draws all tiles offset by camera
+
+    Args:
+        tile_list (list): List of tiles to draw
     """
-    for col in config.MAP_INFO.tile_array:
+    for col in tile_list:
         for tile in col:
             draw_at_camera_offset_without_image(tile)
 
@@ -53,12 +55,15 @@ def draw_debug():
                    "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
 
-def draw_map_menu():
+def draw_map_menu(map_info):
     """
     Draws map. This map
     is a replica of the actual map
+
+    Args:
+        map_info (MapInfo): Has all map data
     """
-    map_data = config.MAP_INFO
+    map_data = map_info
     tile_array = map_data.tile_array
 
     scale_tile_width = RESOLUTION[0] / map_data.tile_width
@@ -121,11 +126,16 @@ def draw_minimap(game):
         minimap.draw_minimap_generated_map(game)
 
 
-def draw_player_stats():
-    player = config.PLAYER
-    hp = player.creature.stat.hp / player.creature.stat.max_hp
-    mp = player.creature.stat.mp / player.creature.stat.max_mp
-    exp = player.creature.stat.exp / 100
+def draw_stats(creature):
+    """
+    Draw stats of creature
+
+    Args:
+        creature (Entity): Entity to draw stats of
+    """
+    hp = creature.creature.stat.hp / creature.creature.stat.max_hp
+    mp = creature.creature.stat.mp / creature.creature.stat.max_mp
+    exp = creature.creature.stat.exp / 100
     pygame.draw.rect(config.SURFACE_MAIN, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
     pygame.draw.rect(config.SURFACE_MAIN, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
     pygame.draw.rect(config.SURFACE_MAIN, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
@@ -142,8 +152,14 @@ def draw_mouse():
     draw_img_at_coord(config.SPRITE.mouse_select, mouse_x, mouse_y)
 
 
-def draw_messages():
-    to_draw = game_text.messages_to_draw(config.GAME_DATA.game_messages)
+def draw_messages(message_list):
+    """
+    Draws message
+
+    Args:
+        message_list (list): Message list to draw
+    """
+    to_draw = game_text.messages_to_draw(message_list)
     text_height = game_text.text_height_helper(FONT_MESSAGE_TEXT)
     y_pos = config.CAMERA.camera_height - (NUM_MESSAGES * text_height) - TEXT_SPACE_BUFFER
     messages_drawn_counter = 0
@@ -158,9 +174,42 @@ def draw_ui():
     """
     Draws ui part of game
     """
-    draw_player_stats()
+    draw_stats(config.PLAYER)
     draw_debug()
-    draw_messages()
+    draw_messages(config.GAME_DATA.game_messages)
+
+
+def _draw_creatures(creatures_list):
+    """
+    Draws all creatures in player FOV offset by camera
+
+    Args:
+        creatures_list (list): List of creatures to draw
+    """
+    for creature in creatures_list:
+        if fov.check_if_in_fov(creature, config.FOV):
+            creature.update_anim()
+            draw_at_camera_offset_without_image(creature)
+
+
+def _draw_items(item_list):
+    """
+    Draws item if the tile item is on is seen offset by camera
+
+    Args:
+        item_list (list): List of items to draw
+    """
+    for item in item_list:
+        if config.MAP_INFO.tile_array[item.y][item.x].seen:
+            draw_at_camera_offset_without_image(item)
+
+
+def draw_game_objects():
+    """
+    Draws all game objects offset by camera
+    """
+    _draw_items(config.GAME_DATA.item_data)
+    _draw_creatures(config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"])
 
 
 class Drawing:
@@ -183,9 +232,9 @@ class Drawing:
         after calling this method to update display
         """
         # Draws all tiles
-        draw_tiles()
+        draw_tiles(config.MAP_INFO.tile_array)
 
-        self.draw_game_objects()
+        draw_game_objects()
 
         draw_grid()
 
@@ -197,30 +246,6 @@ class Drawing:
 
         if self.game.mini_map_on:
             draw_minimap(self.game)
-
-    def draw_game_objects(self):
-        """
-        Draws all game objects offset by camera
-        """
-        self._draw_items()
-        self._draw_creatures()
-
-    def _draw_items(self):
-        """
-        Draws item if the tile item is on is seen offset by camera
-        """
-        for item in self.game.item_group:
-            if config.MAP_INFO.tile_array[item.y][item.x].seen:
-                draw_at_camera_offset_without_image(item)
-
-    def _draw_creatures(self):
-        """
-        Draws all creatures in player FOV offset by camera
-        """
-        for creature in config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"]:
-            if fov.check_if_in_fov(self.game, creature):
-                creature.update_anim()
-                draw_at_camera_offset_without_image(creature)
 
     def draw_particles(self):
         """
