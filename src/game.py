@@ -1,5 +1,5 @@
 from constant import *
-from queue import LifoQueue
+import collections
 import config
 import fov
 import gamemap
@@ -22,8 +22,8 @@ class GameData:
         }
         self.item_data = []
         self.game_messages = []
-        self.previous_levels = LifoQueue()
-        self.next_levels = LifoQueue()
+        self.previous_levels = collections.deque()
+        self.next_levels = collections.deque()
 
 
 class Game:
@@ -248,7 +248,12 @@ class Game:
                 self.transition_next_level()
 
         elif event.key == pygame.K_9:
-            s = pickle.dumps(config.PLAYER)
+            s = pickle.dumps([config.CURRENT_FLOOR, config.TURN_COUNT,
+                             config.MAP_INFO, config.PLAYER,
+                             config.GAME_DATA])
+            print(s)
+            # with open('../data.txt', 'wb') as file:
+            #     pickle.dump(config.PLAYER, file)
 
     def _handle_mouse_event(self, event):
         """
@@ -299,14 +304,14 @@ class Game:
         """
         Go to previous level
         """
-        if not config.GAME_DATA.previous_levels.empty():
+        if config.GAME_DATA.previous_levels:
             # Saves current level to next level list
             level_data = (
                 config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"],
                 config.GAME_DATA.item_data)
-            config.GAME_DATA.next_levels.put(level_data)
+            config.GAME_DATA.next_levels.append(level_data)
 
-            x, y, map_info, enemy_list, item_group = config.GAME_DATA.previous_levels.get()
+            x, y, map_info, enemy_list, item_group = config.GAME_DATA.previous_levels.popleft()
 
             self._load_level_data(enemy_list, item_group, map_info, x, y)
 
@@ -317,14 +322,14 @@ class Game:
         level_data = (
             config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"],
             config.GAME_DATA.item_data)
-        config.GAME_DATA.previous_levels.put(level_data)
+        config.GAME_DATA.previous_levels.append(level_data)
 
-        if config.GAME_DATA.next_levels.empty():
+        if not config.GAME_DATA.next_levels:
             self.new()
             # Places upstair at where the player entered the map at
             config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type = UPSTAIR
         else:
-            x, y, map_info, enemy_list, item_group = config.GAME_DATA.next_levels.get()
+            x, y, map_info, enemy_list, item_group = config.GAME_DATA.next_levels.popleft()
 
             self._load_level_data(enemy_list, item_group, map_info, x, y)
 
@@ -380,6 +385,8 @@ class Game:
                         self._move_to_free_camera()
                         camera_on = False
                     elif event.key == pygame.K_m:
+                        camera_on = False
+                    elif event.key == pygame.K_ESCAPE:
                         camera_on = False
 
             config.CLOCK.tick(FPS)
