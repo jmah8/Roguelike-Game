@@ -1,6 +1,7 @@
 from constant import WHITE, SPRITE_SIZE
 import config
 import game
+import game_text
 
 
 class Item:
@@ -20,9 +21,9 @@ class Item:
     def pick_up(self, entity):
         if entity.container:
             if entity.container.volume + self.volume > entity.container.volume:
-                game.add_game_message_to_print("Inventory Full", WHITE)
+                game_text.add_game_message_to_print("Inventory Full", WHITE)
             else:
-                game.add_game_message_to_print("Picked Up " + self.name, WHITE)
+                game_text.add_game_message_to_print("Picked Up " + self.name, WHITE)
                 entity.container.inventory.append(self.owner)
 
                 config.GAME_DATA.item_data.remove(self.owner)
@@ -39,6 +40,6 @@ class Item:
         self.owner.x = x
         self.owner.y = y
         # self.owner.rect.topleft = (x * SPRITE_SIZE, y * SPRITE_SIZE)
-        game.add_game_message_to_print(self.name + " Item Dropped", WHITE)
+        game_text.add_game_message_to_print(self.name + " Item Dropped", WHITE)
 
     ## TODO use_item()

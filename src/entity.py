@@ -28,8 +28,7 @@ class Entity:
         container (arg, Container): Container self is
     """
 
-    def __init__(self, game, x, y, object_id, creature=None, ai=None, item=None, container=None, image_key=None):
-        self.game = game
+    def __init__(self, x, y, object_id, creature=None, ai=None, item=None, container=None, image_key=None):
         self.x = x
         self.y = y
         self.object_id = object_id

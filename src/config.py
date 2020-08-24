@@ -1,4 +1,5 @@
 from constant import *
+import game
 import pygame
 import sprite
 import entity_generator
@@ -6,7 +7,6 @@ import gamemap
 import camera
 import pathfinding
 import fov
-import game
 
 pygame.init()
 
@@ -28,3 +28,5 @@ GAME_DATA = None
 FOV = fov.new_fov(MAP_INFO)
 
 TURN_COUNT = 0
+
+PARTICLE_LIST = []

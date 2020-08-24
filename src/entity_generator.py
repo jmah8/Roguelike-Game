@@ -67,7 +67,7 @@ def _generate_slime(x, y, game):
     """
     ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("slime", True, "enemy", level=config.GAME_DATA.floor)
-    generated_enemy = entity.Entity(game, x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="slime_dict")
+    generated_enemy = entity.Entity(x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="slime_dict")
     return generated_enemy
 
 
@@ -82,7 +82,7 @@ def _generate_goblin(x, y, game):
     """
     ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("goblin", True, "enemy", level=config.GAME_DATA.floor)
-    generated_enemy = entity.Entity(game, x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="goblin_dict")
+    generated_enemy = entity.Entity(x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="goblin_dict")
     return generated_enemy
 
 
@@ -97,7 +97,7 @@ def _generate_skeleton(x, y, game):
     """
     ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("skeleton", True, "enemy", level=config.GAME_DATA.floor)
-    generated_enemy = entity.Entity(game, x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="skeleton_dict")
+    generated_enemy = entity.Entity(x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="skeleton_dict")
     return generated_enemy
 
 
@@ -115,8 +115,7 @@ def generate_player(tree, game):
     y = random.randint(y1, y2)
     player_container = container.Container()
     player_com = creature.Creature("knight", team="player")
-    player = entity.Entity(game, x, y, "player", creature=player_com, container=player_container,
-                           image_key="knight_dict")
+    player = entity.Entity(x, y, "player", creature=player_com, container=player_container, image_key="knight_dict")
     return player
 
 
@@ -151,7 +150,7 @@ def generate_free_camera(game):
         game (Game): Game with all game data
     """
     camera = creature.Creature("Camera", False, walk_through_tile=True)
-    free_camera = entity.Entity(game, 0, 0, "camera", creature=camera, image_key="mouse_select")
+    free_camera = entity.Entity(0, 0, "camera", creature=camera, image_key="mouse_select")
     return free_camera
 
 
@@ -208,7 +207,7 @@ def _generate_potion(x, y, game):
         game (Game): Game with all game data
     """
     item_com = item.Item("Red Potion", 0, 0, True)
-    generated_item = entity.Entity(game, x, y, "item", item=item_com, image_key="red_potion")
+    generated_item = entity.Entity(x, y, "item", item=item_com, image_key="red_potion")
     return generated_item
 
 
@@ -222,5 +221,5 @@ def _generate_sword(x, y, game):
         game (Game): Game with all game data
     """
     item_sword_com = item.Item("Sword", 0, 0, False)
-    generated_item = entity.Entity(game, x, y, "item", item=item_sword_com, image_key="sword")
+    generated_item = entity.Entity(x, y, "item", item=item_sword_com, image_key="sword")
     return generated_item

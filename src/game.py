@@ -14,17 +14,6 @@ import pickle
 pygame.font.init()
 
 
-def add_game_message_to_print(ingame_message, message_color):
-    """
-    Adds game message to print
-
-    Args:
-        ingame_message (String): Message to add
-        message_color (Color): Color of message
-    """
-    config.GAME_DATA.game_messages.append((ingame_message, message_color))
-
-
 class GameData:
     def __init__(self):
         self.creature_data = {
@@ -61,8 +50,6 @@ class Game:
 
         self.free_camera = generate_free_camera(self)
 
-        self.particles = []
-
         config.GAME_DATA = GameData()
 
     def new(self):
@@ -91,7 +78,7 @@ class Game:
         to random location after
         """
         # Particle group
-        self.particles = []
+        config.PARTICLE_LIST = []
 
         if config.TURN_COUNT == 0:
             config.PLAYER = generate_player(config.MAP_INFO.map_tree, self)
@@ -261,13 +248,14 @@ class Game:
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if config.GAME_DATA.floor < NUM_OF_FLOOR and config.MAP_INFO.tile_array[config.PLAYER.y][
-                config.PLAYER.x].type == DOWNSTAIR:
+            if config.GAME_DATA.floor < NUM_OF_FLOOR and \
+                    config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
                 config.GAME_DATA.floor += 1
                 self.transition_next_level()
 
         elif event.key == pygame.K_9:
-            s = pickle.dumps(config.MAP_INFO.tile_array)
+            print(config.PLAYER)
+            s = pickle.dumps(config.PLAYER)
             print(s)
 
     def _handle_mouse_event(self, event):
@@ -335,7 +323,8 @@ class Game:
         Goes to next level
         """
         level_data = (
-        config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"], config.GAME_DATA.item_data)
+            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"],
+            config.GAME_DATA.item_data)
         config.GAME_DATA.previous_levels.put(level_data)
 
         if config.GAME_DATA.next_levels.empty():

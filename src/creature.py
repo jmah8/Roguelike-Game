@@ -3,6 +3,7 @@ import game
 import json
 import config
 from particle import *
+import game_text
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creature.json')) as f:
     data = json.load(f)
@@ -164,12 +165,12 @@ class Creature:
             bool: if creature died return true else return false
         """
         self.stat.hp -= damage
-        game.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + " took " + str(damage) + " damage", RED)
-        game.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
-        NumberParticle(self.x, self.y, damage, self.owner.game.particles, RED)
+        NumberParticle(self.x, self.y, damage, config.PARTICLE_LIST, RED)
 
         if self.stat.hp <= 0 and self.killable:
             self.die()
@@ -181,7 +182,7 @@ class Creature:
         """
         Prints that Entity is dead and removes it from config.GAME_DATA.creature_data
         """
-        game.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
         config.GAME_DATA.creature_data[self.team].remove(self.owner)
 
@@ -208,7 +209,7 @@ class Creature:
         for team, entity_list in config.GAME_DATA.creature_data.items():
             for entity in entity_list:
                 if (entity.x, entity.y) == (self.x + dx, self.y + dy):
-                    if entity.creature.team == self.team:
+                    if team == self.team:
                         return
                     else:
                         self.attack(entity, self.stat.calc_phys_damage())
@@ -251,7 +252,7 @@ class Creature:
             target (object): Entity to attack
             damage (int): damage to do to Entity
         """
-        game.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + " attacks " + target.creature.name_instance
             + " for " + str(damage) + " damage", WHITE)
         if target.creature.take_damage(damage):
@@ -267,7 +268,7 @@ class Creature:
         """
         exp = enemy.creature.stat.calc_exp_gained_from_self(self.stat.level)
         self.stat.exp += exp
-        NumberParticle(self.x, self.y, exp, self.owner.game.particles, YELLOW)
+        NumberParticle(self.x, self.y, exp, config.PARTICLE_LIST, YELLOW)
 
     def regen(self):
         """
@@ -286,7 +287,7 @@ class Creature:
         while self.stat.exp >= 100:
             self.stat.level += 1
             self.stat.exp -= 100
-            game.add_game_message_to_print(
+            game_text.add_game_message_to_print(
                 self.name_instance + " leveled up ", YELLOW)
 
 

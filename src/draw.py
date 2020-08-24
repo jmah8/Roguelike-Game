@@ -212,6 +212,15 @@ def draw_game_objects():
     _draw_creatures(config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"])
 
 
+def draw_particles():
+    """
+    Draws all particles shifted by camera and updates them after
+    """
+    for particle in config.PARTICLE_LIST:
+        draw_at_camera_offset_with_image(particle)
+        particle.update()
+
+
 class Drawing:
     def __init__(self, game):
         """
@@ -238,7 +247,7 @@ class Drawing:
 
         draw_grid()
 
-        self.draw_particles()
+        draw_particles()
 
         self.button_manager.draw_buttons()
 
@@ -246,14 +255,6 @@ class Drawing:
 
         if self.game.mini_map_on:
             draw_minimap(self.game)
-
-    def draw_particles(self):
-        """
-        Draws all particles shifted by camera and updates them after
-        """
-        for particle in self.game.particles:
-            draw_at_camera_offset_with_image(particle)
-            particle.update()
 
     def add_buttons(self):
         """

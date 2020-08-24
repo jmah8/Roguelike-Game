@@ -1,5 +1,15 @@
 from constant import *
+import config
 
+def add_game_message_to_print(ingame_message, message_color):
+    """
+    Adds game message to print
+
+    Args:
+        ingame_message (String): Message to add
+        message_color (Color): Color of message
+    """
+    config.GAME_DATA.game_messages.append((ingame_message, message_color))
 
 def text_height_helper(font):
     """
