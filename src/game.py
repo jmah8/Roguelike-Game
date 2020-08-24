@@ -24,7 +24,6 @@ class GameData:
         self.game_messages = []
         self.previous_levels = LifoQueue()
         self.next_levels = LifoQueue()
-        self.floor = 1
 
 
 class Game:
@@ -40,15 +39,13 @@ class Game:
         pygame.key.set_repeat(350, 75)
 
         self.running = True
-        self.wall_hack = False
-        self.mini_map_on = False
 
         self.menu_manager = Menu_Manager(self)
 
         self.drawing = draw.Drawing(self)
         self.drawing.add_buttons()
 
-        self.free_camera = generate_free_camera(self)
+        self.free_camera = generate_free_camera()
 
         config.GAME_DATA = GameData()
 
@@ -80,14 +77,11 @@ class Game:
         # Particle group
         config.PARTICLE_LIST = []
 
-        if config.TURN_COUNT == 0:
-            config.PLAYER = generate_player(config.MAP_INFO.map_tree, self)
-        else:
-            config.PLAYER.x, config.PLAYER.y = generate_player_spawn(config.MAP_INFO.map_tree)
+        config.PLAYER.x, config.PLAYER.y = generate_player_spawn(config.MAP_INFO.map_tree)
 
-        config.GAME_DATA.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree, self)
+        config.GAME_DATA.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree)
 
-        config.GAME_DATA.item_data = generate_items(config.MAP_INFO.map_tree, self)
+        config.GAME_DATA.item_data = generate_items(config.MAP_INFO.map_tree)
 
         config.GAME_DATA.creature_data["player"] = [config.PLAYER]
 
@@ -118,7 +112,7 @@ class Game:
         # Update what to lock camera on
         config.CAMERA.update(config.PLAYER)
 
-        if not self.wall_hack:
+        if not config.WALL_HACK:
             config.FOV = fov.new_fov(config.MAP_INFO)
 
         fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
@@ -243,20 +237,18 @@ class Game:
         # Returns to previous level
         elif event.key == pygame.K_1:
             if config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == UPSTAIR:
-                config.GAME_DATA.floor -= 1
+                config.CURRENT_FLOOR -= 1
                 self.transition_previous_level()
 
         # Goes to next level
         elif event.key == pygame.K_2:
-            if config.GAME_DATA.floor < NUM_OF_FLOOR and \
+            if config.CURRENT_FLOOR < NUM_OF_FLOOR and \
                     config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
-                config.GAME_DATA.floor += 1
+                config.CURRENT_FLOOR += 1
                 self.transition_next_level()
 
         elif event.key == pygame.K_9:
-            print(config.PLAYER)
             s = pickle.dumps(config.PLAYER)
-            print(s)
 
     def _handle_mouse_event(self, event):
         """
@@ -392,7 +384,7 @@ class Game:
 
             config.CLOCK.tick(FPS)
             config.CAMERA.update(self.free_camera)
-            if not self.wall_hack:
+            if not config.WALL_HACK:
                 config.FOV = fov.new_fov(config.MAP_INFO)
 
             fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
@@ -437,8 +429,8 @@ class Game:
         Toggles wallhack. If wallhack is on, then show whole map in player FOV
         else turn back to normal fov
         """
-        self.wall_hack = not self.wall_hack
-        if self.wall_hack:
+        config.WALL_HACK = not config.WALL_HACK
+        if config.WALL_HACK:
             config.FOV = [[1 for x in range(0, config.MAP_INFO.tile_width)] for y in
                           range(config.MAP_INFO.tile_height)]
 
@@ -507,7 +499,7 @@ class Game:
             true if enemy is in player FOV, else false
         """
         for obj in config.GAME_DATA.creature_data["enemy"]:
-            if fov.check_if_in_fov(obj, config.FOV) and not self.wall_hack:
+            if fov.check_if_in_fov(obj, config.FOV) and not config.WALL_HACK:
                 return True
         return False
 
@@ -537,4 +529,4 @@ class Game:
         """
         Toggles minimap
         """
-        self.mini_map_on = not self.mini_map_on
+        config.MINIMAP = not config.MINIMAP

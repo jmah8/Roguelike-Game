@@ -15,18 +15,25 @@ CLOCK = pygame.time.Clock()
 # Load in all the sprites
 SPRITE = sprite.GameSprites()
 
+CURRENT_FLOOR = 1
+TURN_COUNT = 0
+
 MAP_INFO = gamemap.MapInfo()
 CAMERA = camera.Camera(MAP_INFO)
 PATHFINDING = pathfinding.Graph()
 PATHFINDING.make_graph(MAP_INFO)
 PATHFINDING.neighbour()
 
-PLAYER = None
+PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
 # Initialized in game
+
 GAME_DATA = None
 
 FOV = fov.new_fov(MAP_INFO)
 
-TURN_COUNT = 0
-
 PARTICLE_LIST = []
+
+WALL_HACK = False
+
+MINIMAP = False
+

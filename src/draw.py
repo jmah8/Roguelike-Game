@@ -253,7 +253,7 @@ class Drawing:
 
         draw_ui()
 
-        if self.game.mini_map_on:
+        if config.MINIMAP:
             draw_minimap(self.game)
 
     def add_buttons(self):

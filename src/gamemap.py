@@ -1,6 +1,5 @@
 import sys
 import config
-from sprite import *
 from map_generator import Tree
 from pathfinding import *
 
@@ -155,7 +154,8 @@ def gen_map(map_array):
     tree.build_rooms()
     tree.build_path()
     tree.print_map()
-    tree.place_downstair()
+    if config.CURRENT_FLOOR < NUM_OF_FLOOR:
+        tree.place_downstair()
     print("")
     return tree
 
