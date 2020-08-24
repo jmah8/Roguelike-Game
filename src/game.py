@@ -247,13 +247,22 @@ class Game:
                 config.CURRENT_FLOOR += 1
                 self.transition_next_level()
 
+        elif event.key == pygame.K_8:
+            path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
+
+            with open(path, 'rb') as file:
+                config.CURRENT_FLOOR,\
+                config.TURN_COUNT,\
+                config.MAP_INFO,\
+                config.PLAYER,\
+                config.GAME_DATA = pickle.load(file)
+
         elif event.key == pygame.K_9:
-            s = pickle.dumps([config.CURRENT_FLOOR, config.TURN_COUNT,
+            path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
+            with open(path, 'wb') as file:
+                pickle.dump([config.CURRENT_FLOOR, config.TURN_COUNT,
                              config.MAP_INFO, config.PLAYER,
-                             config.GAME_DATA])
-            print(s)
-            # with open('../data.txt', 'wb') as file:
-            #     pickle.dump(config.PLAYER, file)
+                             config.GAME_DATA], file)
 
     def _handle_mouse_event(self, event):
         """
