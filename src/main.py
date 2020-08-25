@@ -1,4 +1,4 @@
-from game import *
+import game
 import pygame
 import pstats, io
 import cProfile
@@ -24,10 +24,10 @@ def profile(fnc):
 
 @profile
 def start():
-    game = Game()
-    while game.running:
-        new()
-        game.run()
+    g = game.Game()
+    while g.running:
+        game.populate_map()
+        g.run()
     pygame.quit()
 
 

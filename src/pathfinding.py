@@ -53,7 +53,7 @@ class Graph:
         """
         for y in range(map_info.tile_height):
             for x in range(map_info.tile_width):
-                if (not map_info.tile_array[y][x].type == WALL):
+                if not map_info.tile_array[y][x].type == WALL:
                     self.nodes[(x, y)] = (Node(x, y))
                 else:
                     self.walls[(x, y)] = map_info.tile_array[y][x].type

@@ -14,6 +14,213 @@ import button_manager
 pygame.font.init()
 
 
+def _move_to_free_camera(free_camera):
+    """
+    Moves to free camera location
+
+    Args:
+        free_camera ():
+    """
+    # If tile is unexplored do nothing
+    if not config.MAP_INFO.tile_array[free_camera.y][free_camera.x].seen:
+        return
+    start = (config.PLAYER.x, config.PLAYER.y)
+    goal = (free_camera.x, free_camera.y)
+    # Generates path
+    visited = config.PATHFINDING.bfs(start, goal)
+    # If path is generated move player
+    if visited:
+        path = config.PATHFINDING.find_path(start, goal, visited)
+        move_char_auto(path)
+
+
+def _toggle_camera():
+    camera_on = True
+    x, y = config.PLAYER.x, config.PLAYER.y
+    free_camera = generate_free_camera()
+    free_camera.x = x
+    free_camera.y = y
+    while camera_on:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_a:
+                    free_camera.update(-1, 0)
+                elif event.key == pygame.K_d:
+                    free_camera.update(1, 0)
+                elif event.key == pygame.K_w:
+                    free_camera.update(0, -1)
+                elif event.key == pygame.K_q:
+                    free_camera.update(-1, -1)
+                elif event.key == pygame.K_e:
+                    free_camera.update(1, -1)
+                elif event.key == pygame.K_z:
+                    free_camera.update(-1, 1)
+                elif event.key == pygame.K_c:
+                    free_camera.update(1, 1)
+                elif event.key == pygame.K_s:
+                    free_camera.update(0, 1)
+                elif event.key == pygame.K_RETURN:
+                    _move_to_free_camera(free_camera)
+                    camera_on = False
+                elif event.key == pygame.K_m:
+                    camera_on = False
+                elif event.key == pygame.K_ESCAPE:
+                    camera_on = False
+
+        config.CLOCK.tick(FPS)
+        config.CAMERA.update(free_camera)
+        if not config.WALL_HACK:
+            config.FOV = fov.new_fov(config.MAP_INFO)
+
+        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
+        fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
+
+        draw.draw()
+        draw.draw_at_camera_offset_without_image(free_camera)
+        pygame.display.flip()
+
+
+def _handle_keyboard_event(event):
+    """
+    Handles keyboard event
+
+    Args:
+        event (Event): Keyboard event to handle
+    """
+    # Movement
+    if event.key == pygame.K_a:
+        _update_creatures(config.GAME_DATA.creature_data, -1, 0)
+    elif event.key == pygame.K_d:
+        _update_creatures(config.GAME_DATA.creature_data, 1, 0)
+    elif event.key == pygame.K_w:
+        _update_creatures(config.GAME_DATA.creature_data, 0, -1)
+    elif event.key == pygame.K_q:
+        _update_creatures(config.GAME_DATA.creature_data, -1, -1)
+    elif event.key == pygame.K_e:
+        _update_creatures(config.GAME_DATA.creature_data, 1, -1)
+    elif event.key == pygame.K_z:
+        _update_creatures(config.GAME_DATA.creature_data, -1, 1)
+    elif event.key == pygame.K_c:
+        _update_creatures(config.GAME_DATA.creature_data, 1, 1)
+    elif event.key == pygame.K_s:
+        _update_creatures(config.GAME_DATA.creature_data, 0, 1)
+    elif event.key == pygame.K_x:
+        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+
+    # Mini_map
+    elif event.key == pygame.K_TAB:
+        toggle_minimap()
+
+    # Pickup/Drop Item
+    elif event.key == pygame.K_t:
+        objects_at_player = map_items_at_coord(config.GAME_DATA.item_data, config.PLAYER.x, config.PLAYER.y)
+        for obj in objects_at_player:
+            if obj.item:
+                obj.item.pick_up(config.PLAYER)
+        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+
+    # TODO: instead of dropping last item dropped, drop mouse event in inventory
+    elif event.key == pygame.K_g:
+        if len(config.PLAYER.container.inventory) > 0:
+            config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y)
+        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+
+    elif event.key == pygame.K_ESCAPE:
+        _toggle_wallhack()
+
+    elif event.key == pygame.K_m:
+        _toggle_camera()
+
+    # Auto move
+    elif event.key == pygame.K_v:
+        auto_path(config.PATHFINDING)
+
+    # Menu Buttons
+    elif event.key == pygame.K_p:
+        menu_manager.menpause_menu()
+    elif event.key == pygame.K_i:
+        menu_manager.inventory_menu()
+
+    # Use magic
+    elif event.key == pygame.K_SPACE:
+        menu_manager.magic_targetting_menu()
+
+    # Returns to previous level
+    elif event.key == pygame.K_1:
+        if config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == UPSTAIR:
+            config.CURRENT_FLOOR -= 1
+            config.GAME_DATA.transition_previous_level()
+
+    # Goes to next level
+    elif event.key == pygame.K_2:
+        if config.CURRENT_FLOOR < NUM_OF_FLOOR and \
+                config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
+            config.CURRENT_FLOOR += 1
+            config.GAME_DATA.transition_next_level()
+
+    elif event.key == pygame.K_F1:
+        save_game()
+
+    elif event.key == pygame.K_F2:
+        load_game()
+
+
+class Game:
+    def __init__(self):
+        """
+        Initializes pygame
+        """
+        # Pygame screen
+        pygame.init()
+        pygame.display.set_caption("Knight's Adventure")
+
+        # Repeat keys when held down
+        pygame.key.set_repeat(350, 75)
+
+        self.running = True
+
+        self.playing = True
+
+        button_manager.add_buttons()
+
+    def run(self):
+        """
+        Main game loop which takes in process player input updates screen
+        """
+        while self.playing:
+            config.CLOCK.tick(FPS)
+            self.handle_events()
+            update()
+            pygame.display.flip()
+
+    def handle_events(self):
+        """
+        Handle player input
+        """
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                if self.playing:
+                    self.playing = False
+                self.running = False
+
+            # For resizing window
+            if event.type == pygame.VIDEORESIZE:
+                _handle_screen_resize(event)
+
+            # Moving to where mouse is clicked
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                _handle_mouse_event(event)
+
+            # Keyboard press
+            elif event.type == pygame.KEYDOWN:
+                _handle_keyboard_event(event)
+
+
 def toggle_minimap():
     """
     Toggles minimap
@@ -21,29 +228,33 @@ def toggle_minimap():
     config.MINIMAP = not config.MINIMAP
 
 
-def _check_if_enemy_in_fov():
+def _check_if_enemy_in_fov(enemy_list):
     """
+    Args:
+        enemy_list (list): List of enemies to check if in fov
+
     Returns:
         true if enemy is in player FOV, else false
     """
-    for obj in config.GAME_DATA.creature_data["enemy"]:
+    for obj in enemy_list:
         if fov.check_if_in_fov(obj, config.FOV) and not config.WALL_HACK:
             return True
     return False
 
 
-def map_items_at_coord(coord_x, coord_y):
+def map_items_at_coord(item_list, coord_x, coord_y):
     """
     Returns list of items at (coord_x, coord_y)
 
     Args:
+        item_list (list): List of items to check
         coord_x (int): x coord on map
         coord_y (int): y coord on map
 
     Returns:
         objects (List): list of items at (coord_x, coord_y)
     """
-    objects = [obj for obj in config.GAME_DATA.item_data if obj.x == coord_x and obj.y == coord_y]
+    objects = [obj for obj in item_list if obj.x == coord_x and obj.y == coord_y]
     return objects
 
 
@@ -58,15 +269,16 @@ def _toggle_wallhack():
                       range(config.MAP_INFO.tile_height)]
 
 
-def _update_creatures(dx, dy):
+def _update_creatures(creature_dict, dx, dy):
     """
     Updates all creatures and increments turn count
 
     Args:
+        creature_dict (dict): Dictionary of player and enemy
         dx (int): x to move player by
         dy (int): y to move player by
     """
-    for team in config.GAME_DATA.creature_data:
+    for team in creature_dict:
         for entity in config.GAME_DATA.creature_data[team]:
             entity.update(dx, dy)
     config.TURN_COUNT += 1
@@ -79,7 +291,7 @@ def generate_camera():
     config.CAMERA = Camera(config.MAP_INFO)
 
 
-def _populate_map():
+def populate_map():
     """
     Adds entities to map
 
@@ -122,7 +334,7 @@ def new():
 
     initialize_pathfinding()
 
-    _populate_map()
+    populate_map()
 
 
 def update():
@@ -158,9 +370,9 @@ def move_char_auto(path, ignore=False):
         if not ignore:
             # If enemy in FOV stop auto moving
             # If wall hack on disregard
-            if _check_if_enemy_in_fov():
+            if _check_if_enemy_in_fov(config.GAME_DATA.creature_data["enemy"]):
                 return
-        _update_creatures(0, 0)
+        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
     else:
         for coord in path:
             # If key pressed stop auto moving
@@ -172,13 +384,13 @@ def move_char_auto(path, ignore=False):
             if not ignore:
                 # If enemy in FOV stop auto moving
                 # If wall hack on disregard
-                if _check_if_enemy_in_fov():
+                if _check_if_enemy_in_fov(config.GAME_DATA.creature_data["enemy"]):
                     return
 
             # Move to next coord in path
             dest_x = coord[0] - old_coord[0]
             dest_y = coord[1] - old_coord[1]
-            _update_creatures(dest_x, dest_y)
+            _update_creatures(config.GAME_DATA.creature_data, dest_x, dest_y)
             old_coord = coord
 
             update()
@@ -279,208 +491,7 @@ def cast_magic():
     magic.cast_lightning(config.PLAYER, line)
     # TODO: maybe change this since if player has ai but cast fireball,
     #       player would move + cast fireball at the same time
-    _update_creatures(0, 0)
-
-
-class Game:
-    def __init__(self):
-        """
-        Initializes pygame
-        """
-        # Pygame screen
-        pygame.init()
-        pygame.display.set_caption("Knight's Adventure")
-
-        # Repeat keys when held down
-        pygame.key.set_repeat(350, 75)
-
-        self.running = True
-
-        button_manager.add_buttons()
-
-        self.free_camera = generate_free_camera()
-
-    def run(self):
-        """
-        Main game loop which takes in process player input updates screen
-        """
-        self.playing = True
-        while self.playing:
-            config.CLOCK.tick(FPS)
-            self.handle_events()
-            update()
-            pygame.display.flip()
-
-    def handle_events(self):
-        """
-        Handle player input
-        """
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                if self.playing:
-                    self.playing = False
-                self.running = False
-
-            # For resizing window
-            if event.type == pygame.VIDEORESIZE:
-                _handle_screen_resize(event)
-
-            # Moving to where mouse is clicked
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                _handle_mouse_event(event)
-
-            # Keyboard press
-            elif event.type == pygame.KEYDOWN:
-                self._handle_keyboard_event(event)
-
-    def _handle_keyboard_event(self, event):
-        """
-        Handles keyboard event
-
-        Args:
-            event (Event): Keyboard event to handle
-        """
-        # Movement
-        if event.key == pygame.K_a:
-            _update_creatures(-1, 0)
-        elif event.key == pygame.K_d:
-            _update_creatures(1, 0)
-        elif event.key == pygame.K_w:
-            _update_creatures(0, -1)
-        elif event.key == pygame.K_q:
-            _update_creatures(-1, -1)
-        elif event.key == pygame.K_e:
-            _update_creatures(1, -1)
-        elif event.key == pygame.K_z:
-            _update_creatures(-1, 1)
-        elif event.key == pygame.K_c:
-            _update_creatures(1, 1)
-        elif event.key == pygame.K_s:
-            _update_creatures(0, 1)
-        elif event.key == pygame.K_x:
-            _update_creatures(0, 0)
-
-        # Mini_map
-        elif event.key == pygame.K_TAB:
-            toggle_minimap()
-
-        # Pickup/Drop Item
-        elif event.key == pygame.K_t:
-            objects_at_player = map_items_at_coord(config.PLAYER.x, config.PLAYER.y)
-            for obj in objects_at_player:
-                if obj.item:
-                    obj.item.pick_up(config.PLAYER)
-            _update_creatures(0, 0)
-
-        # TODO: instead of dropping last item dropped, drop mouse event in inventory
-        elif event.key == pygame.K_g:
-            if len(config.PLAYER.container.inventory) > 0:
-                config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y)
-            _update_creatures(0, 0)
-
-        elif event.key == pygame.K_ESCAPE:
-            _toggle_wallhack()
-
-        elif event.key == pygame.K_m:
-            self._toggle_camera()
-
-        # Auto move
-        elif event.key == pygame.K_v:
-            auto_path(config.PATHFINDING)
-
-        # Menu Buttons
-        elif event.key == pygame.K_p:
-            menu_manager.menpause_menu()
-        elif event.key == pygame.K_i:
-            menu_manager.inventory_menu()
-
-        # Use magic
-        elif event.key == pygame.K_SPACE:
-            menu_manager.magic_targetting_menu()
-
-        # Returns to previous level
-        elif event.key == pygame.K_1:
-            if config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == UPSTAIR:
-                config.CURRENT_FLOOR -= 1
-                config.GAME_DATA.transition_previous_level()
-
-        # Goes to next level
-        elif event.key == pygame.K_2:
-            if config.CURRENT_FLOOR < NUM_OF_FLOOR and \
-                    config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
-                config.CURRENT_FLOOR += 1
-                config.GAME_DATA.transition_next_level()
-
-        elif event.key == pygame.K_F1:
-            save_game()
-
-        elif event.key == pygame.K_F2:
-            load_game()
-
-    def _toggle_camera(self):
-        camera_on = True
-        x, y = config.PLAYER.x, config.PLAYER.y
-        self.free_camera.x = x
-        self.free_camera.y = y
-        while camera_on:
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_a:
-                        update(-1, 0)
-                    elif event.key == pygame.K_d:
-                        update(1, 0)
-                    elif event.key == pygame.K_w:
-                        update(0, -1)
-                    elif event.key == pygame.K_q:
-                        update(-1, -1)
-                    elif event.key == pygame.K_e:
-                        update(1, -1)
-                    elif event.key == pygame.K_z:
-                        update(-1, 1)
-                    elif event.key == pygame.K_c:
-                        update(1, 1)
-                    elif event.key == pygame.K_s:
-                        update(0, 1)
-                    elif event.key == pygame.K_RETURN:
-                        self._move_to_free_camera()
-                        camera_on = False
-                    elif event.key == pygame.K_m:
-                        camera_on = False
-                    elif event.key == pygame.K_ESCAPE:
-                        camera_on = False
-
-            config.CLOCK.tick(FPS)
-            config.CAMERA.update(self.free_camera)
-            if not config.WALL_HACK:
-                config.FOV = fov.new_fov(config.MAP_INFO)
-
-            fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
-            fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
-
-            draw.draw()
-            draw.draw_at_camera_offset_without_image(self.free_camera)
-            pygame.display.flip()
-
-    def _move_to_free_camera(self):
-        """
-        Moves to free camera location
-        """
-        # If tile is unexplored do nothing
-        if not config.MAP_INFO.tile_array[self.free_camera.y][self.free_camera.x].seen:
-            return
-        start = (config.PLAYER.x, config.PLAYER.y)
-        goal = (self.free_camera.x, self.free_camera.y)
-        # Generates path
-        visited = config.PATHFINDING.bfs(start, goal)
-        # If path is generated move player
-        if visited:
-            path = config.PATHFINDING.find_path(start, goal, visited)
-            move_char_auto(path)
+    _update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
 
 def save_game():
@@ -501,7 +512,7 @@ def load_game():
     path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
     with open(path, 'rb') as file:
         config.CURRENT_FLOOR, \
-            config.TURN_COUNT, \
-            config.MAP_INFO, \
-            config.PLAYER, \
-            config.GAME_DATA = pickle.load(file)
+        config.TURN_COUNT, \
+        config.MAP_INFO, \
+        config.PLAYER, \
+        config.GAME_DATA = pickle.load(file)

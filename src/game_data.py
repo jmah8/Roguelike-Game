@@ -22,11 +22,11 @@ class GameData:
         if config.GAME_DATA.previous_levels:
             # Saves current level to next level list
             level_data = (
-                config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"],
-                config.GAME_DATA.item_data)
-            config.GAME_DATA.next_levels.append(level_data)
+                config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"],
+                self.item_data)
+            self.next_levels.append(level_data)
 
-            x, y, map_info, enemy_list, item_group = config.GAME_DATA.previous_levels.popleft()
+            x, y, map_info, enemy_list, item_group = self.previous_levels.popleft()
 
             self._load_level_data(enemy_list, item_group, map_info, x, y)
 
@@ -35,16 +35,16 @@ class GameData:
         Goes to next level
         """
         level_data = (
-            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, config.GAME_DATA.creature_data["enemy"],
-            config.GAME_DATA.item_data)
-        config.GAME_DATA.previous_levels.append(level_data)
+            config.PLAYER.x, config.PLAYER.y, config.MAP_INFO, self.creature_data["enemy"],
+            self.item_data)
+        self.previous_levels.append(level_data)
 
-        if not config.GAME_DATA.next_levels:
+        if not self.next_levels:
             game.new()
             # Places upstair at where the player entered the map at
             config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type = UPSTAIR
         else:
-            x, y, map_info, enemy_list, item_group = config.GAME_DATA.next_levels.popleft()
+            x, y, map_info, enemy_list, item_group = self.next_levels.popleft()
 
             self._load_level_data(enemy_list, item_group, map_info, x, y)
 
@@ -61,8 +61,8 @@ class GameData:
         """
         config.PLAYER.x = x
         config.PLAYER.y = y
-        config.GAME_DATA.creature_data["enemy"] = enemy_list
-        config.GAME_DATA.item_data = item_group
+        self.creature_data["enemy"] = enemy_list
+        self.item_data = item_group
         config.MAP_INFO = map_info
         game.generate_camera()
         game.initialize_pathfinding()
