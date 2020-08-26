@@ -7,80 +7,122 @@ import magic
 import pathfinding
 from camera import Camera
 import draw
-from entity_generator import *
 import menu_manager
 import button_manager
+import game_data
+import entity_generator
 
 pygame.font.init()
 
+class Game:
+    def __init__(self):
+        """
+        Initializes pygame
+        """
+        # Pygame screen
+        pygame.init()
+        pygame.display.set_caption("Knight's Adventure")
 
-def _move_to_free_camera(free_camera):
+        # Repeat keys when held down
+        pygame.key.set_repeat(350, 75)
+
+        self.running = True
+
+        self.playing = True
+
+        button_manager.add_buttons()
+
+    def run(self):
+        """
+        Main game loop which takes in process player input updates screen
+        """
+        while self.playing:
+            config.CLOCK.tick(FPS)
+            handle_events()
+            update()
+            pygame.display.flip()
+
+
+def handle_events():
     """
-    Moves to free camera location
+    Handle player input
+    """
+    events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+            quit_game()
+            # if self.playing:
+            #     self.playing = False
+            # self.running = False
+
+        # For resizing window
+        if event.type == pygame.VIDEORESIZE:
+            _handle_screen_resize(event)
+
+        # Moving to where mouse is clicked
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            _handle_mouse_event(event)
+
+        # Keyboard press
+        elif event.type == pygame.KEYDOWN:
+            _handle_keyboard_event(event)
+
+
+def _handle_screen_resize(event):
+    """
+    Handles screen resize event
 
     Args:
-        free_camera ():
+        event (Event): Screen resize event to handle
     """
-    # If tile is unexplored do nothing
-    if not config.MAP_INFO.tile_array[free_camera.y][free_camera.x].seen:
-        return
-    start = (config.PLAYER.x, config.PLAYER.y)
-    goal = (free_camera.x, free_camera.y)
-    # Generates path
-    visited = config.PATHFINDING.bfs(start, goal)
-    # If path is generated move player
-    if visited:
-        path = config.PATHFINDING.find_path(start, goal, visited)
-        move_char_auto(path)
+    new_width = event.w
+    new_height = event.h
+    # Remove if statements if left and top should be empty
+    # else right and bottom is empty
+    if new_width > config.MAP_INFO.pixel_width:
+        config.CAMERA.camera_width = config.MAP_INFO.pixel_width
+    else:
+        config.CAMERA.camera_width = event.w
+
+    if new_height > config.MAP_INFO.pixel_height:
+        config.CAMERA.camera_height = config.MAP_INFO.pixel_height
+    else:
+        config.CAMERA.camera_height = event.h
+    # This line is only used in pygame 1
+    config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
+                                                  pygame.RESIZABLE)
 
 
-def _toggle_camera():
-    camera_on = True
-    x, y = config.PLAYER.x, config.PLAYER.y
-    free_camera = generate_free_camera()
-    free_camera.x = x
-    free_camera.y = y
-    while camera_on:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
+def _handle_mouse_event(event):
+    """
+    Handles mouse clicks
 
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a:
-                    free_camera.update(-1, 0)
-                elif event.key == pygame.K_d:
-                    free_camera.update(1, 0)
-                elif event.key == pygame.K_w:
-                    free_camera.update(0, -1)
-                elif event.key == pygame.K_q:
-                    free_camera.update(-1, -1)
-                elif event.key == pygame.K_e:
-                    free_camera.update(1, -1)
-                elif event.key == pygame.K_z:
-                    free_camera.update(-1, 1)
-                elif event.key == pygame.K_c:
-                    free_camera.update(1, 1)
-                elif event.key == pygame.K_s:
-                    free_camera.update(0, 1)
-                elif event.key == pygame.K_RETURN:
-                    _move_to_free_camera(free_camera)
-                    camera_on = False
-                elif event.key == pygame.K_m:
-                    camera_on = False
-                elif event.key == pygame.K_ESCAPE:
-                    camera_on = False
+    Args:
+        event (Event): Event to handle
+    """
+    if event.button == 1:
+        # Check if button clicked
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
+        if button:
+            button.menu_open()
+            return
+
+        # Move player to mouse click
+        move_x, move_y = config.CAMERA.get_mouse_coord()
+
+        if not config.MAP_INFO.tile_array[move_y][move_x].seen:
+            return
+
+        start = (config.PLAYER.x, config.PLAYER.y)
+        goal = (move_x, move_y)
+        visited = config.PATHFINDING.bfs(start, goal)
+        if visited:
+            path = config.PATHFINDING.find_path(start, goal, visited)
+            move_char_auto(path, True)
 
         config.CLOCK.tick(FPS)
-        config.CAMERA.update(free_camera)
-        if not config.WALL_HACK:
-            config.FOV = fov.new_fov(config.MAP_INFO)
-
-        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
-        fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
-
-        draw.draw()
-        draw.draw_at_camera_offset_without_image(free_camera)
+        update()
         pygame.display.flip()
 
 
@@ -163,62 +205,91 @@ def _handle_keyboard_event(event):
             config.GAME_DATA.transition_next_level()
 
     elif event.key == pygame.K_F1:
-        save_game()
+        new_game()
 
     elif event.key == pygame.K_F2:
+        save_game()
+
+    elif event.key == pygame.K_F3:
         load_game()
 
 
-class Game:
-    def __init__(self):
-        """
-        Initializes pygame
-        """
-        # Pygame screen
-        pygame.init()
-        pygame.display.set_caption("Knight's Adventure")
+def quit_game():
+    """
+    Saves game and closes
+    """
+    save_game()
+    pygame.quit()
 
-        # Repeat keys when held down
-        pygame.key.set_repeat(350, 75)
 
-        self.running = True
-
-        self.playing = True
-
-        button_manager.add_buttons()
-
-    def run(self):
-        """
-        Main game loop which takes in process player input updates screen
-        """
-        while self.playing:
-            config.CLOCK.tick(FPS)
-            self.handle_events()
-            update()
-            pygame.display.flip()
-
-    def handle_events(self):
-        """
-        Handle player input
-        """
+def _toggle_camera():
+    camera_on = True
+    x, y = config.PLAYER.x, config.PLAYER.y
+    free_camera = entity_generator.generate_free_camera()
+    free_camera.x = x
+    free_camera.y = y
+    while camera_on:
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                if self.playing:
-                    self.playing = False
-                self.running = False
+                pygame.quit()
 
-            # For resizing window
-            if event.type == pygame.VIDEORESIZE:
-                _handle_screen_resize(event)
-
-            # Moving to where mouse is clicked
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                _handle_mouse_event(event)
-
-            # Keyboard press
             elif event.type == pygame.KEYDOWN:
-                _handle_keyboard_event(event)
+                if event.key == pygame.K_a:
+                    free_camera.update(-1, 0)
+                elif event.key == pygame.K_d:
+                    free_camera.update(1, 0)
+                elif event.key == pygame.K_w:
+                    free_camera.update(0, -1)
+                elif event.key == pygame.K_q:
+                    free_camera.update(-1, -1)
+                elif event.key == pygame.K_e:
+                    free_camera.update(1, -1)
+                elif event.key == pygame.K_z:
+                    free_camera.update(-1, 1)
+                elif event.key == pygame.K_c:
+                    free_camera.update(1, 1)
+                elif event.key == pygame.K_s:
+                    free_camera.update(0, 1)
+                elif event.key == pygame.K_RETURN:
+                    _move_to_free_camera(free_camera)
+                    camera_on = False
+                elif event.key == pygame.K_m:
+                    camera_on = False
+                elif event.key == pygame.K_ESCAPE:
+                    camera_on = False
+
+        config.CLOCK.tick(FPS)
+        config.CAMERA.update(free_camera)
+        if not config.WALL_HACK:
+            config.FOV = fov.new_fov(config.MAP_INFO)
+
+        fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
+        fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
+
+        draw.draw()
+        draw.draw_at_camera_offset_without_image(free_camera)
+        pygame.display.flip()
+
+
+def _move_to_free_camera(free_camera):
+    """
+    Moves to free camera location
+
+    Args:
+        free_camera ():
+    """
+    # If tile is unexplored do nothing
+    if not config.MAP_INFO.tile_array[free_camera.y][free_camera.x].seen:
+        return
+    start = (config.PLAYER.x, config.PLAYER.y)
+    goal = (free_camera.x, free_camera.y)
+    # Generates path
+    visited = config.PATHFINDING.bfs(start, goal)
+    # If path is generated move player
+    if visited:
+        path = config.PATHFINDING.find_path(start, goal, visited)
+        move_char_auto(path)
 
 
 def toggle_minimap():
@@ -301,11 +372,11 @@ def populate_map():
     # Particle group
     config.PARTICLE_LIST = []
 
-    config.PLAYER.x, config.PLAYER.y = generate_player_spawn(config.MAP_INFO.map_tree)
+    config.PLAYER.x, config.PLAYER.y = entity_generator.generate_player_spawn(config.MAP_INFO.map_tree)
 
-    config.GAME_DATA.creature_data["enemy"] = generate_enemies(config.MAP_INFO.map_tree)
+    config.GAME_DATA.creature_data["enemy"] = entity_generator.generate_enemies(config.MAP_INFO.map_tree)
 
-    config.GAME_DATA.item_data = generate_items(config.MAP_INFO.map_tree)
+    config.GAME_DATA.item_data = entity_generator.generate_items(config.MAP_INFO.map_tree)
 
     config.GAME_DATA.creature_data["player"] = [config.PLAYER]
 
@@ -324,7 +395,7 @@ def initialize_pathfinding():
     config.PATHFINDING.neighbour()
 
 
-def new():
+def new_level():
     """
     Makes new map and entities
     """
@@ -333,6 +404,35 @@ def new():
     generate_camera()
 
     initialize_pathfinding()
+
+    populate_map()
+
+def new_game():
+    # Save this
+    config.CURRENT_FLOOR = 1
+    # Save this
+    config.TURN_COUNT = 0
+
+    # Save this
+    _generate_new_map()
+
+    generate_camera()
+
+    initialize_pathfinding()
+
+    # Save this
+    config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree)
+
+    # Save this
+    config.GAME_DATA = game_data.GameData()
+
+    config.FOV = fov.new_fov(config.MAP_INFO)
+
+    config.PARTICLE_LIST = []
+
+    config.WALL_HACK = False
+
+    config.MINIMAP = False
 
     populate_map()
 
@@ -396,64 +496,6 @@ def move_char_auto(path, ignore=False):
             update()
             config.CLOCK.tick(20)
             pygame.display.flip()
-
-
-def _handle_mouse_event(event):
-    """
-    Handles mouse clicks
-
-    Args:
-        event (Event): Event to handle
-    """
-    if event.button == 1:
-        # Check if button clicked
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
-        if button:
-            button.menu_open()
-            return
-
-        # Move player to mouse click
-        move_x, move_y = config.CAMERA.get_mouse_coord()
-
-        if not config.MAP_INFO.tile_array[move_y][move_x].seen:
-            return
-
-        start = (config.PLAYER.x, config.PLAYER.y)
-        goal = (move_x, move_y)
-        visited = config.PATHFINDING.bfs(start, goal)
-        if visited:
-            path = config.PATHFINDING.find_path(start, goal, visited)
-            move_char_auto(path, True)
-
-        config.CLOCK.tick(FPS)
-        update()
-        pygame.display.flip()
-
-
-def _handle_screen_resize(event):
-    """
-    Handles screen resize event
-
-    Args:
-        event (Event): Screen resize event to handle
-    """
-    new_width = event.w
-    new_height = event.h
-    # Remove if statements if left and top should be empty
-    # else right and bottom is empty
-    if new_width > config.MAP_INFO.pixel_width:
-        config.CAMERA.camera_width = config.MAP_INFO.pixel_width
-    else:
-        config.CAMERA.camera_width = event.w
-
-    if new_height > config.MAP_INFO.pixel_height:
-        config.CAMERA.camera_height = config.MAP_INFO.pixel_height
-    else:
-        config.CAMERA.camera_height = event.h
-    # This line is only used in pygame 1
-    config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
-                                                  pygame.RESIZABLE)
 
 
 def auto_path(graph):

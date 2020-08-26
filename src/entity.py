@@ -1,6 +1,7 @@
 from constant import *
 import config
 
+
 class Entity:
     """
     Class for Entity which represents entity, which is anything that appears
@@ -148,5 +149,3 @@ class Entity:
         if self.creature.stat:
             # Regenerates hp and mp of creatures
             self.creature.regen()
-
-

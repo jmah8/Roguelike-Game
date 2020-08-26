@@ -1,5 +1,4 @@
 import os
-import game
 import json
 import config
 from particle import *

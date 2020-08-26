@@ -1,7 +1,7 @@
 import collections
+from constant import *
 import config
 import game
-from constant import *
 
 
 class GameData:
@@ -40,7 +40,7 @@ class GameData:
         self.previous_levels.append(level_data)
 
         if not self.next_levels:
-            game.new()
+            game.new_level()
             # Places upstair at where the player entered the map at
             config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type = UPSTAIR
         else:

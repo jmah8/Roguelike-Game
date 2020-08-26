@@ -1,4 +1,3 @@
-import pygame
 from exceptions import *
 from constant import *
 import config

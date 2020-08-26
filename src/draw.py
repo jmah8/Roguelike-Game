@@ -4,8 +4,6 @@ import game_text
 import minimap
 import fov
 import sprite
-import game
-
 
 def draw():
     """

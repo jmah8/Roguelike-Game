@@ -1,5 +1,4 @@
 from constant import *
-import game
 import pygame
 import sprite
 import entity_generator

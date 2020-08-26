@@ -2,13 +2,13 @@ import game
 import pygame
 import pstats, io
 import cProfile
+import config
+
 
 def profile(fnc):
-    
     """A decorator that uses cProfile to profile a function"""
-    
+
     def inner(*args, **kwargs):
-        
         pr = cProfile.Profile()
         pr.enable()
         retval = fnc(*args, **kwargs)
@@ -22,11 +22,15 @@ def profile(fnc):
 
     return inner
 
+
 @profile
 def start():
     g = game.Game()
     while g.running:
-        game.populate_map()
+        try:
+            game.load_game()
+        except:
+            game.populate_map()
         g.run()
     pygame.quit()
 
