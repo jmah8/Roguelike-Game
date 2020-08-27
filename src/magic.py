@@ -1,7 +1,9 @@
 import json
 import os
+import game
+import draw
 from constant import *
-import game as g
+import config
 import pygame
 import particle
 
@@ -114,7 +116,7 @@ def line(start, end, map):
         else:
             t = i / num_of_tiles
         x, y = round_point(lerp_point(start, end, t))
-        if map[y][x] == WALL:
+        if map[y][x].type == WALL:
             break
         # Skip the point the entity is on
         if i != 0:
@@ -122,12 +124,11 @@ def line(start, end, map):
     return points
 
 
-def cast_fireball(game, caster, line):
+def cast_fireball(caster, line):
     """
     Throws fireball following line stopping at first enemy hit.
     
     Args:
-        game (Game): Game with game data
         caster (Object): Creature that casted fireball
         line (List): List of coordinates for fireball to follow
     """
@@ -135,7 +136,7 @@ def cast_fireball(game, caster, line):
     mp_cost = data["fireball"]["cost"]
 
     particle_group = []
-    particle.MagicParticle(particle_group, game.game_sprites.magic['fireball'], line)
+    particle.MagicParticle(particle_group, config.SPRITE.magic['fireball'], line)
 
     damage = caster.creature.stat.calc_magic_damage(base_damage)
 
@@ -144,7 +145,7 @@ def cast_fireball(game, caster, line):
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
         enemies = []
-        for team, entity in game.creature_data.items():
+        for team, entity in config.GAME_DATA.creature_data.items():
             if team != caster.creature.team:
                 enemies += entity
         creature_hit = False
@@ -158,32 +159,30 @@ def cast_fireball(game, caster, line):
                     creature_hit = True
                     break
 
-            _update_spell(game, particle_group)
+            _update_spell(particle_group)
 
 
-def _update_spell(game, particle_group):
+def _update_spell(particle_group):
     """
     Updates the spell casted
 
     Args:
-        game (Game): Game with all game data
         particle_group (List): List of particles
     """
     game.update()
     for magic in particle_group:
-        game.drawing.draw_at_camera_offset(magic)
+        draw.draw_at_camera_offset_with_image(magic)
         magic.update()
-    game.clock.tick(20)
+    config.CLOCK.tick(20)
     pygame.display.update()
 
 
 # TODO: make it so enemies wont target through their allies
-def cast_lightning(game, caster, line):
+def cast_lightning(caster, line):
     """
     Throws lightning following line, hitting all enemies in path.
 
     Args:
-        game (Game): Game with game data
         caster (Object): Creature that casted lightning
         line (List): List of coordinates for lightning to follow
     """
@@ -191,7 +190,7 @@ def cast_lightning(game, caster, line):
     mp_cost = data["lightning"]["cost"]
 
     particle_group = []
-    particle.MagicParticle(particle_group, game.game_sprites.magic['lightning'], line)
+    particle.MagicParticle(particle_group, config.SPRITE.magic['lightning'], line)
 
     damage = caster.creature.stat.calc_magic_damage(base_damage)
 
@@ -200,7 +199,7 @@ def cast_lightning(game, caster, line):
         caster.creature.stat.mp -= mp_cost
         # get list of tiles from start to end
         enemies = []
-        for team, entity in game.creature_data.items():
+        for team, entity in config.GAME_DATA.creature_data.items():
             if team != caster.creature.team:
                 enemies += entity
         for (x, y) in line:
@@ -208,7 +207,7 @@ def cast_lightning(game, caster, line):
                 if (enemy.x, enemy.y) == (x, y):
                     caster.creature.attack(enemy, damage)
 
-            _update_spell(game, particle_group)
+            _update_spell(particle_group)
 
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:

@@ -1,6 +1,8 @@
-from particle import *
-import json
 import os
+import json
+import config
+from particle import *
+import game_text
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creature.json')) as f:
     data = json.load(f)
@@ -162,12 +164,12 @@ class Creature:
             bool: if creature died return true else return false
         """
         self.stat.hp -= damage
-        self.owner.game.drawing.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + " took " + str(damage) + " damage", RED)
-        self.owner.game.drawing.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
-        NumberParticle(self.x, self.y, damage, self.owner.game.particles, RED)
+        NumberParticle(self.x, self.y, damage, config.PARTICLE_LIST, RED)
 
         if self.stat.hp <= 0 and self.killable:
             self.die()
@@ -177,11 +179,11 @@ class Creature:
 
     def die(self):
         """
-        Prints that Entity is dead and removes it from game.creature_data
+        Prints that Entity is dead and removes it from config.GAME_DATA.creature_data
         """
-        self.owner.game.drawing.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + " is dead", BLUE)
-        self.owner.game.creature_data[self.team].remove(self.owner)
+        config.GAME_DATA.creature_data[self.team].remove(self.owner)
 
     def move(self, dx, dy):
         """
@@ -199,23 +201,22 @@ class Creature:
 
         if not self.walk_through_tile:
             # check to see if entity collided with wall and if so don't move
-            if self.owner.game.map_info.map_array[self.y + dy][self.x + dx] == WALL:
+            if config.MAP_INFO.tile_array[self.y + dy][self.x + dx].type == WALL:
                 return
 
-        # check to see if entity collided with enemy or ally and if so don't move
-        for team, entity_list in self.owner.game.creature_data.items():
-            for entity in entity_list:
-                if (entity.x, entity.y) == (self.x + dx, self.y + dy):
-                    if entity.creature.team == self.team:
-                        return
-                    else:
-                        self.attack(entity, self.stat.calc_phys_damage())
-                        return
+        if self.team:
+            # check to see if entity collided with enemy or ally and if so don't move
+            for team, entity_list in config.GAME_DATA.creature_data.items():
+                for entity in entity_list:
+                    if (entity.x, entity.y) == (self.x + dx, self.y + dy):
+                        if team == self.team:
+                            return
+                        else:
+                            self.attack(entity, self.stat.calc_phys_damage())
+                            return
 
         self.owner.x += dx
         self.owner.y += dy
-        self.owner.rect.topleft = (
-            self.owner.x * SPRITE_SIZE, self.owner.y * SPRITE_SIZE)
 
     def _update_anim_status(self, dx, dy):
         """
@@ -251,7 +252,7 @@ class Creature:
             target (object): Entity to attack
             damage (int): damage to do to Entity
         """
-        self.owner.game.drawing.add_game_message_to_print(
+        game_text.add_game_message_to_print(
             self.name_instance + " attacks " + target.creature.name_instance
             + " for " + str(damage) + " damage", WHITE)
         if target.creature.take_damage(damage):
@@ -267,16 +268,13 @@ class Creature:
         """
         exp = enemy.creature.stat.calc_exp_gained_from_self(self.stat.level)
         self.stat.exp += exp
-        NumberParticle(self.x, self.y, exp, self.owner.game.particles, YELLOW)
+        NumberParticle(self.x, self.y, exp, config.PARTICLE_LIST, YELLOW)
 
-    def regen(self, turn_count):
+    def regen(self):
         """
         Regenerates hp and mp of self depending on how many turns have passed
-
-        Args:
-            turn_count (int): Turns it has been since start of game
         """
-        if turn_count % REGEN_TIME == 0:
+        if config.TURN_COUNT % REGEN_TIME == 0:
             if self.stat.hp + 1 <= self.stat.max_hp:
                 self.stat.hp += 1
             if self.stat.mp + 1 <= self.stat.max_mp:
@@ -289,7 +287,7 @@ class Creature:
         while self.stat.exp >= 100:
             self.stat.level += 1
             self.stat.exp -= 100
-            self.owner.game.drawing.add_game_message_to_print(
+            game_text.add_game_message_to_print(
                 self.name_instance + " leveled up ", YELLOW)
 
 

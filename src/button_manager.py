@@ -1,6 +1,8 @@
-from constant import *
-import pygame
 from exceptions import *
+from constant import *
+import config
+import menu_manager
+import game
 
 
 class Button:
@@ -32,12 +34,14 @@ class Button_Manager:
         button_count (int): number of buttons currently in button manager
         button_surface (arg, surface): surface that will hold all the buttons.
             Used for finding width and height of surface
+        num_button (int): max number of buttons
     """
 
-    def __init__(self, game_surface):
-        self.x = game_surface.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (NUM_OF_BUTTONS // 2)))
+    def __init__(self, game_surface, x=0, y=0, width=0, height=0, num_button=NUM_OF_BUTTONS):
+        self.num_button = num_button
+        self.x = game_surface.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (self.num_button // 2)))
         self.y = game_surface.get_height() - SPRITE_SIZE
-        self.button_surface = pygame.Surface(((SPRITE_SIZE * NUM_OF_BUTTONS), SPRITE_SIZE))
+        self.button_surface = pygame.Surface(((SPRITE_SIZE * self.num_button), SPRITE_SIZE))
         self.button_surface.set_colorkey(BLACK)
         self.button_dict = {}
         self.button_count = 0
@@ -55,7 +59,7 @@ class Button_Manager:
                 unique
             menu_option (function): function to call when button pressed
         """
-        if not self.button_count >= NUM_OF_BUTTONS:
+        if not self.button_count >= self.num_button:
             button = Button(self.button_count, img, menu_option)
             if button_id not in self.button_dict:
                 self.button_dict[button_id] = button
@@ -63,22 +67,19 @@ class Button_Manager:
             else:
                 raise ButtonExistException("Button exist")
 
-    def draw_buttons(self, game_surface):
+    def draw_buttons(self):
         """
         Draws buttons onto param game_surface
 
         First draws buttons onto button_surface and then draws
         button_surface onto game_surface at self.x, self.y
 
-        Args:
-            game_surface (surface): surface to draw buttons on
-
         Returns:
 
         """
         for button in self.button_dict.values():
             self.button_surface.blit(button.image, button.rect)
-        game_surface.blit(self.button_surface,
+        config.SURFACE_MAIN.blit(self.button_surface,
                           (self.x, self.y))
 
     def check_if_button_pressed(self, mouse_x, mouse_y):
@@ -127,3 +128,15 @@ class Button_Manager:
         if button.rect.collidepoint(final_x, final_y):
             return button
         return None
+
+
+def add_buttons():
+    """
+    Adds clickable buttons to bottom of screen
+    """
+    config.BUTTON_PANEL.add_button(config.SPRITE.knight_anim[0], 'stats',
+                                   menu_manager.stat_menu)
+    config.BUTTON_PANEL.add_button(config.SPRITE.inventory_button, 'inventory',
+                                   menu_manager.inventory_menu)
+    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
+    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'map', menu_manager.map_menu)

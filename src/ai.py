@@ -1,6 +1,7 @@
+from constant import *
+import config
 import random
 
-from constant import *
 
 
 def _calculate_change_in_position(diff):
@@ -33,8 +34,8 @@ class Ai_test:
         Make creature move towards the player if in creature FOV,
         else wander
         """
-        diff_x = self.owner.x - self.owner.game.player.x
-        diff_y = self.owner.y - self.owner.game.player.y
+        diff_x = self.owner.x - config.PLAYER.x
+        diff_y = self.owner.y - config.PLAYER.y
 
         # If player is not in enemy FOV wander
         if (abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV):
@@ -67,7 +68,7 @@ class ChaseAI:
         else wander
         """
         creature = self.owner.creature
-        player = self.owner.game.player
+        player = config.PLAYER
         diff_x = creature.x - player.x
         diff_y = creature.y - player.y
 
@@ -96,7 +97,7 @@ class ChaseAI:
         """
         start = (creature.x, creature.y)
         goal = (player.x, player.y)
-        visited = self.owner.game.graph.bfs(start, goal)
+        visited = config.PATHFINDING.bfs(start, goal)
         if visited:
-            path = self.owner.game.graph.find_path(start, goal, visited)
+            path = config.PATHFINDING.find_path(start, goal, visited)
             creature.current_path = path

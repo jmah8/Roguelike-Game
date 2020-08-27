@@ -21,7 +21,7 @@ class Camera:
         self.camera_width = camera_width
         self.camera_height = camera_height
 
-    def apply(self, entity):
+    def apply_with_image(self, entity):
         """
         Apply camera offset to entity 
 
@@ -30,6 +30,17 @@ class Camera:
         """
         return entity.rect.move(self.camera.topleft)
 
+    def apply_without_image(self, entity):
+        """
+        Apply camera offset to entity
+
+        Args:
+            entity (object): Entity to apply offset to
+        """
+        new_x = ((entity.x * SPRITE_SIZE) + self.camera.x)
+        new_y = ((entity.y * SPRITE_SIZE) + self.camera.y)
+        return new_x, new_y
+
     def update(self, player):
         """
         Update the camera based on player position
@@ -37,8 +48,8 @@ class Camera:
         Args:
             player (object): player to follow
         """
-        x = -player.rect.x + int(self.camera_width / 2)
-        y = -player.rect.y + int(self.camera_height / 2)
+        x = -(player.x * SPRITE_SIZE) + int(self.camera_width / 2)
+        y = -(player.y * SPRITE_SIZE) + int(self.camera_height / 2)
 
         x = min(0, x)
         y = min(0, y)
@@ -64,7 +75,7 @@ class Camera:
 
         Used for drawing images where calling apply is not possible
         since drawing at x = 15, y = 15 will draw it off the screen
-        depending on screen size since apply is called to everything
+        depending on screen size since apply_with_image is called to everything
 
         Args:
             x (int): x coord to translate

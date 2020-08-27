@@ -37,7 +37,7 @@ DIST_FROM_SISTER_NODE_MAX = 3
 MINIMAP_SCALE = 2
 
 # Button manager constants
-NUM_OF_BUTTONS = 3
+NUM_OF_BUTTONS = 4
 
 # Console map output
 WALL = '1'
@@ -57,7 +57,7 @@ YELLOW = (255, 255, 0)
 INVENTORY_BEIGE = (239,228,176)
 
 # Game constants
-NUM_OF_FLOOR = 5
+NUM_OF_FLOOR = 3
 
 # Creature stats
 REGEN_TIME = 5
@@ -69,6 +69,9 @@ SLIME_FOV = 3
 
 # Resource path
 RESOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
+
+#Save path
+SAVE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
 
 # Image path
 KNIGHT = 'creatures/knight/knight_idle_anim_f0.png'

@@ -731,7 +731,7 @@ class Tree:
             x (int): x coord of stair
             y (int): y coord of stair
         """
-        self.map_array[y][x] = '<'
+        self.map_array[y][x] = UPSTAIR
 
     def place_downstair(self):
         """
@@ -741,7 +741,7 @@ class Tree:
         x1, y1, x2, y2 = room.coords
         x = random.randint(x1, x2)
         y = random.randint(y1, y2)
-        self.map_array[y][x] = '>'
+        self.map_array[y][x] = DOWNSTAIR
 
     def print_tree(self):
         """

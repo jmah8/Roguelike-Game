@@ -1,4 +1,16 @@
 from constant import *
+import config
+
+
+def add_game_message_to_print(ingame_message, message_color):
+    """
+    Adds game message to print
+
+    Args:
+        ingame_message (String): Message to add
+        message_color (Color): Color of message
+    """
+    config.GAME_DATA.game_messages.append((ingame_message, message_color))
 
 
 def text_height_helper(font):
@@ -10,22 +22,26 @@ def text_height_helper(font):
     return font_rect.height
 
 
-def messages_to_draw(game):
+def messages_to_draw(message_list):
     """
-    Store most recent NUM_MESSAGES in GAME_MESSAGES in to_draw
+    Store most recent NUM_MESSAGES in message_list in to_draw
+
+    Args:
+        message_list (List): List of messages to draw
     """
-    if len(game.GAME_MESSAGES) <= NUM_MESSAGES:
-        to_draw = game.GAME_MESSAGES
+    if len(message_list) <= NUM_MESSAGES:
+        to_draw = message_list
     else:
-        to_draw = game.GAME_MESSAGES[-NUM_MESSAGES:]
+        to_draw = message_list[-NUM_MESSAGES:]
     return to_draw
 
 
-def draw_text(display_surface, coord, text_color, text, text_bg_color=None):
+def draw_text(display_surface, coord, text_color, text, text_bg_color=None, center=False):
     """
     displays text at coord on given surface
 
     Args:
+        center (Boolean): If text should be centered
         display_surface (surface): surface to draw to
         coord ((int, int)): coord to draw to
         text_color (color): color of text
@@ -35,7 +51,10 @@ def draw_text(display_surface, coord, text_color, text, text_bg_color=None):
     text_surface, text_rect = _text_to_objects_helper(
         text, text_color, text_bg_color)
 
-    text_rect.topleft = coord
+    if center:
+        text_rect.center = coord
+    else:
+        text_rect.topleft = coord
 
     display_surface.blit(text_surface, text_rect)
 

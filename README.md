@@ -36,6 +36,9 @@ Short gameplay
 | m + ENTER | Move to camera location |
 | 1 | Transition to previous level |
 | 2 | Transition to next level |
+| F1 | Make new game |
+| F2 | Manually save game |
+| F3 | Manually load game |
 
 # Features:
 - Animated sprites
@@ -48,12 +51,12 @@ Short gameplay
 - Traversing through floors
 - Castable magic (work in progress!)
 - Inventory system (work in progress!)
+- Better ai
+- Saving and loading
 
 # Upcoming features/todos
 - Come up with name
 - Finishing item pick up/dropping
-- Saving and loading
-- Better ai
 - Different classes
 - Win and lose condition
 - Major refactoring of code

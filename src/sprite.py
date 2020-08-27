@@ -89,11 +89,11 @@ def scale_for_minimap(obj, scale_factor_x, scale_factor_y):
         scale_factor_y (int): what to scale y by
     """
     obj_img = pygame.transform.scale(obj.image,
-                                     (int(obj.rect.size[0] / scale_factor_x),
-                                      int(obj.rect.size[1] / scale_factor_y)))
+                                     (int(obj.size[0] / scale_factor_x),
+                                      int(obj.size[1] / scale_factor_y)))
     obj_img_rect = obj_img.get_rect()
-    obj_img_rect.topleft = (int(obj.rect.topleft[0] / scale_factor_x),
-                            int(obj.rect.topleft[1] // scale_factor_y))
+    obj_img_rect.topleft = (int(obj.rect[0] / scale_factor_x),
+                            int(obj.rect[1] // scale_factor_y))
     return obj_img, obj_img_rect
 
 
@@ -179,7 +179,75 @@ class GameSprites:
         self.minimap_button = load_image(MINIMAP_BUTTON)
 
 
+        # Sprite dicts
+
         self.magic = {
             "fireball": load_image(FIREBALL),
             "lightning": load_image(LIGHTNING)
+        }
+
+        self.sprite_dict = {
+            # Creatures
+            "slime_dict": {
+                "idle_right": self.slime_anim,
+                "idle_left": flip_anim(self.slime_anim),
+                "run_right": self.slime_run_anim,
+                "run_left": flip_anim(self.slime_run_anim)
+            },
+            "goblin_dict": {
+                "idle_right": self.goblin_anim,
+                "idle_left": flip_anim(self.goblin_anim),
+                "run_right": self.goblin_run_anim,
+                "run_left": flip_anim(self.goblin_run_anim)
+            },
+            "skeleton_dict": {
+                "idle_right": self.skeleton_anim,
+                "idle_left": flip_anim(self.skeleton_anim),
+                "run_right": self.skeleton_run_anim,
+                "run_left": flip_anim(self.skeleton_run_anim)
+            },
+            # Knight
+            "knight_dict": {
+                "idle_right": self.knight_anim,
+                "idle_left": flip_anim(self.knight_anim),
+                "run_right": self.knight_run_anim,
+                "run_left": flip_anim(self.knight_run_anim)
+            },
+            ""
+            # Items
+            "sword": self.sword,
+            # Consumables
+            "red_potion": self.red_potion,
+            "mouse_select": self.mouse_select
+        }
+
+        self.tile_dict = {
+            WALL: {
+                "seeing": self.wall_image,
+                "seen": self.seen_wall_image
+            },
+
+            FLOOR: {
+                "seeing": self.floor_image_1,
+                "seen": self.seen_floor_image_1
+            },
+
+            PATH: {
+                "seeing": self.floor_image_2,
+                "seen": self.seen_floor_image_2
+            },
+
+            UPSTAIR: {
+                "seeing": self.upstair,
+                "seen": self.seen_upstair
+            },
+
+            DOWNSTAIR: {
+                "seeing": self.downstair,
+                "seen": self.seen_downstair
+            },
+
+            "unseen": self.unseen_tile,
+
+            "select": self.select_tile,
         }
