@@ -58,7 +58,7 @@ class MenuButton:
             else:
                 self.colour = self.normal_colour
 
-def main_menu():
+def main():
     # Make buttons
     if os.stat(SAVE_PATH).st_size == 0:
         continue_clickable = False
@@ -111,4 +111,4 @@ def main_menu():
         pygame.display.update()
 
 
-main_menu()
+main()

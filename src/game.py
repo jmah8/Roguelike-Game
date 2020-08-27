@@ -176,7 +176,7 @@ def _handle_keyboard_event(event):
 
     # Menu Buttons
     elif event.key == pygame.K_p:
-        menu_manager.menpause_menu()
+        menu_manager.pause_menu()
     elif event.key == pygame.K_i:
         menu_manager.inventory_menu()
 

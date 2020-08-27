@@ -47,8 +47,6 @@ def map_menu():
         config.CLOCK.tick(60)
         pygame.display.update()
 
-    # TODO: could move this to menu_manager
-
 
 def magic_targetting_menu():
     """
@@ -87,40 +85,10 @@ def stat_menu():
     """
     Draws stat menu
     """
-
-    def draw_stat(player):
-        """
-        Draws player stat to stat_surface
-
-        Args:
-            player (Entity): Player's stat to draw
-        """
-        max_hp = player.creature.stat.max_hp
-        max_mp = player.creature.stat.max_mp
-        hp = player.creature.stat.hp
-        mp = player.creature.stat.mp
-        strength = player.creature.stat.strength
-        dexterity = player.creature.stat.dexterity
-        intelligence = player.creature.stat.intelligence
-        exp = player.creature.stat.exp
-        level = player.creature.stat.level
-
-        stat_list = ["hp: " + str(hp) + "/" + str(max_hp),
-                     "mp: " + str(mp) + "/" + str(max_mp),
-                     "strength: " + str(strength),
-                     "dexterity: " + str(dexterity),
-                     "intelligence: " + str(intelligence),
-                     "exp: " + str(exp) + "/ 100",
-                     "level: " + str(level)]
-
-        for i, stat in enumerate(stat_list):
-            game_text.draw_text(stat_surface, (0, character_icon.get_height() + FONT_SIZE * i),
-                                WHITE, stat)
-
-        stat_surface.blit(character_icon, (0, 0))
-
-    menu_width, menu_height = config.CAMERA.camera_width / 4, config.CAMERA.camera_height - (SPRITE_SIZE * 2)
+    menu_width, menu_height = config.CAMERA.camera_width / 3, config.CAMERA.camera_height / 3
     stat_surface = pygame.Surface((menu_width, menu_height))
+
+    # Could move this to _draw_stat if you want animated character icon in stat menu
     character_icon = pygame.transform.scale(config.PLAYER.image, (SPRITE_SIZE * 2, SPRITE_SIZE * 2))
 
     stat_open = True
@@ -136,10 +104,48 @@ def stat_menu():
 
         config.CLOCK.tick(FPS)
         game.update()
-        draw_stat(config.PLAYER)
-        config.SURFACE_MAIN.blit(stat_surface, (menu_width * 2 - menu_width, SPRITE_SIZE))
+        _draw_stat(config.PLAYER, stat_surface, character_icon)
+        # Centers stat_menu
+        stat_rect = stat_surface.get_rect()
+        stat_rect.center = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
+
+        config.SURFACE_MAIN.blit(stat_surface, stat_rect)
 
         pygame.display.flip()
+
+
+def _draw_stat(player, surface, character_icon):
+    """
+    Draws player stat to stat_surface
+
+    Args:
+        player (Entity): Player's stat to draw
+        surface (Surface): Surface to draw stats on
+        character_icon (Sprite): Sprite of character
+    """
+    max_hp = player.creature.stat.max_hp
+    max_mp = player.creature.stat.max_mp
+    hp = player.creature.stat.hp
+    mp = player.creature.stat.mp
+    strength = player.creature.stat.strength
+    dexterity = player.creature.stat.dexterity
+    intelligence = player.creature.stat.intelligence
+    exp = player.creature.stat.exp
+    level = player.creature.stat.level
+
+    stat_list = ["hp: " + str(hp) + "/" + str(max_hp),
+                 "mp: " + str(mp) + "/" + str(max_mp),
+                 "strength: " + str(strength),
+                 "dexterity: " + str(dexterity),
+                 "intelligence: " + str(intelligence),
+                 "exp: " + str(exp) + "/ 100",
+                 "level: " + str(level)]
+
+    for i, stat in enumerate(stat_list):
+        game_text.draw_text(surface, (character_icon.get_width(), FONT_SIZE * i),
+                            WHITE, stat)
+
+    surface.blit(character_icon, (0, 0))
 
 
 def _load_equipment_screen():

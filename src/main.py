@@ -2,7 +2,7 @@ import game
 import pygame
 import pstats, io
 import cProfile
-import config
+import main_menu
 
 
 def profile(fnc):
@@ -24,15 +24,4 @@ def profile(fnc):
 
 
 # @profile
-def start():
-    g = game.Game()
-    while g.running:
-        try:
-            game.load_game()
-        except:
-            game.populate_map()
-        g.run()
-    pygame.quit()
-
-
-start()
+main_menu.main()
