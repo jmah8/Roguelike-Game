@@ -155,11 +155,10 @@ def gen_map(map_array):
     tree.build_bsp()
     tree.build_rooms()
     tree.build_path()
-    tree.print_map()
-    print(config)
+    # tree.print_map()
     if config.CURRENT_FLOOR < NUM_OF_FLOOR:
         tree.place_downstair()
-    print("")
+    # print("")
     return tree
 
 

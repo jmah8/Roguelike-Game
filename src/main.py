@@ -23,7 +23,7 @@ def profile(fnc):
     return inner
 
 
-@profile
+# @profile
 def start():
     g = game.Game()
     while g.running:
