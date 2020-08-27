@@ -179,6 +179,8 @@ class GameSprites:
         self.minimap_button = load_image(MINIMAP_BUTTON)
 
 
+        # Sprite dicts
+
         self.magic = {
             "fireball": load_image(FIREBALL),
             "lightning": load_image(LIGHTNING)

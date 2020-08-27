@@ -69,6 +69,9 @@ SLIME_FOV = 3
 # Resource path
 RESOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resource')
 
+#Save path
+SAVE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
+
 # Image path
 KNIGHT = 'creatures/knight/knight_idle_anim_f0.png'
 KNIGHT_RUN = 'creatures/knight/knight_run_anim_f0.png'

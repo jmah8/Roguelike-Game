@@ -19,13 +19,6 @@ class Game:
         """
         Initializes pygame
         """
-        # Pygame screen
-        pygame.init()
-        pygame.display.set_caption("Knight's Adventure")
-
-        # Repeat keys when held down
-        pygame.key.set_repeat(350, 75)
-
         self.running = True
 
         self.playing = True
@@ -542,8 +535,7 @@ def save_game():
     """
     Saves game to data/save.txt
     """
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
-    with open(path, 'wb') as file:
+    with open(SAVE_PATH, 'wb') as file:
         pickle.dump([config.CURRENT_FLOOR, config.TURN_COUNT,
                      config.MAP_INFO, config.PLAYER,
                      config.GAME_DATA], file)
@@ -555,8 +547,7 @@ def load_game():
 
     Initializes camera and pathfinding
     """
-    path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
-    with open(path, 'rb') as file:
+    with open(SAVE_PATH, 'rb') as file:
         config.CURRENT_FLOOR, \
         config.TURN_COUNT, \
         config.MAP_INFO, \
