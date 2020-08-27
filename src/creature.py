@@ -204,15 +204,16 @@ class Creature:
             if config.MAP_INFO.tile_array[self.y + dy][self.x + dx].type == WALL:
                 return
 
-        # check to see if entity collided with enemy or ally and if so don't move
-        for team, entity_list in config.GAME_DATA.creature_data.items():
-            for entity in entity_list:
-                if (entity.x, entity.y) == (self.x + dx, self.y + dy):
-                    if team == self.team:
-                        return
-                    else:
-                        self.attack(entity, self.stat.calc_phys_damage())
-                        return
+        if self.team:
+            # check to see if entity collided with enemy or ally and if so don't move
+            for team, entity_list in config.GAME_DATA.creature_data.items():
+                for entity in entity_list:
+                    if (entity.x, entity.y) == (self.x + dx, self.y + dy):
+                        if team == self.team:
+                            return
+                        else:
+                            self.attack(entity, self.stat.calc_phys_damage())
+                            return
 
         self.owner.x += dx
         self.owner.y += dy

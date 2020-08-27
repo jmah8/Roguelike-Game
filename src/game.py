@@ -408,31 +408,33 @@ def new_level():
     populate_map()
 
 def new_game():
-    # Save this
-    config.CURRENT_FLOOR = 1
-    # Save this
-    config.TURN_COUNT = 0
+    # # Save this
+    # config.CURRENT_FLOOR = 1
+    # # Save this
+    # config.TURN_COUNT = 0
+    #
+    # # Save this
+    # _generate_new_map()
+    #
+    # generate_camera()
+    #
+    # initialize_pathfinding()
+    #
+    # # Save this
+    # config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree)
+    #
+    # # Save this
+    # config.GAME_DATA = game_data.GameData()
+    #
+    # config.FOV = fov.new_fov(config.MAP_INFO)
+    #
+    # config.PARTICLE_LIST = []
+    #
+    # config.WALL_HACK = False
+    #
+    # config.MINIMAP = False
 
-    # Save this
-    _generate_new_map()
-
-    generate_camera()
-
-    initialize_pathfinding()
-
-    # Save this
-    config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree)
-
-    # Save this
-    config.GAME_DATA = game_data.GameData()
-
-    config.FOV = fov.new_fov(config.MAP_INFO)
-
-    config.PARTICLE_LIST = []
-
-    config.WALL_HACK = False
-
-    config.MINIMAP = False
+    config.new_game()
 
     populate_map()
 
@@ -550,6 +552,8 @@ def save_game():
 def load_game():
     """
     Loads game from data/save.txt
+
+    Initializes camera and pathfinding
     """
     path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
     with open(path, 'rb') as file:
@@ -558,3 +562,7 @@ def load_game():
         config.MAP_INFO, \
         config.PLAYER, \
         config.GAME_DATA = pickle.load(file)
+
+    generate_camera()
+
+    initialize_pathfinding()

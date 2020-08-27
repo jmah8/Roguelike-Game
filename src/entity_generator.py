@@ -136,13 +136,9 @@ def generate_player_spawn(tree):
 
 def generate_free_camera():
     """
-    Generates slime at coords (x, y)
-
-    Args:
-        x (int): x coord to generate monster at
-        y (int): y coord to generate monster at
+    Generates free camera at (0, 0)
     """
-    camera = creature.Creature("Camera", False, walk_through_tile=True)
+    camera = creature.Creature("Camera", False, team=None, walk_through_tile=True)
     free_camera = entity.Entity(0, 0, "camera", creature=camera, image_key="mouse_select")
     return free_camera
 

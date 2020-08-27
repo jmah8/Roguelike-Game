@@ -1,6 +1,7 @@
 from constant import *
 import config
 
+
 def add_game_message_to_print(ingame_message, message_color):
     """
     Adds game message to print
@@ -10,6 +11,7 @@ def add_game_message_to_print(ingame_message, message_color):
         message_color (Color): Color of message
     """
     config.GAME_DATA.game_messages.append((ingame_message, message_color))
+
 
 def text_height_helper(font):
     """
@@ -34,11 +36,12 @@ def messages_to_draw(message_list):
     return to_draw
 
 
-def draw_text(display_surface, coord, text_color, text, text_bg_color=None):
+def draw_text(display_surface, coord, text_color, text, text_bg_color=None, center=False):
     """
     displays text at coord on given surface
 
     Args:
+        center (Boolean): If text should be centered
         display_surface (surface): surface to draw to
         coord ((int, int)): coord to draw to
         text_color (color): color of text
@@ -48,7 +51,10 @@ def draw_text(display_surface, coord, text_color, text, text_bg_color=None):
     text_surface, text_rect = _text_to_objects_helper(
         text, text_color, text_bg_color)
 
-    text_rect.topleft = coord
+    if center:
+        text_rect.center = coord
+    else:
+        text_rect.topleft = coord
 
     display_surface.blit(text_surface, text_rect)
 

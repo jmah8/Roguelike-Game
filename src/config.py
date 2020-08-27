@@ -45,3 +45,29 @@ WALL_HACK = False
 MINIMAP = False
 
 BUTTON_PANEL = button_manager.Button_Manager(SURFACE_MAIN)
+
+def new_game():
+    global CURRENT_FLOOR, TURN_COUNT, MAP_INFO, CAMERA, PATHFINDING, PLAYER, GAME_DATA, FOV
+
+    CURRENT_FLOOR = 1
+    # Save this
+    TURN_COUNT = 0
+
+    # Save this
+    MAP_INFO = gamemap.MapInfo()
+
+    CAMERA = camera.Camera(MAP_INFO)
+
+    PATHFINDING = pathfinding.Graph()
+    PATHFINDING.make_graph(MAP_INFO)
+    PATHFINDING.neighbour()
+
+    # Save this
+    PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
+
+    # Save this
+    GAME_DATA = game_data.GameData()
+
+    FOV = fov.new_fov(MAP_INFO)
+
+    PARTICLE_LIST = []
