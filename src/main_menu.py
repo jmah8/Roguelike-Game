@@ -13,9 +13,6 @@ pygame.display.set_icon(config.SPRITE.sword)
 # Repeat keys when held down
 pygame.key.set_repeat(350, 75)
 
-
-pygame.display.set_caption("Test")
-
 BUTTON_WIDTH = CAMERA_WIDTH // 4
 BUTTON_HEIGHT = CAMERA_HEIGHT // 12
 
@@ -31,6 +28,7 @@ class MenuButton:
         self.clickable = clickable
 
         self.normal_colour = self.colour
+        # Darkens color
         self.mouse_over_colour = (max(self.colour[0] - 50, 0),
                                   max(self.colour[1] - 50, 0),
                                   max(self.colour[2] - 50, 0))
@@ -109,6 +107,3 @@ def main():
                         pygame.quit()
 
         pygame.display.update()
-
-
-main()

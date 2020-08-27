@@ -23,5 +23,8 @@ def profile(fnc):
     return inner
 
 
-# @profile
-main_menu.main()
+@profile
+def start():
+    main_menu.main()
+
+start()
