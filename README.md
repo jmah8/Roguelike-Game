@@ -23,12 +23,12 @@ Short gameplay
 | x   | Stay still |
 | TAB | Toggle minimap |
 | t   | Pickup item |
-| g   | Drop all items |
+| g   | Drop last item |
 | ESC | Toggle FOV limitations |
 | m   | Toggle camera |
 | v   | Auto explore |
-| p   | Pause |
-| I   | Toggle inventory screen |
+| p   | Pause and open menu |
+| i   | Toggle inventory screen |
 | SPACE | Toggle magic selection screen |
 | Mouse left click | Move to mouse cursor |
 | SPACE + Mouse left click | Fire magic spell |
@@ -51,7 +51,6 @@ Short gameplay
 - Traversing through floors
 - Castable magic (work in progress!)
 - Inventory system (work in progress!)
-- Better ai
 - Saving and loading
 
 # Upcoming features/todos
