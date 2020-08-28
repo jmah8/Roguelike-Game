@@ -1,24 +1,149 @@
-import draw
 from constant import *
 import config
+import pygame
+import draw
 import magic
 import game_text
 import game
 
 
-def pause_menu():
-    menu_closed = False
-    while not menu_closed:
-        events_list = pygame.event.get()
-        for event in events_list:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    menu_closed = True
+class TextButton:
+    def __init__(self, button_text, size, center, colour, clickable=True):
+        self.button_text = button_text
+        self.size = size
+        self.center = center
+        self.colour = colour
+        self.clickable = clickable
+
+        self.normal_colour = self.colour
+        # Darkens color
+        self.mouse_over_colour = (max(self.colour[0] - 50, 0),
+                                  max(self.colour[1] - 50, 0),
+                                  max(self.colour[2] - 50, 0))
+
+        self.rect = pygame.Rect((0, 0), size)
+        self.rect.center = center
+
+    def draw(self):
+        pygame.draw.rect(config.SURFACE_MAIN, self.colour, self.rect)
+        game_text.draw_text(config.SURFACE_MAIN, self.center, BLACK, self.button_text, center=True)
+
+    def mouse_over(self):
+        if self.colour == self.normal_colour:
+            self.colour = self.mouse_over_colour
+
+    def check_mouse_over(self):
+        if self.clickable:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            mouse_over = (self.rect.left <= mouse_x <= self.rect.right and
+                          self.rect.top <= mouse_y <= self.rect.bottom)
+
+            if mouse_over:
+                self.colour = self.mouse_over_colour
+            else:
+                self.colour = self.normal_colour
+
+
+def main():
+    # Make buttons
+    if os.stat(SAVE_PATH).st_size == 0:
+        continue_clickable = False
+    else:
+        continue_clickable = True
+
+    new_button = TextButton("New Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                            (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), RED)
+
+    continue_button = TextButton("Continue", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                                 (CAMERA_WIDTH // 2, new_button.rect.midbottom[1] + 100), GREEN, continue_clickable)
+
+    exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             (CAMERA_WIDTH // 2, continue_button.rect.midbottom[1] + 100), GREY)
+
+    g = game.Game()
+
+    while True:
+        config.SURFACE_MAIN.fill(WHITE)
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        new_button.check_mouse_over()
+        continue_button.check_mouse_over()
+        exit_button.check_mouse_over()
+
+        new_button.draw()
+
+        continue_button.draw()
+
+        exit_button.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if new_button.rect.collidepoint((mouse_x, mouse_y)):
+                        game.populate_map()
+                        g.run()
+                    elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
+                        game.load_game()
+                        g.run()
+                    elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pygame.quit()
+
+        pygame.display.update()
+
+
+def pause():
+    # Make buttons
+    resume_button = TextButton("Resume", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                               (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), GREEN)
+
+    save_and_quit_button = TextButton("Save and quit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                                      (CAMERA_WIDTH // 2, resume_button.rect.midbottom[1] + 100), RED)
+
+    exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             (CAMERA_WIDTH // 2, save_and_quit_button.rect.midbottom[1] + 100), GREY)
+
+    pause_menu = True
+    while pause_menu:
+        config.SURFACE_MAIN.blit(config.SPRITE.unfocused_window, (0, 0))
 
         game_text.draw_text(config.SURFACE_MAIN,
-                            ((CAMERA_WIDTH - FONT_SIZE) / 2, (CAMERA_HEIGHT - FONT_SIZE) / 2), WHITE,
-                            "PAUSED", BLACK)
-        config.CLOCK.tick(60)
+                            (CAMERA_WIDTH // 2, resume_button.rect.midtop[1] - 100), WHITE,
+                            "PAUSED", BLACK, center=True)
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        resume_button.check_mouse_over()
+        save_and_quit_button.check_mouse_over()
+        exit_button.check_mouse_over()
+
+        resume_button.draw()
+
+        save_and_quit_button.draw()
+
+        exit_button.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pause_menu = False
+                    break
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if resume_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pause_menu = False
+                        break
+                    elif save_and_quit_button.rect.collidepoint((mouse_x, mouse_y)) and resume_button.clickable:
+                        game.quit_game()
+                    elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pygame.quit()
+
+        config.CLOCK.tick(FPS)
         pygame.display.update()
 
 
@@ -44,7 +169,7 @@ def map_menu():
 
         draw.draw_map_menu(config.MAP_INFO)
         config.BUTTON_PANEL.draw_buttons()
-        config.CLOCK.tick(60)
+        config.CLOCK.tick(FPS)
         pygame.display.update()
 
 

@@ -1,6 +1,5 @@
 from constant import WHITE, SPRITE_SIZE
 import config
-import game
 import game_text
 
 

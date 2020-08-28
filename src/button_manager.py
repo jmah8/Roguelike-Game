@@ -1,13 +1,13 @@
 from exceptions import *
 from constant import *
 import config
-import menu_manager
+import menu
 import game
 
 
-class Button:
+class IconButton:
     """
-    Button class
+    IconButton class
 
     Attributes:
         image (arg, image): image of button
@@ -60,12 +60,12 @@ class Button_Manager:
             menu_option (function): function to call when button pressed
         """
         if not self.button_count >= self.num_button:
-            button = Button(self.button_count, img, menu_option)
+            button = IconButton(self.button_count, img, menu_option)
             if button_id not in self.button_dict:
                 self.button_dict[button_id] = button
                 self.button_count += 1
             else:
-                raise ButtonExistException("Button exist")
+                raise ButtonExistException("IconButton exist")
 
     def draw_buttons(self):
         """
@@ -96,7 +96,7 @@ class Button_Manager:
             mouse_y (int): y position of mouse
 
         Returns:
-            button (Button): button pressed
+            button (IconButton): button pressed
         """
         final_x = mouse_x - self.x
         final_y = mouse_y - self.y
@@ -120,7 +120,7 @@ class Button_Manager:
             mouse_y (int): y position of mouse
 
         Returns:
-            button (Button): button pressed
+            button (IconButton): button pressed
         """
         final_x = mouse_x - self.x
         final_y = mouse_y - self.y
@@ -135,8 +135,8 @@ def add_buttons():
     Adds clickable buttons to bottom of screen
     """
     config.BUTTON_PANEL.add_button(config.SPRITE.knight_anim[0], 'stats',
-                                   menu_manager.stat_menu)
+                                   menu.stat_menu)
     config.BUTTON_PANEL.add_button(config.SPRITE.inventory_button, 'inventory',
-                                   menu_manager.inventory_menu)
+                                   menu.inventory_menu)
     config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
-    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'map', menu_manager.map_menu)
+    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'map', menu.map_menu)
