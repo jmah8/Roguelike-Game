@@ -516,16 +516,15 @@ def auto_path(graph):
         move_char_auto(path)
 
 
-def cast_magic():
+def cast_magic(line):
     """
     Casts lightning at mouse location and prints out the line
     it travels through currently
+
+    Args:
+        line (List): List of coords for spell to travel
     """
-    move_x, move_y = config.CAMERA.get_mouse_coord()
-    start = (config.PLAYER.x, config.PLAYER.y)
-    goal = (move_x, move_y)
-    line = magic.line(start, goal, config.MAP_INFO.tile_array)
-    magic.cast_lightning(config.PLAYER, line)
+    magic.cast_fireball(config.PLAYER, line)
     # TODO: maybe change this since if player has ai but cast fireball,
     #       player would move + cast fireball at the same time
     _update_creatures(config.GAME_DATA.creature_data, 0, 0)

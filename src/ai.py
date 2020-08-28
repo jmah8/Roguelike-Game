@@ -3,7 +3,6 @@ import config
 import random
 
 
-
 def _calculate_change_in_position(diff):
     """
     Helper function for take_turn. Returns int that moves
@@ -38,7 +37,7 @@ class Ai_test:
         diff_y = self.owner.y - config.PLAYER.y
 
         # If player is not in enemy FOV wander
-        if (abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV):
+        if abs(diff_x) > PLAYER_FOV or abs(diff_y) > PLAYER_FOV:
             self.owner.creature.move(random.choice(
                 [0, 1, -1]), random.choice([0, 1, -1]))
         # Else move towards player using shortest path
@@ -73,7 +72,7 @@ class ChaseAI:
         diff_y = creature.y - player.y
 
         # If player is not in enemy FOV wander
-        if abs(diff_x) > SLIME_FOV or abs(diff_y) > SLIME_FOV:
+        if abs(diff_x) > PLAYER_FOV or abs(diff_y) > PLAYER_FOV:
             creature.move(random.choice(
                 [0, 1, -1]), random.choice([0, 1, -1]))
         # Else move towards player using shortest path

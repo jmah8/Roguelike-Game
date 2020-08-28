@@ -35,7 +35,7 @@ def ray_casting(map_data, tile_array, fov, player):
         x = player.x
         y = player.y
 
-        for b in range(KNIGHT_FOV):
+        for b in range(PLAYER_FOV):
             x += ax
             y += ay
 

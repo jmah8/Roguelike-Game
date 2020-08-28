@@ -193,7 +193,7 @@ def magic_targetting_menu():
                         button.menu_open()
                         break
 
-                    game.cast_magic()
+                    game.cast_magic(line)
                     magic_cast = False
                     break
 
@@ -201,7 +201,7 @@ def magic_targetting_menu():
         game.update()
         draw.draw_mouse()
         m_x, m_y = config.CAMERA.get_mouse_coord()
-        line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array)
+        line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array, True)
         draw.draw_magic_path(line)
         pygame.display.flip()
 

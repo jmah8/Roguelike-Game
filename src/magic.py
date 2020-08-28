@@ -8,6 +8,10 @@ import pygame
 import particle
 
 
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as file:
+    data = json.load(file)
+
+
 def diagonal_distance(start, end):
     """
     Finds the diagonl distance between start and end
@@ -92,7 +96,7 @@ def lerp(num1, num2, t):
     return num
 
 
-def line(start, end, map):
+def line(start, end, map, only_in_fov=False):
     """
     Draws line from start to end, stopping at any wall,
     returning the tiles the line passes through
@@ -117,6 +121,8 @@ def line(start, end, map):
             t = i / num_of_tiles
         x, y = round_point(lerp_point(start, end, t))
         if map[y][x].type == WALL:
+            break
+        if only_in_fov and config.FOV[y][x] == 0:
             break
         # Skip the point the entity is on
         if i != 0:
@@ -209,6 +215,3 @@ def cast_lightning(caster, line):
 
             _update_spell(particle_group)
 
-
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as f:
-    data = json.load(f)
