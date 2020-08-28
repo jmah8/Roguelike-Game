@@ -235,6 +235,7 @@ def stat_menu():
         stat_rect.center = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
 
         config.SURFACE_MAIN.blit(stat_surface, stat_rect)
+        draw.draw_mouse()
 
         pygame.display.flip()
 
@@ -376,6 +377,8 @@ def inventory_menu():
         menu_surface.blit(_load_inventory_screen(), (0, menu_height / 2))
         menu_surface.blit(_load_equipment_screen(), (0, 0))
         config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
+
+        draw.draw_mouse()
 
         for event in events_list:
             if event.type == pygame.MOUSEBUTTONDOWN:

@@ -33,6 +33,7 @@ class Game:
             config.CLOCK.tick(FPS)
             handle_events()
             update()
+            draw.draw_mouse()
             pygame.display.flip()
 
 
@@ -433,6 +434,11 @@ def new_game():
 
 
 def update():
+    """
+    Updates game and draws game
+    Returns:
+
+    """
     # Update what to lock camera on
     config.CAMERA.update(config.PLAYER)
 
@@ -443,8 +449,6 @@ def update():
     fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
 
     draw.draw()
-
-    draw.draw_mouse()
 
 
 def move_char_auto(path, ignore=False):
@@ -489,6 +493,7 @@ def move_char_auto(path, ignore=False):
             old_coord = coord
 
             update()
+            draw.draw_mouse()
             config.CLOCK.tick(20)
             pygame.display.flip()
 
