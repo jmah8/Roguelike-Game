@@ -7,7 +7,7 @@ import magic
 import pathfinding
 from camera import Camera
 import draw
-import menu_manager
+import menu
 import button_manager
 import game_data
 import entity_generator
@@ -176,13 +176,13 @@ def _handle_keyboard_event(event):
 
     # Menu Buttons
     elif event.key == pygame.K_p:
-        menu_manager.pause_menu()
+        menu.pause()
     elif event.key == pygame.K_i:
-        menu_manager.inventory_menu()
+        menu.inventory_menu()
 
     # Use magic
     elif event.key == pygame.K_SPACE:
-        menu_manager.magic_targetting_menu()
+        menu.magic_targetting_menu()
 
     # Returns to previous level
     elif event.key == pygame.K_1:

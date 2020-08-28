@@ -1,9 +1,8 @@
-import game
-import pygame
 import pstats, io
 import cProfile
-import main_menu
-
+import pygame
+import config
+import menu
 
 def profile(fnc):
     """A decorator that uses cProfile to profile a function"""
@@ -25,6 +24,14 @@ def profile(fnc):
 
 @profile
 def start():
-    main_menu.main()
+    # Pygame screen
+    pygame.init()
+    pygame.display.set_caption("Knight's Adventure")
+    pygame.display.set_icon(config.SPRITE.sword)
+
+    # Repeat keys when held down
+    pygame.key.set_repeat(350, 75)
+
+    menu.main()
 
 start()

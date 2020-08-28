@@ -126,6 +126,10 @@ class GameSprites:
         self.select_tile.fill(YELLOW)
         self.select_tile.set_alpha(75)
 
+        self.unfocused_window = pygame.Surface((CAMERA_WIDTH, CAMERA_HEIGHT))
+        self.unfocused_window.fill(GREY)
+        self.unfocused_window.set_alpha(5)
+
 
         # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)

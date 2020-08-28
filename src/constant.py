@@ -35,8 +35,13 @@ DIST_FROM_SISTER_NODE_MAX = 3
 # Minimap constants
 MINIMAP_SCALE = 2
 
-# Button manager constants
+# IconButton manager constants
 NUM_OF_BUTTONS = 4
+
+# TextButton constants
+BUTTON_WIDTH = CAMERA_WIDTH // 4
+BUTTON_HEIGHT = CAMERA_HEIGHT // 12
+BUTTON_COORD = (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4)
 
 # Console map output
 WALL = '1'
