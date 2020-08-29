@@ -9,6 +9,20 @@ import game
 
 class TextButton:
     def __init__(self, button_text, size, center, colour, clickable=True):
+        """
+        Class representing button with text
+
+        Args:
+            button_text (String): String to display on button
+            size ((int, int)): Size of button
+            center ((int, int)): Coord of center of button
+            colour (Colour): Colour of button
+            clickable (Boolean): If button is clickable/mouse-overable
+
+        Attributes:
+            normal_colour (Colour): Normal colour of button
+            mouse_over_colour (Colour): Mouse over colour of button
+        """
         self.button_text = button_text
         self.size = size
         self.center = center
@@ -25,14 +39,19 @@ class TextButton:
         self.rect.center = center
 
     def draw(self):
+        """
+        Draws button with text on it
+        """
         pygame.draw.rect(config.SURFACE_MAIN, self.colour, self.rect)
         game_text.draw_text(config.SURFACE_MAIN, self.center, BLACK, self.button_text, center=True)
 
     def mouse_over(self):
-        if self.colour == self.normal_colour:
-            self.colour = self.mouse_over_colour
+        """
+        Checks if button is moused over and if so, darken it
 
-    def check_mouse_over(self):
+        If button is clickable and moused over, darken the button,
+        else return button to normal colour
+        """
         if self.clickable:
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -46,6 +65,11 @@ class TextButton:
 
 
 def main():
+    """
+    Main menu before starting game
+
+    Menu has new game, continue game (only available if save.txt > 1kb in size) and exit
+    """
     # Make buttons
     if os.stat(SAVE_PATH).st_size == 0:
         continue_clickable = False
@@ -68,9 +92,9 @@ def main():
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        new_button.check_mouse_over()
-        continue_button.check_mouse_over()
-        exit_button.check_mouse_over()
+        new_button.mouse_over()
+        continue_button.mouse_over()
+        exit_button.mouse_over()
 
         new_button.draw()
 
@@ -96,6 +120,9 @@ def main():
 
 
 def pause():
+    """
+    Pause menu with continue button, save and exit button and exit button
+    """
     # Make buttons
     resume_button = TextButton("Resume", (BUTTON_WIDTH, BUTTON_HEIGHT),
                                (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), GREEN)
@@ -116,9 +143,9 @@ def pause():
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        resume_button.check_mouse_over()
-        save_and_quit_button.check_mouse_over()
-        exit_button.check_mouse_over()
+        resume_button.mouse_over()
+        save_and_quit_button.mouse_over()
+        exit_button.mouse_over()
 
         resume_button.draw()
 
@@ -201,7 +228,7 @@ def magic_targetting_menu():
         game.update()
         draw.draw_mouse()
         m_x, m_y = config.CAMERA.get_mouse_coord()
-        line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array, True)
+        line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array, config.FOV)
         draw.draw_magic_path(line)
         pygame.display.flip()
 
@@ -401,5 +428,5 @@ def inventory_menu():
                     game.toggle_minimap()
                 if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
                     menu_closed = True
-        config.CLOCK.tick(60)
+        config.CLOCK.tick(FPS)
         pygame.display.update()

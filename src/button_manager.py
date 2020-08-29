@@ -14,13 +14,40 @@ class IconButton:
         rect (arg, rect): rect of image
         menu_open (arg, function): function to call when button clicked
     """
-    def __init__(self, x, image, menu_open):
+    def __init__(self, x, image, menu_open, mouse_over=None):
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (SPRITE_SIZE * x, 0)
         self.menu_open = menu_open
+        self.mouse_over = mouse_over
 
+    def check_mouse_over(self):
+        if not self.mouse_over:
+            return
+        mouse_x, mouse_y = pygame.mouse.get_pos()
 
+        mouse_over = (self.rect.left <= mouse_x <= self.rect.right and
+                      self.rect.top <= mouse_y <= self.rect.bottom)
+
+        if mouse_over:
+            # For items show item stats/effect
+            pass
+
+    def check_if_button_clicked(self, x, y):
+        """
+        Return if button pressed
+
+        Args:
+            x (int): x coord of mouse
+            y (int): y coord of mouse
+
+        Returns:
+            True if button is clicked else false
+        """
+        if self.rect.collidepoint(x, y):
+            return True
+        return False
+ 
 class Button_Manager:
     """
     Manager for the bottom button panel for game
@@ -101,7 +128,7 @@ class Button_Manager:
         final_x = mouse_x - self.x
         final_y = mouse_y - self.y
         for button in self.button_dict.values():
-            if button.rect.collidepoint(final_x, final_y):
+            if button.check_if_button_clicked(final_x, final_y):
                 return button
         return None
 
@@ -125,7 +152,7 @@ class Button_Manager:
         final_x = mouse_x - self.x
         final_y = mouse_y - self.y
         button = self.button_dict[button_id]
-        if button.rect.collidepoint(final_x, final_y):
+        if button.check_if_button_clicked(final_x, final_y):
             return button
         return None
 
