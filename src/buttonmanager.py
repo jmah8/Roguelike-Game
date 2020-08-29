@@ -5,6 +5,7 @@ import menu
 import game
 
 
+
 class IconButton:
     """
     IconButton class
@@ -16,8 +17,11 @@ class IconButton:
         image (arg, image): image of button
         rect (arg, rect): rect of image
         left_click_fn (arg, function): function to call when left button clicked
-        left_click_fn (arg, function): function to call when right button clicked
+        right_click_fn (arg, function): function to call when right button clicked
         mouse_over_fn (arg, function): Function to call when button is hovered over
+        extra_data (dict): Tuple of extra data that might be needed (passing params
+            with function pointers in cause all params to be the same as the last
+            iteration of loop so extra_data is needed)
     """
     def __init__(self, x, y, image, left_click_fn=None, right_click_fn=None, mouse_over_fn=None):
         self.image = image
@@ -26,6 +30,7 @@ class IconButton:
         self.left_click_fn = left_click_fn
         self.right_click_fm = right_click_fn
         self.mouse_over_fn = mouse_over_fn
+        self.extra_data = {}
 
     def check_if_button_hovered(self, x, y):
         """
@@ -56,6 +61,36 @@ class IconButton:
         if self.rect.collidepoint(x, y):
             return True
         return False
+
+    # Methods used for items
+    def item_mouse_over(self):
+        """
+        Draws box with text describing item hovering over
+        """
+        item, button, offset_x, offset_y = self.extra_data["item_mouse_over"]
+        x, y = button.rect.topleft
+        item_button = menu.TextButton(item.item.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
+                                 # offset_x + x makes it so center of text is ButtonManager x + button x
+                                 # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
+                                 #      is to make it so text isn't covering item since TextButton is always centered
+                                 (offset_x + x, offset_y + y - (SPRITE_SIZE // 2)),
+                                 WHITE)
+
+        item_button.draw()
+
+    def item_drop(self):
+        """
+        Drops item that is right clicked at the player's feet
+        """
+        item_entity, player, player_x, player_y = self.extra_data["right_click_fn"]
+        item_entity.item.drop_item(player, player_x, player_y)
+
+    def item_use(self):
+        """
+        Uses item that is left clicked
+        """
+        pass
+
 
 
 class ButtonManager:

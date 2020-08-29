@@ -392,22 +392,15 @@ def _load_inventory_screen():
                 item_entity = inventory_array[counter]
                 item_slot.blit(item_entity.image, (0, 0))
                 counter = counter + 1
-                button.mouse_over_fn = (lambda: item_mouse_over(item_entity, button, menu_width, menu_height))
-                button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
+                button.extra_data["item_mouse_over"] = (item_entity, button, menu_width, menu_height)
+                button.mouse_over_fn = button.item_mouse_over
+                # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
+
+                button.extra_data["right_click_fn"] = (item_entity, config.PLAYER, config.PLAYER.x, config.PLAYER.y)
+                button.right_click_fn = button.item_drop
+                # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
 
     return inventory
-
-
-def item_mouse_over(item, button, offset_x, offset_y):
-    x, y = button.rect.topleft
-    item_button = TextButton(item.item.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
-                             # offset_x + x makes it so center of text is ButtonManager x + button x
-                             # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
-                             #      is to make it so text isn't covering item since TextButton is always centered
-                             (offset_x + x, offset_y + y - (SPRITE_SIZE // 2)),
-                             WHITE)
-
-    item_button.draw()
 
 
 def inventory_menu():
