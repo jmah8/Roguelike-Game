@@ -9,29 +9,36 @@ class IconButton:
     """
     IconButton class
 
+    Args:
+        x (int): x coord of button
+
     Attributes:
         image (arg, image): image of button
         rect (arg, rect): rect of image
-        menu_open (arg, function): function to call when button clicked
+        menu_open_fn (arg, function): function to call when button clicked
+        mouse_over_fn (arg, function): Function to call when button is hovered over
     """
-    def __init__(self, x, image, menu_open, mouse_over=None):
+    def __init__(self, x, image, menu_open_fn, mouse_over_fn=None):
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (SPRITE_SIZE * x, 0)
-        self.menu_open = menu_open
-        self.mouse_over = mouse_over
+        self.menu_open_fn = menu_open_fn
+        self.mouse_over_fn = mouse_over_fn
 
-    def check_mouse_over(self):
-        if not self.mouse_over:
-            return
-        mouse_x, mouse_y = pygame.mouse.get_pos()
+    def check_if_button_hovered(self, x, y):
+        """
+        Return if button is hovered over
 
-        mouse_over = (self.rect.left <= mouse_x <= self.rect.right and
-                      self.rect.top <= mouse_y <= self.rect.bottom)
+        Args:
+            x (int): x coord of mouse
+            y (int): y coord of mouse
 
-        if mouse_over:
-            # For items show item stats/effect
-            pass
+        Returns:
+            mouse_over (int): True if button is hovered over else false
+        """
+        mouse_over = (self.rect.left <= x <= self.rect.right and
+                      self.rect.top <= y <= self.rect.bottom)
+        return mouse_over
 
     def check_if_button_clicked(self, x, y):
         """
@@ -53,21 +60,23 @@ class Button_Manager:
     Manager for the bottom button panel for game
 
     Attributes:
+        num_button (arg, int): max number of buttons
         x (int): x position of button manager
         y (int): y position of button
+        width (int): width of button manager in icons
+        height (int): height of button manager in icons
         button_surface (surface): surface that holds the buttons.
             This surface is blitted to game surface
         button_dict (list): list of buttons
         button_count (int): number of buttons currently in button manager
-        button_surface (arg, surface): surface that will hold all the buttons.
-            Used for finding width and height of surface
-        num_button (int): max number of buttons
     """
 
-    def __init__(self, game_surface, x=0, y=0, width=0, height=0, num_button=NUM_OF_BUTTONS):
+    def __init__(self, x, y, width, height, num_button):
         self.num_button = num_button
-        self.x = game_surface.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (self.num_button // 2)))
-        self.y = game_surface.get_height() - SPRITE_SIZE
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
         self.button_surface = pygame.Surface(((SPRITE_SIZE * self.num_button), SPRITE_SIZE))
         self.button_surface.set_colorkey(BLACK)
         self.button_dict = {}
@@ -96,10 +105,10 @@ class Button_Manager:
 
     def draw_buttons(self):
         """
-        Draws buttons onto param game_surface
+        Draws buttons
 
         First draws buttons onto button_surface and then draws
-        button_surface onto game_surface at self.x, self.y
+        button_surface onto config.SURFACE_MAIN at self.x, self.y
 
         Returns:
 
@@ -108,6 +117,53 @@ class Button_Manager:
             self.button_surface.blit(button.image, button.rect)
         config.SURFACE_MAIN.blit(self.button_surface,
                           (self.x, self.y))
+
+    def check_if_button_hovered(self, mouse_x, mouse_y):
+        """
+        Checks if any of the bottoms are hovered over and returns
+        button hovered over if any, else return None
+
+        Since the mouse_x, mouse_y is relative to topleft corner
+        of screen but the first button's topleft is (0, 0), need to
+        adjust mouse_x and mouse_y so that both are in sync
+
+        Args:
+            mouse_x (int): x position of mouse
+            mouse_y (int): y position of mouse
+
+        Returns:
+            button (IconButton): button hovered over
+        """
+        final_x = mouse_x - self.x
+        final_y = mouse_y - self.y
+        for button in self.button_dict.values():
+            if button.check_if_button_hovered(final_x, final_y):
+                return button
+        return None
+
+    def check_if_specific_button_hovered(self, button_id, mouse_x, mouse_y):
+        """
+        Checks if button with button_id is hovered over and returns
+        button hovered over if any, else return None
+
+        Since the mouse_x, mouse_y is relative to topleft corner
+        of screen but the first button's topleft is (0, 0), need to
+        adjust mouse_x and mouse_y so that both are in sync
+
+        Args:
+            button_id (string): button_id of button to check
+            mouse_x (int): x position of mouse
+            mouse_y (int): y position of mouse
+
+        Returns:
+            button (IconButton): button hovered over
+        """
+        final_x = mouse_x - self.x
+        final_y = mouse_y - self.y
+        button = self.button_dict[button_id]
+        if button.check_if_button_hovered(final_x, final_y):
+            return button
+        return None
 
     def check_if_button_pressed(self, mouse_x, mouse_y):
         """

@@ -36,7 +36,8 @@ DIST_FROM_SISTER_NODE_MAX = 3
 MINIMAP_SCALE = 2
 
 # IconButton manager constants
-NUM_OF_BUTTONS = 4
+NUM_OF_BUTTONS_X = 4
+NUM_OF_BUTTONS_Y = 1
 
 # TextButton constants
 BUTTON_WIDTH = CAMERA_WIDTH // 4

@@ -217,7 +217,7 @@ def magic_targetting_menu():
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
                     if button:
-                        button.menu_open()
+                        button.menu_open_fn()
                         break
 
                     game.cast_magic(line)

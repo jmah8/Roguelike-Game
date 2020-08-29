@@ -53,9 +53,12 @@ def handle_events():
         if event.type == pygame.VIDEORESIZE:
             _handle_screen_resize(event)
 
+        elif event.type == pygame.MOUSEMOTION:
+            _handle_mouse_event_motion(event)
+
         # Moving to where mouse is clicked
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            _handle_mouse_event(event)
+            _handle_mouse_event_click(event)
 
         # Keyboard press
         elif event.type == pygame.KEYDOWN:
@@ -87,7 +90,21 @@ def _handle_screen_resize(event):
                                                   pygame.RESIZABLE)
 
 
-def _handle_mouse_event(event):
+def _handle_mouse_event_motion(event):
+    """
+    Handles mouse movement
+
+    Args:
+        event (Event): Event to handle
+    """
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    hovered_button = config.BUTTON_PANEL.check_if_button_hovered(mouse_x, mouse_y)
+    if hovered_button and hovered_button.mouse_over_fn:
+        hovered_button.mouse_over_fn()
+        return
+
+
+def _handle_mouse_event_click(event):
     """
     Handles mouse clicks
 
@@ -97,9 +114,9 @@ def _handle_mouse_event(event):
     if event.button == 1:
         # Check if button clicked
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
-        if button:
-            button.menu_open()
+        pressed_button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
+        if pressed_button:
+            pressed_button.menu_open_fn()
             return
 
         # Move player to mouse click
@@ -435,9 +452,7 @@ def new_game():
 
 def update():
     """
-    Updates game and draws game
-    Returns:
-
+    Updates camera and fov
     """
     # Update what to lock camera on
     config.CAMERA.update(config.PLAYER)
