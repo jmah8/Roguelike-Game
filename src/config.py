@@ -6,7 +6,7 @@ import gamemap
 import camera
 import pathfinding
 import fov
-import button_manager
+import buttonmanager
 import game_data
 
 pygame.init()
@@ -44,7 +44,7 @@ WALL_HACK = False
 
 MINIMAP = False
 
-BUTTON_PANEL = button_manager.Button_Manager(
+BUTTON_PANEL = buttonmanager.ButtonManager(
     SURFACE_MAIN.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (NUM_OF_BUTTONS_X // 2))),
     SURFACE_MAIN.get_height() - SPRITE_SIZE, NUM_OF_BUTTONS_X, NUM_OF_BUTTONS_Y, (NUM_OF_BUTTONS_X * NUM_OF_BUTTONS_Y))
 

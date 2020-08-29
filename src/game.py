@@ -8,7 +8,7 @@ import pathfinding
 from camera import Camera
 import draw
 import menu
-import button_manager
+import buttonmanager
 import game_data
 import entity_generator
 
@@ -23,7 +23,7 @@ class Game:
 
         self.playing = True
 
-        button_manager.add_buttons()
+        buttonmanager.add_buttons()
 
     def run(self):
         """
@@ -52,9 +52,6 @@ def handle_events():
         # For resizing window
         if event.type == pygame.VIDEORESIZE:
             _handle_screen_resize(event)
-
-        elif event.type == pygame.MOUSEMOTION:
-            _handle_mouse_event_motion(event)
 
         # Moving to where mouse is clicked
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -88,21 +85,6 @@ def _handle_screen_resize(event):
     # This line is only used in pygame 1
     config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
                                                   pygame.RESIZABLE)
-
-
-def _handle_mouse_event_motion(event):
-    """
-    Handles mouse movement
-
-    Args:
-        event (Event): Event to handle
-    """
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    hovered_button = config.BUTTON_PANEL.check_if_button_hovered(mouse_x, mouse_y)
-    if hovered_button and hovered_button.mouse_over_fn:
-        hovered_button.mouse_over_fn()
-        return
-
 
 def _handle_mouse_event_click(event):
     """

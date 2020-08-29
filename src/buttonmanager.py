@@ -18,10 +18,10 @@ class IconButton:
         menu_open_fn (arg, function): function to call when button clicked
         mouse_over_fn (arg, function): Function to call when button is hovered over
     """
-    def __init__(self, x, image, menu_open_fn, mouse_over_fn=None):
+    def __init__(self, x, y, image, menu_open_fn=None, mouse_over_fn=None):
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.topleft = (SPRITE_SIZE * x, 0)
+        self.rect.topleft = (SPRITE_SIZE * x, SPRITE_SIZE * y)
         self.menu_open_fn = menu_open_fn
         self.mouse_over_fn = mouse_over_fn
 
@@ -54,8 +54,9 @@ class IconButton:
         if self.rect.collidepoint(x, y):
             return True
         return False
- 
-class Button_Manager:
+
+
+class ButtonManager:
     """
     Manager for the bottom button panel for game
 
@@ -77,17 +78,37 @@ class Button_Manager:
         self.y = y
         self.width = width
         self.height = height
-        self.button_surface = pygame.Surface(((SPRITE_SIZE * self.num_button), SPRITE_SIZE))
+        self.button_surface = pygame.Surface(((SPRITE_SIZE * self.width), (SPRITE_SIZE * self.height)))
         self.button_surface.set_colorkey(BLACK)
         self.button_dict = {}
         self.button_count = 0
 
-    def add_button(self, img, button_id, menu_option=None):
+    def add_button(self, icon_button, button_id):
         """
-        Adds button to button manager
+        Adds created IconButton
+
+        Raises IconButtonException when button_id
+        is already in button_dict
+
+        Args:
+            icon_button (IconButton): IconButton to add
+            button_id (String): String of button key
+        """
+        if not self.button_count >= self.num_button and button_id not in self.button_dict:
+            self.button_dict[button_id] = icon_button
+            self.button_count += 1
+        else:
+            raise IconButtonException("IconButton exist")
+
+    def create_button(self, img, button_id, menu_option=None):
+        """
+        Creates IconButton and adds it to button manager
 
         Makes button and adds that button to button_list
         and increment button counter by 1
+
+        Raises IconButtonException when button_id
+        is already in button_dict
 
         Args:
             img (sprite): image of button
@@ -96,26 +117,51 @@ class Button_Manager:
             menu_option (function): function to call when button pressed
         """
         if not self.button_count >= self.num_button:
-            button = IconButton(self.button_count, img, menu_option)
             if button_id not in self.button_dict:
+                # The x and y coord of button depends on
+                # nums of button currently in ButtonManager
+                x = self.button_count % self.width
+                y = self.button_count // self.width
+                button = IconButton(x, y, img, menu_option)
                 self.button_dict[button_id] = button
                 self.button_count += 1
             else:
-                raise ButtonExistException("IconButton exist")
+                raise IconButtonException("IconButton exist")
 
-    def draw_buttons(self):
+    def remove_button(self, button_id):
+        if button_id in self.button_dict:
+            self.button_dict.pop(button_id)
+            self.button_count -= 1
+        else:
+            raise IconButtonException("IconButton doesn't exist")
+
+    def get_button(self, button_id):
+        """
+        Args:
+            button_id (String): Key of button_id
+
+        Returns:
+            Returns button with key of button_id
+        """
+        return self.button_dict[button_id]
+
+    def draw_buttons(self, surface):
         """
         Draws buttons
 
         First draws buttons onto button_surface and then draws
         button_surface onto config.SURFACE_MAIN at self.x, self.y
 
+        Args:
+            surface (Surface): Surface to draw buttons on
+
         Returns:
 
         """
-        for button in self.button_dict.values():
+        for key in self.button_dict:
+            button = self.button_dict[key]
             self.button_surface.blit(button.image, button.rect)
-        config.SURFACE_MAIN.blit(self.button_surface,
+        surface.blit(self.button_surface,
                           (self.x, self.y))
 
     def check_if_button_hovered(self, mouse_x, mouse_y):
@@ -217,9 +263,7 @@ def add_buttons():
     """
     Adds clickable buttons to bottom of screen
     """
-    config.BUTTON_PANEL.add_button(config.SPRITE.knight_anim[0], 'stats',
-                                   menu.stat_menu)
-    config.BUTTON_PANEL.add_button(config.SPRITE.inventory_button, 'inventory',
-                                   menu.inventory_menu)
-    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
-    config.BUTTON_PANEL.add_button(config.SPRITE.minimap_button, 'map', menu.map_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.knight_anim[0], 'stats', menu.stat_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
+    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'map', menu.map_menu)

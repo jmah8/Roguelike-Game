@@ -1,10 +1,10 @@
 from constant import *
 import config
-import pygame
 import draw
-import magic
-import game_text
 import game
+import game_text
+import magic
+import buttonmanager
 
 
 class TextButton:
@@ -195,7 +195,7 @@ def map_menu():
                         break
 
         draw.draw_map_menu(config.MAP_INFO)
-        config.BUTTON_PANEL.draw_buttons()
+        config.BUTTON_PANEL.draw_buttons(config.SURFACE_MAIN)
         config.CLOCK.tick(FPS)
         pygame.display.update()
 
@@ -370,23 +370,43 @@ def _load_inventory_screen():
     :return:  inventory_surface
     """
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
-    item_surface = pygame.Surface((menu_width, menu_height))
-    num_items_row = TILE_WIDTH // 2
-    num_items_col = TILE_HEIGHT // 2
     counter = 0
 
-    for y in range(num_items_col - 1):
-        for x in range(num_items_row):
-            inventory_array = config.PLAYER.container.inventory
-            item_surface.blit(config.SPRITE.empty_inventory_slot, (
-                (0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
-            if len(inventory_array) >= counter + 1:
-                item = inventory_array[counter]
-                item_surface.blit(item.image,
-                                  ((0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
-                counter = counter + 1
+    num_item_in_row = TILE_WIDTH // 2
+    num_item_in_col = TILE_HEIGHT // 2 - 1
 
-    return item_surface
+    inventory = buttonmanager.ButtonManager(menu_width, menu_height,
+                                            num_item_in_row, num_item_in_col,
+                                            (num_item_in_row * num_item_in_col))
+
+    for y in range(num_item_in_col):
+        for x in range(num_item_in_row):
+            inventory_array = config.PLAYER.container.inventory
+            # Separate surface for item
+            item_slot = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
+            item_slot.blit(config.SPRITE.empty_inventory_slot, (0, 0))
+
+            inventory.create_button(item_slot, str(x + (num_item_in_row * y)))
+            if len(inventory_array) >= counter + 1:
+                button = inventory.get_button(str(x + (num_item_in_row * y)))
+                item = inventory_array[counter]
+                item_slot.blit(item.image, (0, 0))
+                counter = counter + 1
+                button.mouse_over_fn = (lambda: item_mouse_over(item, button, menu_width, menu_height))
+
+    return inventory
+
+
+def item_mouse_over(item, button, offset_x, offset_y):
+    x, y = button.rect.topleft
+    item_button = TextButton(item.item.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             # offset_x + x makes it so center of text is ButtonManager x + button x
+                             # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
+                             #      is to make it so text isn't covering item since TextButton is always centered
+                             (offset_x + x, offset_y + y - (SPRITE_SIZE // 2)),
+                             WHITE)
+
+    item_button.draw()
 
 
 def inventory_menu():
@@ -396,29 +416,43 @@ def inventory_menu():
     menu_closed = False
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height
     menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
+
     while not menu_closed:
         events_list = pygame.event.get()
         menu_surface.fill(INVENTORY_BEIGE)
         game.update()
 
-        menu_surface.blit(_load_inventory_screen(), (0, menu_height / 2))
+        black_surface = pygame.Surface((config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2))
+        black_surface.fill(BLACK)
+        menu_surface.blit(black_surface, (0, menu_height / 2))
+
         menu_surface.blit(_load_equipment_screen(), (0, 0))
+
         config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
 
+        inventory = _load_inventory_screen()
+        inventory.draw_buttons(config.SURFACE_MAIN)
+
         draw.draw_mouse()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        hovered_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_button and hovered_button.mouse_over_fn:
+            hovered_button.mouse_over_fn()
 
         for event in events_list:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
+
                     inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
                         'inventory', mouse_x, mouse_y)
                     if inventory_button:
                         menu_closed = True
                         break
-                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed('minimap',
-                                                                                          mouse_x,
-                                                                                          mouse_y)
+
+                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
+                        'minimap', mouse_x, mouse_y)
                     if minimap_button:
                         game.toggle_minimap()
                         break
@@ -428,5 +462,6 @@ def inventory_menu():
                     game.toggle_minimap()
                 if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
                     menu_closed = True
+
         config.CLOCK.tick(FPS)
         pygame.display.update()
