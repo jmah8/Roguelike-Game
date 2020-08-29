@@ -98,7 +98,7 @@ def _handle_mouse_event_click(event):
         mouse_x, mouse_y = pygame.mouse.get_pos()
         pressed_button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
         if pressed_button:
-            pressed_button.menu_open_fn()
+            pressed_button.left_click_fn()
             return
 
         # Move player to mouse click

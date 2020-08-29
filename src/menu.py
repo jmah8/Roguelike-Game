@@ -217,7 +217,7 @@ def magic_targetting_menu():
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
                     if button:
-                        button.menu_open_fn()
+                        button.left_click_fn()
                         break
 
                     game.cast_magic(line)
@@ -389,10 +389,11 @@ def _load_inventory_screen():
             inventory.create_button(item_slot, str(x + (num_item_in_row * y)))
             if len(inventory_array) >= counter + 1:
                 button = inventory.get_button(str(x + (num_item_in_row * y)))
-                item = inventory_array[counter]
-                item_slot.blit(item.image, (0, 0))
+                item_entity = inventory_array[counter]
+                item_slot.blit(item_entity.image, (0, 0))
                 counter = counter + 1
-                button.mouse_over_fn = (lambda: item_mouse_over(item, button, menu_width, menu_height))
+                button.mouse_over_fn = (lambda: item_mouse_over(item_entity, button, menu_width, menu_height))
+                button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
 
     return inventory
 
@@ -457,7 +458,14 @@ def inventory_menu():
                         game.toggle_minimap()
                         break
 
-            if event.type == pygame.KEYDOWN:
+                elif event.button == 3:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
+                    if clicked_button:
+                        clicked_button.right_click_fn()
+
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:
                     game.toggle_minimap()
                 if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:

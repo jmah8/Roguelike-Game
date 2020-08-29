@@ -15,14 +15,16 @@ class IconButton:
     Attributes:
         image (arg, image): image of button
         rect (arg, rect): rect of image
-        menu_open_fn (arg, function): function to call when button clicked
+        left_click_fn (arg, function): function to call when left button clicked
+        left_click_fn (arg, function): function to call when right button clicked
         mouse_over_fn (arg, function): Function to call when button is hovered over
     """
-    def __init__(self, x, y, image, menu_open_fn=None, mouse_over_fn=None):
+    def __init__(self, x, y, image, left_click_fn=None, right_click_fn=None, mouse_over_fn=None):
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (SPRITE_SIZE * x, SPRITE_SIZE * y)
-        self.menu_open_fn = menu_open_fn
+        self.left_click_fn = left_click_fn
+        self.right_click_fm = right_click_fn
         self.mouse_over_fn = mouse_over_fn
 
     def check_if_button_hovered(self, x, y):
