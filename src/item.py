@@ -1,6 +1,7 @@
 from constant import *
 import config
 import game_text
+import entity_generator
 
 class Item:
     def __init__(self, name, weight=0.0, volume=0.0):
@@ -59,14 +60,24 @@ def heal_user_hp(user_entity):
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(10) + " hp",
                                         WHITE)
 
+
 def heal_user_mp(user_entity):
     user_entity.creature.stat.heal_mp(5)
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(5) + " mp",
                                         WHITE)
 
+
+def teleport_user(user_entity):
+    x, y = entity_generator.generate_player_spawn(config.MAP_INFO.map_tree)
+    user_entity.x, user_entity.y = x, y
+    game_text.add_game_message_to_print(user_entity.creature.name_instance + " teleported",
+                                        BLUE)
+
+
 # Lookup table for item effect when used
 item_use_dict = {
     "Red Potion": heal_user_hp,
     "Blue Potion": heal_user_mp,
+    "Teleport Scroll": teleport_user,
     "Sword": None
 }
