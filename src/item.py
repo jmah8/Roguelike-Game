@@ -1,8 +1,8 @@
+import menu
 from constant import *
 import config
 import game_text
 import entity_generator
-import menu
 import json
 
 
@@ -106,14 +106,22 @@ class Item:
                 place hover box)
         """
         button_x, button_y, offset_x, offset_y = self.hover_args
-        item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
-                                      # offset_x + x makes it so center of text is ButtonManager x + button x
-                                      # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
-                                      #      is to make it so text isn't covering item since TextButton is always centered
-                                      (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),
-                                      WHITE)
+        # Single line text
+        # item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
+        #                               # offset_x + x makes it so center of text is ButtonManager x + button x
+        #                               # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
+        #                               #      is to make it so text isn't covering item since TextButton is always centered
+        #                               (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),
+        #                               WHITE)
+        #
+        # item_button.draw()
+        # Multiline text
+        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
+        surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_MESSAGE_TEXT, rect, BLACK, WHITE, 1)
+        surface_rect = surface.get_rect()
+        surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
+        config.SURFACE_MAIN.blit(surface, surface_rect)
 
-        item_button.draw()
 
     def drop_item_fn_pointer(self):
         """

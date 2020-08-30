@@ -4,3 +4,7 @@ class IconButtonException(Exception):
 
 class NullRoot(Exception):
     pass
+
+
+class TextRectException(Exception):
+    pass

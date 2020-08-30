@@ -1,8 +1,13 @@
 {
   "Red Potion": {
-    "heal": 10
+    "heal": 10,
+    "desc": "Heal for 10 hp"
   },
   "Blue Potion": {
-    "heal": 5
+    "heal": 5,
+    "desc": "Heal for 5 mp"
+  },
+  "Sword": {
+    "desc": "A sword"
   }
 }
