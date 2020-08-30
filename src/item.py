@@ -12,6 +12,20 @@ with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/item.js
 
 class Equipment:
     def __init__(self, strength_bonus=0, defense_bonus=0, magic_power_bonus=0, hp_bonus=0, mp_bonus=0, slot=None):
+        """
+        Class representing item bonus stats and slot it occupies
+
+        Only items considered equipment will have equipment field in their
+        parent entity
+
+        Args:
+            strength_bonus (int): Strength bonus item gives
+            defense_bonus (int): Defense bonus item gives
+            magic_power_bonus (int): Magic power bonus item gives
+            hp_bonus (int): Max hp bonus item gives
+            mp_bonus (int): Max hp bonus item gives
+            slot (String): Slot item occupies
+        """
         self.strength_bonus = strength_bonus
         self.defense_bonus = defense_bonus
         self.magic_power_bonus = magic_power_bonus
@@ -22,25 +36,34 @@ class Equipment:
         self.owner = None
 
     def toggle_equip(self):
+        """
+        Toggles equipped status of item
+        """
         if self.equipped:
             self.unequip()
         else:
             self.equip()
 
     def unequip(self):
+        """
+        Unequips item
+        """
         self.equipped = False
-        game_text.add_game_message_to_print("Unequipped item")
+        game_text.add_game_message_to_print("Unequipped item", BLACK)
 
     def equip(self):
+        """
+        Equips item if slot is free, else does nothing
+        """
         item_entities = self.owner.item.current_container.equipped_items
 
         for item in item_entities:
             if item.equipment and item.equipment.slot == self.slot:
-                game_text.add_game_message_to_print("Slot equipped already")
-                break
+                game_text.add_game_message_to_print("Slot equipped already", RED)
+                return 
 
         self.equipped = True
-        game_text.add_game_message_to_print("Equipped item")
+        game_text.add_game_message_to_print("Equipped item", BLACK)
 
 
 
@@ -119,12 +142,21 @@ class Item:
     def use_item(self):
         """
         Uses item and produces affect and removes it
+
+        If self is an consumable item (ie no equipment field in entity owner)
+        use item, else equip item
         """
-        use_fn = item_use_dict[self.name]
-        if use_fn:
-            use_fn(self.current_container.owner, self.use_item_args)
-            self.current_container.inventory.remove(self.owner)
-            self.current_container = None
+        # If item is not equipment
+        if not self.owner.equipment:
+            use_fn = item_use_dict[self.name]
+            if use_fn:
+                use_fn(self.current_container.owner, self.use_item_args)
+                self.current_container.inventory.remove(self.owner)
+                self.current_container = None
+        # Item is equipment
+        else:
+            use_fn = self.owner.equipment.toggle_equip
+            use_fn()
 
     def hover_over_item(self):
         """
@@ -134,15 +166,15 @@ class Item:
         Variables:
             button_x (int): x coord of IconButton item is in
             button_y (int): y coord of IconButton item is in
-            offset_x (int): Where ButtonManager is (needed for finding where to
+            offset_x (int): Where GridButtonManager is (needed for finding where to
                 place hover box)
-            offset_y (int): Where ButtonManager is (needed for finding where to
+            offset_y (int): Where GridButtonManager is (needed for finding where to
                 place hover box)
         """
         button_x, button_y, offset_x, offset_y = self.hover_args
         # Single line text
         # item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
-        #                               # offset_x + x makes it so center of text is ButtonManager x + button x
+        #                               # offset_x + x makes it so center of text is GridButtonManager x + button x
         #                               # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
         #                               #      is to make it so text isn't covering item since TextButton is always centered
         #                               (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),

@@ -126,9 +126,11 @@ class Creature:
         team (arg, group): team of self
         walk_through_tile (arg, boolean): if creature can walk through tiles like walls
         current_path (arg, List): List of path from start to goal
+        load_equip_scheme (arg, Boolean): If creature should have equipment slots
     """
 
-    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None, level=1):
+    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None, level=1,
+                 load_equip_scheme=None):
         self.name_instance = name_instance
         self.owner = None
         self.killable = killable
@@ -136,6 +138,10 @@ class Creature:
         self.walk_through_tile = walk_through_tile
         self.current_path = current_path
         self.stat = self._load_stat(level)
+        if load_equip_scheme:
+            self.equip_scheme = self._load_equip_scheme()
+        else:
+            self.equip_scheme = None
 
     def _load_stat(self, level):
         """
@@ -154,6 +160,22 @@ class Creature:
                                 str["dexterity"], str["intelligence"],
                                 level)
             return stat
+
+        return None
+
+    def _load_equip_scheme(self):
+        """
+        Loads equip scheme specific to creature of name_instance
+        and returns it
+
+        Returns:
+            equip_scheme (Dict): Equipment scheme of creature with name_instance
+        """
+        if self.name_instance in data.keys():
+            str = data[self.name_instance]
+            equip_scheme = str["equip_scheme"]
+
+            return equip_scheme
 
         return None
 

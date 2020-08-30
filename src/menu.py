@@ -300,6 +300,7 @@ def _draw_stat(player, surface, character_icon):
 
     surface.blit(character_icon, (0, 0))
 
+
 def inventory_menu():
     """
     create screens for inventory + equipment menus
@@ -431,7 +432,7 @@ def _load_inventory_screen():
     Helper method to create inventory screen with items
 
     Returns:
-        inventory (ButtonManager): ButtonManager representing inventory + items
+        inventory (GridButtonManager): GridButtonManager representing inventory + items
     """
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
     counter = 0
@@ -439,8 +440,8 @@ def _load_inventory_screen():
     num_item_in_row = TILE_WIDTH // 2
     num_item_in_col = TILE_HEIGHT // 2 - 1
 
-    inventory = buttonmanager.ButtonManager(menu_width, menu_height, num_item_in_row, num_item_in_col,
-                                            (num_item_in_row * num_item_in_col))
+    inventory = buttonmanager.GridButtonManager(menu_width, menu_height, num_item_in_row, num_item_in_col,
+                                                (num_item_in_row * num_item_in_col))
 
     for y in range(num_item_in_col):
         for x in range(num_item_in_row):
@@ -469,9 +470,9 @@ def _create_item_mouse_interaction(button, item_entity, menu_height, menu_width)
         button (IconButton): IconButton to create mouse interaction for
         item_entity (Entity): Entity representing item that IconButton is
             holding/creating actions for
-        menu_width (int): Where ButtonManager is (needed for finding where to
+        menu_width (int): Where GridButtonManager is (needed for finding where to
             place hover box)
-        menu_height (int): Where ButtonManager is (needed for finding where to
+        menu_height (int): Where GridButtonManager is (needed for finding where to
             place hover box)
     """
     _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width)
@@ -515,9 +516,9 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
         button (IconButton): IconButton to create interaction for
         item_entity (Entity): Entity representing item that IconButton is
             holding/creating actions for
-        menu_width (int): Where ButtonManager is (needed for finding where to
+        menu_width (int): Where GridButtonManager is (needed for finding where to
             place hover box)
-        menu_height (int): Where ButtonManager is (needed for finding where to
+        menu_height (int): Where GridButtonManager is (needed for finding where to
             place hover box)
     """
     button_x, button_y = button.rect.topleft
