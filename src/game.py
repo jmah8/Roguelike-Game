@@ -206,6 +206,21 @@ def _handle_keyboard_event(event):
     elif event.key == pygame.K_F3:
         load_game()
 
+    elif event.key == pygame.K_F4:
+        save_game_test(config.CURRENT_FLOOR)
+
+    elif event.key == pygame.K_F5:
+        save_game_test(config.TURN_COUNT)
+
+    elif event.key == pygame.K_F6:
+        save_game_test(config.MAP_INFO)
+
+    elif event.key == pygame.K_F7:
+        save_game_test(config.PLAYER)
+
+    elif event.key == pygame.K_F8:
+        save_game_test(config.GAME_DATA)
+
 
 def quit_game():
     """
@@ -558,3 +573,7 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
+
+def save_game_test(p):
+    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/test.txt'), 'wb') as file:
+        pickle.dump([p], file)

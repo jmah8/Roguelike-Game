@@ -3,6 +3,11 @@ import config
 import game_text
 import entity_generator
 import menu
+import json
+
+
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/item.json')) as f:
+    data = json.load(f)
 
 
 class Item:
@@ -29,6 +34,14 @@ class Item:
         self.use_item_args = None
         self.hover_args = None
         self.drop_item_args = None
+
+        self._load_item_values()
+
+    def _load_item_values(self):
+        if self.name in data.keys():
+            dict = data[self.name]
+            args = tuple(dict.values())
+            self.use_item_args = args
 
 
     def pick_up(self, entity):
@@ -75,7 +88,7 @@ class Item:
         """
         use_fn = item_use_dict[self.name]
         if use_fn:
-            use_fn(self.current_container.owner)
+            use_fn(self.current_container.owner, self.use_item_args)
             self.current_container.inventory.remove(self.owner)
             self.current_container = None
 
@@ -111,20 +124,22 @@ class Item:
 
 
 # Change it so if at max hp, it heals for 0
-def heal_user_hp(user_entity, *args):
-    user_entity.creature.stat.heal_hp(10)
-    game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(10) + " hp",
+def heal_user_hp(user_entity, args):
+    heal = args[0]
+    user_entity.creature.stat.heal_hp(heal)
+    game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(heal) + " hp",
                                         WHITE)
 
 
 # Change it so if at max mp, it heals for 0
-def heal_user_mp(user_entity, *args):
-    user_entity.creature.stat.heal_mp(5)
-    game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(5) + " mp",
+def heal_user_mp(user_entity, args):
+    heal = args[0]
+    user_entity.creature.stat.heal_mp(heal)
+    game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(heal) + " mp",
                                         WHITE)
 
 
-def teleport_user(user_entity, *args):
+def teleport_user(user_entity, args):
     x, y = entity_generator.generate_player_spawn(config.MAP_INFO.map_tree)
     user_entity.x, user_entity.y = x, y
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " teleported",
