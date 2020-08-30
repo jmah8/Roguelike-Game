@@ -393,17 +393,73 @@ def _load_inventory_screen():
                 item_slot.blit(item_entity.image, (0, 0))
                 counter = counter + 1
 
-                button.extra_data["item_mouse_over"] = (item_entity, button, menu_width, menu_height)
-                button.mouse_over_fn = button.item_mouse_over
-                # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
-
-                button.extra_data["right_click_fn"] = (item_entity, config.PLAYER, config.PLAYER.x, config.PLAYER.y)
-                button.right_click_fn = button.item_drop
-                # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
-
-                button.left_click_fn = item_entity.item.use_item
+                _create_item_mouse_interaction(button, item_entity, menu_height, menu_width)
 
     return inventory
+
+
+def _create_item_mouse_interaction(button, item_entity, menu_height, menu_width):
+    """
+    Creates all mouse interaction for button
+
+    Args:
+        button (IconButton): IconButton to create mouse interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+        menu_width (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+        menu_height (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+    """
+    _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width)
+
+    _create_item_mouse_interaction_right_click(button, item_entity)
+
+    _create_item_mouse_interaction_left_click(button, item_entity)
+
+
+def _create_item_mouse_interaction_left_click(button, item_entity):
+    """
+    Creates IconButton left mouse click action for items
+
+    Args:
+        button (IconButton): IconButton to create interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+    """
+    button.left_click_fn = item_entity.item.use_item
+
+
+def _create_item_mouse_interaction_right_click(button, item_entity):
+    """
+    Creates IconButton right mouse click action for items
+
+    Args:
+        button (IconButton): IconButton to create interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+    """
+    item_entity.item.drop_item_args = (item_entity.item.current_container.owner)
+    button.right_click_fn = item_entity.item.drop_item_fn_pointer
+    # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
+
+
+def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width):
+    """
+    Creates IconButton hover mouse action for items
+
+    Args:
+        button (IconButton): IconButton to create interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+        menu_width (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+        menu_height (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+    """
+    item_entity.item.hover_args = (button, menu_width, menu_height)
+    button.mouse_over_fn = item_entity.item.hover_over_item
+    # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
 
 
 def inventory_menu():
@@ -462,7 +518,7 @@ def inventory_menu():
                     mouse_x, mouse_y = pygame.mouse.get_pos()
 
                     clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
-                    if clicked_button:
+                    if clicked_button and clicked_button.right_click_fn:
                         clicked_button.right_click_fn()
 
             elif event.type == pygame.KEYDOWN:

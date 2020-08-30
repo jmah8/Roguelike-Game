@@ -161,7 +161,7 @@ def _handle_keyboard_event(event):
     # TODO: instead of dropping last item dropped, drop mouse event in inventory
     elif event.key == pygame.K_g:
         if len(config.PLAYER.container.inventory) > 0:
-            config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y)
+            config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER)
         _update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     elif event.key == pygame.K_ESCAPE:

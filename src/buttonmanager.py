@@ -28,9 +28,8 @@ class IconButton:
         self.rect = self.image.get_rect()
         self.rect.topleft = (SPRITE_SIZE * x, SPRITE_SIZE * y)
         self.left_click_fn = left_click_fn
-        self.right_click_fm = right_click_fn
+        self.right_click_fn = right_click_fn
         self.mouse_over_fn = mouse_over_fn
-        self.extra_data = {}
 
     def check_if_button_hovered(self, x, y):
         """
@@ -61,36 +60,6 @@ class IconButton:
         if self.rect.collidepoint(x, y):
             return True
         return False
-
-    # Methods used for items
-    def item_mouse_over(self):
-        """
-        Draws box with text describing item hovering over
-        """
-        item, button, offset_x, offset_y = self.extra_data["item_mouse_over"]
-        x, y = button.rect.topleft
-        item_button = menu.TextButton(item.item.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
-                                 # offset_x + x makes it so center of text is ButtonManager x + button x
-                                 # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
-                                 #      is to make it so text isn't covering item since TextButton is always centered
-                                 (offset_x + x, offset_y + y - (SPRITE_SIZE // 2)),
-                                 WHITE)
-
-        item_button.draw()
-
-    def item_drop(self):
-        """
-        Drops item that is right clicked at the player's feet
-        """
-        item_entity, player, player_x, player_y = self.extra_data["right_click_fn"]
-        item_entity.item.drop_item(player, player_x, player_y)
-
-    def item_use(self):
-        """
-        Uses item that is left clicked
-        """
-        pass
-
 
 
 class ButtonManager:
