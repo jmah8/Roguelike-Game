@@ -14,6 +14,7 @@ import entity_generator
 
 pygame.font.init()
 
+
 class Game:
     def __init__(self):
         """
@@ -85,6 +86,7 @@ def _handle_screen_resize(event):
     # This line is only used in pygame 1
     config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
                                                   pygame.RESIZABLE)
+
 
 def _handle_mouse_event_click(event):
     """
@@ -206,21 +208,6 @@ def _handle_keyboard_event(event):
     elif event.key == pygame.K_F3:
         load_game()
 
-    elif event.key == pygame.K_F4:
-        save_game_test(config.CURRENT_FLOOR)
-
-    elif event.key == pygame.K_F5:
-        save_game_test(config.TURN_COUNT)
-
-    elif event.key == pygame.K_F6:
-        save_game_test(config.MAP_INFO)
-
-    elif event.key == pygame.K_F7:
-        save_game_test(config.PLAYER)
-
-    elif event.key == pygame.K_F8:
-        save_game_test(config.GAME_DATA)
-
 
 def quit_game():
     """
@@ -231,6 +218,12 @@ def quit_game():
 
 
 def _toggle_camera():
+    """
+    Turns on free camera
+
+    Free camera can move around and pressing enter
+    moves to camera location
+    """
     camera_on = True
     x, y = config.PLAYER.x, config.PLAYER.y
     free_camera = entity_generator.generate_free_camera()
@@ -398,6 +391,9 @@ def _generate_new_map():
 
 
 def initialize_pathfinding():
+    """
+    Initializes pathfinding for config.MAP_INFO
+    """
     config.PATHFINDING = pathfinding.Graph()
     config.PATHFINDING.make_graph(config.MAP_INFO)
     config.PATHFINDING.neighbour()
@@ -415,7 +411,14 @@ def new_level():
 
     populate_map()
 
+
 def new_game():
+    """
+    Makes new game
+
+    Wipes old game data and makes new game data
+    to make a new game
+    """
     # # Save this
     # config.CURRENT_FLOOR = 1
     # # Save this
@@ -573,7 +576,3 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
-
-def save_game_test(p):
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/test.txt'), 'wb') as file:
-        pickle.dump([p], file)

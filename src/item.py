@@ -1,8 +1,8 @@
+import menu
 from constant import *
 import config
 import game_text
 import entity_generator
-import menu
 import json
 
 
@@ -22,9 +22,9 @@ class Item:
             owner (Entity): Owner of item component
             current_container (Container): Container that is currently
                 holding item
-            use_item_args (*args): Args for use_item
-            hover_args (*args): Args for hovering over item
-            drop_item_args (*args): Args for dropping item
+            use_item_args (List): Args for use_item
+            hover_args (Tuple): Args for hovering over item
+            drop_item_args (Tuple): Args for dropping item
         """
         self.name = name
         self.weight = weight
@@ -106,14 +106,22 @@ class Item:
                 place hover box)
         """
         button_x, button_y, offset_x, offset_y = self.hover_args
-        item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
-                                      # offset_x + x makes it so center of text is ButtonManager x + button x
-                                      # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
-                                      #      is to make it so text isn't covering item since TextButton is always centered
-                                      (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),
-                                      WHITE)
+        # Single line text
+        # item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
+        #                               # offset_x + x makes it so center of text is ButtonManager x + button x
+        #                               # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
+        #                               #      is to make it so text isn't covering item since TextButton is always centered
+        #                               (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),
+        #                               WHITE)
+        #
+        # item_button.draw()
+        # Multiline text
+        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
+        surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+        surface_rect = surface.get_rect()
+        surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
+        config.SURFACE_MAIN.blit(surface, surface_rect)
 
-        item_button.draw()
 
     def drop_item_fn_pointer(self):
         """
@@ -125,6 +133,13 @@ class Item:
 
 # Change it so if at max hp, it heals for 0
 def heal_user_hp(user_entity, args):
+    """
+    Heals user_entity's hp for value in item.json under Red Potion
+
+    Args:
+        user_entity (Entity): Entity using item
+        args (List): List of data from item.json
+    """
     heal = args[0]
     user_entity.creature.stat.heal_hp(heal)
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(heal) + " hp",
@@ -133,6 +148,13 @@ def heal_user_hp(user_entity, args):
 
 # Change it so if at max mp, it heals for 0
 def heal_user_mp(user_entity, args):
+    """
+    Heals user_entity's mp for value in item.json under Blue Potion
+
+    Args:
+        user_entity (Entity): Entity using item
+        args (List): List of data from item.json
+    """
     heal = args[0]
     user_entity.creature.stat.heal_mp(heal)
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(heal) + " mp",
@@ -140,10 +162,22 @@ def heal_user_mp(user_entity, args):
 
 
 def teleport_user(user_entity, args):
+    """
+    Teleports user_entity to random location
+
+    Args:
+        user_entity (Entity): Entity using item
+        args (List): List of data from item.json (not used in this method)
+    """
     x, y = entity_generator.generate_player_spawn(config.MAP_INFO.map_tree)
     user_entity.x, user_entity.y = x, y
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " teleported",
                                         BLUE)
+
+def equip_item(user_entity, args):
+    pass
+
+
 
 
 # Lookup table for item effect when used
