@@ -1,10 +1,10 @@
 # Roguelike Game
 A work in progress roguelike game made with Pygame where the player has to fight enemies and complete a currently undecided objective to win.
 
-![Gameplay](resource/readme/Gameplay.gif)
+![Demo](resource/readme/Demo.gif)
 Short gameplay
 
-![Combat](resource/readme/Combat.png)
+![Still](resource/readme/Still.png)
 
 ![Inventory](resource/readme/Inventory.png)
 
