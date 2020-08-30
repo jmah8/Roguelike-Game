@@ -22,9 +22,9 @@ class Item:
             owner (Entity): Owner of item component
             current_container (Container): Container that is currently
                 holding item
-            use_item_args (*args): Args for use_item
-            hover_args (*args): Args for hovering over item
-            drop_item_args (*args): Args for dropping item
+            use_item_args (List): Args for use_item
+            hover_args (Tuple): Args for hovering over item
+            drop_item_args (Tuple): Args for dropping item
         """
         self.name = name
         self.weight = weight
@@ -117,7 +117,7 @@ class Item:
         # item_button.draw()
         # Multiline text
         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
-        surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_MESSAGE_TEXT, rect, BLACK, WHITE, 1)
+        surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
         surface_rect = surface.get_rect()
         surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
         config.SURFACE_MAIN.blit(surface, surface_rect)
@@ -173,6 +173,11 @@ def teleport_user(user_entity, args):
     user_entity.x, user_entity.y = x, y
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " teleported",
                                         BLUE)
+
+def equip_item(user_entity, args):
+    pass
+
+
 
 
 # Lookup table for item effect when used

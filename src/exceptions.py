@@ -1,10 +1,22 @@
 class IconButtonException(Exception):
-    pass
+    def __init__(self, message=None):
+        self.message = message
+
+    def __str__(self):
+        return self.message
 
 
 class NullRoot(Exception):
-    pass
+    def __init__(self, message=None):
+        self.message = message
+
+    def __str__(self):
+        return self.message
 
 
 class TextRectException(Exception):
-    pass
+    def __init__(self, message=None):
+        self.message = message
+
+    def __str__(self):
+        return self.message

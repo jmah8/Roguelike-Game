@@ -307,10 +307,10 @@ def inventory_menu():
     menu_closed = False
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height
     menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
+    menu_surface.fill(INVENTORY_BEIGE)
 
     while not menu_closed:
         events_list = pygame.event.get()
-        menu_surface.fill(INVENTORY_BEIGE)
         game.update()
 
         menu_surface.blit(_load_equipment_screen(), (0, 0))
@@ -324,14 +324,13 @@ def inventory_menu():
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         hovered_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
+
         if hovered_button and hovered_button.mouse_over_fn:
             hovered_button.mouse_over_fn()
 
         for event in events_list:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-
                     inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
                         'inventory', mouse_x, mouse_y)
                     if inventory_button:
@@ -349,8 +348,6 @@ def inventory_menu():
                         item_slot.left_click_fn()
 
                 elif event.button == 3:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-
                     clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
                     if clicked_button and clicked_button.right_click_fn:
                         clicked_button.right_click_fn()

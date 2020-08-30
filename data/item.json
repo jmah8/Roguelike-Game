@@ -8,6 +8,9 @@
     "desc": "Heal for 5 mp"
   },
   "Sword": {
-    "desc": "A sword"
+    "desc": "A weak sword"
+  },
+  "Teleport Scroll": {
+    "desc": "Teleports user"
   }
 }
