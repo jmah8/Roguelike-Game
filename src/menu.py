@@ -392,6 +392,7 @@ def _load_inventory_screen():
                 item_entity = inventory_array[counter]
                 item_slot.blit(item_entity.image, (0, 0))
                 counter = counter + 1
+
                 button.extra_data["item_mouse_over"] = (item_entity, button, menu_width, menu_height)
                 button.mouse_over_fn = button.item_mouse_over
                 # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
@@ -399,6 +400,8 @@ def _load_inventory_screen():
                 button.extra_data["right_click_fn"] = (item_entity, config.PLAYER, config.PLAYER.x, config.PLAYER.y)
                 button.right_click_fn = button.item_drop
                 # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
+
+                button.left_click_fn = item_entity.item.use_item
 
     return inventory
 
@@ -450,6 +453,10 @@ def inventory_menu():
                     if minimap_button:
                         game.toggle_minimap()
                         break
+
+                    item_slot = inventory.check_if_button_pressed(mouse_x, mouse_y)
+                    if item_slot and item_slot.left_click_fn:
+                        item_slot.left_click_fn()
 
                 elif event.button == 3:
                     mouse_x, mouse_y = pygame.mouse.get_pos()

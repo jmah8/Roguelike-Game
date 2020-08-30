@@ -35,7 +35,28 @@ class CreatureStat:
         self.dexterity = dexterity + (1 * (level - 1))
         self.intelligence = intelligence + (1 * (level - 1))
 
+    def heal_hp(self, heal_value):
+        """
+        Heals hp by heal_value
+
+        Args:
+            heal_value (int): Value to heal hp by
+        """
+        self.hp = min(self.max_hp, self.hp + heal_value)
+
+    def heal_mp(self, heal_value):
+        """
+        Heals mp by heal_value
+
+        Args:
+            heal_value (int): Value to heal hp by
+        """
+        self.mp = min(self.max_mp, self.mp + heal_value)
+
     def level_up(self):
+        """
+        Levels creature up, increasing stats by set amount
+        """
         self.max_hp += 5
         self.max_mp += 3
         self.strength += 1
@@ -275,10 +296,8 @@ class Creature:
         Regenerates hp and mp of self depending on how many turns have passed
         """
         if config.TURN_COUNT % REGEN_TIME == 0:
-            if self.stat.hp + 1 <= self.stat.max_hp:
-                self.stat.hp += 1
-            if self.stat.mp + 1 <= self.stat.max_mp:
-                self.stat.mp += 1
+            self.stat.heal_hp(1)
+            self.stat.heal_mp(1)
 
     def check_for_level_up(self):
         """

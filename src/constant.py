@@ -108,6 +108,7 @@ STAIR_DOWN = 'tiles/stair_nextlevel.png'
 
 WALL_1 = 'tiles/wall/wall_1.png'
 RED_POTION = 'items/consumables/potion_red.png'
+BLUE_POTION = 'items/consumables/potion_blue.png'
 SWORD = 'items/sword.png'
 
 INVENTORY = 'ui/chest_closed_anim_f2.png'
