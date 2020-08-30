@@ -11,7 +11,8 @@ class IconButton:
     IconButton class
 
     Args:
-        x (int): x coord of button
+        x (int): x position of button's topleft
+        y (int): y position of button's topleft
 
     Attributes:
         image (arg, image): image of button
@@ -26,7 +27,7 @@ class IconButton:
     def __init__(self, x, y, image, left_click_fn=None, right_click_fn=None, mouse_over_fn=None):
         self.image = image
         self.rect = self.image.get_rect()
-        self.rect.topleft = (SPRITE_SIZE * x, SPRITE_SIZE * y)
+        self.rect.topleft = x, y
         self.left_click_fn = left_click_fn
         self.right_click_fn = right_click_fn
         self.mouse_over_fn = mouse_over_fn
@@ -67,8 +68,8 @@ class ButtonManager:
     Manager for the buttons
 
     Attributes:
-        x (int): x position of button manager
-        y (int): y position of button
+        x (int): x coord of button manager
+        y (int): y coord of button
         width (int): width of button manager in icons
         height (int): height of button manager in icons
         image (surface): surface that holds the buttons.
@@ -279,7 +280,7 @@ class GridButtonManager(ButtonManager):
         else:
             raise IconButtonException("IconButton exist")
 
-    def create_button(self, img, button_id, menu_option=None):
+    def create_button(self, img, button_id, left_click_fn=None, right_click_fn=None, mouse_over_fn=None):
         """
         Creates IconButton and adds it to button manager
 
@@ -290,10 +291,12 @@ class GridButtonManager(ButtonManager):
         is already in button_dict
 
         Args:
+            mouse_over_fn (fn pointer): fn IconButton should call when hovered over
+            right_click_fn (fn pointer): fn IconButton should call when right clicked
+            left_click_fn (fn pointer):fn IconButton should call when left clicked
             img (sprite): image of button
             button_id (string): the type of button it is. String must be
                 unique
-            menu_option (function): function to call when button pressed
         """
         if not self.button_count >= self.num_button:
             if button_id not in self.button_dict:
@@ -301,7 +304,7 @@ class GridButtonManager(ButtonManager):
                 # nums of button currently in GridButtonManager
                 x = self.button_count % self.width
                 y = self.button_count // self.width
-                button = IconButton(x, y, img, menu_option)
+                button = IconButton(SPRITE_SIZE * x, SPRITE_SIZE * y, img, left_click_fn, right_click_fn, mouse_over_fn)
                 self.button_dict[button_id] = button
                 self.button_count += 1
             else:
@@ -342,7 +345,12 @@ class GridButtonManager(ButtonManager):
         Args:
             surface (Surface): Surface to draw buttons on
         """
-        super().draw_buttons(surface)
+        for key in self.button_dict:
+            button = self.button_dict[key]
+            self.image.blit(button.image, button.rect)
+        surface.blit(self.image,
+                     (self.x, self.y))
+        # super().draw_buttons(surface)
 
     def check_if_button_hovered(self, mouse_x, mouse_y):
         """
