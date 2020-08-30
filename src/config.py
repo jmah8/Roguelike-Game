@@ -46,9 +46,13 @@ MINIMAP = False
 
 BUTTON_PANEL = buttonmanager.ButtonManager(
     SURFACE_MAIN.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (NUM_OF_BUTTONS_X // 2))),
-    SURFACE_MAIN.get_height() - SPRITE_SIZE, NUM_OF_BUTTONS_X, NUM_OF_BUTTONS_Y, (NUM_OF_BUTTONS_X * NUM_OF_BUTTONS_Y))
+    SURFACE_MAIN.get_height() - SPRITE_SIZE, NUM_OF_BUTTONS_X, NUM_OF_BUTTONS_Y, (NUM_OF_BUTTONS_X * NUM_OF_BUTTONS_Y),
+    BLACK)
 
 def new_game():
+    """
+    Makes new game by deleting old data and making new data
+    """
     global CURRENT_FLOOR, TURN_COUNT, MAP_INFO, CAMERA, PATHFINDING, PLAYER, GAME_DATA, FOV
 
     CURRENT_FLOOR = 1

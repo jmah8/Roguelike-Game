@@ -300,6 +300,70 @@ def _draw_stat(player, surface, character_icon):
 
     surface.blit(character_icon, (0, 0))
 
+def inventory_menu():
+    """
+    create screens for inventory + equipment menus
+    """
+    menu_closed = False
+    menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height
+    menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
+
+    while not menu_closed:
+        events_list = pygame.event.get()
+        menu_surface.fill(INVENTORY_BEIGE)
+        game.update()
+
+        menu_surface.blit(_load_equipment_screen(), (0, 0))
+
+        config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
+
+        inventory = _load_inventory_screen()
+        inventory.draw_buttons(config.SURFACE_MAIN)
+
+        draw.draw_mouse()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        hovered_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_button and hovered_button.mouse_over_fn:
+            hovered_button.mouse_over_fn()
+
+        for event in events_list:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
+                        'inventory', mouse_x, mouse_y)
+                    if inventory_button:
+                        menu_closed = True
+                        break
+
+                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
+                        'minimap', mouse_x, mouse_y)
+                    if minimap_button:
+                        game.toggle_minimap()
+                        break
+
+                    item_slot = inventory.check_if_button_pressed(mouse_x, mouse_y)
+                    if item_slot and item_slot.left_click_fn:
+                        item_slot.left_click_fn()
+
+                elif event.button == 3:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
+                    if clicked_button and clicked_button.right_click_fn:
+                        clicked_button.right_click_fn()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    game.toggle_minimap()
+                if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
+                    menu_closed = True
+
+        config.CLOCK.tick(FPS)
+        pygame.display.update()
+
 
 def _load_equipment_screen():
     """
@@ -366,8 +430,10 @@ def _load_equipment_screen():
 
 def _load_inventory_screen():
     """
-    Helper to create inventory with items
-    :return:  inventory_surface
+    Helper method to create inventory screen with items
+
+    Returns:
+        inventory (ButtonManager): ButtonManager representing inventory + items
     """
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
     counter = 0
@@ -375,8 +441,7 @@ def _load_inventory_screen():
     num_item_in_row = TILE_WIDTH // 2
     num_item_in_col = TILE_HEIGHT // 2 - 1
 
-    inventory = buttonmanager.ButtonManager(menu_width, menu_height,
-                                            num_item_in_row, num_item_in_col,
+    inventory = buttonmanager.ButtonManager(menu_width, menu_height, num_item_in_row, num_item_in_col,
                                             (num_item_in_row * num_item_in_col))
 
     for y in range(num_item_in_col):
@@ -461,72 +526,3 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
     item_entity.item.hover_args = (button_x, button_y, menu_width, menu_height)
     button.mouse_over_fn = item_entity.item.hover_over_item
     # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
-
-
-def inventory_menu():
-    """
-    create screens for inventory + equipment menus
-    """
-    menu_closed = False
-    menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height
-    menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
-
-    while not menu_closed:
-        events_list = pygame.event.get()
-        menu_surface.fill(INVENTORY_BEIGE)
-        game.update()
-
-        black_surface = pygame.Surface((config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2))
-        black_surface.fill(BLACK)
-        menu_surface.blit(black_surface, (0, menu_height / 2))
-
-        menu_surface.blit(_load_equipment_screen(), (0, 0))
-
-        config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
-
-        inventory = _load_inventory_screen()
-        inventory.draw_buttons(config.SURFACE_MAIN)
-
-        draw.draw_mouse()
-
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        hovered_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
-        if hovered_button and hovered_button.mouse_over_fn:
-            hovered_button.mouse_over_fn()
-
-        for event in events_list:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-
-                    inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
-                        'inventory', mouse_x, mouse_y)
-                    if inventory_button:
-                        menu_closed = True
-                        break
-
-                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
-                        'minimap', mouse_x, mouse_y)
-                    if minimap_button:
-                        game.toggle_minimap()
-                        break
-
-                    item_slot = inventory.check_if_button_pressed(mouse_x, mouse_y)
-                    if item_slot and item_slot.left_click_fn:
-                        item_slot.left_click_fn()
-
-                elif event.button == 3:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-
-                    clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
-                    if clicked_button and clicked_button.right_click_fn:
-                        clicked_button.right_click_fn()
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_TAB:
-                    game.toggle_minimap()
-                if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
-                    menu_closed = True
-
-        config.CLOCK.tick(FPS)
-        pygame.display.update()

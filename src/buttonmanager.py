@@ -76,16 +76,18 @@ class ButtonManager:
             This surface is blitted to game surface
         button_dict (list): list of buttons
         button_count (int): number of buttons currently in button manager
+        colorkey (Colour): Colour to make transparent
     """
 
-    def __init__(self, x, y, width, height, num_button):
+    def __init__(self, x, y, width, height, num_button, colorkey=None):
         self.num_button = num_button
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.button_surface = pygame.Surface(((SPRITE_SIZE * self.width), (SPRITE_SIZE * self.height)))
-        self.button_surface.set_colorkey(BLACK)
+        if colorkey:
+            self.button_surface.set_colorkey(colorkey)
         self.button_dict = {}
         self.button_count = 0
 

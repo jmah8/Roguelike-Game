@@ -125,6 +125,13 @@ class Item:
 
 # Change it so if at max hp, it heals for 0
 def heal_user_hp(user_entity, args):
+    """
+    Heals user_entity's hp for value in item.json under Red Potion
+
+    Args:
+        user_entity (Entity): Entity using item
+        args (List): List of data from item.json
+    """
     heal = args[0]
     user_entity.creature.stat.heal_hp(heal)
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(heal) + " hp",
@@ -133,6 +140,13 @@ def heal_user_hp(user_entity, args):
 
 # Change it so if at max mp, it heals for 0
 def heal_user_mp(user_entity, args):
+    """
+    Heals user_entity's mp for value in item.json under Blue Potion
+
+    Args:
+        user_entity (Entity): Entity using item
+        args (List): List of data from item.json
+    """
     heal = args[0]
     user_entity.creature.stat.heal_mp(heal)
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " healed " + str(heal) + " mp",
@@ -140,6 +154,13 @@ def heal_user_mp(user_entity, args):
 
 
 def teleport_user(user_entity, args):
+    """
+    Teleports user_entity to random location
+
+    Args:
+        user_entity (Entity): Entity using item
+        args (List): List of data from item.json (not used in this method)
+    """
     x, y = entity_generator.generate_player_spawn(config.MAP_INFO.map_tree)
     user_entity.x, user_entity.y = x, y
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " teleported",
