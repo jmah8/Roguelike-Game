@@ -21,7 +21,7 @@ def draw():
 
     draw_particles()
 
-    config.BUTTON_PANEL.draw_buttons()
+    config.BUTTON_PANEL.draw_buttons(config.SURFACE_MAIN)
 
     draw_ui()
 

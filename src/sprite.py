@@ -175,6 +175,8 @@ class GameSprites:
 
         # Consumables
         self.red_potion = load_image(RED_POTION)
+        self.blue_potion = load_image(BLUE_POTION)
+        self.teleport_scroll = load_image(TELEPORT_SCROLL)
 
         # UI
         self.inventory_button = load_image(INVENTORY)
@@ -222,6 +224,9 @@ class GameSprites:
             "sword": self.sword,
             # Consumables
             "red_potion": self.red_potion,
+            "blue_potion": self.blue_potion,
+            "teleport_scroll": self.teleport_scroll,
+
             "mouse_select": self.mouse_select
         }
 

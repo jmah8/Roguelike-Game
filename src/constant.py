@@ -37,7 +37,8 @@ DIST_FROM_SISTER_NODE_MAX = 3
 MINIMAP_SCALE = 2
 
 # IconButton manager constants
-NUM_OF_BUTTONS = 4
+NUM_OF_BUTTONS_X = 4
+NUM_OF_BUTTONS_Y = 1
 
 # TextButton constants
 BUTTON_WIDTH = CAMERA_WIDTH // 4
@@ -108,6 +109,8 @@ STAIR_DOWN = 'tiles/stair_nextlevel.png'
 
 WALL_1 = 'tiles/wall/wall_1.png'
 RED_POTION = 'items/consumables/potion_red.png'
+BLUE_POTION = 'items/consumables/potion_blue.png'
+TELEPORT_SCROLL = 'items/consumables/teleport_scroll.png'
 SWORD = 'items/sword.png'
 
 INVENTORY = 'ui/chest_closed_anim_f2.png'
@@ -137,4 +140,4 @@ FPS = 60
 # RAYCASTING
 RAYS = 360
 STEP = 3
-KNIGHT_FOV = 3
+PLAYER_FOV = 4

@@ -1,14 +1,28 @@
 from constant import *
 import config
-import pygame
 import draw
-import magic
-import game_text
 import game
+import game_text
+import magic
+import buttonmanager
 
 
 class TextButton:
     def __init__(self, button_text, size, center, colour, clickable=True):
+        """
+        Class representing button with text
+
+        Args:
+            button_text (String): String to display on button
+            size ((int, int)): Size of button
+            center ((int, int)): Coord of center of button
+            colour (Colour): Colour of button
+            clickable (Boolean): If button is clickable/mouse-overable
+
+        Attributes:
+            normal_colour (Colour): Normal colour of button
+            mouse_over_colour (Colour): Mouse over colour of button
+        """
         self.button_text = button_text
         self.size = size
         self.center = center
@@ -25,14 +39,19 @@ class TextButton:
         self.rect.center = center
 
     def draw(self):
+        """
+        Draws button with text on it
+        """
         pygame.draw.rect(config.SURFACE_MAIN, self.colour, self.rect)
         game_text.draw_text(config.SURFACE_MAIN, self.center, BLACK, self.button_text, center=True)
 
     def mouse_over(self):
-        if self.colour == self.normal_colour:
-            self.colour = self.mouse_over_colour
+        """
+        Checks if button is moused over and if so, darken it
 
-    def check_mouse_over(self):
+        If button is clickable and moused over, darken the button,
+        else return button to normal colour
+        """
         if self.clickable:
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -46,6 +65,11 @@ class TextButton:
 
 
 def main():
+    """
+    Main menu before starting game
+
+    Menu has new game, continue game (only available if save.txt > 1kb in size) and exit
+    """
     # Make buttons
     if os.stat(SAVE_PATH).st_size == 0:
         continue_clickable = False
@@ -68,9 +92,9 @@ def main():
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        new_button.check_mouse_over()
-        continue_button.check_mouse_over()
-        exit_button.check_mouse_over()
+        new_button.mouse_over()
+        continue_button.mouse_over()
+        exit_button.mouse_over()
 
         new_button.draw()
 
@@ -96,6 +120,9 @@ def main():
 
 
 def pause():
+    """
+    Pause menu with continue button, save and exit button and exit button
+    """
     # Make buttons
     resume_button = TextButton("Resume", (BUTTON_WIDTH, BUTTON_HEIGHT),
                                (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), GREEN)
@@ -116,9 +143,9 @@ def pause():
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        resume_button.check_mouse_over()
-        save_and_quit_button.check_mouse_over()
-        exit_button.check_mouse_over()
+        resume_button.mouse_over()
+        save_and_quit_button.mouse_over()
+        exit_button.mouse_over()
 
         resume_button.draw()
 
@@ -168,7 +195,7 @@ def map_menu():
                         break
 
         draw.draw_map_menu(config.MAP_INFO)
-        config.BUTTON_PANEL.draw_buttons()
+        config.BUTTON_PANEL.draw_buttons(config.SURFACE_MAIN)
         config.CLOCK.tick(FPS)
         pygame.display.update()
 
@@ -190,10 +217,10 @@ def magic_targetting_menu():
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
                     if button:
-                        button.menu_open()
+                        button.left_click_fn()
                         break
 
-                    game.cast_magic()
+                    game.cast_magic(line)
                     magic_cast = False
                     break
 
@@ -201,7 +228,7 @@ def magic_targetting_menu():
         game.update()
         draw.draw_mouse()
         m_x, m_y = config.CAMERA.get_mouse_coord()
-        line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array)
+        line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array, config.FOV)
         draw.draw_magic_path(line)
         pygame.display.flip()
 
@@ -235,6 +262,7 @@ def stat_menu():
         stat_rect.center = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
 
         config.SURFACE_MAIN.blit(stat_surface, stat_rect)
+        draw.draw_mouse()
 
         pygame.display.flip()
 
@@ -342,23 +370,97 @@ def _load_inventory_screen():
     :return:  inventory_surface
     """
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
-    item_surface = pygame.Surface((menu_width, menu_height))
-    num_items_row = TILE_WIDTH // 2
-    num_items_col = TILE_HEIGHT // 2
     counter = 0
 
-    for y in range(num_items_col - 1):
-        for x in range(num_items_row):
+    num_item_in_row = TILE_WIDTH // 2
+    num_item_in_col = TILE_HEIGHT // 2 - 1
+
+    inventory = buttonmanager.ButtonManager(menu_width, menu_height,
+                                            num_item_in_row, num_item_in_col,
+                                            (num_item_in_row * num_item_in_col))
+
+    for y in range(num_item_in_col):
+        for x in range(num_item_in_row):
             inventory_array = config.PLAYER.container.inventory
-            item_surface.blit(config.SPRITE.empty_inventory_slot, (
-                (0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
+            # Separate surface for item
+            item_slot = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
+            item_slot.blit(config.SPRITE.empty_inventory_slot, (0, 0))
+
+            inventory.create_button(item_slot, str(x + (num_item_in_row * y)))
             if len(inventory_array) >= counter + 1:
-                item = inventory_array[counter]
-                item_surface.blit(item.image,
-                                  ((0 + x * SPRITE_SIZE, 0 + y * SPRITE_SIZE), (SPRITE_SIZE, SPRITE_SIZE)))
+                button = inventory.get_button(str(x + (num_item_in_row * y)))
+                item_entity = inventory_array[counter]
+                item_slot.blit(item_entity.image, (0, 0))
                 counter = counter + 1
 
-    return item_surface
+                _create_item_mouse_interaction(button, item_entity, menu_height, menu_width)
+
+    return inventory
+
+
+def _create_item_mouse_interaction(button, item_entity, menu_height, menu_width):
+    """
+    Creates all mouse interaction for button
+
+    Args:
+        button (IconButton): IconButton to create mouse interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+        menu_width (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+        menu_height (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+    """
+    _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width)
+
+    _create_item_mouse_interaction_right_click(button, item_entity)
+
+    _create_item_mouse_interaction_left_click(button, item_entity)
+
+
+def _create_item_mouse_interaction_left_click(button, item_entity):
+    """
+    Creates IconButton left mouse click action for items
+
+    Args:
+        button (IconButton): IconButton to create interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+    """
+    button.left_click_fn = item_entity.item.use_item
+
+
+def _create_item_mouse_interaction_right_click(button, item_entity):
+    """
+    Creates IconButton right mouse click action for items
+
+    Args:
+        button (IconButton): IconButton to create interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+    """
+    item_entity.item.drop_item_args = (item_entity.item.current_container.owner)
+    button.right_click_fn = item_entity.item.drop_item_fn_pointer
+    # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
+
+
+def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width):
+    """
+    Creates IconButton hover mouse action for items
+
+    Args:
+        button (IconButton): IconButton to create interaction for
+        item_entity (Entity): Entity representing item that IconButton is
+            holding/creating actions for
+        menu_width (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+        menu_height (int): Where ButtonManager is (needed for finding where to
+            place hover box)
+    """
+    button_x, button_y = button.rect.topleft
+    item_entity.item.hover_args = (button_x, button_y, menu_width, menu_height)
+    button.mouse_over_fn = item_entity.item.hover_over_item
+    # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
 
 
 def inventory_menu():
@@ -368,35 +470,63 @@ def inventory_menu():
     menu_closed = False
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height
     menu_surface = pygame.Surface((menu_width, menu_height - SPRITE_SIZE))
+
     while not menu_closed:
         events_list = pygame.event.get()
         menu_surface.fill(INVENTORY_BEIGE)
         game.update()
 
-        menu_surface.blit(_load_inventory_screen(), (0, menu_height / 2))
+        black_surface = pygame.Surface((config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2))
+        black_surface.fill(BLACK)
+        menu_surface.blit(black_surface, (0, menu_height / 2))
+
         menu_surface.blit(_load_equipment_screen(), (0, 0))
+
         config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
+
+        inventory = _load_inventory_screen()
+        inventory.draw_buttons(config.SURFACE_MAIN)
+
+        draw.draw_mouse()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        hovered_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_button and hovered_button.mouse_over_fn:
+            hovered_button.mouse_over_fn()
 
         for event in events_list:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
+
                     inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
                         'inventory', mouse_x, mouse_y)
                     if inventory_button:
                         menu_closed = True
                         break
-                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed('minimap',
-                                                                                          mouse_x,
-                                                                                          mouse_y)
+
+                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
+                        'minimap', mouse_x, mouse_y)
                     if minimap_button:
                         game.toggle_minimap()
                         break
 
-            if event.type == pygame.KEYDOWN:
+                    item_slot = inventory.check_if_button_pressed(mouse_x, mouse_y)
+                    if item_slot and item_slot.left_click_fn:
+                        item_slot.left_click_fn()
+
+                elif event.button == 3:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+
+                    clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
+                    if clicked_button and clicked_button.right_click_fn:
+                        clicked_button.right_click_fn()
+
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:
                     game.toggle_minimap()
                 if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
                     menu_closed = True
-        config.CLOCK.tick(60)
+
+        config.CLOCK.tick(FPS)
         pygame.display.update()

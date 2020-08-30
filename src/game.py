@@ -8,7 +8,7 @@ import pathfinding
 from camera import Camera
 import draw
 import menu
-import button_manager
+import buttonmanager
 import game_data
 import entity_generator
 
@@ -23,7 +23,7 @@ class Game:
 
         self.playing = True
 
-        button_manager.add_buttons()
+        buttonmanager.add_buttons()
 
     def run(self):
         """
@@ -33,6 +33,7 @@ class Game:
             config.CLOCK.tick(FPS)
             handle_events()
             update()
+            draw.draw_mouse()
             pygame.display.flip()
 
 
@@ -54,7 +55,7 @@ def handle_events():
 
         # Moving to where mouse is clicked
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            _handle_mouse_event(event)
+            _handle_mouse_event_click(event)
 
         # Keyboard press
         elif event.type == pygame.KEYDOWN:
@@ -85,8 +86,7 @@ def _handle_screen_resize(event):
     config.SURFACE_MAIN = pygame.display.set_mode((config.CAMERA.camera_width, config.CAMERA.camera_height),
                                                   pygame.RESIZABLE)
 
-
-def _handle_mouse_event(event):
+def _handle_mouse_event_click(event):
     """
     Handles mouse clicks
 
@@ -96,9 +96,9 @@ def _handle_mouse_event(event):
     if event.button == 1:
         # Check if button clicked
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
-        if button:
-            button.menu_open()
+        pressed_button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
+        if pressed_button:
+            pressed_button.left_click_fn()
             return
 
         # Move player to mouse click
@@ -161,7 +161,7 @@ def _handle_keyboard_event(event):
     # TODO: instead of dropping last item dropped, drop mouse event in inventory
     elif event.key == pygame.K_g:
         if len(config.PLAYER.container.inventory) > 0:
-            config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y)
+            config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER)
         _update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     elif event.key == pygame.K_ESCAPE:
@@ -205,6 +205,21 @@ def _handle_keyboard_event(event):
 
     elif event.key == pygame.K_F3:
         load_game()
+
+    elif event.key == pygame.K_F4:
+        save_game_test(config.CURRENT_FLOOR)
+
+    elif event.key == pygame.K_F5:
+        save_game_test(config.TURN_COUNT)
+
+    elif event.key == pygame.K_F6:
+        save_game_test(config.MAP_INFO)
+
+    elif event.key == pygame.K_F7:
+        save_game_test(config.PLAYER)
+
+    elif event.key == pygame.K_F8:
+        save_game_test(config.GAME_DATA)
 
 
 def quit_game():
@@ -433,6 +448,9 @@ def new_game():
 
 
 def update():
+    """
+    Updates camera and fov
+    """
     # Update what to lock camera on
     config.CAMERA.update(config.PLAYER)
 
@@ -443,8 +461,6 @@ def update():
     fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
 
     draw.draw()
-
-    draw.draw_mouse()
 
 
 def move_char_auto(path, ignore=False):
@@ -489,6 +505,7 @@ def move_char_auto(path, ignore=False):
             old_coord = coord
 
             update()
+            draw.draw_mouse()
             config.CLOCK.tick(20)
             pygame.display.flip()
 
@@ -516,16 +533,15 @@ def auto_path(graph):
         move_char_auto(path)
 
 
-def cast_magic():
+def cast_magic(line):
     """
     Casts lightning at mouse location and prints out the line
     it travels through currently
+
+    Args:
+        line (List): List of coords for spell to travel
     """
-    move_x, move_y = config.CAMERA.get_mouse_coord()
-    start = (config.PLAYER.x, config.PLAYER.y)
-    goal = (move_x, move_y)
-    line = magic.line(start, goal, config.MAP_INFO.tile_array)
-    magic.cast_lightning(config.PLAYER, line)
+    magic.cast_fireball(config.PLAYER, line)
     # TODO: maybe change this since if player has ai but cast fireball,
     #       player would move + cast fireball at the same time
     _update_creatures(config.GAME_DATA.creature_data, 0, 0)
@@ -557,3 +573,7 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
+
+def save_game_test(p):
+    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/test.txt'), 'wb') as file:
+        pickle.dump([p], file)

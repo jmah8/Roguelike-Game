@@ -107,7 +107,7 @@ def generate_player(tree):
     x1, y1, x2, y2 = room.coords
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
-    player_container = container.Container()
+    player_container = container.Container(inventory=[])
     player_com = creature.Creature("knight", team="player")
     player = entity.Entity(x, y, "player", creature=player_com, container=player_container, image_key="knight_dict")
     return player
@@ -158,7 +158,7 @@ def generate_items(tree):
     for child_room in tree.root.child_room_list:
         random_num = random.randint(0, 100)
         # 50% chance of spawning item
-        if random_num < 50:
+        if random_num < 200:
             _generate_item(child_room, item_list)
 
     return item_list
@@ -175,24 +175,28 @@ def _generate_item(room, item_list):
     x1, y1, x2, y2 = room.coords
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
-    random_num = random.randint(0, 1)
+    random_num = random.randint(0, 3)
     if random_num == 0:
-        new_item = _generate_potion(x, y)
-    else:
+        new_item = _generate_hp_potion(x, y)
+    elif random_num == 1:
         new_item = _generate_sword(x, y)
+    elif random_num == 2:
+        new_item = _generate_mp_potion(x, y)
+    else:
+        new_item = _generate_teleport_scroll(x, y)
 
     item_list.append(new_item)
 
 
-def _generate_potion(x, y):
+def _generate_hp_potion(x, y):
     """
-    Generates potion at coords (x, y)
+    Generates hp potion at coords (x, y)
 
     Args:
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_com = item.Item("Red Potion", 0, 0, True)
+    item_com = item.Item("Red Potion", 0, 0)
     generated_item = entity.Entity(x, y, "item", item=item_com, image_key="red_potion")
     return generated_item
 
@@ -205,6 +209,31 @@ def _generate_sword(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_sword_com = item.Item("Sword", 0, 0, False)
+    item_sword_com = item.Item("Sword", 0, 0)
     generated_item = entity.Entity(x, y, "item", item=item_sword_com, image_key="sword")
+    return generated_item
+
+
+def _generate_mp_potion(x, y):
+    """
+    Generates mp potion at coords (x, y)
+
+    Args:
+        x (int): x coord to generate item at
+        y (int): y coord to generate item at
+    """
+    item_com = item.Item("Blue Potion", 0, 0)
+    generated_item = entity.Entity(x, y, "item", item=item_com, image_key="blue_potion")
+    return generated_item
+
+def _generate_teleport_scroll(x, y):
+    """
+    Generates teleport scroll at coords (x, y)
+
+    Args:
+        x (int): x coord to generate item at
+        y (int): y coord to generate item at
+    """
+    item_com = item.Item("Teleport Scroll", 0, 0)
+    generated_item = entity.Entity(x, y, "item", item=item_com, image_key="teleport_scroll")
     return generated_item

@@ -1,4 +1,4 @@
-class ButtonExistException(Exception):
+class IconButtonException(Exception):
     pass
 
 

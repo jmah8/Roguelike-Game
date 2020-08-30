@@ -1,0 +1,8 @@
+{
+  "Red Potion": {
+    "heal": 10
+  },
+  "Blue Potion": {
+    "heal": 5
+  }
+}
