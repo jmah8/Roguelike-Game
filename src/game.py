@@ -130,23 +130,23 @@ def _handle_keyboard_event(event):
     """
     # Movement
     if event.key == pygame.K_a:
-        _update_creatures(config.GAME_DATA.creature_data, -1, 0)
+        update_creatures(config.GAME_DATA.creature_data, -1, 0)
     elif event.key == pygame.K_d:
-        _update_creatures(config.GAME_DATA.creature_data, 1, 0)
+        update_creatures(config.GAME_DATA.creature_data, 1, 0)
     elif event.key == pygame.K_w:
-        _update_creatures(config.GAME_DATA.creature_data, 0, -1)
+        update_creatures(config.GAME_DATA.creature_data, 0, -1)
     elif event.key == pygame.K_q:
-        _update_creatures(config.GAME_DATA.creature_data, -1, -1)
+        update_creatures(config.GAME_DATA.creature_data, -1, -1)
     elif event.key == pygame.K_e:
-        _update_creatures(config.GAME_DATA.creature_data, 1, -1)
+        update_creatures(config.GAME_DATA.creature_data, 1, -1)
     elif event.key == pygame.K_z:
-        _update_creatures(config.GAME_DATA.creature_data, -1, 1)
+        update_creatures(config.GAME_DATA.creature_data, -1, 1)
     elif event.key == pygame.K_c:
-        _update_creatures(config.GAME_DATA.creature_data, 1, 1)
+        update_creatures(config.GAME_DATA.creature_data, 1, 1)
     elif event.key == pygame.K_s:
-        _update_creatures(config.GAME_DATA.creature_data, 0, 1)
+        update_creatures(config.GAME_DATA.creature_data, 0, 1)
     elif event.key == pygame.K_x:
-        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+        update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     # Mini_map
     elif event.key == pygame.K_TAB:
@@ -158,13 +158,13 @@ def _handle_keyboard_event(event):
         for obj in objects_at_player:
             if obj.item:
                 obj.item.pick_up(config.PLAYER)
-        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+        update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     # TODO: instead of dropping last item dropped, drop mouse event in inventory
     elif event.key == pygame.K_g:
         if len(config.PLAYER.container.inventory) > 0:
             config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER)
-        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+        update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     elif event.key == pygame.K_ESCAPE:
         _toggle_wallhack()
@@ -341,7 +341,7 @@ def _toggle_wallhack():
                       range(config.MAP_INFO.tile_height)]
 
 
-def _update_creatures(creature_dict, dx, dy):
+def update_creatures(creature_dict, dx, dy):
     """
     Updates all creatures and increments turn count
 
@@ -486,7 +486,7 @@ def move_char_auto(path, ignore=False):
             # If wall hack on disregard
             if _check_if_enemy_in_fov(config.GAME_DATA.creature_data["enemy"]):
                 return
-        _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+        update_creatures(config.GAME_DATA.creature_data, 0, 0)
     else:
         for coord in path:
             # If key pressed stop auto moving
@@ -504,7 +504,7 @@ def move_char_auto(path, ignore=False):
             # Move to next coord in path
             dest_x = coord[0] - old_coord[0]
             dest_y = coord[1] - old_coord[1]
-            _update_creatures(config.GAME_DATA.creature_data, dest_x, dest_y)
+            update_creatures(config.GAME_DATA.creature_data, dest_x, dest_y)
             old_coord = coord
 
             update()
@@ -547,7 +547,7 @@ def cast_magic(line):
     magic.cast_fireball(config.PLAYER, line)
     # TODO: maybe change this since if player has ai but cast fireball,
     #       player would move + cast fireball at the same time
-    _update_creatures(config.GAME_DATA.creature_data, 0, 0)
+    update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
 
 def save_game():

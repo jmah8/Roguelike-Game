@@ -351,6 +351,7 @@ def inventory_menu():
                     clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
                     if clicked_button and clicked_button.right_click_fn:
                         clicked_button.right_click_fn()
+                        game.update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:

@@ -1,5 +1,6 @@
 from constant import *
 import config
+import item as i
 
 
 class Entity:
@@ -29,7 +30,8 @@ class Entity:
         container (arg, Container): Container self is
     """
 
-    def __init__(self, x, y, object_id, creature=None, ai=None, item=None, container=None, image_key=None):
+    def __init__(self, x, y, object_id, creature=None, ai=None, item=None, equipment=None, container=None,
+                 image_key=None):
         self.x = x
         self.y = y
         self.object_id = object_id
@@ -58,12 +60,19 @@ class Entity:
             ai.owner = self
 
         self.item = item
-        if item:
-            item.owner = self
+        if self.item:
+            self.item.owner = self
+
+        self.equipment = equipment
+        if self.equipment:
+            self.equipment.owner = self
+
+            self.item = i.Item(self.item.name)
+            self.item.owner = self
 
         self.container = container
-        if container:
-            container.owner = self
+        if self.container:
+            self.container.owner = self
 
     @property
     def position(self):

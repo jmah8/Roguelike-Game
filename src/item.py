@@ -10,6 +10,40 @@ with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/item.js
     data = json.load(f)
 
 
+class Equipment:
+    def __init__(self, strength_bonus=0, defense_bonus=0, magic_power_bonus=0, hp_bonus=0, mp_bonus=0, slot=None):
+        self.strength_bonus = strength_bonus
+        self.defense_bonus = defense_bonus
+        self.magic_power_bonus = magic_power_bonus
+        self.hp_bonus = hp_bonus
+        self.mp_bonus = mp_bonus
+        self.slot = slot
+        self.equipped = False
+        self.owner = None
+
+    def toggle_equip(self):
+        if self.equipped:
+            self.unequip()
+        else:
+            self.equip()
+
+    def unequip(self):
+        self.equipped = False
+        game_text.add_game_message_to_print("Unequipped item")
+
+    def equip(self):
+        item_entities = self.owner.item.current_container.equipped_items
+
+        for item in item_entities:
+            if item.equipment and item.equipment.slot == self.slot:
+                game_text.add_game_message_to_print("Slot equipped already")
+                break
+
+        self.equipped = True
+        game_text.add_game_message_to_print("Equipped item")
+
+
+
 class Item:
     def __init__(self, name, weight=0.0, volume=0.0):
         """

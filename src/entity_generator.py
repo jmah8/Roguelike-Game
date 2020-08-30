@@ -210,7 +210,8 @@ def _generate_sword(x, y):
         y (int): y coord to generate item at
     """
     item_sword_com = item.Item("Sword", 0, 0)
-    generated_item = entity.Entity(x, y, "item", item=item_sword_com, image_key="sword")
+    equipment_sword_com = item.Equipment(strength_bonus=2, slot="Left hand")
+    generated_item = entity.Entity(x, y, "item", item=item_sword_com, equipment=equipment_sword_com, image_key="sword")
     return generated_item
 
 
