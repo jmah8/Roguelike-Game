@@ -48,22 +48,41 @@ class Equipment:
         """
         Unequips item
         """
+        equipped_dict = self.owner.item.current_container.owner.creature.equipment
+        equipped_dict[self.slot] = None
         self.equipped = False
         game_text.add_game_message_to_print("Unequipped item", BLACK)
+
+        self.owner.item.current_container.inventory.append(self.owner)
+
+        # self.equipped = False
+        # game_text.add_game_message_to_print("Unequipped item", BLACK)
 
     def equip(self):
         """
         Equips item if slot is free, else does nothing
         """
-        item_entities = self.owner.item.current_container.equipped_items
+        equipped_dict = self.owner.item.current_container.owner.creature.equipment
 
-        for item in item_entities:
-            if item.equipment and item.equipment.slot == self.slot:
-                game_text.add_game_message_to_print("Slot equipped already", RED)
-                return 
+        if equipped_dict[self.slot] == None:
+            equipped_dict[self.slot] = self.owner
+            self.equipped = True
+            game_text.add_game_message_to_print("Equipped item", BLACK)
+            self.owner.item.current_container.inventory.remove(self.owner)
+        else:
+            game_text.add_game_message_to_print("Slot equipped already", RED)
 
-        self.equipped = True
-        game_text.add_game_message_to_print("Equipped item", BLACK)
+
+
+        # item_entities = self.owner.item.current_container.equipped_items
+        #
+        # for item in item_entities:
+        #     if item.equipment and item.equipment.slot == self.slot:
+        #         game_text.add_game_message_to_print("Slot equipped already", RED)
+        #         return
+        #
+        # self.equipped = True
+        # game_text.add_game_message_to_print("Equipped item", BLACK)
 
 
 

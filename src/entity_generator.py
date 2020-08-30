@@ -108,7 +108,7 @@ def generate_player(tree):
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
     player_container = container.Container(inventory=[])
-    player_com = creature.Creature("knight", team="player")
+    player_com = creature.Creature("knight", team="player", load_equip_scheme=True)
     player = entity.Entity(x, y, "player", creature=player_com, container=player_container, image_key="knight_dict")
     return player
 
