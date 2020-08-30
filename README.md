@@ -23,15 +23,16 @@ Short gameplay
 | x   | Stay still |
 | TAB | Toggle minimap |
 | t   | Pickup item |
-| g   | Drop last item |
 | ESC | Toggle FOV limitations |
 | m   | Toggle camera |
 | v   | Auto explore |
 | p   | Pause and open menu |
 | i   | Toggle inventory screen |
+| i + Left mouse click | Use item |
+| i + Right mouse click | Drop item |
 | SPACE | Toggle magic selection screen |
-| Mouse left click | Move to mouse cursor |
-| SPACE + Mouse left click | Fire magic spell |
+| Left mouse click | Move to mouse cursor |
+| SPACE + Left mouse click | Fire magic spell |
 | m + Movement keys | Move camera around |
 | m + ENTER | Move to camera location |
 | 1 | Transition to previous level |
@@ -55,7 +56,6 @@ Short gameplay
 
 # Upcoming features/todos
 - Come up with name
-- Finishing item pick up/dropping
 - Different classes
 - Win and lose condition
 - Major refactoring of code
