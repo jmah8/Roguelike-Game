@@ -457,7 +457,8 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
         menu_height (int): Where ButtonManager is (needed for finding where to
             place hover box)
     """
-    item_entity.item.hover_args = (button, menu_width, menu_height)
+    button_x, button_y = button.rect.topleft
+    item_entity.item.hover_args = (button_x, button_y, menu_width, menu_height)
     button.mouse_over_fn = item_entity.item.hover_over_item
     # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
 

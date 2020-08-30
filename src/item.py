@@ -98,19 +98,19 @@ class Item:
         when hovering over it
 
         Variables:
-            button (IconButton): IconButton item is in
+            button_x (int): x coord of IconButton item is in
+            button_y (int): y coord of IconButton item is in
             offset_x (int): Where ButtonManager is (needed for finding where to
                 place hover box)
             offset_y (int): Where ButtonManager is (needed for finding where to
                 place hover box)
         """
-        button, offset_x, offset_y = self.hover_args
-        x, y = button.rect.topleft
+        button_x, button_y, offset_x, offset_y = self.hover_args
         item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
                                       # offset_x + x makes it so center of text is ButtonManager x + button x
                                       # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
                                       #      is to make it so text isn't covering item since TextButton is always centered
-                                      (offset_x + x, offset_y + y - (SPRITE_SIZE // 2)),
+                                      (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),
                                       WHITE)
 
         item_button.draw()
