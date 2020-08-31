@@ -11,7 +11,7 @@ with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/item.js
 
 
 class Equipment:
-    def __init__(self, strength_bonus=0, defense_bonus=0, magic_power_bonus=0, hp_bonus=0, mp_bonus=0, slot=None):
+    def __init__(self, strength_bonus=0, defense_bonus=0, wizardry_bonus=0, hp_bonus=0, mp_bonus=0, slot=None):
         """
         Class representing item bonus stats and slot it occupies
 
@@ -21,14 +21,14 @@ class Equipment:
         Args:
             strength_bonus (int): Strength bonus item gives
             defense_bonus (int): Defense bonus item gives
-            magic_power_bonus (int): Magic power bonus item gives
+            wizardry_bonus (int): Magic power bonus item gives
             hp_bonus (int): Max hp bonus item gives
             mp_bonus (int): Max hp bonus item gives
             slot (String): Slot item occupies
         """
         self.strength_bonus = strength_bonus
         self.defense_bonus = defense_bonus
-        self.magic_power_bonus = magic_power_bonus
+        self.wizardry_bonus = wizardry_bonus
         self.hp_bonus = hp_bonus
         self.mp_bonus = mp_bonus
         self.slot = slot

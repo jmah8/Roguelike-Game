@@ -281,16 +281,16 @@ def _draw_stat(player, surface, character_icon):
     hp = player.creature.stat.hp
     mp = player.creature.stat.mp
     strength = player.creature.stat.strength
-    dexterity = player.creature.stat.dexterity
-    intelligence = player.creature.stat.intelligence
+    defense = player.creature.stat.defense
+    wizardry = player.creature.stat.wizardry
     exp = player.creature.stat.exp
     level = player.creature.stat.level
 
     stat_list = ["hp: " + str(hp) + "/" + str(max_hp),
                  "mp: " + str(mp) + "/" + str(max_mp),
                  "strength: " + str(strength),
-                 "dexterity: " + str(dexterity),
-                 "intelligence: " + str(intelligence),
+                 "defense: " + str(defense),
+                 "wizardry: " + str(wizardry),
                  "exp: " + str(exp) + "/ 100",
                  "level: " + str(level)]
 

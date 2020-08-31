@@ -10,7 +10,7 @@ with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creatur
 
 class CreatureStat:
 
-    def __init__(self, hp, mp, strength, dexterity, intelligence, level=1):
+    def __init__(self, hp, mp, strength, defense, wizardry, level=1):
         """
         Stats of a creature
 
@@ -18,8 +18,8 @@ class CreatureStat:
             hp (int): hp of creature
             mp (int): mp of creature
             strength (int): strength of creature
-            dexterity (int): dexterity of creature
-            intelligence (int): intelligence of creature
+            defense (int): defense of creature
+            wizardry (int): wizardry of creature
             level (int): level of creature
 
         Attributes:
@@ -32,8 +32,8 @@ class CreatureStat:
         self.exp = 0
         self.level = level
         self.strength = strength + (1 * (level - 1))
-        self.dexterity = dexterity + (1 * (level - 1))
-        self.intelligence = intelligence + (1 * (level - 1))
+        self.defense = defense + (1 * (level - 1))
+        self.wizardry = wizardry + (1 * (level - 1))
 
     def heal_hp(self, heal_value):
         """
@@ -76,7 +76,7 @@ class CreatureStat:
     def calc_magic_damage(self, base_damage):
         """
         Returns damage dealt from using spell
-        scaling with level and intelligence
+        scaling with level and wizardry
 
         Args:
             base_damage (int): base damage of spell
@@ -84,7 +84,7 @@ class CreatureStat:
         Returns:
             damage (int): damage spell will do when casted by self
         """
-        damage = (self.level + self.intelligence) * base_damage // 2
+        damage = (self.level + self.wizardry) * base_damage // 2
         return damage
 
     def calc_exp_gained_from_self(self, player_level):
@@ -157,7 +157,7 @@ class Creature:
         if self.name_instance in data.keys():
             str = data[self.name_instance]
             stat = CreatureStat(str["hp"], str["mp"], str["strength"],
-                                str["dexterity"], str["intelligence"],
+                                str["defense"], str["wizardry"],
                                 level)
             return stat
 
