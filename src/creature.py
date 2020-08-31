@@ -10,7 +10,7 @@ with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creatur
 
 class CreatureStat:
 
-    def __init__(self, hp, mp, strength, dexterity, intelligence, level=1):
+    def __init__(self, hp, mp, strength, defense, wizardry, level=1):
         """
         Stats of a creature
 
@@ -18,8 +18,8 @@ class CreatureStat:
             hp (int): hp of creature
             mp (int): mp of creature
             strength (int): strength of creature
-            dexterity (int): dexterity of creature
-            intelligence (int): intelligence of creature
+            defense (int): defense of creature
+            wizardry (int): wizardry of creature
             level (int): level of creature
 
         Attributes:
@@ -32,8 +32,8 @@ class CreatureStat:
         self.exp = 0
         self.level = level
         self.strength = strength + (1 * (level - 1))
-        self.dexterity = dexterity + (1 * (level - 1))
-        self.intelligence = intelligence + (1 * (level - 1))
+        self.defense = defense + (1 * (level - 1))
+        self.wizardry = wizardry + (1 * (level - 1))
 
     def heal_hp(self, heal_value):
         """
@@ -76,7 +76,7 @@ class CreatureStat:
     def calc_magic_damage(self, base_damage):
         """
         Returns damage dealt from using spell
-        scaling with level and intelligence
+        scaling with level and wizardry
 
         Args:
             base_damage (int): base damage of spell
@@ -84,7 +84,7 @@ class CreatureStat:
         Returns:
             damage (int): damage spell will do when casted by self
         """
-        damage = (self.level + self.intelligence) * base_damage // 2
+        damage = (self.level + self.wizardry) * base_damage // 2
         return damage
 
     def calc_exp_gained_from_self(self, player_level):
@@ -126,9 +126,11 @@ class Creature:
         team (arg, group): team of self
         walk_through_tile (arg, boolean): if creature can walk through tiles like walls
         current_path (arg, List): List of path from start to goal
+        load_equip_scheme (arg, Boolean): True if creature should have equipment slots
     """
 
-    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None, level=1):
+    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None, level=1,
+                 load_equip_scheme=False):
         self.name_instance = name_instance
         self.owner = None
         self.killable = killable
@@ -136,6 +138,10 @@ class Creature:
         self.walk_through_tile = walk_through_tile
         self.current_path = current_path
         self.stat = self._load_stat(level)
+        if load_equip_scheme:
+            self.equipment = self._load_equip_scheme()
+        else:
+            self.equipment = None
 
     def _load_stat(self, level):
         """
@@ -151,9 +157,25 @@ class Creature:
         if self.name_instance in data.keys():
             str = data[self.name_instance]
             stat = CreatureStat(str["hp"], str["mp"], str["strength"],
-                                str["dexterity"], str["intelligence"],
+                                str["defense"], str["wizardry"],
                                 level)
             return stat
+
+        return None
+
+    def _load_equip_scheme(self):
+        """
+        Loads equip scheme specific to creature of name_instance
+        and returns it
+
+        Returns:
+            equipment (Dict): Equipment scheme of creature with name_instance
+        """
+        if self.name_instance in data.keys():
+            str = data[self.name_instance]
+            equip = str["equip"]
+
+            return equip
 
         return None
 

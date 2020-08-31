@@ -281,16 +281,16 @@ def _draw_stat(player, surface, character_icon):
     hp = player.creature.stat.hp
     mp = player.creature.stat.mp
     strength = player.creature.stat.strength
-    dexterity = player.creature.stat.dexterity
-    intelligence = player.creature.stat.intelligence
+    defense = player.creature.stat.defense
+    wizardry = player.creature.stat.wizardry
     exp = player.creature.stat.exp
     level = player.creature.stat.level
 
     stat_list = ["hp: " + str(hp) + "/" + str(max_hp),
                  "mp: " + str(mp) + "/" + str(max_mp),
                  "strength: " + str(strength),
-                 "dexterity: " + str(dexterity),
-                 "intelligence: " + str(intelligence),
+                 "defense: " + str(defense),
+                 "wizardry: " + str(wizardry),
                  "exp: " + str(exp) + "/ 100",
                  "level: " + str(level)]
 
@@ -299,6 +299,7 @@ def _draw_stat(player, surface, character_icon):
                             WHITE, stat)
 
     surface.blit(character_icon, (0, 0))
+
 
 def inventory_menu():
     """
@@ -313,9 +314,10 @@ def inventory_menu():
         events_list = pygame.event.get()
         game.update()
 
-        menu_surface.blit(_load_equipment_screen(), (0, 0))
-
         config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
+
+        equipment = _load_equipment_screen()
+        equipment.draw_buttons(config.SURFACE_MAIN)
 
         inventory = _load_inventory_screen()
         inventory.draw_buttons(config.SURFACE_MAIN)
@@ -347,10 +349,15 @@ def inventory_menu():
                     if item_slot and item_slot.left_click_fn:
                         item_slot.left_click_fn()
 
+                    equip_slot = equipment.check_if_button_pressed(mouse_x, mouse_y)
+                    if equip_slot and equip_slot.left_click_fn:
+                        equip_slot.left_click_fn()
+
                 elif event.button == 3:
                     clicked_button = inventory.check_if_button_pressed(mouse_x, mouse_y)
                     if clicked_button and clicked_button.right_click_fn:
                         clicked_button.right_click_fn()
+                        game.update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:
@@ -364,65 +371,118 @@ def inventory_menu():
 
 def _load_equipment_screen():
     """
-    Helper to create equipment_screen with items
-    :return:  equipment_surface
+    Helper method to create equipment screen with equip slots
+
+    Returns:
+        equip_slot (ButtonManager): ButtonManager representing equip slots + equipped items
     """
-    equipment_rects = []
+    menu_width = config.CAMERA.camera_width / 2
 
-    menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
-    equipment_surface = pygame.Surface((menu_width, menu_height))
+    num_of_row = TILE_WIDTH // 2
+    num_of_col = TILE_HEIGHT // 2
 
-    helmet_tl, helmet_br = (243, 24), (294, 67)
-    armor_tl, armor_br = (218, 70), (319, 185)
-    amulet_tl, amulet_br = (323, 52), (361, 89)
-    main_tl, main_br = (38, 83), (114, 274)
-    off_tl, off_br = (390, 83), (466, 274)
-    ringL_tl, ringL_br = (176, 171), (214, 208)
-    ringR_tl, ringR_br = (323, 171), (361, 208)
-    pants_tl, pants_br = (218, 188), (319, 301)
-    gloves_tl, gloves_br = (134, 230), (209, 299)
-    boots_tl, boots_br = (232, 308), (305, 356)
+    equip_slot = buttonmanager.ButtonManager(menu_width, 0, num_of_row, num_of_col)
 
-    helmet_rect = pygame.Rect(helmet_tl, ((helmet_br[0] - helmet_tl[0]), (helmet_br[1] - helmet_tl[1])))
-    armor_rect = pygame.Rect(armor_tl, ((armor_br[0] - armor_tl[0]), (armor_br[1] - armor_tl[1])))
-    amulet_rect = pygame.Rect(amulet_tl, ((amulet_br[0] - amulet_tl[0]), (amulet_br[1] - amulet_tl[1])))
-    main_rect = pygame.Rect(main_tl, ((main_br[0] - main_tl[0]), (main_br[1] - main_tl[1])))
-    off_rect = pygame.Rect(off_tl, ((off_br[0] - off_tl[0]), (off_br[1] - off_tl[1])))
-    ringL_rect = pygame.Rect(ringL_tl, ((ringL_br[0] - ringL_tl[0]), (ringL_br[1] - ringL_tl[1])))
-    ringR_rect = pygame.Rect(ringR_tl, ((ringR_br[0] - ringR_tl[0]), (ringR_br[1] - ringR_tl[1])))
-    pants_rect = pygame.Rect(pants_tl, ((pants_br[0] - pants_tl[0]), (pants_br[1] - pants_tl[1])))
-    gloves_rect = pygame.Rect(gloves_tl, ((gloves_br[0] - gloves_tl[0]), (gloves_br[1] - gloves_tl[1])))
-    boots_rect = pygame.Rect(boots_tl, ((boots_br[0] - boots_tl[0]), (boots_br[1] - boots_tl[1])))
+    hand_scale = (SPRITE_SIZE * 2, SPRITE_SIZE * 4)
+    armor_scale = (SPRITE_SIZE * 4, SPRITE_SIZE * 6)
 
-    equipment_rects.append(helmet_rect)
-    equipment_rects.append(armor_rect)
-    equipment_rects.append(amulet_rect)
-    equipment_rects.append(main_rect)
-    equipment_rects.append(off_rect)
-    equipment_rects.append(ringL_rect)
-    equipment_rects.append(ringR_rect)
-    equipment_rects.append(pants_rect)
-    equipment_rects.append(gloves_rect)
-    equipment_rects.append(boots_rect)
+    # Make equipment slots
+    left_hand_slot = pygame.transform.scale(config.SPRITE.empty_inventory_slot, hand_scale)
+    left_hand = buttonmanager.IconButton(0, SPRITE_SIZE * 1, left_hand_slot)
+    equip_slot.add_button(left_hand, "Left hand")
 
-    for rect in equipment_rects:
-        pygame.draw.rect(equipment_surface, INVENTORY_BEIGE, rect)
+    right_hand_slot = pygame.transform.scale(config.SPRITE.empty_inventory_slot, hand_scale)
+    right_hand = buttonmanager.IconButton(SPRITE_SIZE * 6, SPRITE_SIZE * 1, right_hand_slot)
+    equip_slot.add_button(right_hand, "Right hand")
 
-    equipment_surface.blit(config.SPRITE.equip_screen, (0, 0))
+    armor_slot = pygame.transform.scale(config.SPRITE.empty_inventory_slot, armor_scale)
+    armor = buttonmanager.IconButton(SPRITE_SIZE * 2, 0, armor_slot)
+    equip_slot.add_button(armor, "Armor")
 
-    return equipment_surface
+    # Find all entities equipped by player
+    equipped_entities = config.PLAYER.creature.equipment.values()
+    for equip_entity in equipped_entities:
+        if equip_entity and equip_entity.equipment.equipped:
+            slot = equip_entity.equipment.slot
+            if slot == "Left hand":
+                scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
+                left_hand_slot.blit(scaled_equip, (0, 0))
+                left_hand.left_click_fn = equip_entity.equipment.toggle_equip
+            elif slot == "Right hand":
+                scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
+                right_hand_slot.blit(scaled_equip, (0, 0))
+                right_hand.left_click_fn = equip_entity.equipment.toggle_equip
+            elif slot == "Armor":
+                scaled_equip = pygame.transform.scale(equip_entity.image, armor_scale)
+                armor_slot.blit(scaled_equip, (0, 0))
+                armor.left_click_fn = equip_entity.equipment.toggle_equip
 
-    # equip_dictionary = {
-    #     "main": None,
-    #     "off": None,
-    #     "helmet": None,
-    #     "armor": None,
-    #     "amulet": None,
-    #     "ring": None,
-    #     "pants": None,
-    #     "boots": None,
-    #     "gloves": None,
-    # }
+
+    return equip_slot
+
+
+
+# def _load_equipment_screen():
+#     """
+#     Helper to create equipment_screen with items
+#     :return:  equipment_surface
+#     """
+#     equipment_rects = []
+#
+#     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
+#     equipment_surface = pygame.Surface((menu_width, menu_height))
+#
+#     helmet_tl, helmet_br = (243, 24), (294, 67)
+#     armor_tl, armor_br = (218, 70), (319, 185)
+#     amulet_tl, amulet_br = (323, 52), (361, 89)
+#     main_tl, main_br = (38, 83), (114, 274)
+#     off_tl, off_br = (390, 83), (466, 274)
+#     ringL_tl, ringL_br = (176, 171), (214, 208)
+#     ringR_tl, ringR_br = (323, 171), (361, 208)
+#     pants_tl, pants_br = (218, 188), (319, 301)
+#     gloves_tl, gloves_br = (134, 230), (209, 299)
+#     boots_tl, boots_br = (232, 308), (305, 356)
+#
+#     helmet_rect = pygame.Rect(helmet_tl, ((helmet_br[0] - helmet_tl[0]), (helmet_br[1] - helmet_tl[1])))
+#     armor_rect = pygame.Rect(armor_tl, ((armor_br[0] - armor_tl[0]), (armor_br[1] - armor_tl[1])))
+#     amulet_rect = pygame.Rect(amulet_tl, ((amulet_br[0] - amulet_tl[0]), (amulet_br[1] - amulet_tl[1])))
+#     main_rect = pygame.Rect(main_tl, ((main_br[0] - main_tl[0]), (main_br[1] - main_tl[1])))
+#     off_rect = pygame.Rect(off_tl, ((off_br[0] - off_tl[0]), (off_br[1] - off_tl[1])))
+#     ringL_rect = pygame.Rect(ringL_tl, ((ringL_br[0] - ringL_tl[0]), (ringL_br[1] - ringL_tl[1])))
+#     ringR_rect = pygame.Rect(ringR_tl, ((ringR_br[0] - ringR_tl[0]), (ringR_br[1] - ringR_tl[1])))
+#     pants_rect = pygame.Rect(pants_tl, ((pants_br[0] - pants_tl[0]), (pants_br[1] - pants_tl[1])))
+#     gloves_rect = pygame.Rect(gloves_tl, ((gloves_br[0] - gloves_tl[0]), (gloves_br[1] - gloves_tl[1])))
+#     boots_rect = pygame.Rect(boots_tl, ((boots_br[0] - boots_tl[0]), (boots_br[1] - boots_tl[1])))
+#
+#     equipment_rects.append(helmet_rect)
+#     equipment_rects.append(armor_rect)
+#     equipment_rects.append(amulet_rect)
+#     equipment_rects.append(main_rect)
+#     equipment_rects.append(off_rect)
+#     equipment_rects.append(ringL_rect)
+#     equipment_rects.append(ringR_rect)
+#     equipment_rects.append(pants_rect)
+#     equipment_rects.append(gloves_rect)
+#     equipment_rects.append(boots_rect)
+#
+#     for rect in equipment_rects:
+#         pygame.draw.rect(equipment_surface, INVENTORY_BEIGE, rect)
+#
+#     equipment_surface.blit(config.SPRITE.equip_screen, (0, 0))
+#
+#     return equipment_surface
+#
+#     # equip_dictionary = {
+#     #     "main": None,
+#     #     "off": None,
+#     #     "helmet": None,
+#     #     "armor": None,
+#     #     "amulet": None,
+#     #     "ring": None,
+#     #     "pants": None,
+#     #     "boots": None,
+#     #     "gloves": None,
+#     # }
 
 
 def _load_inventory_screen():
@@ -430,7 +490,7 @@ def _load_inventory_screen():
     Helper method to create inventory screen with items
 
     Returns:
-        inventory (ButtonManager): ButtonManager representing inventory + items
+        inventory (GridButtonManager): GridButtonManager representing inventory + items
     """
     menu_width, menu_height = config.CAMERA.camera_width / 2, config.CAMERA.camera_height / 2
     counter = 0
@@ -438,8 +498,8 @@ def _load_inventory_screen():
     num_item_in_row = TILE_WIDTH // 2
     num_item_in_col = TILE_HEIGHT // 2 - 1
 
-    inventory = buttonmanager.ButtonManager(menu_width, menu_height, num_item_in_row, num_item_in_col,
-                                            (num_item_in_row * num_item_in_col))
+    inventory = buttonmanager.GridButtonManager(menu_width, menu_height, num_item_in_row, num_item_in_col,
+                                                (num_item_in_row * num_item_in_col))
 
     for y in range(num_item_in_col):
         for x in range(num_item_in_row):
@@ -468,9 +528,9 @@ def _create_item_mouse_interaction(button, item_entity, menu_height, menu_width)
         button (IconButton): IconButton to create mouse interaction for
         item_entity (Entity): Entity representing item that IconButton is
             holding/creating actions for
-        menu_width (int): Where ButtonManager is (needed for finding where to
+        menu_width (int): Where GridButtonManager is (needed for finding where to
             place hover box)
-        menu_height (int): Where ButtonManager is (needed for finding where to
+        menu_height (int): Where GridButtonManager is (needed for finding where to
             place hover box)
     """
     _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width)
@@ -514,9 +574,9 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
         button (IconButton): IconButton to create interaction for
         item_entity (Entity): Entity representing item that IconButton is
             holding/creating actions for
-        menu_width (int): Where ButtonManager is (needed for finding where to
+        menu_width (int): Where GridButtonManager is (needed for finding where to
             place hover box)
-        menu_height (int): Where ButtonManager is (needed for finding where to
+        menu_height (int): Where GridButtonManager is (needed for finding where to
             place hover box)
     """
     button_x, button_y = button.rect.topleft

@@ -7,10 +7,16 @@
     "heal": 5,
     "desc": "Heal for 5 mp"
   },
+  "Teleport Scroll": {
+    "desc": "Teleports user"
+  },
   "Sword": {
     "desc": "A weak sword"
   },
-  "Teleport Scroll": {
-    "desc": "Teleports user"
+  "Shield": {
+    "desc": "A weak shield"
+  },
+  "Armor": {
+    "desc": "A weak armor"
   }
 }
