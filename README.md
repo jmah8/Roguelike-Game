@@ -28,11 +28,11 @@ Short gameplay
 | v   | Auto explore |
 | p   | Pause and open menu |
 | i   | Toggle inventory screen |
-| i + Left mouse click | Use item |
+| i + Left mouse click | Use item / Toggle equipment |
 | i + Right mouse click | Drop item |
 | SPACE | Toggle magic selection screen |
 | Left mouse click | Move to mouse cursor |
-| SPACE + Left mouse click | Fire magic spell |
+| SPACE + Left mouse click | Fire spell |
 | m + Movement keys | Move camera around |
 | m + ENTER | Move to camera location |
 | 1 | Transition to previous level |
@@ -46,12 +46,12 @@ Short gameplay
 - Semi intelligent monster ai
 - Random map generation
 - Pathfinding
-- FOV
-- Player and enemy stats
+- Field of view
+- Player and enemy stats and stat scaling
 - Randomly generated monsters and items
 - Traversing through floors
 - Castable magic (work in progress!)
-- Inventory system (work in progress!)
+- Inventory system
 - Saving and loading
 
 # Upcoming features/todos
