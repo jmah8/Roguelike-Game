@@ -125,6 +125,7 @@ EQUIP_SCREEN = 'ui/equipment_screen.png'
 
 FIREBALL = 'magic/fireball.png'
 LIGHTNING = 'magic/lightning.png'
+CONFUSION = 'magic/confusion.png'
 
 # FONTS
 font_path_name = os.path.join(RESOURCE_PATH, 'fonts/FFF_Tusj.ttf')

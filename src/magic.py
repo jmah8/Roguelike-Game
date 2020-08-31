@@ -2,10 +2,12 @@ import json
 import os
 import game
 import draw
+import game_text
 from constant import *
 import config
 import pygame
 import particle
+import ai
 
 
 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as file:
@@ -218,3 +220,47 @@ def cast_lightning(caster, line):
 
             _update_spell(particle_group)
 
+
+def cast_confusion(caster, line):
+    """
+    Throws confusion following line stopping at first enemy hit.
+
+    Args:
+        caster (Object): Creature that casted confusion
+        line (List): List of coordinates for confusion to follow
+    """
+    base_damage = data["confusion"]["damage"]
+    mp_cost = data["confusion"]["cost"]
+
+    particle_group = []
+    particle.MagicParticle(particle_group, config.SPRITE.magic['confusion'], line)
+
+    # Special case where spell shouldn't do damage but instead duration scales with caster stat
+    turn_count = caster.creature.stat.calc_magic_damage(base_damage)
+
+    # If caster has enough mp to cast magic
+    if caster.creature.stat.mp - mp_cost >= 0:
+        caster.creature.stat.mp -= mp_cost
+        # get list of tiles from start to end
+        enemies = []
+        for team, entity in config.GAME_DATA.creature_data.items():
+            if team != caster.creature.team:
+                enemies += entity
+        creature_hit = False
+        for (x, y) in line:
+            if creature_hit:
+                break
+            # hit first enemy in list of tile
+            for enemy in enemies:
+                if (enemy.x, enemy.y) == (x, y):
+                    # TODO: could change constructor to take in owner for
+                    #       confuseai if decide that creatures are only confused
+                    #       from magic
+                    confuseAI = ai.ConfuseAI(enemy.ai, turn_count)
+                    confuseAI.owner = enemy
+                    enemy.ai = confuseAI
+                    creature_hit = True
+                    game_text.add_game_message_to_print(enemy.object_name + " is confused!", BLUE)
+                    break
+
+            _update_spell(particle_group)

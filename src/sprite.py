@@ -191,7 +191,8 @@ class GameSprites:
         # Sprite dicts
         self.magic = {
             "fireball": load_image(FIREBALL),
-            "lightning": load_image(LIGHTNING)
+            "lightning": load_image(LIGHTNING),
+            "confusion": load_image(CONFUSION)
         }
 
         self.entity_dict = {
