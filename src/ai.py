@@ -48,12 +48,43 @@ class Ai_test:
             self.owner.creature.move(move_x, move_y)
 
 
-class ChaseAI:
+class ConfuseAI:
     """
-    Once per turn, execute
+    Once per turn randomly move around
 
     Attributes:
-        owner (Object): owner of ai
+        owner (Entity): owner of ai
+        old_ai (AI): old ai of creature to switch back to
+        turn_count (int): number of turn owner is confused for
+    """
+    def __init__(self, old_ai, turn_count=10):
+        self.owner = None
+        self.old_ai = old_ai
+        self.turn_count = turn_count
+
+    def take_turn(self):
+        """
+        Randomly moves owner
+
+        Decrease turn count every move and if turn count = 0,
+        turn back to old ai
+        """
+        if self.turn_count == 0:
+            self.owner.ai = self.old_ai
+
+        self.owner.creature.move(random.choice(
+            [0, 1, -1]), random.choice([0, 1, -1]))
+        self.turn_count -= 1
+
+
+
+class ChaseAI:
+    """
+    Once per turn check if player in fov and so
+    chase player, else wander
+
+    Attributes:
+        owner (Entity): owner of ai
     """
 
     def __init__(self):
