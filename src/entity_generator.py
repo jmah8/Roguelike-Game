@@ -64,7 +64,7 @@ def _generate_slime(x, y):
     """
     ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("slime", True, "enemy", level=config.CURRENT_FLOOR)
-    generated_enemy = entity.Entity(x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="slime_dict")
+    generated_enemy = entity.Entity(x, y, "slime", creature=creature_gen, ai=ai_gen)
     return generated_enemy
 
 
@@ -78,7 +78,7 @@ def _generate_goblin(x, y):
     """
     ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("goblin", True, "enemy", level=config.CURRENT_FLOOR)
-    generated_enemy = entity.Entity(x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="goblin_dict")
+    generated_enemy = entity.Entity(x, y, "goblin", creature=creature_gen, ai=ai_gen)
     return generated_enemy
 
 
@@ -92,7 +92,7 @@ def _generate_skeleton(x, y):
     """
     ai_gen = ai.ChaseAI()
     creature_gen = creature.Creature("skeleton", True, "enemy", level=config.CURRENT_FLOOR)
-    generated_enemy = entity.Entity(x, y, "enemy", creature=creature_gen, ai=ai_gen, image_key="skeleton_dict")
+    generated_enemy = entity.Entity(x, y, "skeleton", creature=creature_gen, ai=ai_gen)
     return generated_enemy
 
 
@@ -109,7 +109,7 @@ def generate_player(tree):
     y = random.randint(y1, y2)
     player_container = container.Container(inventory=[])
     player_com = creature.Creature("knight", team="player", load_equip_scheme=True)
-    player = entity.Entity(x, y, "player", creature=player_com, container=player_container, image_key="knight_dict")
+    player = entity.Entity(x, y, "knight", creature=player_com, container=player_container)
     return player
 
 
@@ -138,8 +138,8 @@ def generate_free_camera():
     """
     Generates free camera at (0, 0)
     """
-    camera = creature.Creature("Camera", False, team=None, walk_through_tile=True)
-    free_camera = entity.Entity(0, 0, "camera", creature=camera, image_key="mouse_select")
+    camera = creature.Creature("camera", False, team=None, walk_through_tile=True)
+    free_camera = entity.Entity(0, 0, "camera", creature=camera)
     return free_camera
 
 
@@ -158,7 +158,7 @@ def generate_items(tree):
     for child_room in tree.root.child_room_list:
         random_num = random.randint(0, 100)
         # 50% chance of spawning item
-        if random_num < 200:
+        if random_num < 50:
             _generate_item(child_room, item_list)
 
     return item_list
@@ -169,7 +169,7 @@ def _generate_item(room, item_list):
     Generates a item in room at random coords and appends to item_list
 
     Args:
-        room (Room): Room to generate monste rin
+        room (Room): Room to generate monster in
         item_list (list): list to append created item to
     """
     x1, y1, x2, y2 = room.coords
@@ -200,8 +200,8 @@ def _generate_hp_potion(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_com = item.Item("Red Potion", 0, 0)
-    generated_item = entity.Entity(x, y, "item", item=item_com, image_key="red_potion")
+    item_com = item.Item("red potion", 0, 0)
+    generated_item = entity.Entity(x, y, "red potion", item=item_com)
     return generated_item
 
 
@@ -213,9 +213,9 @@ def _generate_sword(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_sword_com = item.Item("Sword", 0, 0)
+    item_sword_com = item.Item("sword", 0, 0)
     equipment_sword_com = item.Equipment(strength_bonus=2, slot="Left hand")
-    generated_item = entity.Entity(x, y, "item", item=item_sword_com, equipment=equipment_sword_com, image_key="sword")
+    generated_item = entity.Entity(x, y, "sword", item=item_sword_com, equipment=equipment_sword_com)
     return generated_item
 
 def _generate_shield(x, y):
@@ -226,9 +226,9 @@ def _generate_shield(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_shield_com = item.Item("Shield", 0, 0)
+    item_shield_com = item.Item("shield", 0, 0)
     equipment_shield_com = item.Equipment(defense_bonus=1, slot="Right hand")
-    generated_item = entity.Entity(x, y, "item", item=item_shield_com, equipment=equipment_shield_com, image_key="shield")
+    generated_item = entity.Entity(x, y, "shield", item=item_shield_com, equipment=equipment_shield_com)
     return generated_item
 
 
@@ -240,9 +240,9 @@ def _generate_armor(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_armor_com = item.Item("Armor", 0, 0)
+    item_armor_com = item.Item("armor", 0, 0)
     equipment_armor_com = item.Equipment(defense_bonus=2, slot="Armor")
-    generated_item = entity.Entity(x, y, "item", item=item_armor_com, equipment=equipment_armor_com, image_key="armor")
+    generated_item = entity.Entity(x, y, "armor", item=item_armor_com, equipment=equipment_armor_com)
     return generated_item
 
 
@@ -254,8 +254,8 @@ def _generate_mp_potion(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_com = item.Item("Blue Potion", 0, 0)
-    generated_item = entity.Entity(x, y, "item", item=item_com, image_key="blue_potion")
+    item_com = item.Item("blue potion", 0, 0)
+    generated_item = entity.Entity(x, y, "blue potion", item=item_com)
     return generated_item
 
 
@@ -267,6 +267,6 @@ def _generate_teleport_scroll(x, y):
         x (int): x coord to generate item at
         y (int): y coord to generate item at
     """
-    item_com = item.Item("Teleport Scroll", 0, 0)
-    generated_item = entity.Entity(x, y, "item", item=item_com, image_key="teleport_scroll")
+    item_com = item.Item("teleport scroll", 0, 0)
+    generated_item = entity.Entity(x, y, "teleport scroll", item=item_com)
     return generated_item

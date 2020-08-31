@@ -116,7 +116,7 @@ ARMOR = 'items/equip/armor.png'
 
 INVENTORY = 'ui/chest.png'
 EMPTY_INVENTORY_SLOT = 'ui/empty_inventory_slot.png'
-MOUSE_SELECT = 'ui/mouse_select.png'
+CAMERA = 'ui/camera.png'
 MINIMAP_BUTTON = 'ui/minimap.png'
 MAP_BUTTON = 'ui/map.png'
 

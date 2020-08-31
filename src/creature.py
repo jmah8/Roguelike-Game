@@ -89,24 +89,24 @@ class CreatureStat:
 
     def calc_exp_gained_from_self(self, player_level):
         """
-        Returns exp gained from player slaying self.
+        Returns exp gained from enemy slaying self.
 
         Level gained is based on difference in levels.
-        With larger increase in exp when player is >=
+        With larger increase in exp when enemy is >=
         level of self
 
         Args:
             player_level (int): Level of thing that slayed self
 
         Returns:
-            exp_gained (int): exp gained by slayer
+            exp_gained (int): exp gained by enemy
         """
         if player_level > self.level:
             scale = 5
         else:
             scale = 20
 
-        exp_gained = abs(player_level - self.level) + 1 * scale
+        exp_gained = (abs(player_level - self.level) + 1) * scale
         return exp_gained
 
 class Creature:
