@@ -70,11 +70,14 @@ def main():
 
     Menu has new game, continue game (only available if save.txt > 1kb in size) and exit
     """
-    # Make buttons
-    if os.stat(SAVE_PATH).st_size == 0:
-        continue_clickable = False
+    if not os.path.isfile(SAVE_PATH):
+        with open(SAVE_PATH, 'w') as file:
+            continue_clickable = False
     else:
-        continue_clickable = True
+        if os.stat(SAVE_PATH).st_size == 0:
+            continue_clickable = False
+        else:
+            continue_clickable = True
 
     new_button = TextButton("New Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
                             (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), RED)
