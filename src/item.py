@@ -267,7 +267,7 @@ def equip_item(user_entity, args):
 
 # Lookup table for item effect when used
 item_use_dict = {
-    "Red Potion": heal_user_hp,
-    "Blue Potion": heal_user_mp,
-    "Teleport Scroll": teleport_user
+    "red potion": heal_user_hp,
+    "blue potion": heal_user_mp,
+    "teleport scroll": teleport_user
 }

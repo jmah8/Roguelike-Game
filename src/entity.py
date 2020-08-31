@@ -9,11 +9,10 @@ class Entity:
     and acts in the game
 
     Attributes:
-        game (arg, game): Game with all game data
         x (arg, int): Position on x axis
         y (arg, int): Position on y axis
-        object_id (arg, string): id of Entity
-        image_key (arg, string): key of sprite image
+        object_name (arg, string): name of Entity (ie type of entity).
+            Also key of sprite image
         anim_length (arg, int): number of sprites in animation
 
         left (bool): if Entity is facing left
@@ -30,15 +29,13 @@ class Entity:
         container (arg, Container): Container self is
     """
 
-    def __init__(self, x, y, object_id, creature=None, ai=None, item=None, equipment=None, container=None,
-                 image_key=None):
+    def __init__(self, x, y, object_name, creature=None, ai=None, item=None, equipment=None, container=None):
         self.x = x
         self.y = y
-        self.object_id = object_id
-        self.image_key = image_key
+        self.object_name = object_name
 
-        if isinstance(config.SPRITE.sprite_dict[self.image_key], dict):
-            self.anim_length = len(config.SPRITE.sprite_dict[self.image_key]["idle_right"])
+        if isinstance(config.SPRITE.entity_dict[self.object_name], dict):
+            self.anim_length = len(config.SPRITE.entity_dict[self.object_name]["idle_right"])
         else:
             self.anim_length = 1
 
@@ -114,18 +111,18 @@ class Entity:
         """
         image = None
         if self.anim_length == 1:
-            image = config.SPRITE.sprite_dict[self.image_key]
+            image = config.SPRITE.entity_dict[self.object_name]
         else:
             if self.right:
                 if self.moving:
-                    image = config.SPRITE.sprite_dict[self.image_key]["run_right"][self.anim_frame]
+                    image = config.SPRITE.entity_dict[self.object_name]["run_right"][self.anim_frame]
                 else:
-                    image = config.SPRITE.sprite_dict[self.image_key]["idle_right"][self.anim_frame]
+                    image = config.SPRITE.entity_dict[self.object_name]["idle_right"][self.anim_frame]
             else:
                 if self.moving:
-                    image = config.SPRITE.sprite_dict[self.image_key]["run_left"][self.anim_frame]
+                    image = config.SPRITE.entity_dict[self.object_name]["run_left"][self.anim_frame]
                 else:
-                    image = config.SPRITE.sprite_dict[self.image_key]["idle_left"][self.anim_frame]
+                    image = config.SPRITE.entity_dict[self.object_name]["idle_left"][self.anim_frame]
         return image
 
     def update_anim(self):

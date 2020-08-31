@@ -60,7 +60,8 @@ BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
-INVENTORY_BEIGE = (239,228,176)
+INVENTORY_BEIGE = (239, 228, 176)
+BROWN = (210, 180, 140)
 
 # Game constants
 NUM_OF_FLOOR = 3
@@ -117,7 +118,7 @@ ARMOR = 'items/equip/armor.png'
 
 INVENTORY = 'ui/chest.png'
 EMPTY_INVENTORY_SLOT = 'ui/empty_inventory_slot.png'
-MOUSE_SELECT = 'ui/mouse_select.png'
+CAMERA = 'ui/camera.png'
 MINIMAP_BUTTON = 'ui/minimap.png'
 MAP_BUTTON = 'ui/map.png'
 

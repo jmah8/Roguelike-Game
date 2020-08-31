@@ -1,22 +1,22 @@
 {
-  "Red Potion": {
+  "red potion": {
     "heal": 10,
     "desc": "Heal for 10 hp"
   },
-  "Blue Potion": {
+  "blue potion": {
     "heal": 5,
     "desc": "Heal for 5 mp"
   },
-  "Teleport Scroll": {
+  "teleport scroll": {
     "desc": "Teleports user"
   },
-  "Sword": {
+  "sword": {
     "desc": "A weak sword"
   },
-  "Shield": {
+  "shield": {
     "desc": "A weak shield"
   },
-  "Armor": {
+  "armor": {
     "desc": "A weak armor"
   }
 }

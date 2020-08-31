@@ -60,23 +60,25 @@ class CreatureStat:
         self.max_hp += 5
         self.max_mp += 3
         self.strength += 1
+        self.defense += 1
+        self.wizardry += 1
 
-    def calc_phys_damage(self):
+    @property
+    def physical_damage(self):
         """
         Return damage dealt from hitting,
-        scaling with level and strength
+        scaling with strength
 
         Returns:
             damage (int): damage self with stat will do
-
         """
-        damage = (self.level + self.strength) // 2
+        damage = self.strength
         return damage
 
     def calc_magic_damage(self, base_damage):
         """
         Returns damage dealt from using spell
-        scaling with level and wizardry
+        scaling with wizardry and spell damage
 
         Args:
             base_damage (int): base damage of spell
@@ -84,29 +86,38 @@ class CreatureStat:
         Returns:
             damage (int): damage spell will do when casted by self
         """
-        damage = (self.level + self.wizardry) * base_damage // 2
+        damage = self.wizardry + base_damage
         return damage
+
+    @property
+    def damage_blocked(self):
+        """
+        Returns blocked damaged from hits
+        scaling with defense
+        """
+        blocked_damage = self.defense
+        return blocked_damage
 
     def calc_exp_gained_from_self(self, player_level):
         """
-        Returns exp gained from player slaying self.
+        Returns exp gained from enemy slaying self.
 
         Level gained is based on difference in levels.
-        With larger increase in exp when player is >=
+        With larger increase in exp when enemy is >=
         level of self
 
         Args:
             player_level (int): Level of thing that slayed self
 
         Returns:
-            exp_gained (int): exp gained by slayer
+            exp_gained (int): exp gained by enemy
         """
         if player_level > self.level:
             scale = 5
         else:
             scale = 20
 
-        exp_gained = abs(player_level - self.level) + 1 * scale
+        exp_gained = (abs(player_level - self.level) + 1) * scale
         return exp_gained
 
 class Creature:
@@ -129,7 +140,7 @@ class Creature:
         load_equip_scheme (arg, Boolean): True if creature should have equipment slots
     """
 
-    def __init__(self, name_instance, killable=None, team="enemy", walk_through_tile=False, current_path=None, level=1,
+    def __init__(self, name_instance, killable=False, team="enemy", walk_through_tile=False, current_path=None, level=1,
                  load_equip_scheme=False):
         self.name_instance = name_instance
         self.owner = None
@@ -199,20 +210,58 @@ class Creature:
         """
         return self.owner.y
 
+    @property
+    def total_physical_damage(self):
+        """
+        Return damage dealt from hitting,
+        scaling with strength and equipment
+
+        Returns:
+            damage (int): damage self with stat + equipment
+                will do
+        """
+        weapon_bonus = 0
+        if self.equipment:
+            for equipment_entity in self.equipment.values():
+                if equipment_entity:
+                    weapon_bonus += equipment_entity.equipment.strength_bonus
+        total_damage = self.stat.physical_damage + weapon_bonus
+        return total_damage
+
+    @property
+    def total_blocked_damage(self):
+        """
+        Return damage blocked from hits,
+        scaling with defense and equipment
+
+        Returns:
+            damage (int): damage self will block
+                with stat + equipment
+        """
+        equipment_bonus = 0
+        if self.equipment:
+            for equipment_entity in self.equipment.values():
+                if equipment_entity:
+                    equipment_bonus += equipment_entity.equipment.defense_bonus
+        total_blocked_damage = self.stat.damage_blocked + equipment_bonus
+        return total_blocked_damage
+
     def take_damage(self, damage):
         """
-        Creature takes damage to hp and if hp is <= 0 and killable == True, it dies
+        Creature takes damage depending on stat.defense to
+        hp and if hp is <= 0 and killable == True, it dies
 
         Returns:
             bool: if creature died return true else return false
         """
-        self.stat.hp -= damage
+        total_damage = max(0, damage - self.total_blocked_damage)
+        self.stat.hp -= total_damage
         game_text.add_game_message_to_print(
-            self.name_instance + " took " + str(damage) + " damage", RED)
+            self.name_instance + " took " + str(total_damage) + " damage", RED)
         game_text.add_game_message_to_print(
             self.name_instance + "'s hp is at :" + str(self.stat.hp), WHITE)
 
-        NumberParticle(self.x, self.y, damage, config.PARTICLE_LIST, RED)
+        NumberParticle(self.x, self.y, total_damage, config.PARTICLE_LIST, RED)
 
         if self.stat.hp <= 0 and self.killable:
             self.die()
@@ -255,7 +304,7 @@ class Creature:
                         if team == self.team:
                             return
                         else:
-                            self.attack(entity, self.stat.calc_phys_damage())
+                            self.attack(entity, self.total_physical_damage)
                             return
 
         self.owner.x += dx

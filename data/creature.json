@@ -1,10 +1,10 @@
 {
   "knight": {
-    "hp": 50,
-    "mp": 20,
-    "strength": 5,
-    "defense": 2,
-    "wizardry": 1,
+    "hp": 30,
+    "mp": 5,
+    "strength": 3,
+    "defense": 1,
+    "wizardry": 0,
     "equip" : {
       "Left hand": null,
       "Right hand": null,
@@ -14,15 +14,15 @@
   "slime": {
     "hp": 5,
     "mp": 0,
-    "strength": 2,
-    "defense": 2,
+    "strength": 1,
+    "defense": 0,
     "wizardry": 0
   },
     "goblin": {
     "hp": 8,
     "mp": 0,
-    "strength": 3,
-    "defense": 3,
+    "strength": 2,
+    "defense": 1,
     "wizardry": 1
   },
     "skeleton": {
