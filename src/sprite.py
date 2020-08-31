@@ -171,7 +171,9 @@ class GameSprites:
 
         # Items
         self.empty_inventory_slot = load_image(EMPTY_INVENTORY_SLOT)
-        self.sword = load_image(SWORD, -1)
+        self.sword = load_image(SWORD)
+        self.shield = load_image(SHIELD)
+        self.armor = load_image(ARMOR)
 
         # Consumables
         self.red_potion = load_image(RED_POTION)
@@ -183,10 +185,10 @@ class GameSprites:
         self.mouse_select = load_image(MOUSE_SELECT)
         self.equip_screen = load_image(EQUIP_SCREEN, None, (TILE_WIDTH // 2 * SPRITE_SIZE, TILE_HEIGHT // 2 * SPRITE_SIZE))
         self.minimap_button = load_image(MINIMAP_BUTTON)
+        self.map_button = load_image(MAP_BUTTON)
 
 
         # Sprite dicts
-
         self.magic = {
             "fireball": load_image(FIREBALL),
             "lightning": load_image(LIGHTNING)
@@ -222,6 +224,8 @@ class GameSprites:
             ""
             # Items
             "sword": self.sword,
+            "shield": self.shield,
+            "armor": self.armor,
             # Consumables
             "red_potion": self.red_potion,
             "blue_potion": self.blue_potion,

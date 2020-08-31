@@ -51,12 +51,12 @@ class Equipment:
         equipped_dict = self.owner.item.current_container.owner.creature.equipment
         equipped_dict[self.slot] = None
         self.equipped = False
-        game_text.add_game_message_to_print("Unequipped item", BLACK)
+        game_text.add_game_message_to_print("Unequipped item", WHITE)
 
         self.owner.item.current_container.inventory.append(self.owner)
 
         # self.equipped = False
-        # game_text.add_game_message_to_print("Unequipped item", BLACK)
+        # game_text.add_game_message_to_print("Unequipped item", WHITE)
 
     def equip(self):
         """
@@ -67,7 +67,7 @@ class Equipment:
         if equipped_dict[self.slot] == None:
             equipped_dict[self.slot] = self.owner
             self.equipped = True
-            game_text.add_game_message_to_print("Equipped item", BLACK)
+            game_text.add_game_message_to_print("Equipped item", WHITE)
             self.owner.item.current_container.inventory.remove(self.owner)
         else:
             game_text.add_game_message_to_print("Slot equipped already", RED)
@@ -82,7 +82,7 @@ class Equipment:
         #         return
         #
         # self.equipped = True
-        # game_text.add_game_message_to_print("Equipped item", BLACK)
+        # game_text.add_game_message_to_print("Equipped item", WHITW)
 
 
 
@@ -269,6 +269,5 @@ def equip_item(user_entity, args):
 item_use_dict = {
     "Red Potion": heal_user_hp,
     "Blue Potion": heal_user_mp,
-    "Teleport Scroll": teleport_user,
-    "Sword": None
+    "Teleport Scroll": teleport_user
 }

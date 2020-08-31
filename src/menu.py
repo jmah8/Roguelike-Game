@@ -411,11 +411,11 @@ def _load_equipment_screen():
             elif slot == "Right hand":
                 scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
                 right_hand_slot.blit(scaled_equip, (0, 0))
-                right_hand_slot.left_click_fn = equip_entity.equipment.toggle_equip
+                right_hand.left_click_fn = equip_entity.equipment.toggle_equip
             elif slot == "Armor":
                 scaled_equip = pygame.transform.scale(equip_entity.image, armor_scale)
                 armor_slot.blit(scaled_equip, (0, 0))
-                armor_scale.left_click_fn = equip_entity.equipment.toggle_equip
+                armor.left_click_fn = equip_entity.equipment.toggle_equip
 
 
     return equip_slot

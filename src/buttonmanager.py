@@ -434,4 +434,4 @@ def add_buttons():
     config.BUTTON_PANEL.create_button(config.SPRITE.knight_anim[0], 'stats', menu.stat_menu)
     config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
     config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
-    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'map', menu.map_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.map_button, 'map', menu.map_menu)
