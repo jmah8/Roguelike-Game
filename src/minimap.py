@@ -50,12 +50,31 @@ def _draw_minimap_walls_generated_map(map_info, scale_factor_x, scale_factor_y):
     Args:
         map_info ():
         scale_factor_x (int): what to scale x by
-        scale_factor_y (int): what to sclae y by
+        scale_factor_y (int): what to sca;e y by
     """
     pygame.draw.rect(config.SURFACE_MAIN, BLACK,
                      (0, 0,
                       map_info.pixel_width / scale_factor_x,
                       map_info.pixel_height / scale_factor_y))
+
+
+def _draw_minimap_stairs_generated_map(tile_array, scale_factor_x, scale_factor_y):
+    """
+    Draws stairs onto minimap as brown
+
+    Args:
+        tile_array (2D array): 2D array representing map
+        scale_factor_x (int): what to scale x by
+        scale_factor_y (int): what to scale y by
+    """
+    for col in tile_array:
+        for tile in col:
+            if tile.type == UPSTAIR or tile.type == DOWNSTAIR:
+                pygame.draw.rect(config.SURFACE_MAIN, BROWN,
+                                 (tile.x * SPRITE_SIZE / scale_factor_x, 
+                                  tile.y * SPRITE_SIZE / scale_factor_y,
+                                  SPRITE_SIZE / scale_factor_x,
+                                  SPRITE_SIZE / scale_factor_y))
 
 
 def draw_minimap_generated_map():
@@ -81,6 +100,7 @@ def draw_minimap_generated_map():
         scale_factor_x,
         scale_factor_y)
     _draw_unseen_tile_generated_map(config.MAP_INFO.unseen_tiles, scale_factor_x, scale_factor_y)
+    _draw_minimap_stairs_generated_map(config.MAP_INFO.tile_array, scale_factor_x, scale_factor_y)
     _draw_minimap_items_both_map(config.GAME_DATA.item_data, scale_factor_x, scale_factor_y)
     _draw_minimap_enemies_in_fov_both_map(config.GAME_DATA.creature_data["enemy"], scale_factor_x, scale_factor_y)
     _draw_minimap_player_both_map(config.PLAYER, scale_factor_x, scale_factor_y)
