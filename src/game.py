@@ -544,7 +544,7 @@ def cast_magic(line):
     Args:
         line (List): List of coords for spell to travel
     """
-    magic.cast_fireball(config.PLAYER, line)
+    magic.cast_lightning(config.PLAYER, line)
     # TODO: maybe change this since if player has ai but cast fireball,
     #       player would move + cast fireball at the same time
     update_creatures(config.GAME_DATA.creature_data, 0, 0)

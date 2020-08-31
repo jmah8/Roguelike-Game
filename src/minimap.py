@@ -71,7 +71,7 @@ def _draw_minimap_stairs_generated_map(tile_array, scale_factor_x, scale_factor_
         for tile in col:
             if tile.type == UPSTAIR or tile.type == DOWNSTAIR:
                 pygame.draw.rect(config.SURFACE_MAIN, BROWN,
-                                 (tile.x * SPRITE_SIZE / scale_factor_x, 
+                                 (tile.x * SPRITE_SIZE / scale_factor_x,
                                   tile.y * SPRITE_SIZE / scale_factor_y,
                                   SPRITE_SIZE / scale_factor_x,
                                   SPRITE_SIZE / scale_factor_y))

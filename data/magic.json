@@ -1,10 +1,10 @@
 {
   "fireball": {
-    "damage": 2,
+    "damage": 4,
     "cost": 1
   },
   "lightning": {
-    "damage": 1,
+    "damage": 2,
     "cost": 2
   }
 }
