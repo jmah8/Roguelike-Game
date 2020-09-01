@@ -653,9 +653,7 @@ def _create_item_mouse_interaction_right_click(button, item_entity):
         item_entity (Entity): Entity representing item that IconButton is
             holding/creating actions for
     """
-    item_entity.item.drop_item_args = (item_entity.item.current_container.owner)
-    button.right_click_fn = item_entity.item.drop_item_fn_pointer
-    # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
+    button.right_click_fn = partial(item_entity.item.drop_item, item_entity.item.current_container.owner)
 
 
 def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width):
@@ -672,6 +670,4 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
             place hover box)
     """
     button_x, button_y = button.rect.topleft
-    item_entity.item.hover_args = (button_x, button_y, menu_width, menu_height)
-    button.mouse_over_fn = item_entity.item.item_description
-    # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
+    button.mouse_over_fn = partial(item_entity.item.item_description_test, button_x, button_y, menu_width, menu_height)

@@ -164,11 +164,16 @@ def line(start, end, map, fov, only_in_fov=True):
 
 def spell_description(spell_name, button_x, button_y, offset_x, offset_y):
     # Multiline text
-    rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
-    surface = game_text.multiLineSurface(spell_name + "\n \n" + data[spell_name]["desc"], FONT_ITEM_DESCRIPTION, rect,
-                                         BLACK, WHITE, 1)
+    LINES_OF_TEXT = 3
+    rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
+    surface = game_text.multiLineSurface(spell_name + "\n \n" +
+                                         data[spell_name]["desc"] + "\n" +
+                                         "cost:" + str(data[spell_name]["cost"]) + "\n" +
+                                         "damage:" + str(data[spell_name]["damage"]),
+                                         FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
     surface_rect = surface.get_rect()
-    surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
+    surface_rect.centerx = offset_x + button_x
+    surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
     config.SURFACE_MAIN.blit(surface, surface_rect)
 
 

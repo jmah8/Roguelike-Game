@@ -12,6 +12,6 @@
   "confusion": {
     "damage": 2,
     "cost": 4,
-    "desc": "Confuses monster"
+    "desc": "Causes confusion"
   }
 }

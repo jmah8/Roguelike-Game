@@ -55,9 +55,6 @@ class Equipment:
 
         self.owner.item.current_container.inventory.append(self.owner)
 
-        # self.equipped = False
-        # game_text.add_game_message_to_print("Unequipped item", WHITE)
-
     def equip(self):
         """
         Equips item if slot is free, else does nothing
@@ -72,19 +69,28 @@ class Equipment:
         else:
             game_text.add_game_message_to_print("Slot equipped already", RED)
 
+    def equipment_description(self):
+        """
+        Returns:
+            accumulator (String): String with bonus stats and slot
+                equipment occupies
+        """
+        accumulator = ""
+        stat_dict = {
+            "strength": self.strength_bonus,
+            "defense": self.defense_bonus,
+            "wizardry": self.wizardry_bonus,
+            "hp": self.hp_bonus,
+            "mp": self.mp_bonus
+        }
 
+        for key in stat_dict:
+            bonus = stat_dict[key]
+            if bonus != 0:
+                accumulator += (key + " +" + str(bonus) + "\n")
 
-        # item_entities = self.owner.item.current_container.equipped_items
-        #
-        # for item in item_entities:
-        #     if item.equipment and item.equipment.slot == self.slot:
-        #         game_text.add_game_message_to_print("Slot equipped already", RED)
-        #         return
-        #
-        # self.equipped = True
-        # game_text.add_game_message_to_print("Equipped item", WHITW)
-
-
+        accumulator += ("slot: " + self.slot)
+        return accumulator
 
 class Item:
     def __init__(self, name, weight=0.0, volume=0.0):
@@ -108,8 +114,6 @@ class Item:
         self.owner = None
         self.current_container = None
         self.use_item_args = None
-        self.hover_args = None
-        self.drop_item_args = None
 
         self._load_item_values()
 
@@ -118,7 +122,6 @@ class Item:
             dict = data[self.name]
             args = tuple(dict.values())
             self.use_item_args = args
-
 
     def pick_up(self, entity):
         """
@@ -177,12 +180,12 @@ class Item:
             use_fn = self.owner.equipment.toggle_equip
             use_fn()
 
-    def item_description(self):
+    def item_description_test(self, button_x, button_y, offset_x, offset_y):
         """
         Draws white box with item name on top of item
         when hovering over it
 
-        Variables:
+        Args:
             button_x (int): x coord of IconButton item is in
             button_y (int): y coord of IconButton item is in
             offset_x (int): Where GridButtonManager is (needed for finding where to
@@ -190,7 +193,6 @@ class Item:
             offset_y (int): Where GridButtonManager is (needed for finding where to
                 place hover box)
         """
-        button_x, button_y, offset_x, offset_y = self.hover_args
         # Single line text
         # item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
         #                               # offset_x + x makes it so center of text is GridButtonManager x + button x
@@ -201,19 +203,18 @@ class Item:
         #
         # item_button.draw()
         # Multiline text
-        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
-        surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+        description = self.name + "\n \n" + data[self.name]["desc"] + " "
+        if self.owner.equipment:
+            description += self.owner.equipment.equipment_description()
+
+        LINES_OF_TEXT = 3
+        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
+        surface = game_text.multiLineSurface(description,
+                                             FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
         surface_rect = surface.get_rect()
-        surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
+        surface_rect.centerx = offset_x + button_x
+        surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
         config.SURFACE_MAIN.blit(surface, surface_rect)
-
-
-    def drop_item_fn_pointer(self):
-        """
-        Drops item at entity's feet
-        """
-        entity = self.drop_item_args
-        self.drop_item(entity)
 
 
 # Change it so if at max hp, it heals for 0
