@@ -177,7 +177,7 @@ class Item:
             use_fn = self.owner.equipment.toggle_equip
             use_fn()
 
-    def hover_over_item(self):
+    def item_description(self):
         """
         Draws white box with item name on top of item
         when hovering over it
