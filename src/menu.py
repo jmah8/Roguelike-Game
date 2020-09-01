@@ -251,49 +251,43 @@ def _draw_castable_spells():
                                                    config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE),
                                                    num_of_spells, 1, num_of_spells, BLACK)
 
-    # tmp = (lambda: magic.spell_description("fireball", 0, 0, menu_width,
-    #                                       menu_height))
     fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
                                         magic.cast_fireball)
-    tmp = partial(magic.spell_description, "fireball",
-                  fireball.rect.topleft[0],
-                  fireball.rect.topleft[1],
-                  menu_width,
-                  menu_height)
+    tmp = (lambda: magic.spell_description("fireball", 0, 0, menu_width,
+                                          menu_height))
+    # tmp = partial(magic.spell_description, "fireball",
+    #               fireball.rect.topleft[0],
+    #               fireball.rect.topleft[1],
+    #               menu_width,
+    #               menu_height)
     fireball.mouse_over_fn = tmp
     magic_select.add_button(fireball, "fireball")
 
     lightning = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.magic["lightning"],
                                          magic.cast_lightning)
-    # tmp1 = (lambda: magic.spell_description("lightning", lightning.rect.topleft[0], lightning.rect.topleft[1],
-    #                                        menu_width, menu_height))
-    tmp1 = partial(magic.spell_description, "lightning",
-                   lightning.rect.topleft[0],
-                   lightning.rect.topleft[1],
-                   menu_width,
-                   menu_height)
-    fireball.mouse_over_fn = tmp1
+    tmp1 = (lambda: magic.spell_description("lightning", lightning.rect.topleft[0], lightning.rect.topleft[1],
+                                           menu_width, menu_height))
+    # tmp1 = partial(magic.spell_description, "lightning",
+    #                lightning.rect.topleft[0],
+    #                lightning.rect.topleft[1],
+    #                menu_width,
+    #                menu_height)
+    lightning.mouse_over_fn = tmp1
     magic_select.add_button(lightning, "lightning")
 
     confusion = buttonmanager.IconButton(4 * SPRITE_SIZE, 0, config.SPRITE.magic["confusion"],
                                          magic.cast_confusion)
-    # tmp2 = (lambda: magic.spell_description("confusion", confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
-    #                                       menu_height))
-    tmp2 = partial(magic.spell_description, "confusion",
-                   confusion.rect.topleft[0],
-                   confusion.rect.topleft[1],
-                   menu_width,
-                   menu_height)
-    fireball.mouse_over_fn = tmp2
+    tmp2 = (lambda: magic.spell_description("confusion", confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
+                                          menu_height))
+    # tmp2 = partial(magic.spell_description, "confusion",
+    #                confusion.rect.topleft[0],
+    #                confusion.rect.topleft[1],
+    #                menu_width,
+    #                menu_height)
+    confusion.mouse_over_fn = tmp2
     magic_select.add_button(confusion, "confusion")
 
-    print(tmp)
-    print(tmp1)
-    print(tmp2)
-
     return magic_select
-
-
 
 def magic_targetting_menu(spell_to_cast):
     """

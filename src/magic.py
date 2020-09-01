@@ -163,7 +163,6 @@ def line(start, end, map, fov, only_in_fov=True):
 #         config.SURFACE_MAIN.blit(surface, surface_rect)
 
 def spell_description(spell_name, button_x, button_y, offset_x, offset_y):
-    print(spell_name)
     # Multiline text
     rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
     surface = game_text.multiLineSurface(spell_name + "\n \n" + data[spell_name]["desc"], FONT_ITEM_DESCRIPTION, rect,
