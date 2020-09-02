@@ -50,7 +50,7 @@ Short gameplay
 - Player and enemy stats and stat scaling
 - Randomly generated monsters and items
 - Traversing through floors
-- Castable magic (work in progress!)
+- Castable magic
 - Inventory system
 - Saving and loading
 
