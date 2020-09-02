@@ -120,6 +120,7 @@ class CreatureStat:
         exp_gained = (abs(player_level - self.level) + 1) * scale
         return exp_gained
 
+
 class Creature:
     """
     have hp

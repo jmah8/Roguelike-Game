@@ -76,6 +76,7 @@ class Camera:
         Used for drawing images where calling apply is not possible
         since drawing at x = 15, y = 15 will draw it off the screen
         depending on screen size since apply_with_image is called to everything
+        (things with no image/position instance variables)
 
         Args:
             x (int): x coord to translate

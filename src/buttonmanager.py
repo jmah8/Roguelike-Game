@@ -5,7 +5,6 @@ import menu
 import game
 
 
-
 class IconButton:
     """
     IconButton class

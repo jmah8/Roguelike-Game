@@ -21,11 +21,13 @@ def _calculate_change_in_position(diff):
 
 
 class Ai_test:
-    """
-    Once per turn, execute
-    """
-
     def __init__(self):
+        """
+        Once per turn, execute
+
+        Args:
+            owner (Entity): Entity with self as ai
+        """
         self.owner = None
 
     def take_turn(self):
@@ -75,7 +77,6 @@ class ConfuseAI:
         self.owner.creature.move(random.choice(
             [0, 1, -1]), random.choice([0, 1, -1]))
         self.turn_count -= 1
-
 
 
 class ChaseAI:

@@ -1,6 +1,53 @@
 from constant import *
 import os
 
+# Image path
+KNIGHT = 'creatures/knight/knight_idle_anim_f0.png'
+KNIGHT_RUN = 'creatures/knight/knight_run_anim_f0.png'
+
+SLIME = 'creatures/slime/slime_idle_anim_f0.png'
+SLIME_RUN = 'creatures/slime/slime_run_anim_f0.png'
+
+GOBLIN = 'creatures/goblin/goblin_idle_anim_f0.png'
+GOBLIN_RUN = 'creatures/goblin/goblin_run_anim_f0.png'
+
+SKELETON = 'creatures/skeleton/skelet_idle_anim_f0.png'
+SKELETON_RUN = 'creatures/skeleton/skelet_run_anim_f0.png'
+
+SPIKE = 'tiles/floor/spikes_anim_f0.png'
+SPIKE_1 = 'tiles/floor/spikes_anim_f6.png'
+
+FLOOR_1 = 'tiles/floor/floor_1.png'
+FLOOR_2 = 'tiles/floor/floor_2.png'
+FLOOR_3 = 'tiles/floor/floor_3.png'
+FLOOR_4 = 'tiles/floor/floor_4.png'
+FLOOR_5 = 'tiles/floor/floor_side2.png'
+FLOOR_6 = 'tiles/floor/floor_side3.png'
+FLOOR_7 = 'tiles/floor/floor_side4.png'
+FLOOR_8 = 'tiles/floor/floor_side5.png'
+
+STAIR_UP = 'tiles/stair_prevlevel.png'
+STAIR_DOWN = 'tiles/stair_nextlevel.png'
+
+WALL_1 = 'tiles/wall/wall_1.png'
+RED_POTION = 'items/consumables/potion_red.png'
+BLUE_POTION = 'items/consumables/potion_blue.png'
+TELEPORT_SCROLL = 'items/consumables/teleport_scroll.png'
+SWORD = 'items/equip/sword.png'
+SHIELD = 'items/equip/shield.png'
+ARMOR = 'items/equip/armor.png'
+
+INVENTORY = 'ui/chest.png'
+EMPTY_INVENTORY_SLOT = 'ui/empty_inventory_slot.png'
+CAMERA = 'ui/camera.png'
+MINIMAP_BUTTON = 'ui/minimap.png'
+MAP_BUTTON = 'ui/map.png'
+
+EQUIP_SCREEN = 'ui/equipment_screen.png'
+
+FIREBALL = 'magic/fireball.png'
+LIGHTNING = 'magic/lightning.png'
+CONFUSION = 'magic/confusion.png'
 
 def load_image(name, colorkey=None, sprite_size=(SPRITE_SIZE, SPRITE_SIZE), convert_alpha=True):
     """

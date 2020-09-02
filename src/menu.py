@@ -243,23 +243,24 @@ def magic_select_menu():
 
 
 def _draw_castable_spells():
+    """
+    Initializes spell selection button manager and return button mananger
+
+    Returns:
+        magic_select (ButtonManager): ButtonManager with buttons corresponding to spells
+    """
     num_of_spells = 5
     menu_width = config.CAMERA.camera_width // 2 - (num_of_spells // 2 * SPRITE_SIZE)
     menu_height = config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE)
 
-    magic_select = buttonmanager.GridButtonManager(menu_width,
+    magic_select = buttonmanager.ButtonManager(menu_width,
                                                    config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE),
-                                                   num_of_spells, 1, num_of_spells, BLACK)
+                                                   num_of_spells, 1, BLACK)
 
     fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
                                         magic.cast_fireball)
     tmp = (lambda: magic.spell_description("fireball", 0, 0, menu_width,
                                           menu_height))
-    # tmp = partial(magic.spell_description, "fireball",
-    #               fireball.rect.topleft[0],
-    #               fireball.rect.topleft[1],
-    #               menu_width,
-    #               menu_height)
     fireball.mouse_over_fn = tmp
     magic_select.add_button(fireball, "fireball")
 
@@ -267,11 +268,6 @@ def _draw_castable_spells():
                                          magic.cast_lightning)
     tmp1 = (lambda: magic.spell_description("lightning", lightning.rect.topleft[0], lightning.rect.topleft[1],
                                            menu_width, menu_height))
-    # tmp1 = partial(magic.spell_description, "lightning",
-    #                lightning.rect.topleft[0],
-    #                lightning.rect.topleft[1],
-    #                menu_width,
-    #                menu_height)
     lightning.mouse_over_fn = tmp1
     magic_select.add_button(lightning, "lightning")
 
@@ -279,22 +275,18 @@ def _draw_castable_spells():
                                          magic.cast_confusion)
     tmp2 = (lambda: magic.spell_description("confusion", confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
                                           menu_height))
-    # tmp2 = partial(magic.spell_description, "confusion",
-    #                confusion.rect.topleft[0],
-    #                confusion.rect.topleft[1],
-    #                menu_width,
-    #                menu_height)
     confusion.mouse_over_fn = tmp2
     magic_select.add_button(confusion, "confusion")
 
     return magic_select
 
+
 def magic_targetting_menu(spell_to_cast):
     """
-    Selects target for spell and cast magic and updates display
+    Selects target for spell and cast spell_to_cast and updates display
 
     Args:
-        spell_to_cast ():
+        spell_to_cast (fn pointer):
     """
     magic_cast = True
     while magic_cast:

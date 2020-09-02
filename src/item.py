@@ -71,6 +71,9 @@ class Equipment:
 
     def equipment_description(self):
         """
+        Note: currently height of message box allows for only
+        1 extra bonus stat
+
         Returns:
             accumulator (String): String with bonus stats and slot
                 equipment occupies
@@ -207,6 +210,7 @@ class Item:
         if self.owner.equipment:
             description += self.owner.equipment.equipment_description()
 
+        # TODO: make the box height scale with number of bonus stats from equipment
         LINES_OF_TEXT = 3
         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
         surface = game_text.multiLineSurface(description,
@@ -262,8 +266,6 @@ def teleport_user(user_entity, args):
 
 def equip_item(user_entity, args):
     pass
-
-
 
 
 # Lookup table for item effect when used
