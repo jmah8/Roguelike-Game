@@ -1,3 +1,5 @@
+from functools import partial
+
 from constant import *
 import config
 import draw
@@ -203,9 +205,88 @@ def map_menu():
         pygame.display.update()
 
 
-def magic_targetting_menu():
+def magic_select_menu():
+    select_menu = _draw_castable_spells()
+
+    select_magic = True
+    while select_magic:
+        game.update()
+        draw.draw_mouse()
+        select_menu.draw_buttons(config.SURFACE_MAIN)
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        hovered_button = select_menu.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_button and hovered_button.mouse_over_fn:
+            hovered_button.mouse_over_fn()
+
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    select_magic = False
+                    break
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
+                    if button:
+                        select_magic = False
+                        break
+
+                    magic_button = select_menu.check_if_button_pressed(mouse_x, mouse_y)
+                    if magic_button:
+                        magic_targetting_menu(magic_button.left_click_fn)
+
+        config.CLOCK.tick(FPS)
+        pygame.display.flip()
+
+
+def _draw_castable_spells():
     """
-    Selects target for spell and cast magic and updates display
+    Initializes spell selection button manager and return button mananger
+
+    Returns:
+        magic_select (ButtonManager): ButtonManager with buttons corresponding to spells
+    """
+    num_of_spells = 5
+    menu_width = config.CAMERA.camera_width // 2 - (num_of_spells // 2 * SPRITE_SIZE)
+    menu_height = config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE)
+
+    magic_select = buttonmanager.ButtonManager(menu_width,
+                                                   config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE),
+                                                   num_of_spells, 1, BLACK)
+
+    fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
+                                        magic.cast_fireball)
+    tmp = (lambda: magic.spell_description("fireball", 0, 0, menu_width,
+                                          menu_height))
+    fireball.mouse_over_fn = tmp
+    magic_select.add_button(fireball, "fireball")
+
+    lightning = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.magic["lightning"],
+                                         magic.cast_lightning)
+    tmp1 = (lambda: magic.spell_description("lightning", lightning.rect.topleft[0], lightning.rect.topleft[1],
+                                           menu_width, menu_height))
+    lightning.mouse_over_fn = tmp1
+    magic_select.add_button(lightning, "lightning")
+
+    confusion = buttonmanager.IconButton(4 * SPRITE_SIZE, 0, config.SPRITE.magic["confusion"],
+                                         magic.cast_confusion)
+    tmp2 = (lambda: magic.spell_description("confusion", confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
+                                          menu_height))
+    confusion.mouse_over_fn = tmp2
+    magic_select.add_button(confusion, "confusion")
+
+    return magic_select
+
+
+def magic_targetting_menu(spell_to_cast):
+    """
+    Selects target for spell and cast spell_to_cast and updates display
+
+    Args:
+        spell_to_cast (fn pointer):
     """
     magic_cast = True
     while magic_cast:
@@ -215,6 +296,8 @@ def magic_targetting_menu():
                 if event.key == pygame.K_SPACE:
                     magic_cast = False
                     break
+                elif event.key == pygame.K_1:
+                    magic_select_menu()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -223,7 +306,7 @@ def magic_targetting_menu():
                         button.left_click_fn()
                         break
 
-                    game.cast_magic(line)
+                    game.cast_magic(spell_to_cast, line)
                     magic_cast = False
                     break
 
@@ -420,9 +503,7 @@ def _load_equipment_screen():
                 armor_slot.blit(scaled_equip, (0, 0))
                 armor.left_click_fn = equip_entity.equipment.toggle_equip
 
-
     return equip_slot
-
 
 
 # def _load_equipment_screen():
@@ -564,9 +645,7 @@ def _create_item_mouse_interaction_right_click(button, item_entity):
         item_entity (Entity): Entity representing item that IconButton is
             holding/creating actions for
     """
-    item_entity.item.drop_item_args = (item_entity.item.current_container.owner)
-    button.right_click_fn = item_entity.item.drop_item_fn_pointer
-    # button.right_click_fn = (lambda: item_entity.item.drop_item(config.PLAYER, config.PLAYER.x, config.PLAYER.y))
+    button.right_click_fn = partial(item_entity.item.drop_item, item_entity.item.current_container.owner)
 
 
 def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_width):
@@ -583,6 +662,4 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
             place hover box)
     """
     button_x, button_y = button.rect.topleft
-    item_entity.item.hover_args = (button_x, button_y, menu_width, menu_height)
-    button.mouse_over_fn = item_entity.item.hover_over_item
-    # button.mouse_over_fn = (lambda: test_fn(lambda: item_mouse_over(item_entity, button, menu_width, menu_height)))
+    button.mouse_over_fn = partial(item_entity.item.item_description_test, button_x, button_y, menu_width, menu_height)

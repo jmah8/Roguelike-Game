@@ -135,6 +135,48 @@ def line(start, end, map, fov, only_in_fov=True):
     return points
 
 
+# class Spell:
+#     def __init__(self, name):
+#         self.name = name
+#         self.base_damage = 0
+#         self.mp_cost = 0
+#         self.use_spell_args = None
+#         self.hover_args = None
+#         self._load_spell_values()
+#
+#     def cast_spell(self):
+#         caster, line = self.use_spell_args
+#         spell_use_dict[self.name](caster, line)
+#
+#     def _load_spell_values(self):
+#         self.base_damage = data[self.name]["damage"]
+#         self.mp_cost = data[self.name]["cost"]
+#
+#     def spell_description(self):
+#         button_x, button_y, offset_x, offset_y = self.hover_args
+#         # Multiline text
+#         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
+#         surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_ITEM_DESCRIPTION, rect,
+#                                              BLACK, WHITE, 1)
+#         surface_rect = surface.get_rect()
+#         surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
+#         config.SURFACE_MAIN.blit(surface, surface_rect)
+
+def spell_description(spell_name, button_x, button_y, offset_x, offset_y):
+    # Multiline text
+    LINES_OF_TEXT = 3
+    rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
+    surface = game_text.multiLineSurface(spell_name + "\n \n" +
+                                         data[spell_name]["desc"] + "\n" +
+                                         "cost:" + str(data[spell_name]["cost"]) + "\n" +
+                                         "damage:" + str(data[spell_name]["damage"]),
+                                         FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+    surface_rect = surface.get_rect()
+    surface_rect.centerx = offset_x + button_x
+    surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
+    config.SURFACE_MAIN.blit(surface, surface_rect)
+
+
 def cast_fireball(caster, line):
     """
     Throws fireball following line stopping at first enemy hit.
@@ -264,3 +306,11 @@ def cast_confusion(caster, line):
                     break
 
             _update_spell(particle_group)
+
+
+# Lookup table for spell methods
+spell_use_dict = {
+    "fireball": cast_fireball,
+    "lightning": cast_lightning,
+    "confusion": cast_confusion
+}

@@ -184,7 +184,8 @@ def _handle_keyboard_event(event):
 
     # Use magic
     elif event.key == pygame.K_SPACE:
-        menu.magic_targetting_menu()
+        # menu.magic_targetting_menu(magic.cast_confusion)
+        menu.magic_select_menu()
 
     # Returns to previous level
     elif event.key == pygame.K_1:
@@ -536,15 +537,16 @@ def auto_path(graph):
         move_char_auto(path)
 
 
-def cast_magic(line):
+def cast_magic(spell_to_cast, line):
     """
     Casts lightning at mouse location and prints out the line
     it travels through currently
 
     Args:
+        spell_to_cast (fn_pointer): spell to cast
         line (List): List of coords for spell to travel
     """
-    magic.cast_confusion(config.PLAYER, line)
+    spell_to_cast(config.PLAYER, line)
     # TODO: maybe change this since if player has ai but cast fireball,
     #       player would move + cast fireball at the same time
     update_creatures(config.GAME_DATA.creature_data, 0, 0)

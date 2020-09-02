@@ -1,14 +1,17 @@
 {
   "fireball": {
     "damage": 4,
-    "cost": 1
+    "cost": 1,
+    "desc": "A fireball"
   },
   "lightning": {
     "damage": 2,
-    "cost": 2
+    "cost": 2,
+    "desc": "A piercing bolt"
   },
   "confusion": {
     "damage": 2,
-    "cost": 4
+    "cost": 4,
+    "desc": "Causes confusion"
   }
 }
