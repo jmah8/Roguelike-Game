@@ -662,4 +662,4 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
             place hover box)
     """
     button_x, button_y = button.rect.topleft
-    button.mouse_over_fn = partial(item_entity.item.item_description_test, button_x, button_y, menu_width, menu_height)
+    button.mouse_over_fn = partial(item_entity.item.item_description, button_x, button_y, menu_width, menu_height)

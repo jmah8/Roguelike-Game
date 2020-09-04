@@ -211,7 +211,7 @@ class Item:
             use_fn = self.equip_stat.toggle_equip
             use_fn()
 
-    def item_description_test(self, button_x, button_y, offset_x, offset_y):
+    def item_description(self, button_x, button_y, offset_x, offset_y):
         """
         Draws white box with item name on top of item
         when hovering over it
@@ -239,7 +239,7 @@ class Item:
             description += self.equip_stat.equipment_description()
 
         # TODO: make the box height scale with number of bonus stats from equipment
-        LINES_OF_TEXT = 3
+        LINES_OF_TEXT = description.count('\n')
         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
         surface = game_text.multiLineSurface(description,
                                              FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)

@@ -59,7 +59,7 @@ class Entity:
         self.item = item
         if self.item:
             self.item.owner = self
-        
+
         self.container = container
         if self.container:
             self.container.owner = self
