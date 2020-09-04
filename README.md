@@ -53,6 +53,7 @@ Short gameplay
 - Castable magic
 - Inventory system
 - Saving and loading
+- Moddable player/enemy/item/magic stats
 
 # Upcoming features/todos
 - Come up with name
