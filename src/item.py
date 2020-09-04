@@ -13,7 +13,7 @@ with open(os.path.join(DATA_PATH, 'equipment.json')) as f1:
     equipment_data = json.load(f1)
 
 
-class Equipment:
+class EquipmentStat:
     def __init__(self, strength_bonus=0, defense_bonus=0, wizardry_bonus=0, hp_bonus=0, mp_bonus=0, slot=None):
         """
         Class representing item bonus stats and slot it occupies
@@ -51,7 +51,7 @@ class Equipment:
         """
         Unequips item
         """
-        equipped_dict = self.owner.item.current_container.owner.creature.equipment
+        equipped_dict = self.owner.item.current_container.owner.creature.equip_slot
         equipped_dict[self.slot] = None
         self.equipped = False
         game_text.add_game_message_to_print("Unequipped item", WHITE)
@@ -62,7 +62,7 @@ class Equipment:
         """
         Equips item if slot is free, else does nothing
         """
-        equipped_dict = self.owner.item.current_container.owner.creature.equipment
+        equipped_dict = self.owner.item.current_container.owner.creature.equip_slot
 
         if equipped_dict[self.slot] == None:
             equipped_dict[self.slot] = self.owner
@@ -140,16 +140,16 @@ class Item:
         if item is an equipment and returns its
 
         Returns:
-            equipment (Equipment): Item's equipment stats
+            equipment (EquipmentStat): Item's equipment stats
         """
         if self.name in equipment_data.keys():
             data = equipment_data[self.name]
-            equipment = Equipment(data["strength_bonus"],
-                                  data["defense_bonus"],
-                                  data["wizardry_bonus"],
-                                  data["hp_bonus"],
-                                  data["mp_bonus"],
-                                  data["slot"])
+            equipment = EquipmentStat(data["strength_bonus"],
+                                      data["defense_bonus"],
+                                      data["wizardry_bonus"],
+                                      data["hp_bonus"],
+                                      data["mp_bonus"],
+                                      data["slot"])
             return equipment
         return None
 

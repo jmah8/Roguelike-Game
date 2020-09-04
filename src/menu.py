@@ -486,7 +486,7 @@ def _load_equipment_screen():
     equip_slot.add_button(armor, "Armor")
 
     # Find all entities equipped by player
-    equipped_entities = config.PLAYER.creature.equipment.values()
+    equipped_entities = config.PLAYER.creature.equip_slot.values()
     for equip_entity in equipped_entities:
         if equip_entity and equip_entity.equipment.equipped:
             slot = equip_entity.equipment.slot

@@ -139,7 +139,7 @@ class Creature:
         team (arg, group): team of self
         walk_through_tile (arg, boolean): if creature can walk through tiles like walls
         current_path (arg, List): List of path from start to goal
-        equipment (Dict): Dictionary with keys as equipment slot and values
+        equip_slot (Dict): Dictionary with keys as equipment slot and values
             as item currently in slot
     """
 
@@ -153,9 +153,9 @@ class Creature:
         self.current_path = current_path
         self.stat = self._load_stat(level)
         if load_equip_scheme:
-            self.equipment = self._load_equip_scheme()
+            self.equip_slot = self._load_equip_scheme()
         else:
-            self.equipment = None
+            self.equip_slot = None
 
     def _load_stat(self, level):
         """
@@ -182,7 +182,7 @@ class Creature:
         and returns it
 
         Returns:
-            equipment (Dict): Equipment scheme of creature with name_instance
+            equip_slot (Dict): Equipment scheme of creature with name_instance
         """
         if self.name_instance in data.keys():
             str = data[self.name_instance]
@@ -223,8 +223,8 @@ class Creature:
                 will do
         """
         weapon_bonus = 0
-        if self.equipment:
-            for equipment_entity in self.equipment.values():
+        if self.equip_slot:
+            for equipment_entity in self.equip_slot.values():
                 if equipment_entity:
                     weapon_bonus += equipment_entity.equipment.strength_bonus
         total_damage = self.stat.physical_damage + weapon_bonus
@@ -241,8 +241,8 @@ class Creature:
                 with stat + equipment
         """
         equipment_bonus = 0
-        if self.equipment:
-            for equipment_entity in self.equipment.values():
+        if self.equip_slot:
+            for equipment_entity in self.equip_slot.values():
                 if equipment_entity:
                     equipment_bonus += equipment_entity.equipment.defense_bonus
         total_blocked_damage = self.stat.damage_blocked + equipment_bonus
