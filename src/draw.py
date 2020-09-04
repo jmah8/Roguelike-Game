@@ -5,7 +5,8 @@ import minimap
 import fov
 import sprite
 
-def draw():
+
+def draw_game():
     """
     Draws map and entities
 
@@ -74,7 +75,7 @@ def draw_debug():
     Draws FPS counter on top right of screen
     """
     game_text.draw_text(config.SURFACE_MAIN, (config.CAMERA.camera_width - 125, 15), WHITE,
-                   "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
+                        "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
 
 def draw_map_menu(map_info):
@@ -158,7 +159,8 @@ def draw_stats(creature):
     exp = creature.creature.stat.exp / 100
     pygame.draw.rect(config.SURFACE_MAIN, RED, (0, 0, HP_BAR_WIDTH * hp, HP_BAR_HEIGHT))
     pygame.draw.rect(config.SURFACE_MAIN, BLUE, (0, HP_BAR_HEIGHT, MP_BAR_WIDTH * mp, MP_BAR_HEIGHT))
-    pygame.draw.rect(config.SURFACE_MAIN, YELLOW, (0, HP_BAR_HEIGHT+MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
+    pygame.draw.rect(config.SURFACE_MAIN, YELLOW,
+                     (0, HP_BAR_HEIGHT + MP_BAR_HEIGHT, EXP_BAR_WIDTH * exp, EXP_BAR_HEIGHT))
 
 
 def draw_mouse():
@@ -185,7 +187,7 @@ def draw_messages(message_list):
     messages_drawn_counter = 0
     for message, color in to_draw:
         game_text.draw_text(config.SURFACE_MAIN, (TEXT_SPACE_BUFFER,
-                                                (y_pos + messages_drawn_counter * text_height)), color, message,
+                                                  (y_pos + messages_drawn_counter * text_height)), color, message,
                             None)
         messages_drawn_counter += 1
 
@@ -239,9 +241,3 @@ def draw_particles():
     for particle in config.PARTICLE_LIST:
         draw_at_camera_offset_with_image(particle)
         particle.update()
-
-
-
-
-
-

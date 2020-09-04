@@ -4,7 +4,7 @@ import config
 from particle import *
 import game_text
 
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/creature.json')) as f:
+with open(os.path.join(DATA_PATH, 'creature.json')) as f:
     data = json.load(f)
 
 
@@ -129,6 +129,7 @@ class Creature:
 
     Args:
         level (int): level of monster
+        load_equip_scheme (Boolean): True if creature should have equipment slots
 
     Attributes:
         name_instance (arg, string) : Name of creature
@@ -138,7 +139,8 @@ class Creature:
         team (arg, group): team of self
         walk_through_tile (arg, boolean): if creature can walk through tiles like walls
         current_path (arg, List): List of path from start to goal
-        load_equip_scheme (arg, Boolean): True if creature should have equipment slots
+        equipment (Dict): Dictionary with keys as equipment slot and values
+            as item currently in slot
     """
 
     def __init__(self, name_instance, killable=False, team="enemy", walk_through_tile=False, current_path=None, level=1,
@@ -165,7 +167,6 @@ class Creature:
         Returns:
             stat (Stat): Stat of creature with name_instance
         """
-
         if self.name_instance in data.keys():
             str = data[self.name_instance]
             stat = CreatureStat(str["hp"], str["mp"], str["strength"],

@@ -6,8 +6,11 @@ import entity_generator
 import json
 
 
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/item.json')) as f:
-    data = json.load(f)
+with open(os.path.join(DATA_PATH, 'item.json')) as f:
+    item_data = json.load(f)
+
+with open(os.path.join(DATA_PATH, 'equipment.json')) as f1:
+    equipment_data = json.load(f1)
 
 
 class Equipment:
@@ -120,11 +123,35 @@ class Item:
 
         self._load_item_values()
 
+        self.equip_stat = self._load_equipment_stats()
+
     def _load_item_values(self):
-        if self.name in data.keys():
-            dict = data[self.name]
+        """
+        Loads item's use data from item.json
+        """
+        if self.name in item_data.keys():
+            dict = item_data[self.name]
             args = tuple(dict.values())
             self.use_item_args = args
+
+    def _load_equipment_stats(self):
+        """
+        Loads item's equipment stats from equipment.json
+        if item is an equipment and returns its
+
+        Returns:
+            equipment (Equipment): Item's equipment stats
+        """
+        if self.name in equipment_data.keys():
+            data = equipment_data[self.name]
+            equipment = Equipment(data["strength_bonus"],
+                                  data["defense_bonus"],
+                                  data["wizardry_bonus"],
+                                  data["hp_bonus"],
+                                  data["mp_bonus"],
+                                  data["slot"])
+            return equipment
+        return None
 
     def pick_up(self, entity):
         """
@@ -206,7 +233,7 @@ class Item:
         #
         # item_button.draw()
         # Multiline text
-        description = self.name + "\n \n" + data[self.name]["desc"] + " "
+        description = self.name + "\n \n" + item_data[self.name]["desc"] + " "
         if self.owner.equipment:
             description += self.owner.equipment.equipment_description()
 

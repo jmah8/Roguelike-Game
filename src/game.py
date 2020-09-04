@@ -24,7 +24,7 @@ class Game:
 
         self.playing = True
 
-        buttonmanager.add_buttons()
+        buttonmanager.add_button_to_bottom_panel()
 
     def run(self):
         """
@@ -269,7 +269,7 @@ def _toggle_camera():
         fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
         fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
 
-        draw.draw()
+        draw.draw_game()
         draw.draw_at_camera_offset_without_image(free_camera)
         pygame.display.flip()
 
@@ -464,7 +464,7 @@ def update():
     fov.ray_casting(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV, config.PLAYER)
     fov.change_seen(config.MAP_INFO, config.MAP_INFO.tile_array, config.FOV)
 
-    draw.draw()
+    draw.draw_game()
 
 
 def move_char_auto(path, ignore=False):

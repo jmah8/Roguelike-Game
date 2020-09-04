@@ -218,6 +218,7 @@ def _generate_sword(x, y):
     generated_item = entity.Entity(x, y, "sword", item=item_sword_com, equipment=equipment_sword_com)
     return generated_item
 
+
 def _generate_shield(x, y):
     """
     Generates shield at coords (x, y)
