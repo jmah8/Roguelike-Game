@@ -214,9 +214,9 @@ def _generate_sword(x, y):
         y (int): y coord to generate item at
     """
     item_sword_com = item.Item("sword", 0, 0)
-    equipment_sword_com = item.Equipment(strength_bonus=2, slot="Left hand")
-    generated_item = entity.Entity(x, y, "sword", item=item_sword_com, equipment=equipment_sword_com)
+    generated_item = entity.Entity(x, y, "sword", item=item_sword_com)
     return generated_item
+
 
 def _generate_shield(x, y):
     """
@@ -227,8 +227,7 @@ def _generate_shield(x, y):
         y (int): y coord to generate item at
     """
     item_shield_com = item.Item("shield", 0, 0)
-    equipment_shield_com = item.Equipment(defense_bonus=1, slot="Right hand")
-    generated_item = entity.Entity(x, y, "shield", item=item_shield_com, equipment=equipment_shield_com)
+    generated_item = entity.Entity(x, y, "shield", item=item_shield_com)
     return generated_item
 
 
@@ -241,8 +240,7 @@ def _generate_armor(x, y):
         y (int): y coord to generate item at
     """
     item_armor_com = item.Item("armor", 0, 0)
-    equipment_armor_com = item.Equipment(defense_bonus=2, slot="Armor")
-    generated_item = entity.Entity(x, y, "armor", item=item_armor_com, equipment=equipment_armor_com)
+    generated_item = entity.Entity(x, y, "armor", item=item_armor_com)
     return generated_item
 
 

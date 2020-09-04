@@ -60,13 +60,6 @@ class Entity:
         if self.item:
             self.item.owner = self
 
-        self.equipment = equipment
-        if self.equipment:
-            self.equipment.owner = self
-
-            self.item = i.Item(self.item.name)
-            self.item.owner = self
-
         self.container = container
         if self.container:
             self.container.owner = self

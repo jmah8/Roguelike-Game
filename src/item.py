@@ -6,12 +6,16 @@ import entity_generator
 import json
 
 
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/item.json')) as f:
-    data = json.load(f)
+with open(os.path.join(DATA_PATH, 'item.json')) as f:
+    item_data = json.load(f)
+
+with open(os.path.join(DATA_PATH, 'equipment.json')) as f1:
+    equipment_data = json.load(f1)
 
 
-class Equipment:
-    def __init__(self, strength_bonus=0, defense_bonus=0, wizardry_bonus=0, hp_bonus=0, mp_bonus=0, slot=None):
+class EquipmentStat:
+    def __init__(self, strength_bonus=0, defense_bonus=0, wizardry_bonus=0,
+                 hp_bonus=0, mp_bonus=0, slot=None, item_owner=None):
         """
         Class representing item bonus stats and slot it occupies
 
@@ -32,8 +36,8 @@ class Equipment:
         self.hp_bonus = hp_bonus
         self.mp_bonus = mp_bonus
         self.slot = slot
+        self.item_owner = item_owner
         self.equipped = False
-        self.owner = None
 
     def toggle_equip(self):
         """
@@ -48,24 +52,24 @@ class Equipment:
         """
         Unequips item
         """
-        equipped_dict = self.owner.item.current_container.owner.creature.equipment
+        equipped_dict = self.item_owner.current_container.owner.creature.equip_slot
         equipped_dict[self.slot] = None
         self.equipped = False
         game_text.add_game_message_to_print("Unequipped item", WHITE)
 
-        self.owner.item.current_container.inventory.append(self.owner)
+        self.item_owner.current_container.inventory.append(self.item_owner.owner)
 
     def equip(self):
         """
         Equips item if slot is free, else does nothing
         """
-        equipped_dict = self.owner.item.current_container.owner.creature.equipment
+        equipped_dict = self.item_owner.current_container.owner.creature.equip_slot
 
         if equipped_dict[self.slot] == None:
-            equipped_dict[self.slot] = self.owner
+            equipped_dict[self.slot] = self.item_owner.owner
             self.equipped = True
             game_text.add_game_message_to_print("Equipped item", WHITE)
-            self.owner.item.current_container.inventory.remove(self.owner)
+            self.item_owner.current_container.inventory.remove(self.item_owner.owner)
         else:
             game_text.add_game_message_to_print("Slot equipped already", RED)
 
@@ -120,11 +124,35 @@ class Item:
 
         self._load_item_values()
 
+        self.equip_stat = self._load_equipment_stats()
+
     def _load_item_values(self):
-        if self.name in data.keys():
-            dict = data[self.name]
+        """
+        Loads item's use data from item.json
+        """
+        if self.name in item_data.keys():
+            dict = item_data[self.name]
             args = tuple(dict.values())
             self.use_item_args = args
+
+    def _load_equipment_stats(self):
+        """
+        Loads item's equipment stats from equipment.json
+        if item is an equipment and returns its
+
+        Returns:
+            equipment (EquipmentStat): Item's equipment stats
+        """
+        if self.name in equipment_data.keys():
+            data = equipment_data[self.name]
+            equipment = EquipmentStat(data["strength_bonus"],
+                                      data["defense_bonus"],
+                                      data["wizardry_bonus"],
+                                      data["hp_bonus"],
+                                      data["mp_bonus"],
+                                      data["slot"], self)
+            return equipment
+        return None
 
     def pick_up(self, entity):
         """
@@ -169,10 +197,10 @@ class Item:
         Uses item and produces affect and removes it
 
         If self is an consumable item (ie no equipment field in entity owner)
-        use item, else equip item
+        use item, else equip items
         """
         # If item is not equipment
-        if not self.owner.equipment:
+        if not self.equip_stat:
             use_fn = item_use_dict[self.name]
             if use_fn:
                 use_fn(self.current_container.owner, self.use_item_args)
@@ -180,10 +208,10 @@ class Item:
                 self.current_container = None
         # Item is equipment
         else:
-            use_fn = self.owner.equipment.toggle_equip
+            use_fn = self.equip_stat.toggle_equip
             use_fn()
 
-    def item_description_test(self, button_x, button_y, offset_x, offset_y):
+    def item_description(self, button_x, button_y, offset_x, offset_y):
         """
         Draws white box with item name on top of item
         when hovering over it
@@ -206,12 +234,12 @@ class Item:
         #
         # item_button.draw()
         # Multiline text
-        description = self.name + "\n \n" + data[self.name]["desc"] + " "
-        if self.owner.equipment:
-            description += self.owner.equipment.equipment_description()
+        description = self.name + "\n \n" + item_data[self.name]["desc"] + " "
+        if self.equip_stat:
+            description += self.equip_stat.equipment_description()
 
         # TODO: make the box height scale with number of bonus stats from equipment
-        LINES_OF_TEXT = 3
+        LINES_OF_TEXT = description.count('\n')
         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
         surface = game_text.multiLineSurface(description,
                                              FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)

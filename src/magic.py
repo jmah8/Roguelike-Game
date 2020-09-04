@@ -10,7 +10,7 @@ import particle
 import ai
 
 
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/magic.json')) as file:
+with open(os.path.join(DATA_PATH, 'magic.json')) as file:
     data = json.load(file)
 
 
@@ -149,14 +149,14 @@ def line(start, end, map, fov, only_in_fov=True):
 #         spell_use_dict[self.name](caster, line)
 #
 #     def _load_spell_values(self):
-#         self.base_damage = data[self.name]["damage"]
-#         self.mp_cost = data[self.name]["cost"]
+#         self.base_damage = item_data[self.name]["damage"]
+#         self.mp_cost = item_data[self.name]["cost"]
 #
 #     def spell_description(self):
 #         button_x, button_y, offset_x, offset_y = self.hover_args
 #         # Multiline text
 #         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * 2)
-#         surface = game_text.multiLineSurface(self.name + "\n \n" + data[self.name]["desc"], FONT_ITEM_DESCRIPTION, rect,
+#         surface = game_text.multiLineSurface(self.name + "\n \n" + item_data[self.name]["desc"], FONT_ITEM_DESCRIPTION, rect,
 #                                              BLACK, WHITE, 1)
 #         surface_rect = surface.get_rect()
 #         surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)

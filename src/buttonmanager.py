@@ -19,9 +19,6 @@ class IconButton:
         left_click_fn (arg, function): function to call when left button clicked
         right_click_fn (arg, function): function to call when right button clicked
         mouse_over_fn (arg, function): Function to call when button is hovered over
-        extra_data (dict): Tuple of extra data that might be needed (passing params
-            with function pointers in cause all params to be the same as the last
-            iteration of loop so extra_data is needed)
     """
     def __init__(self, x, y, image, left_click_fn=None, right_click_fn=None, mouse_over_fn=None):
         self.image = image
@@ -67,14 +64,14 @@ class ButtonManager:
     Manager for the buttons
 
     Attributes:
-        x (int): x coord of button manager
-        y (int): y coord of button
-        width (int): width of button manager in icons
-        height (int): height of button manager in icons
+        x (arg, int): x coord of button manager
+        y (arg, int): y coord of button
+        width (arg, int): width of button manager in icons
+        height (arg, int): height of button manager in icons
         image (surface): surface that holds the buttons.
             This surface is blitted to game surface
         button_dict (list): list of buttons
-        colorkey (Colour): Colour to make transparent
+        colorkey (arg, Colour): Colour to make transparent
     """
     def __init__(self, x, y, width, height, colorkey=None):
         self.x = x
@@ -135,9 +132,6 @@ class ButtonManager:
 
         Args:
             surface (Surface): Surface to draw buttons on
-
-        Returns:
-
         """
         for key in self.button_dict:
             button = self.button_dict[key]
@@ -344,12 +338,7 @@ class GridButtonManager(ButtonManager):
         Args:
             surface (Surface): Surface to draw buttons on
         """
-        for key in self.button_dict:
-            button = self.button_dict[key]
-            self.image.blit(button.image, button.rect)
-        surface.blit(self.image,
-                     (self.x, self.y))
-        # super().draw_buttons(surface)
+        super().draw_buttons(surface)
 
     def check_if_button_hovered(self, mouse_x, mouse_y):
         """
@@ -426,7 +415,7 @@ class GridButtonManager(ButtonManager):
         return super().check_if_specific_button_pressed(button_id, mouse_x, mouse_y)
 
 
-def add_buttons():
+def add_button_to_bottom_panel():
     """
     Adds clickable buttons to bottom of screen
     """

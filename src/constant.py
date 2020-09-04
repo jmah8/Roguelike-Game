@@ -80,6 +80,9 @@ RESOURCE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resour
 #Save path
 SAVE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/save.txt')
 
+# Data path
+DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+
 # FONTS
 font_path_name = os.path.join(RESOURCE_PATH, 'fonts/FFF_Tusj.ttf')
 FONT_SIZE = 28
