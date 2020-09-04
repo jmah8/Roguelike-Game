@@ -226,7 +226,7 @@ class Creature:
         if self.equip_slot:
             for equipment_entity in self.equip_slot.values():
                 if equipment_entity:
-                    weapon_bonus += equipment_entity.equipment.strength_bonus
+                    weapon_bonus += equipment_entity.item.equip_stat.strength_bonus
         total_damage = self.stat.physical_damage + weapon_bonus
         return total_damage
 
@@ -244,7 +244,7 @@ class Creature:
         if self.equip_slot:
             for equipment_entity in self.equip_slot.values():
                 if equipment_entity:
-                    equipment_bonus += equipment_entity.equipment.defense_bonus
+                    equipment_bonus += equipment_entity.item.equip_stat.defense_bonus
         total_blocked_damage = self.stat.damage_blocked + equipment_bonus
         return total_blocked_damage
 

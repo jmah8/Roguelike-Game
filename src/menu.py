@@ -488,20 +488,20 @@ def _load_equipment_screen():
     # Find all entities equipped by player
     equipped_entities = config.PLAYER.creature.equip_slot.values()
     for equip_entity in equipped_entities:
-        if equip_entity and equip_entity.equipment.equipped:
-            slot = equip_entity.equipment.slot
+        if equip_entity and equip_entity.item.equip_stat.equipped:
+            slot = equip_entity.item.equip_stat.slot
             if slot == "Left hand":
                 scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
                 left_hand_slot.blit(scaled_equip, (0, 0))
-                left_hand.left_click_fn = equip_entity.equipment.toggle_equip
+                left_hand.left_click_fn = equip_entity.item.equip_stat.toggle_equip
             elif slot == "Right hand":
                 scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
                 right_hand_slot.blit(scaled_equip, (0, 0))
-                right_hand.left_click_fn = equip_entity.equipment.toggle_equip
+                right_hand.left_click_fn = equip_entity.item.equip_stat.toggle_equip
             elif slot == "Armor":
                 scaled_equip = pygame.transform.scale(equip_entity.image, armor_scale)
                 armor_slot.blit(scaled_equip, (0, 0))
-                armor.left_click_fn = equip_entity.equipment.toggle_equip
+                armor.left_click_fn = equip_entity.item.equip_stat.toggle_equip
 
     return equip_slot
 
