@@ -30,6 +30,29 @@ def draw_game():
         draw_minimap()
 
 
+def draw_tiles(tile_list):
+    """
+    Draws all tiles offset by camera
+
+    Args:
+        tile_list (list): List of tiles to draw
+    """
+    for col in tile_list:
+        for tile in col:
+            draw_at_camera_offset_without_image(tile)
+
+
+def draw_grid():
+    """
+    Draws line showing tiles separated into a grid
+    """
+    for x in range(0, config.CAMERA.camera_width, SPRITE_SIZE):
+        pygame.draw.line(config.SURFACE_MAIN, GREY, (x, 0), (x, config.CAMERA.camera_height))
+
+    for y in range(0, config.CAMERA.camera_height, SPRITE_SIZE):
+        pygame.draw.line(config.SURFACE_MAIN, GREY, (0, y), (config.CAMERA.camera_width, y))
+
+
 def draw_at_camera_offset_without_image(obj):
     """
     Draws obj on surface taking into account camera offset
@@ -50,26 +73,6 @@ def draw_at_camera_offset_with_image(obj):
     config.SURFACE_MAIN.blit(obj.image, config.CAMERA.apply_with_image(obj))
 
 
-def draw_tiles(tile_list):
-    """
-    Draws all tiles offset by camera
-
-    Args:
-        tile_list (list): List of tiles to draw
-    """
-    for col in tile_list:
-        for tile in col:
-            draw_at_camera_offset_without_image(tile)
-
-
-def draw_grid():
-    for x in range(0, config.CAMERA.camera_width, SPRITE_SIZE):
-        pygame.draw.line(config.SURFACE_MAIN, GREY, (x, 0), (x, config.CAMERA.camera_height))
-
-    for y in range(0, config.CAMERA.camera_height, SPRITE_SIZE):
-        pygame.draw.line(config.SURFACE_MAIN, GREY, (0, y), (config.CAMERA.camera_width, y))
-
-
 def draw_debug():
     """
     Draws FPS counter on top right of screen
@@ -78,7 +81,7 @@ def draw_debug():
                         "FPS: " + str(int(config.CLOCK.get_fps())), BLACK)
 
 
-def draw_map_menu(map_info):
+def draw_map(map_info):
     """
     Draws map. This map
     is a replica of the actual map

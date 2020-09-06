@@ -86,7 +86,7 @@ class MapInfo:
         else:
             # Holds the map representation (chars)
             map_array = [["1" for x in range(0, MAP_WIDTH)] for y in range(0, MAP_HEIGHT)]
-            self.map_tree = gen_map(map_array)
+            self.map_tree = generate_map(map_array)
 
         # Holds actual tiles
         self.tile_array = make_tile_array(map_array)
@@ -105,7 +105,7 @@ class MapInfo:
 
 def make_tile_array(map_array):
     """
-    Draws tiles to background using p_map_array and returns
+    Converts array filled with characters to Tiles and returns
     array filled with Tiles
 
     Args:
@@ -141,7 +141,7 @@ def load_map():
     return map_array
 
 
-def gen_map(map_array):
+def generate_map(map_array):
     """
     Generates random map and prints resulting map into console. Also draws map to surface
 

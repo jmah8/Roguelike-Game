@@ -224,21 +224,10 @@ class Item:
             offset_y (int): Where GridButtonManager is (needed for finding where to
                 place hover box)
         """
-        # Single line text
-        # item_button = menu.TextButton(self.name, (BUTTON_WIDTH, BUTTON_HEIGHT),
-        #                               # offset_x + x makes it so center of text is GridButtonManager x + button x
-        #                               # offset_y + y is to make text centered vertically and the - (SPRITE_SIZE // 2)
-        #                               #      is to make it so text isn't covering item since TextButton is always centered
-        #                               (offset_x + button_x, offset_y + button_y - (SPRITE_SIZE // 2)),
-        #                               WHITE)
-        #
-        # item_button.draw()
-        # Multiline text
         description = self.name + "\n \n" + item_data[self.name]["desc"] + " "
         if self.equip_stat:
             description += self.equip_stat.equipment_description()
 
-        # TODO: make the box height scale with number of bonus stats from equipment
         LINES_OF_TEXT = description.count('\n')
         rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
         surface = game_text.multiLineSurface(description,

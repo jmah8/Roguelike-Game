@@ -199,7 +199,7 @@ def map_menu():
                         menu_closed = True
                         break
 
-        draw.draw_map_menu(config.MAP_INFO)
+        draw.draw_map(config.MAP_INFO)
         config.BUTTON_PANEL.draw_buttons(config.SURFACE_MAIN)
         config.CLOCK.tick(FPS)
         pygame.display.update()
