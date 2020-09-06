@@ -382,6 +382,9 @@ def populate_map():
 
     config.GAME_DATA.creature_data["player"] = [config.PLAYER]
 
+    if config.CURRENT_FLOOR == NUM_OF_FLOOR:
+        config.GAME_DATA.item_data.append(entity_generator.generate_win_item(config.MAP_INFO.map_tree))
+
 
 def _generate_new_map():
     """

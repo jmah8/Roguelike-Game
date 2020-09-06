@@ -281,6 +281,17 @@ def teleport_user(user_entity, args):
     game_text.add_game_message_to_print(user_entity.creature.name_instance + " teleported",
                                         BLUE)
 
+def win_game(user_entity, args):
+    """
+    Wins the game when item used
+
+    Args:
+        user_entity (Entity): Entity using item (not used in this method)
+        args (List): List of data from item.json (not used in this method)
+    """
+    print("Win the game")
+
+
 def equip_item(user_entity, args):
     pass
 
@@ -289,5 +300,6 @@ def equip_item(user_entity, args):
 item_use_dict = {
     "red potion": heal_user_hp,
     "blue potion": heal_user_mp,
-    "teleport scroll": teleport_user
+    "teleport scroll": teleport_user,
+    "chest": win_game
 }

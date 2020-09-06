@@ -268,3 +268,23 @@ def _generate_teleport_scroll(x, y):
     item_com = item.Item("teleport scroll", 0, 0)
     generated_item = entity.Entity(x, y, "teleport scroll", item=item_com)
     return generated_item
+
+
+def generate_win_item(tree):
+    """
+    Generates win item in random room
+
+    Args:
+        tree (BSP tree): Tree representing rooms
+
+    Returns:
+        item (Entity): Win item entity
+    """
+    random_room = random.choice(tree.root.child_room_list)
+    x1, y1, x2, y2 = random_room.coords
+    x = random.randint(x1, x2)
+    y = random.randint(y1, y2)
+
+    item_com = item.Item("chest", 0, 0)
+    generated_item = entity.Entity(x, y, "chest", item=item_com)
+    return generated_item

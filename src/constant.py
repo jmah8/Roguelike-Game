@@ -63,7 +63,7 @@ INVENTORY_BEIGE = (239, 228, 176)
 BROWN = (210, 180, 140)
 
 # Game constants
-NUM_OF_FLOOR = 3
+NUM_OF_FLOOR = 1
 
 # Creature stats
 REGEN_TIME = 5

@@ -36,8 +36,9 @@ TELEPORT_SCROLL = 'items/consumables/teleport_scroll.png'
 SWORD = 'items/equip/sword.png'
 SHIELD = 'items/equip/shield.png'
 ARMOR = 'items/equip/armor.png'
+CHEST = 'items/win_chest.png'
 
-INVENTORY = 'ui/chest.png'
+INVENTORY = 'ui/inventory.png'
 EMPTY_INVENTORY_SLOT = 'ui/empty_inventory_slot.png'
 CAMERA = 'ui/camera.png'
 MINIMAP_BUTTON = 'ui/minimap.png'
@@ -221,6 +222,7 @@ class GameSprites:
         self.sword = load_image(SWORD)
         self.shield = load_image(SHIELD)
         self.armor = load_image(ARMOR)
+        self.chest = load_image(CHEST)
 
         # Consumables
         self.red_potion = load_image(RED_POTION)
@@ -274,6 +276,7 @@ class GameSprites:
             "sword": self.sword,
             "shield": self.shield,
             "armor": self.armor,
+            "chest": self.chest,
             # Consumables
             "red potion": self.red_potion,
             "blue potion": self.blue_potion,
