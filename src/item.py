@@ -289,7 +289,7 @@ def win_game(user_entity, args):
         user_entity (Entity): Entity using item (not used in this method)
         args (List): List of data from item.json (not used in this method)
     """
-    print("Win the game")
+    menu.win_menu()
 
 
 def equip_item(user_entity, args):

@@ -210,6 +210,13 @@ def _handle_keyboard_event(event):
         load_game()
 
 
+def new_game():
+    """
+    Makes new game data
+    """
+    config.new_game()
+
+
 def quit_game():
     """
     Saves game and closes

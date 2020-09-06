@@ -73,8 +73,7 @@ def main():
     Menu has new game, continue game (only available if save.txt > 1kb in size) and exit
     """
     if not os.path.isfile(SAVE_PATH):
-        with open(SAVE_PATH, 'w') as file:
-            continue_clickable = False
+        continue_clickable = False
     else:
         if os.stat(SAVE_PATH).st_size == 0:
             continue_clickable = False
@@ -663,3 +662,51 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
     """
     button_x, button_y = button.rect.topleft
     button.mouse_over_fn = partial(item_entity.item.item_description, button_x, button_y, menu_width, menu_height)
+
+
+def win_menu():
+    """
+    Win menu after using chest
+
+    Deletes save file if there is data
+    """
+    if os.path.isfile(SAVE_PATH) and os.stat(SAVE_PATH).st_size > 0:
+        open(SAVE_PATH, 'w').close()
+
+    str = "Congratulations you found the treasure"
+
+    new_button = TextButton("New Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                            (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 250), RED)
+
+    exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             (CAMERA_WIDTH // 2, new_button.rect.midbottom[1] + 100), GREY)
+
+    while True:
+        config.SURFACE_MAIN.blit(config.SPRITE.unfocused_window, (0, 0))
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        new_button.mouse_over()
+        exit_button.mouse_over()
+
+        game_text.draw_text(config.SURFACE_MAIN, (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100),
+                            WHITE, str, center=True)
+
+        new_button.draw()
+
+        exit_button.draw()
+
+        g = game.Game()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if new_button.rect.collidepoint((mouse_x, mouse_y)):
+                        game.new_game()
+                        game.populate_map()
+                        g.run()
+                    elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pygame.quit()
+
+        pygame.display.update()
