@@ -61,6 +61,7 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 INVENTORY_BEIGE = (239, 228, 176)
 BROWN = (210, 180, 140)
+LIGHT_GREY = (212, 212, 212)
 
 # Game constants
 NUM_OF_FLOOR = 1
@@ -85,6 +86,7 @@ DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
 # FONTS
 font_path_name = os.path.join(RESOURCE_PATH, 'fonts/FFF_Tusj.ttf')
 FONT_SIZE = 28
+FONT_CONTROL_TEXT = pygame.font.Font(font_path_name, 20)
 FONT_DEBUG_MESSAGE = pygame.font.Font(font_path_name, 28)
 FONT_MESSAGE_TEXT = pygame.font.Font(font_path_name, 28)
 FONT_ITEM_DESCRIPTION = pygame.font.Font(font_path_name, 28)
