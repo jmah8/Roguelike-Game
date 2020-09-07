@@ -858,4 +858,52 @@ def instruction_menu():
         pygame.display.update()
 
 
+def lose_menu():
+    """
+    Lose menu with new game button and exit button
 
+    Deletes save file if there is data
+    """
+    if os.path.isfile(SAVE_PATH) and os.stat(SAVE_PATH).st_size > 0:
+        open(SAVE_PATH, 'w').close()
+
+    # Make buttons
+    new_button = TextButton("Start a new Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                               (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), GREEN)
+
+    exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             (CAMERA_WIDTH // 2, new_button.rect.midbottom[1] + 100), GREY)
+
+    loss_menu = True
+
+    g = game.Game()
+    while loss_menu:
+        config.SURFACE_MAIN.blit(config.SPRITE.unfocused_window, (0, 0))
+
+        game_text.draw_text(config.SURFACE_MAIN,
+                            (CAMERA_WIDTH // 2, new_button.rect.midtop[1] - 100), WHITE,
+                            "You lost", BLACK, center=True)
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        new_button.mouse_over()
+        exit_button.mouse_over()
+
+        new_button.draw()
+
+        exit_button.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if new_button.rect.collidepoint((mouse_x, mouse_y)):
+                        game.new_game()
+                        game.populate_map()
+                        g.run()
+                    elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pygame.quit()
+
+        config.CLOCK.tick(FPS)
+        pygame.display.update()

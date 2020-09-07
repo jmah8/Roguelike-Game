@@ -35,6 +35,7 @@ class Game:
             handle_events()
             update()
             draw.draw_mouse()
+            check_if_player_lost()
             pygame.display.flip()
 
 
@@ -208,6 +209,11 @@ def _handle_keyboard_event(event):
 
     elif event.key == pygame.K_F3:
         load_game()
+
+
+def check_if_player_lost():
+    if config.PLAYER.creature.stat.hp <= 0:
+        menu.lose_menu()
 
 
 def new_game():
