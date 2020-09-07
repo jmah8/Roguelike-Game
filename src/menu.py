@@ -73,8 +73,7 @@ def main():
     Menu has new game, continue game (only available if save.txt > 1kb in size) and exit
     """
     if not os.path.isfile(SAVE_PATH):
-        with open(SAVE_PATH, 'w') as file:
-            continue_clickable = False
+        continue_clickable = False
     else:
         if os.stat(SAVE_PATH).st_size == 0:
             continue_clickable = False
@@ -82,13 +81,16 @@ def main():
             continue_clickable = True
 
     new_button = TextButton("New Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
-                            (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), RED)
+                            (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4), RED)
 
     continue_button = TextButton("Continue", (BUTTON_WIDTH, BUTTON_HEIGHT),
                                  (CAMERA_WIDTH // 2, new_button.rect.midbottom[1] + 100), GREEN, continue_clickable)
 
+    setting_button = TextButton("Controls", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                                 (CAMERA_WIDTH // 2, continue_button.rect.midbottom[1] + 100), LIGHT_GREY)
+
     exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
-                             (CAMERA_WIDTH // 2, continue_button.rect.midbottom[1] + 100), GREY)
+                             (CAMERA_WIDTH // 2, setting_button.rect.midbottom[1] + 100), GREY)
 
     g = game.Game()
 
@@ -99,11 +101,14 @@ def main():
 
         new_button.mouse_over()
         continue_button.mouse_over()
+        setting_button.mouse_over()
         exit_button.mouse_over()
 
         new_button.draw()
 
         continue_button.draw()
+
+        setting_button.draw()
 
         exit_button.draw()
 
@@ -113,11 +118,14 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
-                        game.populate_map()
-                        g.run()
+                        # game.populate_map()
+                        # g.run()
+                        instruction_menu()
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
                         game.load_game()
                         g.run()
+                    elif setting_button.rect.collidepoint((mouse_x, mouse_y)):
+                        keys_menu()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
                         pygame.quit()
 
@@ -199,7 +207,7 @@ def map_menu():
                         menu_closed = True
                         break
 
-        draw.draw_map_menu(config.MAP_INFO)
+        draw.draw_map(config.MAP_INFO)
         config.BUTTON_PANEL.draw_buttons(config.SURFACE_MAIN)
         config.CLOCK.tick(FPS)
         pygame.display.update()
@@ -663,3 +671,191 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
     """
     button_x, button_y = button.rect.topleft
     button.mouse_over_fn = partial(item_entity.item.item_description, button_x, button_y, menu_width, menu_height)
+
+
+def win_menu():
+    """
+    Win menu after using chest
+
+    Deletes save file if there is data
+    """
+    if os.path.isfile(SAVE_PATH) and os.stat(SAVE_PATH).st_size > 0:
+        open(SAVE_PATH, 'w').close()
+
+    str = "Congratulations you found the treasure"
+
+    new_button = TextButton("New Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                            (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 250), RED)
+
+    exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             (CAMERA_WIDTH // 2, new_button.rect.midbottom[1] + 100), GREY)
+
+    while True:
+        config.SURFACE_MAIN.blit(config.SPRITE.unfocused_window, (0, 0))
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        new_button.mouse_over()
+        exit_button.mouse_over()
+
+        game_text.draw_text(config.SURFACE_MAIN, (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100),
+                            WHITE, str, center=True)
+
+        new_button.draw()
+
+        exit_button.draw()
+
+        g = game.Game()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if new_button.rect.collidepoint((mouse_x, mouse_y)):
+                        game.new_game()
+                        game.populate_map()
+                        g.run()
+                    elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pygame.quit()
+
+        pygame.display.update()
+
+
+def keys_menu():
+    """
+    Shows controls
+    """
+    controls = "Key \n" \
+               "w \n" \
+               "a \n" \
+               "s \n" \
+               "d \n" \
+               "q \n" \
+               "e \n" \
+               "z \n" \
+               "c \n" \
+               "x \n" \
+               "TAB \n" \
+               "t \n" \
+               "ESC \n" \
+               "m \n" \
+               "v \n" \
+               "p \n" \
+               "i \n" \
+               "i + Left mouse click \n" \
+               "i + Right mouse click \n" \
+               "SPACE \n" \
+               "Left mouse click \n" \
+               "SPACE + Left mouse click \n" \
+               "m + Movement keys \n" \
+               "m + ENTER \n" \
+               "1 \n" \
+               "2 \n" \
+               "F1 \n" \
+               "F2 \n" \
+               "F3"
+
+    actions = "Action\n" \
+                "Walk up \n" \
+                "Walk left \n" \
+                "Walk down \n" \
+                "Walk right \n" \
+                "Walk diagonally up and left \n" \
+                "Walk diagonally up and right \n" \
+                "Walk diagonally down and left \n" \
+                "Walk diagonally down and right \n" \
+                "Stay still \n" \
+                "Toggle minimap \n" \
+                "Pickup item \n" \
+                "Toggle FOV limitations \n" \
+                "Toggle camera \n" \
+                "Auto explore \n" \
+                "Pause and open menu \n" \
+                "Toggle inventory screen \n" \
+                "Use item / Toggle equipment \n" \
+                "Drop item \n" \
+                "Toggle magic selection screen \n" \
+                "Move to mouse cursor \n" \
+                "Fire spell \n" \
+                "Move camera around \n" \
+                "Move to camera location \n" \
+                "Transition to previous level \n" \
+                "Transition to next level \n" \
+                "Make new game \n" \
+                "Manually save game \n" \
+                "Manually load game"
+
+    back_button = TextButton("Go back", (BUTTON_WIDTH, BUTTON_HEIGHT - 20),
+                                 (CAMERA_WIDTH // 2, config.CAMERA.camera_height - (BUTTON_HEIGHT // 2)), RED)
+
+    controls_rect = pygame.Rect(0, 0, config.CAMERA.camera_width, config.CAMERA.camera_height)
+    actions_rect = pygame.Rect(config.CAMERA.camera_width // 2, 0, config.CAMERA.camera_width // 2, config.CAMERA.camera_height)
+
+    controls_surface = game_text.multiLineSurface(controls, FONT_CONTROL_TEXT, controls_rect, BLACK, WHITE, 0)
+    actions_surface = game_text.multiLineSurface(actions, FONT_CONTROL_TEXT, actions_rect, BLACK, WHITE, 0)
+
+    control_open = True
+
+    while control_open:
+        back_button.mouse_over()
+
+        config.SURFACE_MAIN.blit(controls_surface, controls_rect)
+        config.SURFACE_MAIN.blit(actions_surface, actions_rect)
+
+        back_button.draw()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if back_button.rect.collidepoint((mouse_x, mouse_y)):
+                        control_open = False
+                        break
+
+        pygame.display.update()
+
+
+def instruction_menu():
+    """
+    Instruction menu telling player how to win
+    """
+    instructions = "Reach the lowest level of the dungeon and find the chest full of treasure! \n " \
+                   "Find items to aid you in your adventure and fight monster that get in your way."
+    continue_str = "Press any key to continue"
+
+    instruction_rect = pygame.Rect(0, 0, config.CAMERA.camera_width // 2, SPRITE_SIZE * 6)
+    continue_rect = pygame.Rect(0, 0, config.CAMERA.camera_width // 2, SPRITE_SIZE * 3)
+    chest_rect = pygame.Rect(0, 0, SPRITE_SIZE, SPRITE_SIZE)
+
+    instruction_surface = game_text.multiLineSurfaceTransparentBG(instructions, FONT_MESSAGE_TEXT, instruction_rect,
+                                                                  BLACK, WHITE, None, justification=1)
+    continue_surface = game_text.multiLineSurfaceTransparentBG(continue_str, FONT_MESSAGE_TEXT, continue_rect,
+                                                               BLACK, WHITE, None, justification=1)
+
+    instruction_rect.midtop = (config.CAMERA.camera_width // 2, SPRITE_SIZE)
+    chest_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
+    continue_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height - SPRITE_SIZE)
+
+    g = game.Game()
+
+    while True:
+        config.SURFACE_MAIN.fill(WHITE)
+
+        config.SURFACE_MAIN.blit(instruction_surface, instruction_rect)
+        config.SURFACE_MAIN.blit(config.SPRITE.entity_dict["chest"], chest_rect)
+        config.SURFACE_MAIN.blit(continue_surface, continue_rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                game.populate_map()
+                g.run()
+
+        pygame.display.update()
+
+
+

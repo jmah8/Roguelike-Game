@@ -1,6 +1,6 @@
 #!/bin/sh
 # Gets the files that aren't spriteSizexspriteSize and dumps the name, current size and original size to wrongsizeSprite.txt
-pathname="$HOME/Desktop/TestConvert/*"
+pathname="$HOME/Desktop/TestConvert1/*"
 var=$(identify "$pathname" | grep -Ev 'coin|weapon|door' | awk '{printf "%s\t%s\t%s\n", $1, $3, $4}')
 #var=$(identify resource/frames/* | grep -v 16x16 | awk '{printf ("%5s\t%s\t%s\n", $1, $3, $4)}' | cut -c 17-)
 

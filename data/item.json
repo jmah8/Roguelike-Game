@@ -18,5 +18,8 @@
   },
   "armor": {
     "desc": "A weak armor"
+  },
+  "chest": {
+    "desc": "Full of treasure"
   }
 }
