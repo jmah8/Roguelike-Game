@@ -169,8 +169,7 @@ def spell_description(spell_name):
     Returns:
         description (String): Description of spell
     """
-    description = spell_name + "\n \n" + \
-                  data[spell_name]["desc"] + "\n" + \
+    description = data[spell_name]["desc"] + "\n" + \
                  "cost:" + str(data[spell_name]["cost"]) + "\n" + \
                  "base damage:" + str(data[spell_name]["damage"])
 
