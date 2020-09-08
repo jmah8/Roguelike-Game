@@ -218,7 +218,7 @@ class Item:
         Returns:
             description (String): Description of item/equipment
         """
-        description = self.name + "\n \n" + item_data[self.name]["desc"] + "\n"
+        description = item_data[self.name]["desc"] + "\n"
         if self.equip_stat:
             description += self.equip_stat.equipment_description()
 

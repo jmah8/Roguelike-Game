@@ -255,7 +255,7 @@ class Creature:
                 else return No description available if creature doesn't have description
         """
         if "desc" in data[self.name_instance].keys():
-            description = self.name_instance + "\n \n" + data[self.name_instance]["desc"] + "\n"
+            description = data[self.name_instance]["desc"] + "\n"
             return description
         return "No description available"
 

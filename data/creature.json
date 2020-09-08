@@ -10,7 +10,7 @@
       "Right hand": null,
       "Armor": null
     },
-    "desc": "Good at defending"
+    "desc": "Knight \n \n Good at defense"
   },
   "wizard": {
     "hp": 20,
@@ -23,7 +23,7 @@
       "Right hand": null,
       "Armor": null
     },
-    "desc": "Good at magic"
+    "desc": "Wizard \n \n Good at magic"
   },
   "slime": {
     "hp": 5,
