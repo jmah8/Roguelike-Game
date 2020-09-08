@@ -381,5 +381,3 @@ class Creature:
             self.stat.exp -= 100
             game_text.add_game_message_to_print(
                 self.name_instance + " leveled up ", YELLOW)
-
-

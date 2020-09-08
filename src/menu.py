@@ -272,22 +272,22 @@ def _draw_castable_spells():
 
     fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
                                         magic.cast_fireball)
-    tmp = (lambda: magic.spell_description("fireball", 0, 0, menu_width,
-                                          menu_height))
+    tmp = (lambda: draw.draw_description(0, 0, menu_width,
+                                          menu_height, magic.spell_description("fireball")))
     fireball.mouse_over_fn = tmp
     magic_select.add_button(fireball, "fireball")
 
     lightning = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.magic["lightning"],
                                          magic.cast_lightning)
-    tmp1 = (lambda: magic.spell_description("lightning", lightning.rect.topleft[0], lightning.rect.topleft[1],
-                                           menu_width, menu_height))
+    tmp1 = (lambda: draw.draw_description(lightning.rect.topleft[0], lightning.rect.topleft[1],
+                                           menu_width, menu_height, magic.spell_description("lightning")))
     lightning.mouse_over_fn = tmp1
     magic_select.add_button(lightning, "lightning")
 
     confusion = buttonmanager.IconButton(4 * SPRITE_SIZE, 0, config.SPRITE.magic["confusion"],
                                          magic.cast_confusion)
-    tmp2 = (lambda: magic.spell_description("confusion", confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
-                                          menu_height))
+    tmp2 = (lambda: draw.draw_description(confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
+                                        menu_height, magic.spell_description("confusion")))
     confusion.mouse_over_fn = tmp2
     magic_select.add_button(confusion, "confusion")
 
@@ -675,7 +675,7 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
             place hover box)
     """
     button_x, button_y = button.rect.topleft
-    button.mouse_over_fn = partial(item_entity.item.item_description, button_x, button_y, menu_width, menu_height)
+    button.mouse_over_fn = partial(draw.draw_description, button_x, button_y, menu_width, menu_height, item_entity.item.item_description())
 
 
 def win_menu():
@@ -866,6 +866,33 @@ def class_selection_menu():
     """
         create screens for inventory + equipment menus
         """
+
+    def creature_description(self, button_x, button_y, offset_x, offset_y):
+        """
+        Draws white box with creature name on top of button
+        when hovering over it
+
+        Args:
+            button_x (int): x coord of IconButton item is in
+            button_y (int): y coord of IconButton item is in
+            offset_x (int): Where GridButtonManager is (needed for finding where to
+                place hover box)
+            offset_y (int): Where GridButtonManager is (needed for finding where to
+                place hover box)
+        """
+        description = self.name + "\n \n" + item_data[self.name]["desc"] + " "
+        if self.equip_stat:
+            description += self.equip_stat.equipment_description()
+
+        LINES_OF_TEXT = description.count('\n')
+        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
+        surface = game_text.multiLineSurface(description,
+                                             FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+        surface_rect = surface.get_rect()
+        surface_rect.centerx = offset_x + button_x
+        surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
+        config.SURFACE_MAIN.blit(surface, surface_rect)
+
     menu_open = True
     config.SURFACE_MAIN.fill(WHITE)
 

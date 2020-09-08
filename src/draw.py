@@ -244,3 +244,24 @@ def draw_particles():
     for particle in config.PARTICLE_LIST:
         draw_at_camera_offset_with_image(particle)
         particle.update()
+
+def draw_description(button_x, button_y, offset_x, offset_y, description):
+    """
+    Draws description box on top of IconButton
+
+    Args:
+        button_x (int): x coord of IconButton item is in
+        button_y (int): y coord of IconButton item is in
+        offset_x (int): Where GridButtonManager is (needed for finding where to
+            place hover box)
+        offset_y (int): Where GridButtonManager is (needed for finding where to
+            place hover box)
+    """
+    LINES_OF_TEXT = description.count('\n') - 1
+    rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
+    surface = game_text.multiLineSurface(description,
+                                         FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+    surface_rect = surface.get_rect()
+    surface_rect.centerx = offset_x + button_x
+    surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
+    config.SURFACE_MAIN.blit(surface, surface_rect)
