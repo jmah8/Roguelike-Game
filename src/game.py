@@ -24,7 +24,7 @@ class Game:
 
         self.playing = True
 
-        buttonmanager.add_button_to_bottom_panel()
+        add_button_to_bottom_panel()
 
     def run(self):
         """
@@ -212,6 +212,9 @@ def _handle_keyboard_event(event):
 
 
 def check_if_player_lost():
+    """
+    Checks if player lost (hp <= 0) and if so brings lose menu up
+    """
     if config.PLAYER.creature.stat.hp <= 0:
         menu.lose_menu()
 
@@ -594,3 +597,13 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
+
+
+def add_button_to_bottom_panel():
+    """
+    Adds clickable buttons to bottom of screen
+    """
+    config.BUTTON_PANEL.create_button(config.SPRITE.knight_anim[0], 'stats', menu.stat_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'minimap', toggle_minimap)
+    config.BUTTON_PANEL.create_button(config.SPRITE.map_button, 'map', menu.map_menu)

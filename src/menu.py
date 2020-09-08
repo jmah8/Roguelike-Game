@@ -118,9 +118,9 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
-                        # game.populate_map()
-                        # g.run()
                         instruction_menu()
+                        game.populate_map()
+                        g.run()
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
                         game.load_game()
                         g.run()
@@ -214,6 +214,9 @@ def map_menu():
 
 
 def magic_select_menu():
+    """
+    Shows spells that are castable and allows for choosing which spell to cast
+    """
     select_menu = _draw_castable_spells()
 
     select_magic = True
@@ -839,9 +842,8 @@ def instruction_menu():
     chest_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
     continue_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height - SPRITE_SIZE)
 
-    g = game.Game()
-
-    while True:
+    instruction_menu_open = True
+    while instruction_menu_open:
         config.SURFACE_MAIN.fill(WHITE)
 
         config.SURFACE_MAIN.blit(instruction_surface, instruction_rect)
@@ -852,8 +854,8 @@ def instruction_menu():
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
-                game.populate_map()
-                g.run()
+                instruction_menu_open = False
+                break
 
         pygame.display.update()
 

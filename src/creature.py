@@ -31,9 +31,9 @@ class CreatureStat:
         self.mp = self.max_mp
         self.exp = 0
         self.level = level
-        self.strength = strength + (1 * (level - 1))
-        self.defense = defense + (1 * (level - 1))
-        self.wizardry = wizardry + (1 * (level - 1))
+        self.strength = strength + (level - 1)
+        self.defense = defense + (level - 1)
+        self.wizardry = wizardry + (level - 1)
 
     def heal_hp(self, heal_value):
         """
@@ -75,7 +75,7 @@ class CreatureStat:
         damage = self.strength
         return damage
 
-    def calc_magic_damage(self, base_damage):
+    def magic_damage(self, base_damage):
         """
         Returns damage dealt from using spell
         scaling with wizardry and spell damage

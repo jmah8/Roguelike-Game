@@ -191,7 +191,7 @@ def cast_fireball(caster, line):
     particle_group = []
     particle.MagicParticle(particle_group, config.SPRITE.magic['fireball'], line)
 
-    damage = caster.creature.stat.calc_magic_damage(base_damage)
+    damage = caster.creature.stat.magic_damage(base_damage)
 
     # If caster has enough mp to cast magic
     if caster.creature.stat.mp - mp_cost >= 0:
@@ -245,7 +245,7 @@ def cast_lightning(caster, line):
     particle_group = []
     particle.MagicParticle(particle_group, config.SPRITE.magic['lightning'], line)
 
-    damage = caster.creature.stat.calc_magic_damage(base_damage)
+    damage = caster.creature.stat.magic_damage(base_damage)
 
     # If caster has enough mp to cast magic
     if caster.creature.stat.mp - mp_cost >= 0:
@@ -278,7 +278,7 @@ def cast_confusion(caster, line):
     particle.MagicParticle(particle_group, config.SPRITE.magic['confusion'], line)
 
     # Special case where spell shouldn't do damage but instead duration scales with caster stat
-    turn_count = caster.creature.stat.calc_magic_damage(base_damage)
+    turn_count = caster.creature.stat.magic_damage(base_damage)
 
     # If caster has enough mp to cast magic
     if caster.creature.stat.mp - mp_cost >= 0:

@@ -49,6 +49,7 @@ BUTTON_PANEL = buttonmanager.GridButtonManager(
     SURFACE_MAIN.get_height() - SPRITE_SIZE, NUM_OF_BUTTONS_X, NUM_OF_BUTTONS_Y, (NUM_OF_BUTTONS_X * NUM_OF_BUTTONS_Y),
     BLACK)
 
+
 def new_game():
     """
     Makes new game by deleting old data and making new data

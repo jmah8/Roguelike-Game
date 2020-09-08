@@ -174,7 +174,7 @@ def draw_mouse():
     mouse_x = mouse_x // SPRITE_SIZE
     mouse_y = mouse_y // SPRITE_SIZE
 
-    draw_img_at_coord(config.SPRITE.camera, mouse_x, mouse_y)
+    draw_img_at_coord(config.SPRITE.entity_dict["camera"], mouse_x, mouse_y)
 
 
 def draw_messages(message_list):

@@ -1,8 +1,5 @@
 from exceptions import *
 from constant import *
-import config
-import menu
-import game
 
 
 class IconButton:
@@ -413,13 +410,3 @@ class GridButtonManager(ButtonManager):
             button (IconButton): button pressed
         """
         return super().check_if_specific_button_pressed(button_id, mouse_x, mouse_y)
-
-
-def add_button_to_bottom_panel():
-    """
-    Adds clickable buttons to bottom of screen
-    """
-    config.BUTTON_PANEL.create_button(config.SPRITE.knight_anim[0], 'stats', menu.stat_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'minimap', game.toggle_minimap)
-    config.BUTTON_PANEL.create_button(config.SPRITE.map_button, 'map', menu.map_menu)
