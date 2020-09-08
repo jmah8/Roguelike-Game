@@ -122,6 +122,7 @@ def main_menu():
                         g = game.Game()
                         game.populate_map()
                         g.run()
+                        lose_menu()
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
                         game.load_game()
                         g.run()
@@ -908,7 +909,7 @@ def class_selection_menu():
 
 def lose_menu():
     """
-    Lose menu with new game button and exit button
+    Lose menu with go to main menu and exit button
 
     Deletes save file if there is data
     """
@@ -916,7 +917,7 @@ def lose_menu():
         open(SAVE_PATH, 'w').close()
 
     # Make buttons
-    new_button = TextButton("Start a new Game", (BUTTON_WIDTH, BUTTON_HEIGHT),
+    new_button = TextButton("Go to main menu", (BUTTON_WIDTH, BUTTON_HEIGHT),
                                (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), GREEN)
 
     exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
@@ -947,9 +948,8 @@ def lose_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
-                        game.new_game()
-                        game.populate_map()
-                        g.run()
+                        loss_menu = False
+                        break
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
                         pygame.quit()
 

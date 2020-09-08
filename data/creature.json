@@ -13,10 +13,10 @@
   },
   "wizard": {
     "hp": 20,
-    "mp": 15,
+    "mp": 10,
     "strength": 1,
     "defense": 1,
-    "wizardry": 3,
+    "wizardry": 2,
     "equip" : {
       "Left hand": null,
       "Right hand": null,
