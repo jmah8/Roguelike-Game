@@ -114,7 +114,8 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
                         instruction_menu()
@@ -177,11 +178,13 @@ def pause():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.KEYDOWN:
+                
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pause_menu = False
                     break
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                    
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if resume_button.rect.collidepoint((mouse_x, mouse_y)):
                         pause_menu = False
@@ -207,6 +210,7 @@ def map_menu():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -241,7 +245,10 @@ def magic_select_menu():
 
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     select_magic = False
                     break
@@ -311,7 +318,9 @@ def magic_targetting_menu(spell_to_cast):
     while magic_cast:
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     magic_cast = False
                     break
@@ -352,7 +361,9 @@ def stat_menu():
     while stat_open:
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
                 stat_open = False
                 break
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -436,7 +447,10 @@ def inventory_menu():
             hovered_button.mouse_over_fn()
 
         for event in events_list:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
                         'inventory', mouse_x, mouse_y)
@@ -720,7 +734,7 @@ def win_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
                         game.new_game()
@@ -820,7 +834,7 @@ def keys_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if back_button.rect.collidepoint((mouse_x, mouse_y)):
                         control_open = False
@@ -861,7 +875,7 @@ def instruction_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN:
                 instruction_menu_open = False
                 break
 
@@ -878,7 +892,7 @@ def class_selection_menu():
 
     menu_open = True
 
-    menu_width = config.CAMERA.camera_width // 2
+    menu_width = config.CAMERA.camera_width // 2 - (SPRITE_SIZE * 3 // 2)
     menu_height = config.CAMERA.camera_height // 2
 
     class_selector = buttonmanager.ButtonManager(menu_width, menu_height, 3, 1, BLACK)
@@ -902,7 +916,7 @@ def class_selection_menu():
     class_selector.add_button(wizard_button, "wizard")
 
     while menu_open:
-        config.SURFACE_MAIN.fill(RED)
+        config.SURFACE_MAIN.fill(WHITE)
         events_list = pygame.event.get()
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -917,7 +931,7 @@ def class_selection_menu():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     knight_pressed = class_selector.check_if_specific_button_pressed(
                         "knight", mouse_x, mouse_y)
@@ -973,7 +987,7 @@ def lose_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
                         loss_menu = False
