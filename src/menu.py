@@ -122,10 +122,18 @@ def main_menu():
                         g = game.Game()
                         game.populate_map()
                         g.run()
+                        # Since we are out of game loop = lost game
+                        # and so no save game available
+                        continue_button.clickable = False
                         lose_menu()
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
+                        g = game.Game()
                         game.load_game()
                         g.run()
+                        # Since we are out of game loop = lost game
+                        # and so no save game available
+                        continue_button.clickable = False
+                        lose_menu()
                     elif setting_button.rect.collidepoint((mouse_x, mouse_y)):
                         keys_menu()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -952,7 +960,6 @@ def lose_menu():
 
     loss_menu = True
 
-    g = game.Game()
     while loss_menu:
         config.SURFACE_MAIN.blit(config.SPRITE.unfocused_window, (0, 0))
 
