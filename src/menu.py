@@ -125,7 +125,6 @@ def main_menu():
                         # Since we are out of game loop = lost game
                         # and so no save game available
                         continue_button.clickable = False
-                        lose_menu()
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
                         g = game.Game()
                         game.load_game()
@@ -133,7 +132,6 @@ def main_menu():
                         # Since we are out of game loop = lost game
                         # and so no save game available
                         continue_button.clickable = False
-                        lose_menu()
                     elif setting_button.rect.collidepoint((mouse_x, mouse_y)):
                         keys_menu()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -275,7 +273,7 @@ def _draw_castable_spells():
     menu_height = config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE)
 
     magic_select = buttonmanager.ButtonManager(menu_width,
-                                                   config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE),
+                                                   menu_height,
                                                    num_of_spells, 1, BLACK)
 
     fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
@@ -872,50 +870,46 @@ def instruction_menu():
 
 def class_selection_menu():
     """
-        create screens for inventory + equipment menus
-        """
+    create screens for inventory + equipment menus
+    """
 
-    def creature_description(self, button_x, button_y, offset_x, offset_y):
-        """
-        Draws white box with creature name on top of button
-        when hovering over it
-
-        Args:
-            button_x (int): x coord of IconButton item is in
-            button_y (int): y coord of IconButton item is in
-            offset_x (int): Where GridButtonManager is (needed for finding where to
-                place hover box)
-            offset_y (int): Where GridButtonManager is (needed for finding where to
-                place hover box)
-        """
-        description = self.name + "\n \n" + item_data[self.name]["desc"] + " "
-        if self.equip_stat:
-            description += self.equip_stat.equipment_description()
-
-        LINES_OF_TEXT = description.count('\n')
-        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
-        surface = game_text.multiLineSurface(description,
-                                             FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
-        surface_rect = surface.get_rect()
-        surface_rect.centerx = offset_x + button_x
-        surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
-        config.SURFACE_MAIN.blit(surface, surface_rect)
+    knight_entity = entity_generator.generate_player(config.MAP_INFO.map_tree, 'knight')
+    wizard_entity = entity_generator.generate_player(config.MAP_INFO.map_tree, 'wizard')
 
     menu_open = True
-    config.SURFACE_MAIN.fill(WHITE)
 
-    class_selector = buttonmanager.ButtonManager(0, 0, 3, 1, BLACK)
+    menu_width = config.CAMERA.camera_width // 2
+    menu_height = config.CAMERA.camera_height // 2
+
+    class_selector = buttonmanager.ButtonManager(menu_width, menu_height, 3, 1, BLACK)
 
     knight_button = buttonmanager.IconButton(0, 0, config.SPRITE.entity_dict["knight"]["idle_right"][0])
     wizard_button = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.entity_dict["wizard"]["idle_right"][0])
+
+    knight_button.mouse_over_fn = partial(draw.draw_description,
+                                          knight_button.rect.topleft[0],
+                                          knight_button.rect.topleft[1],
+                                          menu_width, menu_height,
+                                          knight_entity.creature.creature_description())
+
+    wizard_button.mouse_over_fn = partial(draw.draw_description,
+                                          wizard_button.rect.topleft[0],
+                                          wizard_button.rect.topleft[1],
+                                          menu_width, menu_height,
+                                          wizard_entity.creature.creature_description())
 
     class_selector.add_button(knight_button, "knight")
     class_selector.add_button(wizard_button, "wizard")
 
     while menu_open:
+        config.SURFACE_MAIN.fill(RED)
         events_list = pygame.event.get()
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        hovered_button = class_selector.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_button and hovered_button.mouse_over_fn:
+            hovered_button.mouse_over_fn()
 
         class_selector.draw_buttons(config.SURFACE_MAIN)
 
@@ -928,14 +922,14 @@ def class_selection_menu():
                     knight_pressed = class_selector.check_if_specific_button_pressed(
                         "knight", mouse_x, mouse_y)
                     if knight_pressed:
-                        config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree, 'knight')
+                        config.PLAYER = knight_entity
                         menu_open = False
                         break
 
                     wizard_pressed = class_selector.check_if_specific_button_pressed(
                         "wizard", mouse_x, mouse_y)
                     if wizard_pressed:
-                        config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree, 'wizard')
+                        config.PLAYER = wizard_entity
                         menu_open = False
                         break
 

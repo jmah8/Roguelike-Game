@@ -100,7 +100,6 @@ def multiLineSurface(string, font, rect, fontColour, BGColour, justification=0):
     Success - a surface object with the text rendered onto it.
     Failure - raises a TextRectException if the text won't fit onto the surface.
     """
-
     finalLines = []
     requestedLines = string.splitlines()
     # Create a series of lines that will fit on the provided

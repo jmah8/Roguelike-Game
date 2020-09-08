@@ -248,6 +248,17 @@ class Creature:
         total_blocked_damage = self.stat.damage_blocked + equipment_bonus
         return total_blocked_damage
 
+    def creature_description(self):
+        """
+        Returns:
+            description (String): Description of creature from creature.json
+                else return No description available if creature doesn't have description
+        """
+        if "desc" in data[self.name_instance].keys():
+            description = self.name_instance + "\n \n" + data[self.name_instance]["desc"] + "\n"
+            return description
+        return "No description available"
+
     def take_damage(self, damage):
         """
         Creature takes damage depending on stat.defense to

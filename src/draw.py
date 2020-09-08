@@ -257,10 +257,9 @@ def draw_description(button_x, button_y, offset_x, offset_y, description):
         offset_y (int): Where GridButtonManager is (needed for finding where to
             place hover box)
     """
-    LINES_OF_TEXT = description.count('\n') - 1
+    LINES_OF_TEXT = max(1, description.count('\n') - 1)
     rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
-    surface = game_text.multiLineSurface(description,
-                                         FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+    surface = game_text.multiLineSurface(description, FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
     surface_rect = surface.get_rect()
     surface_rect.centerx = offset_x + button_x
     surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)

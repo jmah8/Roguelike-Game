@@ -45,6 +45,7 @@ class Game:
         """
         if config.PLAYER.creature.stat.hp <= 0:
             self.playing = False
+            menu.lose_menu()
 
 
 def handle_events():
