@@ -11,6 +11,18 @@
       "Armor": null
     }
   },
+  "wizard": {
+    "hp": 20,
+    "mp": 15,
+    "strength": 1,
+    "defense": 1,
+    "wizardry": 3,
+    "equip" : {
+      "Left hand": null,
+      "Right hand": null,
+      "Armor": null
+    }
+  },
   "slime": {
     "hp": 5,
     "mp": 0,

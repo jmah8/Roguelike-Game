@@ -1,5 +1,6 @@
 from functools import partial
 
+import entity_generator
 from constant import *
 import config
 import draw
@@ -66,7 +67,7 @@ class TextButton:
                 self.colour = self.normal_colour
 
 
-def main():
+def main_menu():
     """
     Main menu before starting game
 
@@ -91,8 +92,6 @@ def main():
 
     exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
                              (CAMERA_WIDTH // 2, setting_button.rect.midbottom[1] + 100), GREY)
-
-    g = game.Game()
 
     while True:
         config.SURFACE_MAIN.fill(WHITE)
@@ -119,6 +118,8 @@ def main():
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
                         instruction_menu()
+                        class_selection_menu()
+                        g = game.Game()
                         game.populate_map()
                         g.run()
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
@@ -856,6 +857,51 @@ def instruction_menu():
             if event.type == pygame.KEYDOWN:
                 instruction_menu_open = False
                 break
+
+        pygame.display.update()
+
+
+def class_selection_menu():
+    """
+        create screens for inventory + equipment menus
+        """
+    menu_open = True
+    config.SURFACE_MAIN.fill(WHITE)
+
+    class_selector = buttonmanager.ButtonManager(0, 0, 3, 1, BLACK)
+
+    knight_button = buttonmanager.IconButton(0, 0, config.SPRITE.entity_dict["knight"]["idle_right"][0])
+    wizard_button = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.entity_dict["wizard"]["idle_right"][0])
+
+    class_selector.add_button(knight_button, "knight")
+    class_selector.add_button(wizard_button, "wizard")
+
+    while menu_open:
+        events_list = pygame.event.get()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        class_selector.draw_buttons(config.SURFACE_MAIN)
+
+        for event in events_list:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    knight_pressed = class_selector.check_if_specific_button_pressed(
+                        "knight", mouse_x, mouse_y)
+                    if knight_pressed:
+                        config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree, 'knight')
+                        menu_open = False
+                        break
+
+                    wizard_pressed = class_selector.check_if_specific_button_pressed(
+                        "wizard", mouse_x, mouse_y)
+                    if wizard_pressed:
+                        config.PLAYER = entity_generator.generate_player(config.MAP_INFO.map_tree, 'wizard')
+                        menu_open = False
+                        break
 
         pygame.display.update()
 

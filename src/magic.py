@@ -169,7 +169,7 @@ def spell_description(spell_name, button_x, button_y, offset_x, offset_y):
     surface = game_text.multiLineSurface(spell_name + "\n \n" +
                                          data[spell_name]["desc"] + "\n" +
                                          "cost:" + str(data[spell_name]["cost"]) + "\n" +
-                                         "damage:" + str(data[spell_name]["damage"]),
+                                         "base damage:" + str(data[spell_name]["damage"]),
                                          FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
     surface_rect = surface.get_rect()
     surface_rect.centerx = offset_x + button_x

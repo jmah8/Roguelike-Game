@@ -204,7 +204,7 @@ def draw_ui():
     draw_messages(config.GAME_DATA.game_messages)
 
 
-def _draw_creatures(creatures_list):
+def _draw_and_update_anim_creatures(creatures_list):
     """
     Draws all creatures in player FOV offset by camera
 
@@ -234,7 +234,7 @@ def draw_game_objects():
     Draws all game objects offset by camera
     """
     _draw_items(config.GAME_DATA.item_data)
-    _draw_creatures(config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"])
+    _draw_and_update_anim_creatures(config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"])
 
 
 def draw_particles():

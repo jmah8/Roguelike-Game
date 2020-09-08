@@ -31,7 +31,7 @@ PATHFINDING.make_graph(MAP_INFO)
 PATHFINDING.neighbour()
 
 # Save this
-PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
+PLAYER = entity_generator.generate_player(MAP_INFO.map_tree, "knight")
 
 # Save this
 GAME_DATA = game_data.GameData()
@@ -70,7 +70,7 @@ def new_game():
     PATHFINDING.neighbour()
 
     # Save this
-    PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
+    PLAYER = entity_generator.generate_player(MAP_INFO.map_tree, "knight")
 
     # Save this
     GAME_DATA = game_data.GameData()

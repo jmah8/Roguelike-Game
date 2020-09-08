@@ -32,6 +32,6 @@ def start():
     # Repeat keys when held down
     pygame.key.set_repeat(350, 75)
 
-    menu.main()
+    menu.main_menu()
 
 start()

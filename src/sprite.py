@@ -5,6 +5,9 @@ import os
 KNIGHT = 'creatures/knight/knight_idle_anim_f0.png'
 KNIGHT_RUN = 'creatures/knight/knight_run_anim_f0.png'
 
+WIZARD = 'creatures/wizard/wizard_idle_anim_f0.png'
+WIZARD_RUN = 'creatures/wizard/wizard_run_anim_f0.png'
+
 SLIME = 'creatures/slime/slime_idle_anim_f0.png'
 SLIME_RUN = 'creatures/slime/slime_run_anim_f0.png'
 
@@ -192,6 +195,9 @@ class GameSprites:
         self.knight_anim = load_anim(KNIGHT, 0, 5)
         self.knight_run_anim = load_anim(KNIGHT_RUN, 0, 5)
 
+        self.wizard_anim = load_anim(WIZARD, 0, 3)
+        self.wizard_run_anim = load_anim(WIZARD_RUN, 0, 3)
+
         # UI
         self.empty_inventory_slot = load_image(EMPTY_INVENTORY_SLOT)
         self.inventory_button = load_image(INVENTORY)
@@ -233,7 +239,14 @@ class GameSprites:
                 "run_right": self.knight_run_anim,
                 "run_left": flip_anim(self.knight_run_anim)
             },
-            ""
+
+            "wizard": {
+                "idle_right": self.wizard_anim,
+                "idle_left": flip_anim(self.wizard_anim),
+                "run_right": self.wizard_run_anim,
+                "run_left": flip_anim(self.wizard_run_anim)
+            },
+
             # Items
             "sword": load_image(SWORD),
             "shield": load_image(SHIELD),
