@@ -556,7 +556,7 @@ def _load_equipment_screen():
                 armor.left_click_fn = equip_entity.item.equip_stat.toggle_equip
                 armor.mouse_over_fn = partial(draw.draw_description, armor.rect.bottomleft[0],
                                                                     armor.rect.bottomleft[1],
-                                                                    menu_width, menu_heightww
+                                                                    menu_width, menu_height,
                                                                     equip_entity.item.item_description())
 
     return equip_slot
