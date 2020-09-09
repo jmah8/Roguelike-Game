@@ -162,19 +162,18 @@ def line(start, end, map, fov, only_in_fov=True):
 #         surface_rect.center = (offset_x + button_x, offset_y + button_y - BUTTON_HEIGHT)
 #         config.SURFACE_MAIN.blit(surface, surface_rect)
 
-def spell_description(spell_name, button_x, button_y, offset_x, offset_y):
-    # Multiline text
-    LINES_OF_TEXT = 3
-    rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
-    surface = game_text.multiLineSurface(spell_name + "\n \n" +
-                                         data[spell_name]["desc"] + "\n" +
-                                         "cost:" + str(data[spell_name]["cost"]) + "\n" +
-                                         "damage:" + str(data[spell_name]["damage"]),
-                                         FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
-    surface_rect = surface.get_rect()
-    surface_rect.centerx = offset_x + button_x
-    surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
-    config.SURFACE_MAIN.blit(surface, surface_rect)
+def spell_description(spell_name):
+    """
+    Returns spell description
+
+    Returns:
+        description (String): Description of spell
+    """
+    description = data[spell_name]["desc"] + "\n" + \
+                 "cost:" + str(data[spell_name]["cost"]) + "\n" + \
+                 "base damage:" + str(data[spell_name]["damage"])
+
+    return description
 
 
 def cast_fireball(caster, line):
@@ -191,7 +190,7 @@ def cast_fireball(caster, line):
     particle_group = []
     particle.MagicParticle(particle_group, config.SPRITE.magic['fireball'], line)
 
-    damage = caster.creature.stat.calc_magic_damage(base_damage)
+    damage = caster.creature.stat.magic_damage(base_damage)
 
     # If caster has enough mp to cast magic
     if caster.creature.stat.mp - mp_cost >= 0:
@@ -245,7 +244,7 @@ def cast_lightning(caster, line):
     particle_group = []
     particle.MagicParticle(particle_group, config.SPRITE.magic['lightning'], line)
 
-    damage = caster.creature.stat.calc_magic_damage(base_damage)
+    damage = caster.creature.stat.magic_damage(base_damage)
 
     # If caster has enough mp to cast magic
     if caster.creature.stat.mp - mp_cost >= 0:
@@ -278,7 +277,7 @@ def cast_confusion(caster, line):
     particle.MagicParticle(particle_group, config.SPRITE.magic['confusion'], line)
 
     # Special case where spell shouldn't do damage but instead duration scales with caster stat
-    turn_count = caster.creature.stat.calc_magic_damage(base_damage)
+    turn_count = caster.creature.stat.magic_damage(base_damage)
 
     # If caster has enough mp to cast magic
     if caster.creature.stat.mp - mp_cost >= 0:

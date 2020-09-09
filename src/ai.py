@@ -25,7 +25,7 @@ class Ai_test:
         """
         Once per turn, execute
 
-        Args:
+        Attributes:
             owner (Entity): Entity with self as ai
         """
         self.owner = None

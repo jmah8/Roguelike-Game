@@ -27,11 +27,11 @@ def start():
     # Pygame screen
     pygame.init()
     pygame.display.set_caption("Knight's Adventure")
-    pygame.display.set_icon(config.SPRITE.sword)
+    pygame.display.set_icon(config.SPRITE.entity_dict["sword"])
 
     # Repeat keys when held down
     pygame.key.set_repeat(350, 75)
 
-    menu.main()
+    menu.main_menu()
 
 start()

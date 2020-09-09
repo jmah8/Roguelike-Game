@@ -2,14 +2,28 @@
   "knight": {
     "hp": 30,
     "mp": 5,
-    "strength": 3,
-    "defense": 1,
+    "strength": 2,
+    "defense": 2,
     "wizardry": 0,
     "equip" : {
       "Left hand": null,
       "Right hand": null,
       "Armor": null
-    }
+    },
+    "desc": "Knight \n \n Okay at defense \n and attacking"
+  },
+  "wizard": {
+    "hp": 20,
+    "mp": 10,
+    "strength": 1,
+    "defense": 1,
+    "wizardry": 2,
+    "equip" : {
+      "Left hand": null,
+      "Right hand": null,
+      "Armor": null
+    },
+    "desc": "Wizard \n \n Good at magic"
   },
   "slime": {
     "hp": 5,

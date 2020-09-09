@@ -31,9 +31,9 @@ class CreatureStat:
         self.mp = self.max_mp
         self.exp = 0
         self.level = level
-        self.strength = strength + (1 * (level - 1))
-        self.defense = defense + (1 * (level - 1))
-        self.wizardry = wizardry + (1 * (level - 1))
+        self.strength = strength + (level - 1)
+        self.defense = defense + (level - 1)
+        self.wizardry = wizardry + (level - 1)
 
     def heal_hp(self, heal_value):
         """
@@ -75,7 +75,7 @@ class CreatureStat:
         damage = self.strength
         return damage
 
-    def calc_magic_damage(self, base_damage):
+    def magic_damage(self, base_damage):
         """
         Returns damage dealt from using spell
         scaling with wizardry and spell damage
@@ -248,6 +248,17 @@ class Creature:
         total_blocked_damage = self.stat.damage_blocked + equipment_bonus
         return total_blocked_damage
 
+    def creature_description(self):
+        """
+        Returns:
+            description (String): Description of creature from creature.json
+                else return No description available if creature doesn't have description
+        """
+        if "desc" in data[self.name_instance].keys():
+            description = data[self.name_instance]["desc"] + "\n"
+            return description
+        return "No description available"
+
     def take_damage(self, damage):
         """
         Creature takes damage depending on stat.defense to
@@ -381,5 +392,3 @@ class Creature:
             self.stat.exp -= 100
             game_text.add_game_message_to_print(
                 self.name_instance + " leveled up ", YELLOW)
-
-

@@ -96,11 +96,12 @@ def _generate_skeleton(x, y):
     return generated_enemy
 
 
-def generate_player(tree):
+def generate_player(tree, player_class):
     """
     Generates player in random room
 
     Args:
+        player_class (String): Name of player class
         tree (BSP tree): Tree representing rooms
     """
     room = random.choice(tree.root.child_room_list)
@@ -108,8 +109,8 @@ def generate_player(tree):
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
     player_container = container.Container(inventory=[])
-    player_com = creature.Creature("knight", team="player", load_equip_scheme=True)
-    player = entity.Entity(x, y, "knight", creature=player_com, container=player_container)
+    player_com = creature.Creature(player_class, team="player", load_equip_scheme=True)
+    player = entity.Entity(x, y, player_class, creature=player_com, container=player_container)
     return player
 
 

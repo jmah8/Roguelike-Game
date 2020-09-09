@@ -20,11 +20,12 @@ class Game:
         """
         Initializes pygame
         """
-        self.running = True
+        # TODO: move game variables/config variables to game
+        # self.running = True
 
         self.playing = True
 
-        buttonmanager.add_button_to_bottom_panel()
+        add_button_to_bottom_panel()
 
     def run(self):
         """
@@ -35,7 +36,16 @@ class Game:
             handle_events()
             update()
             draw.draw_mouse()
+            self.check_if_player_lost()
             pygame.display.flip()
+
+    def check_if_player_lost(self):
+        """
+        Checks if player lost (hp <= 0) and if so brings lose menu up
+        """
+        if config.PLAYER.creature.stat.hp <= 0:
+            self.playing = False
+            menu.lose_menu()
 
 
 def handle_events():
@@ -588,3 +598,13 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
+
+
+def add_button_to_bottom_panel():
+    """
+    Adds clickable buttons to bottom of screen
+    """
+    config.BUTTON_PANEL.create_button(config.PLAYER.image, 'stats', menu.stat_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'minimap', toggle_minimap)
+    config.BUTTON_PANEL.create_button(config.SPRITE.map_button, 'map', menu.map_menu)

@@ -1,5 +1,6 @@
 from functools import partial
 
+import entity_generator
 from constant import *
 import config
 import draw
@@ -66,7 +67,7 @@ class TextButton:
                 self.colour = self.normal_colour
 
 
-def main():
+def main_menu():
     """
     Main menu before starting game
 
@@ -92,8 +93,6 @@ def main():
     exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
                              (CAMERA_WIDTH // 2, setting_button.rect.midbottom[1] + 100), GREY)
 
-    g = game.Game()
-
     while True:
         config.SURFACE_MAIN.fill(WHITE)
 
@@ -115,15 +114,25 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
-                        # game.populate_map()
-                        # g.run()
                         instruction_menu()
+                        class_selection_menu()
+                        g = game.Game()
+                        game.populate_map()
+                        g.run()
+                        # Since we are out of game loop = lost game
+                        # and so no save game available
+                        continue_button.clickable = False
                     elif continue_button.rect.collidepoint((mouse_x, mouse_y)) and continue_button.clickable:
+                        g = game.Game()
                         game.load_game()
                         g.run()
+                        # Since we are out of game loop = lost game
+                        # and so no save game available
+                        continue_button.clickable = False
                     elif setting_button.rect.collidepoint((mouse_x, mouse_y)):
                         keys_menu()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -169,11 +178,13 @@ def pause():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.KEYDOWN:
+                
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pause_menu = False
                     break
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                    
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if resume_button.rect.collidepoint((mouse_x, mouse_y)):
                         pause_menu = False
@@ -199,6 +210,7 @@ def map_menu():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -214,6 +226,9 @@ def map_menu():
 
 
 def magic_select_menu():
+    """
+    Shows spells that are castable and allows for choosing which spell to cast
+    """
     select_menu = _draw_castable_spells()
 
     select_magic = True
@@ -230,7 +245,10 @@ def magic_select_menu():
 
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     select_magic = False
                     break
@@ -262,27 +280,27 @@ def _draw_castable_spells():
     menu_height = config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE)
 
     magic_select = buttonmanager.ButtonManager(menu_width,
-                                                   config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE),
+                                                   menu_height,
                                                    num_of_spells, 1, BLACK)
 
     fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
                                         magic.cast_fireball)
-    tmp = (lambda: magic.spell_description("fireball", 0, 0, menu_width,
-                                          menu_height))
+    tmp = (lambda: draw.draw_description(0, 0, menu_width,
+                                          menu_height, magic.spell_description("fireball")))
     fireball.mouse_over_fn = tmp
     magic_select.add_button(fireball, "fireball")
 
     lightning = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.magic["lightning"],
                                          magic.cast_lightning)
-    tmp1 = (lambda: magic.spell_description("lightning", lightning.rect.topleft[0], lightning.rect.topleft[1],
-                                           menu_width, menu_height))
+    tmp1 = (lambda: draw.draw_description(lightning.rect.topleft[0], lightning.rect.topleft[1],
+                                           menu_width, menu_height, magic.spell_description("lightning")))
     lightning.mouse_over_fn = tmp1
     magic_select.add_button(lightning, "lightning")
 
     confusion = buttonmanager.IconButton(4 * SPRITE_SIZE, 0, config.SPRITE.magic["confusion"],
                                          magic.cast_confusion)
-    tmp2 = (lambda: magic.spell_description("confusion", confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
-                                          menu_height))
+    tmp2 = (lambda: draw.draw_description(confusion.rect.topleft[0], confusion.rect.topleft[1], menu_width,
+                                        menu_height, magic.spell_description("confusion")))
     confusion.mouse_over_fn = tmp2
     magic_select.add_button(confusion, "confusion")
 
@@ -300,7 +318,9 @@ def magic_targetting_menu(spell_to_cast):
     while magic_cast:
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     magic_cast = False
                     break
@@ -341,7 +361,9 @@ def stat_menu():
     while stat_open:
         events = pygame.event.get()
         for event in events:
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.KEYDOWN:
                 stat_open = False
                 break
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -425,7 +447,10 @@ def inventory_menu():
             hovered_button.mouse_over_fn()
 
         for event in events_list:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
                         'inventory', mouse_x, mouse_y)
@@ -670,7 +695,7 @@ def _create_item_mouse_interaction_hover(button, item_entity, menu_height, menu_
             place hover box)
     """
     button_x, button_y = button.rect.topleft
-    button.mouse_over_fn = partial(item_entity.item.item_description, button_x, button_y, menu_width, menu_height)
+    button.mouse_over_fn = partial(draw.draw_description, button_x, button_y, menu_width, menu_height, item_entity.item.item_description())
 
 
 def win_menu():
@@ -709,7 +734,7 @@ def win_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
                         game.new_game()
@@ -809,7 +834,7 @@ def keys_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if back_button.rect.collidepoint((mouse_x, mouse_y)):
                         control_open = False
@@ -839,9 +864,8 @@ def instruction_menu():
     chest_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
     continue_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height - SPRITE_SIZE)
 
-    g = game.Game()
-
-    while True:
+    instruction_menu_open = True
+    while instruction_menu_open:
         config.SURFACE_MAIN.fill(WHITE)
 
         config.SURFACE_MAIN.blit(instruction_surface, instruction_rect)
@@ -851,11 +875,125 @@ def instruction_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-            if event.type == pygame.KEYDOWN:
-                game.populate_map()
-                g.run()
+            elif event.type == pygame.KEYDOWN:
+                instruction_menu_open = False
+                break
 
         pygame.display.update()
 
 
+def class_selection_menu():
+    """
+    create screens for inventory + equipment menus
+    """
 
+    knight_entity = entity_generator.generate_player(config.MAP_INFO.map_tree, 'knight')
+    wizard_entity = entity_generator.generate_player(config.MAP_INFO.map_tree, 'wizard')
+
+    menu_open = True
+
+    menu_width = config.CAMERA.camera_width // 2 - (SPRITE_SIZE * 3 // 2)
+    menu_height = config.CAMERA.camera_height // 2
+
+    class_selector = buttonmanager.ButtonManager(menu_width, menu_height, 3, 1, BLACK)
+
+    knight_button = buttonmanager.IconButton(0, 0, config.SPRITE.entity_dict["knight"]["idle_right"][0])
+    wizard_button = buttonmanager.IconButton(2 * SPRITE_SIZE, 0, config.SPRITE.entity_dict["wizard"]["idle_right"][0])
+
+    knight_button.mouse_over_fn = partial(draw.draw_description,
+                                          knight_button.rect.topleft[0],
+                                          knight_button.rect.topleft[1],
+                                          menu_width, menu_height,
+                                          knight_entity.creature.creature_description())
+
+    wizard_button.mouse_over_fn = partial(draw.draw_description,
+                                          wizard_button.rect.topleft[0],
+                                          wizard_button.rect.topleft[1],
+                                          menu_width, menu_height,
+                                          wizard_entity.creature.creature_description())
+
+    class_selector.add_button(knight_button, "knight")
+    class_selector.add_button(wizard_button, "wizard")
+
+    while menu_open:
+        config.SURFACE_MAIN.fill(WHITE)
+        events_list = pygame.event.get()
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        hovered_button = class_selector.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_button and hovered_button.mouse_over_fn:
+            hovered_button.mouse_over_fn()
+
+        class_selector.draw_buttons(config.SURFACE_MAIN)
+
+        for event in events_list:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    knight_pressed = class_selector.check_if_specific_button_pressed(
+                        "knight", mouse_x, mouse_y)
+                    if knight_pressed:
+                        config.PLAYER = knight_entity
+                        menu_open = False
+                        break
+
+                    wizard_pressed = class_selector.check_if_specific_button_pressed(
+                        "wizard", mouse_x, mouse_y)
+                    if wizard_pressed:
+                        config.PLAYER = wizard_entity
+                        menu_open = False
+                        break
+
+        pygame.display.update()
+
+
+def lose_menu():
+    """
+    Lose menu with go to main menu and exit button
+
+    Deletes save file if there is data
+    """
+    if os.path.isfile(SAVE_PATH) and os.stat(SAVE_PATH).st_size > 0:
+        open(SAVE_PATH, 'w').close()
+
+    # Make buttons
+    new_button = TextButton("Go to main menu", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                               (CAMERA_WIDTH // 2, CAMERA_HEIGHT // 4 + 100), GREEN)
+
+    exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
+                             (CAMERA_WIDTH // 2, new_button.rect.midbottom[1] + 100), GREY)
+
+    loss_menu = True
+
+    while loss_menu:
+        config.SURFACE_MAIN.blit(config.SPRITE.unfocused_window, (0, 0))
+
+        game_text.draw_text(config.SURFACE_MAIN,
+                            (CAMERA_WIDTH // 2, new_button.rect.midtop[1] - 100), WHITE,
+                            "You lost", BLACK, center=True)
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        new_button.mouse_over()
+        exit_button.mouse_over()
+
+        new_button.draw()
+
+        exit_button.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if new_button.rect.collidepoint((mouse_x, mouse_y)):
+                        loss_menu = False
+                        break
+                    elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
+                        pygame.quit()
+
+        config.CLOCK.tick(FPS)
+        pygame.display.update()

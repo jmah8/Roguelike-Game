@@ -31,7 +31,7 @@ PATHFINDING.make_graph(MAP_INFO)
 PATHFINDING.neighbour()
 
 # Save this
-PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
+PLAYER = entity_generator.generate_player(MAP_INFO.map_tree, "knight")
 
 # Save this
 GAME_DATA = game_data.GameData()
@@ -48,6 +48,7 @@ BUTTON_PANEL = buttonmanager.GridButtonManager(
     SURFACE_MAIN.get_width() - (SPRITE_SIZE * ((TILE_WIDTH // 2) + (NUM_OF_BUTTONS_X // 2))),
     SURFACE_MAIN.get_height() - SPRITE_SIZE, NUM_OF_BUTTONS_X, NUM_OF_BUTTONS_Y, (NUM_OF_BUTTONS_X * NUM_OF_BUTTONS_Y),
     BLACK)
+
 
 def new_game():
     """
@@ -69,7 +70,7 @@ def new_game():
     PATHFINDING.neighbour()
 
     # Save this
-    PLAYER = entity_generator.generate_player(MAP_INFO.map_tree)
+    PLAYER = entity_generator.generate_player(MAP_INFO.map_tree, "knight")
 
     # Save this
     GAME_DATA = game_data.GameData()

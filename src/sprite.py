@@ -5,6 +5,9 @@ import os
 KNIGHT = 'creatures/knight/knight_idle_anim_f0.png'
 KNIGHT_RUN = 'creatures/knight/knight_run_anim_f0.png'
 
+WIZARD = 'creatures/wizard/wizard_idle_anim_f0.png'
+WIZARD_RUN = 'creatures/wizard/wizard_run_anim_f0.png'
+
 SLIME = 'creatures/slime/slime_idle_anim_f0.png'
 SLIME_RUN = 'creatures/slime/slime_run_anim_f0.png'
 
@@ -178,64 +181,29 @@ class GameSprites:
         self.unfocused_window.fill(GREY)
         self.unfocused_window.set_alpha(5)
 
-
         # Creatures
         self.slime_anim = load_anim(SLIME, 0, 5)
         self.slime_run_anim = load_anim(SLIME_RUN, 0, 5)
-        self.slime_dict = {
-            "idle_right": self.slime_anim,
-            "idle_left": flip_anim(self.slime_anim),
-            "run_right": self.slime_run_anim,
-            "run_left": flip_anim(self.slime_run_anim)
-        }
 
         self.goblin_anim = load_anim(GOBLIN, 0, 5)
         self.goblin_run_anim = load_anim(GOBLIN_RUN, 0, 5)
-        self.goblin_dict = {
-            "idle_right": self.goblin_anim,
-            "idle_left": flip_anim(self.goblin_anim),
-            "run_right": self.goblin_run_anim,
-            "run_left": flip_anim(self.goblin_run_anim)
-        }
 
         self.skeleton_anim = load_anim(SKELETON, 0, 3)
         self.skeleton_run_anim = load_anim(SKELETON_RUN, 0, 3)
-        self.skeleton_dict = {
-            "idle_right": self.skeleton_anim,
-            "idle_left": flip_anim(self.skeleton_anim),
-            "run_right": self.skeleton_run_anim,
-            "run_left": flip_anim(self.skeleton_run_anim)
-        }
 
         # Knight
         self.knight_anim = load_anim(KNIGHT, 0, 5)
         self.knight_run_anim = load_anim(KNIGHT_RUN, 0, 5)
-        self.knight_dict = {
-            "idle_right": self.knight_anim,
-            "idle_left": flip_anim(self.knight_anim),
-            "run_right": self.knight_run_anim,
-            "run_left": flip_anim(self.knight_run_anim)
-        }
 
-        # Items
-        self.empty_inventory_slot = load_image(EMPTY_INVENTORY_SLOT)
-        self.sword = load_image(SWORD)
-        self.shield = load_image(SHIELD)
-        self.armor = load_image(ARMOR)
-        self.chest = load_image(CHEST)
-
-        # Consumables
-        self.red_potion = load_image(RED_POTION)
-        self.blue_potion = load_image(BLUE_POTION)
-        self.teleport_scroll = load_image(TELEPORT_SCROLL)
+        self.wizard_anim = load_anim(WIZARD, 0, 3)
+        self.wizard_run_anim = load_anim(WIZARD_RUN, 0, 3)
 
         # UI
+        self.empty_inventory_slot = load_image(EMPTY_INVENTORY_SLOT)
         self.inventory_button = load_image(INVENTORY)
-        self.camera = load_image(CAMERA)
         self.equip_screen = load_image(EQUIP_SCREEN, None, (TILE_WIDTH // 2 * SPRITE_SIZE, TILE_HEIGHT // 2 * SPRITE_SIZE))
         self.minimap_button = load_image(MINIMAP_BUTTON)
         self.map_button = load_image(MAP_BUTTON)
-
 
         # Sprite dicts
         self.magic = {
@@ -271,18 +239,26 @@ class GameSprites:
                 "run_right": self.knight_run_anim,
                 "run_left": flip_anim(self.knight_run_anim)
             },
-            ""
-            # Items
-            "sword": self.sword,
-            "shield": self.shield,
-            "armor": self.armor,
-            "chest": self.chest,
-            # Consumables
-            "red potion": self.red_potion,
-            "blue potion": self.blue_potion,
-            "teleport scroll": self.teleport_scroll,
 
-            "camera": self.camera
+            "wizard": {
+                "idle_right": self.wizard_anim,
+                "idle_left": flip_anim(self.wizard_anim),
+                "run_right": self.wizard_run_anim,
+                "run_left": flip_anim(self.wizard_run_anim)
+            },
+
+            # Items
+            "sword": load_image(SWORD),
+            "shield": load_image(SHIELD),
+            "armor": load_image(ARMOR),
+            "chest": load_image(CHEST),
+
+            # Consumables
+            "red potion": load_image(RED_POTION),
+            "blue potion": load_image(BLUE_POTION),
+            "teleport scroll": load_image(TELEPORT_SCROLL),
+
+            "camera": load_image(CAMERA)
         }
 
         self.tile_dict = {

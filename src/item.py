@@ -211,32 +211,18 @@ class Item:
             use_fn = self.equip_stat.toggle_equip
             use_fn()
 
-    def item_description(self, button_x, button_y, offset_x, offset_y):
+    def item_description(self):
         """
-        Draws white box with item name on top of item
-        when hovering over it
+        Returns item description
 
-        Args:
-            button_x (int): x coord of IconButton item is in
-            button_y (int): y coord of IconButton item is in
-            offset_x (int): Where GridButtonManager is (needed for finding where to
-                place hover box)
-            offset_y (int): Where GridButtonManager is (needed for finding where to
-                place hover box)
+        Returns:
+            description (String): Description of item/equipment
         """
-        description = self.name + "\n \n" + item_data[self.name]["desc"] + " "
+        description = item_data[self.name]["desc"] + "\n"
         if self.equip_stat:
             description += self.equip_stat.equipment_description()
 
-        LINES_OF_TEXT = description.count('\n')
-        rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
-        surface = game_text.multiLineSurface(description,
-                                             FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
-        surface_rect = surface.get_rect()
-        surface_rect.centerx = offset_x + button_x
-        surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
-        config.SURFACE_MAIN.blit(surface, surface_rect)
-
+        return description
 
 # Change it so if at max hp, it heals for 0
 def heal_user_hp(user_entity, args):

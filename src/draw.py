@@ -174,7 +174,7 @@ def draw_mouse():
     mouse_x = mouse_x // SPRITE_SIZE
     mouse_y = mouse_y // SPRITE_SIZE
 
-    draw_img_at_coord(config.SPRITE.camera, mouse_x, mouse_y)
+    draw_img_at_coord(config.SPRITE.entity_dict["camera"], mouse_x, mouse_y)
 
 
 def draw_messages(message_list):
@@ -204,7 +204,7 @@ def draw_ui():
     draw_messages(config.GAME_DATA.game_messages)
 
 
-def _draw_creatures(creatures_list):
+def _draw_and_update_anim_creatures(creatures_list):
     """
     Draws all creatures in player FOV offset by camera
 
@@ -234,7 +234,7 @@ def draw_game_objects():
     Draws all game objects offset by camera
     """
     _draw_items(config.GAME_DATA.item_data)
-    _draw_creatures(config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"])
+    _draw_and_update_anim_creatures(config.GAME_DATA.creature_data["enemy"] + config.GAME_DATA.creature_data["player"])
 
 
 def draw_particles():
@@ -244,3 +244,23 @@ def draw_particles():
     for particle in config.PARTICLE_LIST:
         draw_at_camera_offset_with_image(particle)
         particle.update()
+
+def draw_description(button_x, button_y, offset_x, offset_y, description):
+    """
+    Draws description box on top of IconButton
+
+    Args:
+        button_x (int): x coord of IconButton item is in
+        button_y (int): y coord of IconButton item is in
+        offset_x (int): Where GridButtonManager is (needed for finding where to
+            place hover box)
+        offset_y (int): Where GridButtonManager is (needed for finding where to
+            place hover box)
+    """
+    LINES_OF_TEXT = max(1, description.count('\n') - 1)
+    rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT * LINES_OF_TEXT)
+    surface = game_text.multiLineSurface(description, FONT_ITEM_DESCRIPTION, rect, BLACK, WHITE, 1)
+    surface_rect = surface.get_rect()
+    surface_rect.centerx = offset_x + button_x
+    surface_rect.top = offset_y + button_y - (LINES_OF_TEXT * BUTTON_HEIGHT)
+    config.SURFACE_MAIN.blit(surface, surface_rect)
