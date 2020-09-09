@@ -165,7 +165,9 @@ def _handle_keyboard_event(event):
     # Pickup/Drop Item
     elif event.key == pygame.K_t:
         objects_at_player = map_items_at_coord(config.GAME_DATA.item_data, config.PLAYER.x, config.PLAYER.y)
-        objects_at_player[0].item.pick_up(config.PLAYER)
+        for obj in objects_at_player:
+            if obj.item:
+                obj.item.pick_up(config.PLAYER)
         update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     # TODO: instead of dropping last item dropped, drop mouse event in inventory
