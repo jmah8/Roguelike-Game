@@ -60,7 +60,7 @@ def _draw_minimap_walls_generated_map(map_info, scale_factor_x, scale_factor_y):
 
 def _draw_minimap_stairs_generated_map(tile_array, scale_factor_x, scale_factor_y):
     """
-    Draws stairs onto minimap as brown
+    Draws stairs onto minimap as brown if stairs are seen
 
     Args:
         tile_array (2D array): 2D array representing map
@@ -69,7 +69,7 @@ def _draw_minimap_stairs_generated_map(tile_array, scale_factor_x, scale_factor_
     """
     for col in tile_array:
         for tile in col:
-            if tile.type == UPSTAIR or tile.type == DOWNSTAIR:
+            if (tile.type == UPSTAIR or tile.type == DOWNSTAIR) and tile.seen:
                 pygame.draw.rect(config.SURFACE_MAIN, BROWN,
                                  (tile.x * SPRITE_SIZE / scale_factor_x,
                                   tile.y * SPRITE_SIZE / scale_factor_y,

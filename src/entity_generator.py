@@ -159,7 +159,7 @@ def generate_items(tree):
     for child_room in tree.root.child_room_list:
         random_num = random.randint(0, 100)
         # 50% chance of spawning item
-        if random_num < 50:
+        if random_num < 75:
             _generate_item(child_room, item_list)
 
     return item_list
