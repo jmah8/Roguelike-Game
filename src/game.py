@@ -159,15 +159,13 @@ def _handle_keyboard_event(event):
         update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     # Mini_map
-    elif event.key == pygame.K_TAB:
+    elif event.key == pygame.K_m:
         toggle_minimap()
 
     # Pickup/Drop Item
     elif event.key == pygame.K_t:
         objects_at_player = map_items_at_coord(config.GAME_DATA.item_data, config.PLAYER.x, config.PLAYER.y)
-        for obj in objects_at_player:
-            if obj.item:
-                obj.item.pick_up(config.PLAYER)
+        objects_at_player[0].item.pick_up(config.PLAYER)
         update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
     # TODO: instead of dropping last item dropped, drop mouse event in inventory
@@ -176,10 +174,10 @@ def _handle_keyboard_event(event):
             config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER)
         update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
-    elif event.key == pygame.K_ESCAPE:
+    elif event.key == pygame.K_F12:
         _toggle_wallhack()
 
-    elif event.key == pygame.K_m:
+    elif event.key == pygame.K_TAB:
         _toggle_camera()
 
     # Auto move
@@ -189,6 +187,7 @@ def _handle_keyboard_event(event):
     # Menu Buttons
     elif event.key == pygame.K_p:
         menu.pause()
+
     elif event.key == pygame.K_i:
         menu.inventory_menu()
 
@@ -209,9 +208,6 @@ def _handle_keyboard_event(event):
                 config.MAP_INFO.tile_array[config.PLAYER.y][config.PLAYER.x].type == DOWNSTAIR:
             config.CURRENT_FLOOR += 1
             config.GAME_DATA.transition_next_level()
-
-    elif event.key == pygame.K_F1:
-        new_game()
 
     elif event.key == pygame.K_F2:
         save_game()
@@ -273,7 +269,7 @@ def _toggle_camera():
                 elif event.key == pygame.K_RETURN:
                     _move_to_free_camera(free_camera)
                     camera_on = False
-                elif event.key == pygame.K_m:
+                elif event.key == pygame.K_TAB:
                     camera_on = False
                 elif event.key == pygame.K_ESCAPE:
                     camera_on = False

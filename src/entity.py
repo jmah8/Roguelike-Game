@@ -29,7 +29,7 @@ class Entity:
         container (arg, Container): Container self is
     """
 
-    def __init__(self, x, y, object_name, creature=None, ai=None, item=None, equipment=None, container=None):
+    def __init__(self, x, y, object_name, creature=None, ai=None, item=None, container=None):
         self.x = x
         self.y = y
         self.object_name = object_name

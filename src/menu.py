@@ -760,25 +760,25 @@ def keys_menu():
                "z \n" \
                "c \n" \
                "x \n" \
-               "TAB \n" \
-               "t \n" \
-               "ESC \n" \
+               "Left mouse click \n" \
                "m \n" \
+               "t \n" \
+               "TAB \n" \
+               "TAB + Movement keys \n" \
+               "TAB + ENTER \n" \
                "v \n" \
                "p \n" \
                "i \n" \
                "i + Left mouse click \n" \
                "i + Right mouse click \n" \
                "SPACE \n" \
-               "Left mouse click \n" \
                "SPACE + Left mouse click \n" \
-               "m + Movement keys \n" \
-               "m + ENTER \n" \
+               "SPACE + Left mouse click + Left mouse click \n" \
                "1 \n" \
                "2 \n" \
-               "F1 \n" \
                "F2 \n" \
-               "F3"
+               "F3 \n " \
+               "F12"
 
     actions = "Action\n" \
                 "Walk up \n" \
@@ -790,25 +790,25 @@ def keys_menu():
                 "Walk diagonally down and left \n" \
                 "Walk diagonally down and right \n" \
                 "Stay still \n" \
+                "Move to mouse cursor \n" \
                 "Toggle minimap \n" \
                 "Pickup item \n" \
-                "Toggle FOV limitations \n" \
                 "Toggle camera \n" \
+                "Move camera around \n" \
+                "Move to camera location \n" \
                 "Auto explore \n" \
                 "Pause and open menu \n" \
                 "Toggle inventory screen \n" \
-                "Use item / Toggle equipment \n" \
+                "Use item / Toggle equip \n" \
                 "Drop item \n" \
                 "Toggle magic selection screen \n" \
-                "Move to mouse cursor \n" \
-                "Fire spell \n" \
-                "Move camera around \n" \
-                "Move to camera location \n" \
+                "Choose spell to cast \n" \
+                "Cast chosen spell \n" \
                 "Transition to previous level \n" \
                 "Transition to next level \n" \
-                "Make new game \n" \
                 "Manually save game \n" \
-                "Manually load game"
+                "Manually load game \n" \
+                "Toggle FOV limitations \n"
 
     back_button = TextButton("Go back", (BUTTON_WIDTH, BUTTON_HEIGHT - 20),
                                  (CAMERA_WIDTH // 2, config.CAMERA.camera_height - (BUTTON_HEIGHT // 2)), RED)
@@ -847,8 +847,9 @@ def instruction_menu():
     """
     Instruction menu telling player how to win
     """
-    instructions = "Reach the lowest level of the dungeon and find the chest full of treasure! \n " \
-                   "Find items to aid you in your adventure and fight monster that get in your way."
+    instructions = "Reach the lowest level of the dungeon and find the chest full of treasure! \n \n " \
+                   "As you progress further into the dungeon, monsters get harder. \n" \
+                   "Find items to aid you in your adventure and fight monster to get experience."
     continue_str = "Press any key to continue"
 
     instruction_rect = pygame.Rect(0, 0, config.CAMERA.camera_width // 2, SPRITE_SIZE * 6)
@@ -856,11 +857,11 @@ def instruction_menu():
     chest_rect = pygame.Rect(0, 0, SPRITE_SIZE, SPRITE_SIZE)
 
     instruction_surface = game_text.multiLineSurfaceTransparentBG(instructions, FONT_MESSAGE_TEXT, instruction_rect,
-                                                                  BLACK, WHITE, None, justification=1)
+                                                                  BLACK, WHITE, None, justification=0)
     continue_surface = game_text.multiLineSurfaceTransparentBG(continue_str, FONT_MESSAGE_TEXT, continue_rect,
                                                                BLACK, WHITE, None, justification=1)
 
-    instruction_rect.midtop = (config.CAMERA.camera_width // 2, SPRITE_SIZE)
+    instruction_rect.midtop = (config.CAMERA.camera_width // 2, (SPRITE_SIZE - FONT_SIZE))
     chest_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height // 2)
     continue_rect.midtop = (config.CAMERA.camera_width // 2, config.CAMERA.camera_height - SPRITE_SIZE)
 
