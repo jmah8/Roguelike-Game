@@ -210,8 +210,13 @@ def map_menu():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
-                
-            if event.type == pygame.MOUSEBUTTONDOWN:
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    menu_closed = True
+                    break
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
@@ -483,6 +488,7 @@ def inventory_menu():
                     game.toggle_minimap()
                 if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
                     menu_closed = True
+                    break
 
         config.CLOCK.tick(FPS)
         pygame.display.update()
@@ -774,8 +780,9 @@ def keys_menu():
                "SPACE \n" \
                "SPACE + Left mouse click \n" \
                "SPACE + Left mouse click + Left mouse click \n" \
-               "1 \n" \
-               "2 \n" \
+               "1 (On upstairs) \n" \
+               "2 (On downstairs) \n" \
+               "ESC \n" \
                "F2 \n" \
                "F3 \n " \
                "F12"
@@ -799,13 +806,14 @@ def keys_menu():
                 "Auto explore \n" \
                 "Pause and open menu \n" \
                 "Toggle inventory screen \n" \
-                "Use item / Toggle equip \n" \
+                "Use item / Equip / Unequip \n" \
                 "Drop item \n" \
-                "Toggle magic selection screen \n" \
+                "Toggle magic selection \n" \
                 "Choose spell to cast \n" \
                 "Cast chosen spell \n" \
                 "Transition to previous level \n" \
                 "Transition to next level \n" \
+                "Close opened menu \n" \
                 "Manually save game \n" \
                 "Manually load game \n" \
                 "Toggle FOV limitations \n"

@@ -21,25 +21,26 @@ Short gameplay
 | z   | Walk diagonally down and left |
 | c   | Walk diagonally down and right |
 | x   | Stay still |
-| TAB | Toggle minimap |
+| Left mouse click | Move to mouse cursor |
+| m   | Toggle minimap |
 | t   | Pickup item |
-| ESC | Toggle FOV limitations |
-| m   | Toggle camera |
+| TAB | Toggle camera |
+| TAB + Movement keys | Move camera around |
+| TAB + ENTER | Move to camera location |
 | v   | Auto explore |
 | p   | Pause and open menu |
 | i   | Toggle inventory screen |
-| i + Left mouse click | Use item / Toggle equipment |
+| i + Left mouse click | Use item / Equip / Unequip |
 | i + Right mouse click | Drop item |
-| SPACE | Toggle magic selection screen |
-| Left mouse click | Move to mouse cursor |
-| SPACE + Left mouse click | Fire spell |
-| m + Movement keys | Move camera around |
-| m + ENTER | Move to camera location |
-| 1 | Transition to previous level |
-| 2 | Transition to next level |
-| F1 | Make new game |
+| SPACE | Toggle magic selection |
+| SPACE + Left mouse click | Choose spell to cast |
+| SPACE + Left mouse click + Left mouse click | Cast chosen spell |
+| 1 (On upstairs) | Transition to previous level |
+| 2 (On downstairs) | Transition to next level |
+| ESC | Close opened menu |
 | F2 | Manually save game |
 | F3 | Manually load game |
+| F12 | Toggle FOV limitations |
 
 # Features:
 - Animated sprites
