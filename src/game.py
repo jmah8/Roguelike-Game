@@ -602,5 +602,4 @@ def add_button_to_bottom_panel():
     """
     config.BUTTON_PANEL.create_button(config.PLAYER.image, 'stats', menu.stat_menu)
     config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'minimap', toggle_minimap)
-    config.BUTTON_PANEL.create_button(config.SPRITE.map_button, 'map', menu.map_menu)
+    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'map', menu.map_menu)

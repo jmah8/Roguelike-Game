@@ -196,7 +196,7 @@ class Graph:
                 to goal and the previous node
 
         Returns:
-
+            path (List): Reversed visited path
         """
         path = []
         current = goal
