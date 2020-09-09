@@ -446,16 +446,20 @@ def inventory_menu():
         draw.draw_mouse()
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        hovered_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
 
-        if hovered_button and hovered_button.mouse_over_fn:
-            hovered_button.mouse_over_fn()
+        hovered_inventory_button = inventory.check_if_button_hovered(mouse_x, mouse_y)
+        if hovered_inventory_button and hovered_inventory_button.mouse_over_fn:
+            hovered_inventory_button.mouse_over_fn()
+
+        hovered_equipment_button = equipment.check_if_button_pressed(mouse_x, mouse_y)
+        if hovered_equipment_button and hovered_equipment_button.mouse_over_fn:
+            hovered_equipment_button.mouse_over_fn()
 
         for event in events_list:
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     inventory_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
                         'inventory', mouse_x, mouse_y)
@@ -463,10 +467,10 @@ def inventory_menu():
                         menu_closed = True
                         break
 
-                    minimap_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
-                        'minimap', mouse_x, mouse_y)
-                    if minimap_button:
-                        game.toggle_minimap()
+                    map_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
+                        'map', mouse_x, mouse_y)
+                    if map_button:
+                        map_menu()
                         break
 
                     item_slot = inventory.check_if_button_pressed(mouse_x, mouse_y)
@@ -483,7 +487,7 @@ def inventory_menu():
                         clicked_button.right_click_fn()
                         game.update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
-            elif event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_TAB:
                     game.toggle_minimap()
                 if event.key == pygame.K_i or event.key == pygame.K_ESCAPE:
@@ -502,11 +506,12 @@ def _load_equipment_screen():
         equip_slot (ButtonManager): ButtonManager representing equip slots + equipped items
     """
     menu_width = config.CAMERA.camera_width / 2
+    menu_height = 0
 
     num_of_row = TILE_WIDTH // 2
     num_of_col = TILE_HEIGHT // 2
 
-    equip_slot = buttonmanager.ButtonManager(menu_width, 0, num_of_row, num_of_col)
+    equip_slot = buttonmanager.ButtonManager(menu_width, menu_height, num_of_row, num_of_col)
 
     hand_scale = (SPRITE_SIZE * 2, SPRITE_SIZE * 4)
     armor_scale = (SPRITE_SIZE * 4, SPRITE_SIZE * 6)
@@ -533,14 +538,26 @@ def _load_equipment_screen():
                 scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
                 left_hand_slot.blit(scaled_equip, (0, 0))
                 left_hand.left_click_fn = equip_entity.item.equip_stat.toggle_equip
+                left_hand.mouse_over_fn = partial(draw.draw_description, left_hand.rect.bottomleft[0],
+                                                                        left_hand.rect.bottomleft[1],
+                                                                        menu_width, menu_height,
+                                                                        equip_entity.item.item_description())
             elif slot == "Right hand":
                 scaled_equip = pygame.transform.scale(equip_entity.image, hand_scale)
                 right_hand_slot.blit(scaled_equip, (0, 0))
                 right_hand.left_click_fn = equip_entity.item.equip_stat.toggle_equip
+                right_hand.mouse_over_fn = partial(draw.draw_description, right_hand.rect.bottomleft[0],
+                                                                        right_hand.rect.bottomleft[1],
+                                                                        menu_width, menu_height,
+                                                                        equip_entity.item.item_description())
             elif slot == "Armor":
                 scaled_equip = pygame.transform.scale(equip_entity.image, armor_scale)
                 armor_slot.blit(scaled_equip, (0, 0))
                 armor.left_click_fn = equip_entity.item.equip_stat.toggle_equip
+                armor.mouse_over_fn = partial(draw.draw_description, armor.rect.bottomleft[0],
+                                                                    armor.rect.bottomleft[1],
+                                                                    menu_width, menu_heightww
+                                                                    equip_entity.item.item_description())
 
     return equip_slot
 
@@ -893,7 +910,7 @@ def instruction_menu():
 
 def class_selection_menu():
     """
-    create screens for inventory + equipment menus
+    create screens for character selection
     """
 
     knight_entity = entity_generator.generate_player(config.MAP_INFO.map_tree, 'knight')
