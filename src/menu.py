@@ -1,4 +1,5 @@
 from functools import partial
+import sys
 
 import entity_generator
 from constant import *
@@ -93,8 +94,12 @@ def main_menu():
     exit_button = TextButton("Exit", (BUTTON_WIDTH, BUTTON_HEIGHT),
                              (CAMERA_WIDTH // 2, setting_button.rect.midbottom[1] + 100), GREY)
 
+    background = pygame.transform.scale(config.SPRITE.entity_dict["chest"],
+                                        (config.CAMERA.camera_width, config.CAMERA.camera_height))
+
     while True:
         config.SURFACE_MAIN.fill(WHITE)
+        config.SURFACE_MAIN.blit(background, (0, 0))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -114,6 +119,7 @@ def main_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -137,6 +143,7 @@ def main_menu():
                         keys_menu()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
                         pygame.quit()
+                        sys.exit()
 
         pygame.display.update()
 
@@ -178,6 +185,7 @@ def pause():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -193,6 +201,7 @@ def pause():
                         game.quit_game()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
                         pygame.quit()
+                        sys.exit()
 
         config.CLOCK.tick(FPS)
         pygame.display.update()
@@ -210,6 +219,7 @@ def map_menu():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -238,7 +248,7 @@ def magic_select_menu():
 
     select_magic = True
     while select_magic:
-        game.update()
+        game.update_game()
         draw.draw_mouse()
         select_menu.draw_buttons(config.SURFACE_MAIN)
 
@@ -252,6 +262,7 @@ def magic_select_menu():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
                 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -325,12 +336,15 @@ def magic_targetting_menu(spell_to_cast):
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     magic_cast = False
                     break
                 elif event.key == pygame.K_1:
                     magic_select_menu()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -344,7 +358,7 @@ def magic_targetting_menu(spell_to_cast):
                     break
 
         config.CLOCK.tick(FPS)
-        game.update()
+        game.update_game()
         draw.draw_mouse()
         m_x, m_y = config.CAMERA.get_mouse_coord()
         line = magic.line(config.PLAYER.position, (m_x, m_y), config.MAP_INFO.tile_array, config.FOV)
@@ -368,15 +382,18 @@ def stat_menu():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
+
             elif event.type == pygame.KEYDOWN:
                 stat_open = False
                 break
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 stat_open = False
                 break
 
         config.CLOCK.tick(FPS)
-        game.update()
+        game.update_game()
         _draw_stat(config.PLAYER, stat_surface, character_icon)
         # Centers stat_menu
         stat_rect = stat_surface.get_rect()
@@ -433,7 +450,7 @@ def inventory_menu():
 
     while not menu_closed:
         events_list = pygame.event.get()
-        game.update()
+        game.update_game()
 
         config.SURFACE_MAIN.blit(menu_surface, (menu_width, 0))
 
@@ -458,6 +475,7 @@ def inventory_menu():
         for event in events_list:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -757,6 +775,8 @@ def win_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -765,6 +785,7 @@ def win_menu():
                         g.run()
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
                         pygame.quit()
+                        sys.exit()
 
         pygame.display.update()
 
@@ -859,6 +880,8 @@ def keys_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if back_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -901,6 +924,8 @@ def instruction_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
+
             elif event.type == pygame.KEYDOWN:
                 instruction_menu_open = False
                 break
@@ -956,6 +981,7 @@ def class_selection_menu():
         for event in events_list:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -1013,6 +1039,8 @@ def lose_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if new_button.rect.collidepoint((mouse_x, mouse_y)):
@@ -1020,6 +1048,7 @@ def lose_menu():
                         break
                     elif exit_button.rect.collidepoint((mouse_x, mouse_y)):
                         pygame.quit()
+                        sys.exit()
 
         config.CLOCK.tick(FPS)
         pygame.display.update()
