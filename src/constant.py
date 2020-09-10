@@ -87,7 +87,7 @@ DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
 # FONTS
 font_path_name = os.path.join(RESOURCE_PATH, 'fonts/FFF_Tusj.ttf')
 FONT_SIZE = 28
-FONT_CONTROL_TEXT = pygame.font.Font(font_path_name, 20)
+FONT_CONTROL_TEXT = pygame.font.Font(font_path_name, 19)
 FONT_DEBUG_MESSAGE = pygame.font.Font(font_path_name, 28)
 FONT_MESSAGE_TEXT = pygame.font.Font(font_path_name, 28)
 FONT_ITEM_DESCRIPTION = pygame.font.Font(font_path_name, 28)
