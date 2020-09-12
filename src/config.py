@@ -8,6 +8,7 @@ import pathfinding
 import fov
 import buttonmanager
 import game_data
+import menu
 
 pygame.init()
 
@@ -49,6 +50,9 @@ BUTTON_PANEL = buttonmanager.GridButtonManager(
     SURFACE_MAIN.get_height() - SPRITE_SIZE, NUM_OF_BUTTONS_X, NUM_OF_BUTTONS_Y, (NUM_OF_BUTTONS_X * NUM_OF_BUTTONS_Y),
     BLACK)
 
+BUTTON_PANEL.create_button(PLAYER.image, 'stats', menu.stat_menu)
+BUTTON_PANEL.create_button(SPRITE.inventory_button, 'inventory', menu.inventory_menu)
+BUTTON_PANEL.create_button(SPRITE.minimap_button, 'map', menu.map_menu)
 
 def new_game():
     """

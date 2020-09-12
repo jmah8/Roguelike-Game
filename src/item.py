@@ -99,6 +99,7 @@ class EquipmentStat:
         accumulator += ("slot: " + self.slot)
         return accumulator
 
+
 class Item:
     def __init__(self, name, weight=0.0, volume=0.0):
         """
@@ -223,6 +224,7 @@ class Item:
             description += self.equip_stat.equipment_description()
 
         return description
+
 
 # Change it so if at max hp, it heals for 0
 def heal_user_hp(user_entity, args):

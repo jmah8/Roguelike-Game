@@ -26,8 +26,6 @@ class Game:
 
         self.playing = True
 
-        add_button_to_bottom_panel()
-
     def run(self):
         """
         Main game loop which takes in process player input updates screen
@@ -595,12 +593,3 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
-
-
-def add_button_to_bottom_panel():
-    """
-    Adds clickable buttons to bottom of screen
-    """
-    config.BUTTON_PANEL.create_button(config.PLAYER.image, 'stats', menu.stat_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'map', menu.map_menu)

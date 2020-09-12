@@ -291,13 +291,13 @@ def _draw_castable_spells():
     Returns:
         magic_select (ButtonManager): ButtonManager with buttons corresponding to spells
     """
-    num_of_spells = 5
-    menu_width = config.CAMERA.camera_width // 2 - (num_of_spells // 2 * SPRITE_SIZE)
+    num_of_spaces = 5
+    menu_width = config.CAMERA.camera_width // 2 - (num_of_spaces // 2 * SPRITE_SIZE)
     menu_height = config.CAMERA.camera_height // 2 + (2 * SPRITE_SIZE)
 
     magic_select = buttonmanager.ButtonManager(menu_width,
                                                    menu_height,
-                                                   num_of_spells, 1, BLACK)
+                                                   num_of_spaces, 1, BLACK)
 
     fireball = buttonmanager.IconButton(0, 0, config.SPRITE.magic["fireball"],
                                         magic.cast_fireball)
@@ -342,12 +342,11 @@ def magic_targetting_menu(spell_to_cast):
                 if event.key == pygame.K_SPACE:
                     magic_cast = False
                     break
-                elif event.key == pygame.K_1:
-                    magic_select_menu()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_x, mouse_y = pygame.mouse.get_pos()
+
                     button = config.BUTTON_PANEL.check_if_button_pressed(mouse_x, mouse_y)
                     if button:
                         button.left_click_fn()
@@ -489,6 +488,12 @@ def inventory_menu():
                         'map', mouse_x, mouse_y)
                     if map_button:
                         map_menu()
+                        break
+
+                    stat_button = config.BUTTON_PANEL.check_if_specific_button_pressed(
+                        'stats', mouse_x, mouse_y)
+                    if stat_button:
+                        stat_menu()
                         break
 
                     item_slot = inventory.check_if_button_pressed(mouse_x, mouse_y)
