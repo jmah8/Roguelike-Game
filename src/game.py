@@ -1,4 +1,5 @@
 import pickle
+import sys
 from constant import *
 import config
 import fov
@@ -25,8 +26,6 @@ class Game:
 
         self.playing = True
 
-        add_button_to_bottom_panel()
-
     def run(self):
         """
         Main game loop which takes in process player input updates screen
@@ -34,7 +33,7 @@ class Game:
         while self.playing:
             config.CLOCK.tick(FPS)
             handle_events()
-            update()
+            update_game()
             draw.draw_mouse()
             self.check_if_player_lost()
             pygame.display.flip()
@@ -127,7 +126,7 @@ def _handle_mouse_event_click(event):
             move_char_auto(path, True)
 
         config.CLOCK.tick(FPS)
-        update()
+        update_game()
         pygame.display.flip()
 
 
@@ -170,12 +169,6 @@ def _handle_keyboard_event(event):
                 obj.item.pick_up(config.PLAYER)
         update_creatures(config.GAME_DATA.creature_data, 0, 0)
 
-    # TODO: instead of dropping last item dropped, drop mouse event in inventory
-    elif event.key == pygame.K_g:
-        if len(config.PLAYER.container.inventory) > 0:
-            config.PLAYER.container.inventory[-1].item.drop_item(config.PLAYER)
-        update_creatures(config.GAME_DATA.creature_data, 0, 0)
-
     elif event.key == pygame.K_F12:
         _toggle_wallhack()
 
@@ -195,7 +188,6 @@ def _handle_keyboard_event(event):
 
     # Use magic
     elif event.key == pygame.K_SPACE:
-        # menu.magic_targetting_menu(magic.cast_confusion)
         menu.magic_select_menu()
 
     # Returns to previous level
@@ -231,6 +223,7 @@ def quit_game():
     """
     save_game()
     pygame.quit()
+    sys.exit()
 
 
 def _toggle_camera():
@@ -250,6 +243,7 @@ def _toggle_camera():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a:
@@ -278,6 +272,7 @@ def _toggle_camera():
 
         config.CLOCK.tick(FPS)
         config.CAMERA.update(free_camera)
+
         if not config.WALL_HACK:
             config.FOV = fov.new_fov(config.MAP_INFO)
 
@@ -291,14 +286,15 @@ def _toggle_camera():
 
 def _move_to_free_camera(free_camera):
     """
-    Moves to free camera location
+    Moves player to free camera location
 
     Args:
-        free_camera ():
+        free_camera (Entity): Entity representing camera
     """
     # If tile is unexplored do nothing
     if not config.MAP_INFO.tile_array[free_camera.y][free_camera.x].seen:
         return
+
     start = (config.PLAYER.x, config.PLAYER.y)
     goal = (free_camera.x, free_camera.y)
     # Generates path
@@ -353,8 +349,8 @@ def _toggle_wallhack():
     """
     config.WALL_HACK = not config.WALL_HACK
     if config.WALL_HACK:
-        config.FOV = [[1 for x in range(0, config.MAP_INFO.tile_width)] for y in
-                      range(config.MAP_INFO.tile_height)]
+        config.FOV = [[1 for x in range(0, config.MAP_INFO.tile_width)]
+                      for y in range(config.MAP_INFO.tile_height)]
 
 
 def update_creatures(creature_dict, dx, dy):
@@ -469,7 +465,7 @@ def new_game():
     populate_map()
 
 
-def update():
+def update_game():
     """
     Updates camera and fov
     """
@@ -499,6 +495,7 @@ def move_char_auto(path, ignore=False):
             continue moving, else stop and prevent movement
     """
     old_coord = (config.PLAYER.x, config.PLAYER.y)
+
     if len(path) == 0:
         if not ignore:
             # If enemy in FOV stop auto moving
@@ -526,7 +523,7 @@ def move_char_auto(path, ignore=False):
             update_creatures(config.GAME_DATA.creature_data, dest_x, dest_y)
             old_coord = coord
 
-            update()
+            update_game()
             draw.draw_mouse()
             config.CLOCK.tick(20)
             pygame.display.flip()
@@ -596,12 +593,3 @@ def load_game():
     generate_camera()
 
     initialize_pathfinding()
-
-
-def add_button_to_bottom_panel():
-    """
-    Adds clickable buttons to bottom of screen
-    """
-    config.BUTTON_PANEL.create_button(config.PLAYER.image, 'stats', menu.stat_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.inventory_button, 'inventory', menu.inventory_menu)
-    config.BUTTON_PANEL.create_button(config.SPRITE.minimap_button, 'map', menu.map_menu)

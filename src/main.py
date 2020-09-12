@@ -26,7 +26,7 @@ def profile(fnc):
 def start():
     # Pygame screen
     pygame.init()
-    pygame.display.set_caption("Knight's Adventure")
+    pygame.display.set_caption("Treasure Quest")
     pygame.display.set_icon(config.SPRITE.entity_dict["sword"])
 
     # Repeat keys when held down

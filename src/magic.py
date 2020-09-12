@@ -221,7 +221,7 @@ def _update_spell(particle_group):
     Args:
         particle_group (List): List of particles
     """
-    game.update()
+    game.update_game()
     for magic in particle_group:
         draw.draw_at_camera_offset_with_image(magic)
         magic.update()
